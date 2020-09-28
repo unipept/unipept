@@ -9,12 +9,13 @@
 # This script assumes that the unipept-web-components project and the unipept project
 # live in the same parent folder.
 
-# First remove previously initiated content
-rm -R node_modules/unipept-web-components
-
-# Recreate an empty directory
-mkdir node_modules/unipept-web-components
+# First remove the original dist data and link both together
+rm -f ./node_modules/unipept-web-components/dist/unipept-web-components.umd.min.js
 
 # Then, start a watcher that automatically applies changes made to the original web components into our local copy
 # inside of node_modules
 node link_with_web_components_watch.js
+#ln -s ../unipept-web-components/dist/unipept-web-components.umd.min.js ./node_modules/unipept-web-components/dist/unipept-web-components.umd.min.js
+
+
+

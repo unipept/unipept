@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: ruby:2.6.5
+      image: ruby:2.7.1
       env:
         RAILS_ENV: "test"
         DATABASE_URL: "mysql2://root:unipept@mysql:3306/unipept_test"
@@ -68,7 +68,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     container:
-      image: ruby:2.6.5
+      image: ruby:2.7.1
     steps:
     - uses: actions/checkout@v1
     - name: Cache Ruby dependencies

@@ -89,8 +89,8 @@ class Lineage < ApplicationRecord
   # This code disables the rangecheck for UnsignedIntegers
   module ActiveRecord::Type
     class UnsignedInteger
-      def ensure_in_range(_value)
-        true
+      def ensure_in_range(value)
+        value
       end
     end
   end

@@ -27,9 +27,7 @@ import Component from 'vue-class-component';
 import {Prop, Watch} from 'vue-property-decorator';
 
 @Component
-export default class SearchHelp extends Vue {
-
-}
+export default class SearchHelp extends Vue {}
 </script>
 
 <style scoped>

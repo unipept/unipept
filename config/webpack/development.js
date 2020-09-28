@@ -1,6 +1,5 @@
-const environment = require("./environment");
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
-const config = environment.toWebpackConfig();
-config.devtool = "source-map";
+const environment = require('./environment')
 
-module.exports = config;
+module.exports = environment.toWebpackConfig()

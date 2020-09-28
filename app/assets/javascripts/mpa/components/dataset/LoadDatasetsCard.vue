@@ -49,7 +49,7 @@
                     v-on:create-assay="onCreateAssay"
                     v-on:destroy-assay="onDestroyAssay"
                     v-on:store-assay="onStoreAssay"
-                    :stored-assays="$store.getters.getStoredAssays">
+                    :stored-assays="$store.getters.storedAssays">
                 </load-local-dataset-card>
             </v-tab-item>
         </v-tabs-items>
@@ -68,15 +68,16 @@ import Vue from "vue";
 
 import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import CreateDatasetCard from "unipept-web-components/src/components/dataset/CreateDatasetCard.vue";
-import LoadSampleDatasetCard from "unipept-web-components/src/components/dataset/LoadSampleDatasetCard.vue";
-import LoadPrideDatasetCard from "unipept-web-components/src/components/dataset/LoadPrideDatasetCard.vue";
-import LoadLocalDatasetCard from "unipept-web-components/src/components/dataset/LoadLocalDatasetCard.vue";
-import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
-import Tooltip from "unipept-web-components/src/custom/Tooltip.vue";
-import BrowserStorageRemover from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageRemover";
-import BrowserStorageWriter from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageWriter";
-import BrowserStorageDataReader from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageDataReader";
+import {
+    CreateDatasetCard,
+    LoadSampleDatasetCard,
+    LoadPrideDatasetCard,
+    LoadLocalDatasetCard,
+    ProteomicsAssay,
+    BrowserStorageRemover,
+    BrowserStorageWriter,
+    BrowserStorageDataReader
+} from "unipept-web-components";
 
 @Component({
     components: {
@@ -100,7 +101,7 @@ export default class LoadDatasetsCard extends Vue {
     private errorSnackbar: boolean = false;
 
     private async onCreateAssay(assay: ProteomicsAssay) {
-        if (!assay.getPeptides()) {
+        if (!assay.getPeptides() || assay.getPeptides().length === 0) {
             const browserStorageDataReader = new BrowserStorageDataReader(window.localStorage);
             await assay.accept(browserStorageDataReader);
         }

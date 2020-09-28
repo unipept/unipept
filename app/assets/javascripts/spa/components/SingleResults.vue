@@ -2,8 +2,16 @@
     <v-app style="background: transparent;">
         <v-row>
             <v-col :cols="12">
-                <single-peptide-summary :peptide="sequence" :equateIl="equateIl"></single-peptide-summary>
-                <single-peptide-analysis-card :peptide="sequence" :equateIl="equateIl"></single-peptide-analysis-card>
+                <single-peptide-summary
+                    :peptide="sequence"
+                    :equateIl="equateIl"
+                    :communication-source="communicationSource">
+                </single-peptide-summary>
+                <single-peptide-analysis-card
+                    :peptide="sequence"
+                    :equateIl="equateIl"
+                    :communication-source="communicationSource">
+                </single-peptide-analysis-card>
             </v-col>
         </v-row>
     </v-app>
@@ -12,10 +20,14 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import NetworkConfiguration from "unipept-web-components/src/business/communication/NetworkConfiguration";
-import SinglePeptideAnalysisCard from "unipept-web-components/src/components/analysis/single/SinglePeptideAnalysisCard.vue";
-import SinglePeptideSummary from "unipept-web-components/src/components/analysis/single/SinglePeptideSummary.vue";
-import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptide";
+import {
+    NetworkConfiguration,
+    SinglePeptideAnalysisCard,
+    SinglePeptideSummary,
+    Peptide,
+    CommunicationSource,
+    DefaultCommunicationSource
+} from "unipept-web-components";
 
 @Component({
     components: {
@@ -26,6 +38,7 @@ import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptid
 export default class SingleResults extends Vue {
     private sequence: Peptide = "";
     private equateIl: boolean = true;
+    private communicationSource: CommunicationSource = new DefaultCommunicationSource();
 
     private created() {
         NetworkConfiguration.BASE_URL = "";

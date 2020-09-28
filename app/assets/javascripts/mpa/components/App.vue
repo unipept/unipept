@@ -15,10 +15,12 @@ import HomePage from "./pages/HomePage.vue";
 import AnalysisPage from "./pages/AnalysisPage.vue";
 import {Prop} from "vue-property-decorator";
 import { v4 as uuidv4 } from "uuid";
-import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
-import BrowserStorageWriter from "unipept-web-components/src/business/storage/browser/assay/BrowserStorageWriter";
-import BrowserAssayManager from "unipept-web-components/src/business/storage/browser/assay/BrowserAssayManager";
-import NetworkConfiguration from "unipept-web-components/src/business/communication/NetworkConfiguration";
+import {
+    ProteomicsAssay,
+    BrowserStorageWriter,
+    BrowserAssayManager,
+    NetworkConfiguration
+} from "unipept-web-components";
 
 @Component({
     components: {
@@ -110,7 +112,7 @@ export default class App extends Vue {
     }
 
     h2 {
-        font-size: 21px;
+        font-size: 21px
     }
 
     h3 {
@@ -124,5 +126,4 @@ export default class App extends Vue {
     .theme--light.v-application {
         background-color: #FAFAFA !important;
     }
-
 </style>

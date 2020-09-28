@@ -32,8 +32,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import CardHeader from "unipept-web-components/src/components/custom/CardHeader.vue";
-import CardTitle from "unipept-web-components/src/components/custom/CardTitle.vue";
+import { CardHeader, CardTitle } from "unipept-web-components";
 import { Watch } from "vue-property-decorator";
 import { VForm } from "vuetify/lib";
 
