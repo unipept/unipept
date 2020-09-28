@@ -1,28 +1,34 @@
 <template>
-    <v-list-item ripple @click="activateAssay(assay)" :class="$store.getters.getActiveAssay === assay ? 'selected-list-item' : ''">
+    <v-list-item ripple @click="activateAssay(assayData.assay)" :class="this.$store.getters.activeAssay === assayData.assay ? 'selected-list-item' : ''">
         <v-list-item-action>
             <div class="select-dataset-radio" v-if="progress === 1">
                 <v-radio-group v-model="activeAssayModel">
-                    <v-radio :value="assay"></v-radio>
+                    <v-radio :value="assayData.assay"></v-radio>
                 </v-radio-group>
             </div>
             <v-progress-circular v-else :rotate="-90" :size="24" :value="progress * 100" color="primary"></v-progress-circular>
         </v-list-item-action>
         <v-list-item-content>
             <v-list-item-title>
-                {{ assay.getName() }}
+                {{ assayData.assay.getName() }}
             </v-list-item-title>
-            <v-list-item-subtitle>
-                {{ assay.getAmountOfPeptides() }} peptides
+            <v-list-item-subtitle v-if="progress === 1">
+                {{ assayData.assay.getAmountOfPeptides() }} peptides
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-else-if="progress === 0">
+                Computing estimated time remaining...
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-else>
+                ~{{ getTimeString(eta) }} remaining...
             </v-list-item-subtitle>
         </v-list-item-content>
 
         <v-list-item-action>
             <v-list-item-action-text>
-                {{ assay.getDate().toLocaleDateString() }}
+                {{ assayData.assay.getDate().toLocaleDateString() }}
             </v-list-item-action-text>
             <tooltip message="Remove assay from analysis.">
-                <v-icon @click="deselectAssay(assay)" v-on:click.stop>mdi-delete-outline</v-icon>
+                <v-icon @click="deselectAssay(assayData.assay)" v-on:click.stop>mdi-delete-outline</v-icon>
             </tooltip>
         </v-list-item-action>
     </v-list-item>
@@ -32,8 +38,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
-import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
+import { AssayData, ProteomicsAssay, StringUtils, Tooltip } from "unipept-web-components";
 
 @Component({
     components: {
@@ -42,29 +47,36 @@ import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
     computed: {
         activeAssayModel: {
             get(): ProteomicsAssay {
-                return this.$store.getters.getActiveAssay;
+                return this.$store.getters.activeAssay;
             },
             set(assay: ProteomicsAssay) {
                 // Nothing to do here!
-            }
-        },
-        progress: {
-            get() {
-                return this.$store.getters.getProgressStatesMap.find(p => p.assay.getId() === this.assay.getId()).progress;
             }
         }
     }
 })
 export default class AssayItem extends Vue {
     @Prop({ required: true })
-    private assay: ProteomicsAssay;
+    private assayData: AssayData;
+
+    get progress(): number {
+        return this.assayData.analysisMetaData.progress;
+    }
+
+    get eta(): number {
+        return this.assayData.analysisMetaData.eta;
+    }
 
     private activateAssay(assay: ProteomicsAssay): void {
-        this.$store.dispatch("setActiveAssay", assay);
+        this.$store.dispatch("activateAssay", assay);
     }
 
     private deselectAssay(assay: ProteomicsAssay): void {
         this.$store.dispatch("removeAssay", assay);
+    }
+
+    private getTimeString(eta: number): string {
+        return StringUtils.secondsToTimeString(eta);
     }
 }
 </script>
