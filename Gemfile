@@ -39,7 +39,7 @@ gem 'rmagick',  '~> 4.1.1', require: false
 
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
-gem 'less-rails',  '~> 4.0.0'
+gem 'less-rails',  '~> 5.0.0'
 
 # auto css prefixer
 gem 'autoprefixer-rails',  '~> 9.8.6'
