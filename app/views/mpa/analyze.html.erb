@@ -2,9 +2,6 @@
   <%= javascript_pack_tag 'mpa_app' %>
 <% end %>
 
-<% content_for :stylesheets do %>
-<% end %>
-
 <div id="mpa-app">
   <app peptides="<%= @peptides %>" il="<%= @il %>" dupes="<%= @dupes %>" missed="<%= @missed %>" search-name="<%= @name %>" ></app>
 </div>

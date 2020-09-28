@@ -8,7 +8,7 @@ gem 'rails', '~> 6.0.3', '>= 6.0.3.2'
 
 gem 'mysql2', '~> 0.5.3'
 
-gem 'webpacker', '~> 4.2.2'
+gem 'webpacker', '~> 5.2.1'
 
 # Use Puma as the app server
 gem 'puma', '~> 4.1'
@@ -29,7 +29,7 @@ gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 gem 'bootsnap', '~> 1.4.6', require: false
 
 # faster json
-gem 'oj',  '~> 3.10.6'
+gem 'oj',  '~> 3.10.13'
 
 gem 'multi_json',  '~> 1.15.0'
 gem 'jbuilder',  '~> 2.10.0'
@@ -78,7 +78,7 @@ end
 
 group :development do
   gem 'capistrano-bundler', '~> 1.6.0', require: false
-  gem 'capistrano-rails',   '~> 1.4.0', require: false
+  gem 'capistrano-rails',   '~> 1.6.1', require: false
   gem 'capistrano-rvm', '~> 0.1.2', require: false
   gem 'capistrano-yarn', '~> 2.0.2'
 end
@@ -93,7 +93,7 @@ group :development do
   gem 'annotate', '~> 3.1.1' # annotate models with database info
   gem 'guard', '~> 2.16.2'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
-  gem 'rubocop', '~> 0.89.1'
+  gem 'rubocop', '~> 0.90.0'
   gem 'rake', '~> 13.0.1'
   gem 'sprockets', '~> 3.7.2'
 end
