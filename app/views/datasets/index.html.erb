@@ -3,6 +3,13 @@
 <% end %>
 
 <% content_for :stylesheets do %>
+  <!-- This solution is temporary until the CSS-files for this repository have been restructured. -->
+  <link rel="stylesheet" href="unipept-web-components.css">
+  <style>
+    .v-progress-circular__overlay {
+        transition: none !important;
+    }
+  </style>
 <% end %>
 
 <div id="mpa-app">

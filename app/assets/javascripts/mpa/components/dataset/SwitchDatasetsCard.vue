@@ -20,23 +20,23 @@ to date.
                 </tooltip>
             </div>
         </card-header>
-        <v-card-text v-if="$store.getters.getAssays.length === 0">
+        <v-card-text v-if="this.$store.getters.assays.length === 0">
             <span>Please add one or more datasets by clicking the plus button above...</span>
         </v-card-text>
         <div class="growing-list">
             <v-list two-line>
                 <assay-item
-                    v-for="assay of $store.getters.getAssays"
-                    :assay="assay"
-                    :key="assay.getId()">
+                    v-for="data of this.$store.getters.assays"
+                    :assayData="data"
+                    :key="data.assay.id">
                 </assay-item>
             </v-list>
             <v-card-text>
                 <v-divider></v-divider>
-                <div class="card-actions">
+                <div class="text-center">
                     <tooltip message="Compare samples above using a heatmap.">
                         <v-btn
-                            :disabled="$store.getters.isInProgress"
+                            :disabled="isInProgress"
                             @click="compareAssays">
                             Compare samples
                         </v-btn>
@@ -54,9 +54,9 @@ to date.
                 </div>
                 <div>
                     <heatmap-wizard-multi-sample
-                        v-if="!this.$store.getters.inProgress"
-                        :assays="this.$store.getters.getAssays"
-                        :tree="tree">
+                        v-if="!isInProgress"
+                        :assays="this.$store.getters.assays.map(a => a.assay)"
+                        :communication-source="communicationSource">
                     </heatmap-wizard-multi-sample>
                     <div v-else style="display: flex; justify-content: center;">
                         <div class="text-xs-center" style="margin-top: 25px;">
@@ -73,17 +73,19 @@ to date.
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Watch } from "vue-property-decorator";
-import CardHeader from "unipept-web-components/src/components/custom/CardHeader.vue";
-import CardTitle from "unipept-web-components/src/components/custom/CardTitle.vue";
-import HeatmapWizardMultiSample from "unipept-web-components/src/components/heatmap/HeatmapWizardMultiSample.vue";
-import Tooltip from "unipept-web-components/src/components/custom/Tooltip.vue";
-import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
-import Tree from "unipept-web-components/src/business/ontology/taxonomic/Tree";
-import AssayItem from "./AssayItem.vue";
-import { CountTable } from "unipept-web-components/src/business/counts/CountTable";
-import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptide";
-import LcaCountTableProcessor from "unipept-web-components/src/business/processors/taxonomic/ncbi/LcaCountTableProcessor";
-import NcbiOntologyProcessor from "unipept-web-components/src/business/ontology/taxonomic/ncbi/NcbiOntologyProcessor";
+import {
+    CardHeader,
+    CardTitle,
+    HeatmapWizardMultiSample,
+    Tooltip,
+    ProteomicsAssay,
+    Tree,
+    CountTable,
+    Peptide,
+    LcaCountTableProcessor,
+    NcbiOntologyProcessor, CommunicationSource, DefaultCommunicationSource
+} from "unipept-web-components"
+import AssayItem from "./AssayItem.vue"
 
 @Component({
     components: { CardTitle, CardHeader, HeatmapWizardMultiSample, Tooltip, AssayItem },
@@ -92,34 +94,27 @@ import NcbiOntologyProcessor from "unipept-web-components/src/business/ontology/
 export default class SwitchDatasetsCard extends Vue {
     private isAssaySelectionInProgress: boolean = false;
     private dialogOpen: boolean = false;
-    private tree: Tree = null;
+
+    private communicationSource: CommunicationSource = new DefaultCommunicationSource();
 
     get countTable(): CountTable<Peptide> {
-        const activeAssay: ProteomicsAssay = this.$store.getters.getActiveAssay;
+        const activeAssay: ProteomicsAssay = this.$store.getters.activeAssay;
         if (activeAssay) {
-            return this.$store.getters.getProgressStatesMap.find(p => p.assay.getId() === activeAssay.getId()).countTable;
+            return this.$store.getters.assayData(activeAssay)?.countTable;
         } else {
             return undefined;
         }
     }
 
     get activeAssay(): ProteomicsAssay {
-        return this.$store.getters.getActiveAssay;
+        return this.$store.getters.activeAssay;
     }
 
-    @Watch("countTable")
-    @Watch("activeAssay")
-    private async onCountTableChanged() {
-        if (this.activeAssay && this.countTable) {
-            const taxaCountProcessor = new LcaCountTableProcessor(this.countTable, this.activeAssay.getSearchConfiguration());
-            const taxaCounts = await taxaCountProcessor.getCountTable();
-
-            const taxaOntologyProcessor = new NcbiOntologyProcessor();
-            const taxaOntology = await taxaOntologyProcessor.getOntology(taxaCounts);
-
-            this.tree = new Tree(taxaCounts, taxaOntology, await taxaCountProcessor.getAnnotationPeptideMapping(), 1);
-        }
+    get isInProgress(): boolean {
+        return this.$store.getters.assays.some(a => a.analysisMetaData.progress < 1);
     }
+
+    mounted() {}
 
     private deselectAssay(dataset: ProteomicsAssay) {
         this.$emit("deselect-assay", dataset);
