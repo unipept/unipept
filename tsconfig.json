@@ -1,36 +1,29 @@
 {
-  "compilerOptions": {
-    "declaration": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "downlevelIteration": true,
-    "lib": ["es2017", "dom"],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "sourceMap": true,
-    "target": "esnext",
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "types": [
-      "custom",
-      "jquery",
-      "d3",
-      "node"
+    "compilerOptions": {
+        "declaration": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "downlevelIteration": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": false,
+        "strictPropertyInitialization": false,
+        "useDefineForClassFields": false,
+        "allowJs": true,
+        "lib": ["es6", "dom"],
+        "module": "es6",
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+            "*": ["node_modules/*", "app/javascript/*"]
+        },
+        "sourceMap": true,
+        "target": "es6"
+    },
+    "exclude": [
+        "**/*.spec.ts",
+        "node_modules",
+        "vendor",
+        "public"
     ],
-    "typeRoots": [
-      "node_modules/@types",
-      "./typings"
-    ]
-  },
-//  "files": [
-//    "app/**/*"
-//  ],
-  "exclude": [
-    "**/*.spec.ts",
-    // "node_modules",
-    "vendor",
-    "public"
-  ],
-  "compileOnSave": false
+    "compileOnSave": false
 }

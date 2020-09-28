@@ -1,7 +1,7 @@
 /**
  * This file watches the original Unipept web components directory for changes and automatically applies these changes
  * to the local copy of the Unipept web components (inside the node_modules folder).
- * 
+ *
  * This script is only here for use during development of Unipept and should not be used in the production environment.
  * The package Chokidar is required to run this file.
  */
@@ -10,7 +10,7 @@ const chokidar = require('chokidar');
 const fs = require('fs');
 const path = require('path');
 
-const directory = './../unipept-web-components'
+const directory = './../unipept-web-components/dist'
 
 const errHandler = function(err) {
     if (err) {

@@ -14,7 +14,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import SearchPeptideCard from "./search/SearchPeptideCard.vue";
-import { Peptide } from "unipept-web-components/src/business/ontology/raw/Peptide";
+import { Peptide } from "unipept-web-components";
 
 @Component({
     components: {

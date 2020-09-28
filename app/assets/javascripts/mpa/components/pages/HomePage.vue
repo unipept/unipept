@@ -24,7 +24,7 @@ import LoadDatasetsCard from "./../dataset/LoadDatasetsCard.vue";
 import SelectDatasetsCard from "./../dataset/SelectDatasetsCard.vue";
 import SearchHelp from "./../miscellaneous/SearchHelp.vue";
 import { Prop } from "vue-property-decorator";
-import ProteomicsAssay from "unipept-web-components/src/business/entities/assay/ProteomicsAssay";
+import { ProteomicsAssay } from "unipept-web-components";
 
 @Component({
     components: {
