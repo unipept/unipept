@@ -55,7 +55,8 @@ to date.
                 <div>
                     <heatmap-wizard-multi-sample
                         v-if="!isInProgress"
-                        :assays="this.$store.getters.assays.map(a => a.assay)">
+                        :assays="this.$store.getters.assays.map(a => a.assay)"
+                        :communication-source="communicationSource">
                     </heatmap-wizard-multi-sample>
                     <div v-else style="display: flex; justify-content: center;">
                         <div class="text-xs-center" style="margin-top: 25px;">
@@ -82,7 +83,7 @@ import {
     CountTable,
     Peptide,
     LcaCountTableProcessor,
-    NcbiOntologyProcessor
+    NcbiOntologyProcessor, CommunicationSource, DefaultCommunicationSource
 } from "unipept-web-components"
 import AssayItem from "./AssayItem.vue"
 
@@ -93,6 +94,8 @@ import AssayItem from "./AssayItem.vue"
 export default class SwitchDatasetsCard extends Vue {
     private isAssaySelectionInProgress: boolean = false;
     private dialogOpen: boolean = false;
+
+    private communicationSource: CommunicationSource = new DefaultCommunicationSource();
 
     get countTable(): CountTable<Peptide> {
         const activeAssay: ProteomicsAssay = this.$store.getters.activeAssay;
