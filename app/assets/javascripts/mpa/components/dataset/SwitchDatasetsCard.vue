@@ -144,20 +144,4 @@ export default class SwitchDatasetsCard extends Vue {
 </script>
 
 <style lang="less">
-    .growing-list {
-        min-height: 100%;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .v-divider {
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-
-    .select-dataset-radio .v-input--radio-group__input {
-        margin-right: -16px;
-    }
 </style>
