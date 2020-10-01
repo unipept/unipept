@@ -42,7 +42,7 @@ gem 'rmagick',  '~> 4.1.1', require: false
 gem 'less-rails',  '~> 5.0.0'
 
 # auto css prefixer
-gem 'autoprefixer-rails',  '~> 9.8.6'
+gem 'autoprefixer-rails',  '~> 10.0.1'
 
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
