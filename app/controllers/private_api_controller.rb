@@ -111,6 +111,12 @@ class PrivateApiController < HandleOptionsController
     end
   end
 
+  def metadata()
+    @data = {
+        :db_version => Rails.application.config.versions[:uniprot]
+    }
+  end
+
   private
 
   def default_format_json
