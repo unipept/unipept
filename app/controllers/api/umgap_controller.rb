@@ -4,7 +4,7 @@ class Api::UmgapController < ApplicationController
   before_action :set_case_subnav, only: %i[casestudies casestudy_metagenomics]
 
   def index
-    @title = ' Unipept MetaGenomics Analysis Pipeline'
+    @title = 'Unipept MetaGenomics Analysis Pipeline'
     @sidebar_name = 'Overview'
     @sidebar_subnav = %w[Installation Updates Configuration]
   end
