@@ -29,9 +29,7 @@ class Api::ClidocsController < ApplicationController
   end
 
   def casestudy_metagenomics
-    @title = 'Case study: metagenomics'
-    @sidebar_name = 'Case studies'
-    @study = 'Metagenomics'
+    redirect_to api_umgap_casestudy_metagenomics_path
   end
 
   def pept2lca

@@ -1,0 +1,47 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap prot2kmer</samp><br>
+        <small>Splits a <span class='initialism'>FASTA</span> stream of peptides into k-mers.</small>
+      </h1>
+    </div>
+    <p>The <code>umgap prot2kmer</code> command takes one or more peptides as input and outputs all their k-length
+    subsequences in order of appearance.</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given in a <span class='initialism'>FASTA</span> format on <em>standard input</em> with a single peptide per <span class='initialism'>FASTA</span> header,
+        which may be hardwrapped with newlines. All overlapping k-mers of a peptide are written to
+        <em>standard output</em>, separated by newlines. The k-mer length is configurable with the <samp>-k</samp> option,
+        and is 9 by default.</p>
+        <pre>
+<b>$ cat input.fa</b>
+&gt;header1
+DAIGDVAKAYKKAG*S
+<b>$ umgap prot2kmer &lt; input.fa</b>
+&gt;header1
+DAIGDVAKA
+AIGDVAKAY
+IGDVAKAYK
+GDVAKAYKK
+DVAKAYKKA
+VAKAYKKAG
+AKAYKKAG*
+KAYKKAG*S</pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+        <dl class='dl-horizontal'>
+          <dt><samp>-k</samp> / <samp>--length <em>k</em></samp></dt><dd>The k-mer length [default: 9]</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

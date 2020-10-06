@@ -1,0 +1,56 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap translate</samp><br>
+        <small>Translates a <span class='initialism'>FASTA</span> stream of <span class='initialism'>DNA</span> reads to peptides</small>
+      </h1>
+    </div>
+    <p>
+      <p>The <code>umgap translate</code> command takes one or more <span class='initialism'>DNA</span> sequences and translates them into
+      amino acid sequences.</p>
+    </p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The <span class='initialism'>DNA</span> sequences are expected in a <span class='initialism'>FASTA</span> format on <em>standard input</em>.</p>
+        <pre>
+$ cat input.fa
+&gt;header1
+GATTACAAA
+$ umgap translate -f1 &lt; input.fa
+&gt;header1
+DYK</pre>
+        <p>The <samp>-f</samp> flag allows you to add reading frames to the translation. If you want to translate
+        multiple frames and care to keep them apart, the <samp>-n</samp> flag adds the name of the frame to the end
+        of the <span class='initialism'>FASTA</span> header.</p>
+        <pre>
+$ umgap translate -f1 -f1R &lt; input.fa
+&gt;header1|1
+DYK
+&gt;header1|1R
+FVI</pre>
+        <p>The <samp>-a</samp> flag can be used as a shortcut to translate all 6 reading frames.</p>
+        <p>With the <samp>-t</samp> flag, you can select a specific translation table, for instance <samp>-t11</samp> for the
+        bacterial, archaeal and plant plastid code.</p>
+        <dl class='dl-horizontal'>
+          <dt><samp>-a</samp> / <samp>--all-frames</samp></dt><dd>Read and output all six frames</dd>
+          <dt><samp>-n</samp> / <samp>--append-name</samp></dt><dd>Append a bar (<code>|</code>) and the name of the frame to the fasta header</dd>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-m</samp> / <samp>--methionine</samp></dt><dd>Replace each start-codon with methionine</dd>
+          <dt><samp>-s</samp> / <samp>--show-table</samp></dt><dd>Instead of normal use, print the selected table and exit</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+        <dl class='dl-horizontal'>
+          <dt><samp>-f</samp> / <samp>--frame <em>f</em>...</samp></dt><dd>Adds a reading frame (1, 2, 3, 1R, 2R or 3R)</dd>
+          <dt><samp>-t</samp> / <samp>--table <em>t</em></samp></dt><dd>Translation table to use [default: 1]</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

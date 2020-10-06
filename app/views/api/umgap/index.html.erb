@@ -1,0 +1,156 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <h1 class='api-title'>
+      <span class="initialism">UMGAP</span> documentation
+    </h1>
+    <p class='lead'>
+      Use the Unipept MetaGenomics Analysis Pipeline to assign taxonomic labels to your shotgun metagenomics reads. The results are available as taxonomic frequency tables and interactive visualizations. 
+    </p>
+    <p>
+      The <span class='initialism'>UMGAP</span> is a collection of command line tools.
+      Combine them into your own pipeline to identify (short) shotgun metagenomics reads guided by our <a href="<%= api_umgap_casestudies_path %>">case studies</a>, or use one of the preconfigured pipelines.
+      After each read is assigned a taxon, collect the results in frequency tabels and interactive visualizations.
+      With communication via <em>standard input</em> and <em>standard output</em>, and an easy to understand, consistent intermediate format, it's easy to plug your own extensions into the pipeline.
+    </p>
+    <ul>
+      <li><strong><span class='initialism'>UMGAP</span> High Precision:</strong> Optimized for high precision identifications on your metagenomics reads.</li>
+      <li><strong><span class='initialism'>UMGAP</span> Max Precision:</strong> Optimized for highest precision, with a small setback on sensitivity.</li>
+      <li><strong><span class='initialism'>UMGAP</span> Tryptic Precision:</strong> Made for fast analyses on your laptop. Fewer results, but accurate.</li>
+      <li><strong><span class='initialism'>UMGAP</span> High Sensitivity:</strong> Optimized for high sensitivity identifications on metagenomics reads.</li>
+      <li><strong><span class='initialism'>UMGAP</span> Max Sensitivity:</strong> Optimized for highest sensitivity, with a small setback on precision.</li>
+      <li><strong><span class='initialism'>UMGAP</span> Tryptic Sensitivity:</strong> Made for fast analyses on your laptop. Get a quick overview of your data.</li>
+    </ul>
+    </p>
+    <p>
+      Throughout this documentation, the term peptides is used for both tryptic peptides and k-mers.
+      The term taxon ID refers to an identifier of an <span class='initialism'>NCBI</span> taxonomy (which should be the same version
+      in the whole pipeline).
+    </p>
+    <p>
+      The <span class='initialism'>UMGAP</span> is free and open-source software under the <span class='initialism'>MIT</span> License and all code is available on <a href='https://github.com/unipept/umgap' target='_blank'>Github</a>. In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or <a href='https://github.com/unipept/umgap/issues' target='_blank'>create an issue</a> on Github.
+    </p>
+    <dl class='dl-horizontal'>
+      <dt>fastq2fasta</dt><dd>Interleaves a number of <span class='initialism'>FASTQ</span> files into a single <span class='initialism'>FASTA</span> output</dd>
+      <dt>translate</dt><dd>Translates <span class='initialism'>DNA</span> into Amino Acid Sequences</dd>
+      <dt>prot2tryp</dt><dd>Splits each protein sequence in a <span class='initialism'>FASTA</span> format into a list of (tryptic) peptides</dd>
+      <dt>filter</dt><dd>Filter peptides in a <span class='initialism'>FASTA</span> format based on specific criteria</dd>
+      <dt>prot2kmer</dt><dd>Splits each protein sequence in a <span class='initialism'>FASTA</span> format into a list of kmers</dd>
+      <dt>pept2lca</dt><dd>Looks up each line of input in a given <span class='initialism'>FST</span> index and outputs the result. Lines starting with a '>' are copied. Lines for which no mapping is found are ignored</dd>
+      <dt>prot2tryp2lca</dt><dd>Reads all the records in a specified <span class='initialism'>FASTA</span> file and queries the tryptic peptides in an <span class='initialism'>FST</span> for the <span class='initialism'>LCA</span>s</dd>
+      <dt>prot2kmer2lca</dt><dd>Reads all the records in a specified <span class='initialism'>FASTA</span> file and queries the k-mers in an <span class='initialism'>FST</span> for the <span class='initialism'>LCA</span>s</dd>
+      <dt>bestof</dt><dd>Pick the frame with the most none-root hits</dd>
+      <dt>seedextend</dt><dd>Seed and extend</dd>
+      <dt>uniq</dt><dd>Concatenates the data strings of all consecutive <span class='initialism'>FASTA</span> entries with the same header</dd>
+      <dt>taxa2agg</dt><dd>Aggregates taxa to a single taxon</dd>
+      <dt>snaptaxon</dt><dd>Snap taxa to a specified rank or one of the specified taxa</dd>
+      <dt>taxa2freq</dt><dd>Count and report on a list of taxon IDs</dd>
+      <dt>taxa2tree</dt><dd>Visualizes the given list of taxons using the Unipept API</dd>
+      <dt>taxonomy</dt><dd>Show taxonomy info</dd>
+      <dt>splitkmers</dt><dd>Splits each protein sequence in a <span class='initialism'>CSV</span> format into a list of kmers</dd>
+      <dt>joinkmers</dt><dd>Groups a <span class='initialism'>CSV</span> by equal first fields (k-mers) and aggregates the second fields (taxon IDs)</dd>
+      <dt>buildindex</dt><dd>Write an <span class='initialism'>FST</span> index of stdin on stdout</dd>
+      <dt>printindex</dt><dd>Print the values in an <span class='initialism'>FST</span> index to stdout</dd>
+    </dl>
+    <div class='card'>
+        <div class='card-title card-title-colored'>
+          <h2 id="installation" class='card-title-text'>Installation</h2>
+        </div>
+        <div class='card-supporting-text'>
+    <p>
+      To use <span class='initialism'>UMGAP</span>, Rust needs to be installed on your system. We recommend the lastest version, but all versions since Rust 1.35 are supported. To check if you have the correct Ruby version installed, open a terminal and run
+      <code>rustc --version</code>.
+    </p>
+
+    <pre>
+<b>$ rustc --version</b>
+rustc 1.42.0</pre>
+
+    <div class="apidocs-callout apidocs-callout-info">
+      <h4>Installing Rust</h4>
+      <p>
+        If the
+        <code>rustc --version</code>
+        command returns
+        <samp>command not found</samp>, Rust is not yet installed on your system. More information on installing Rust can be found at
+        <a href='https://www.rust-lang.org/tools/install' target='_blank'>https://www.rust-lang.org/tools/install</a>.
+      </p>
+    </div>
+
+    <p>
+      The next step is to download the <span class='initialism'>UMGAP</span> source code. The easiest way to do this, is by cloning our git repository using <code>git clone https://github.com/unipept/umgap.git</code>. Alternatively, you can also click the download button on <a href="https://github.com/unipept/umgap" target="_blank">GitHub</a>.
+    </p>
+
+    <p>
+      Next, we're ready to compile and install <span class='initialism'>UMGAP</span>. First navigate to the directory where you cloned or downloaded the code, then run <code>cargo install --path .</code>. The output should look like this:
+    </p>
+
+    <pre>
+<b>$ cargo install --path .</b>
+ Installing umgap v0.3.5 (/Users/unipept/Downloads/umgap)
+    Updating crates.io index
+  Downloaded num-traits v0.2.11
+  Downloaded error-chain v0.12.2
+  ...
+  Compiling structopt v0.3.13
+  Compiling umgap v0.3.5 (/Users/bart/Downloads/umgap)
+ Finished release [optimized] target(s) in 1m 50s
+ Installed package `umgap v0.3.5 (/Users/unipept/Downloads/umgap)` (executable `umgap`)
+ warning: be sure to add `/Users/unipept/.cargo/bin` to your PATH to be able to run the installed binaries</pre>
+
+    <p>
+      <span class='initialism'>UMGAP</span> should now be installed to the <code>~/.cargo/bin</code> directory. To access it everywhere, be sure to add it to your <code>$PATH</code>.
+    </p>
+
+    <p>
+      After successful installation, the <span class='initialism'>UMGAP</span> command should be available. To check if it was installed correctly, run
+      <code>umgap --version</code>. This should print the version number:
+    </p>
+
+    <pre>
+<b>$ umgap --version</b>
+umgap 0.3.5</pre>
+
+    <p>
+      More information about the installed command can be found on these pages, or by running the
+      <code>umgap --help</code>
+      command.
+    </p>
+  </div>
+</div>
+<div class='card'>
+    <div class='card-title card-title-colored'>
+      <h2 id="updates" class='card-title-text'>Updates</h2>
+    </div>
+    <div class='card-supporting-text'>
+    <p>
+      To update <span class='initialism'>UMGAP</span>, simply repeat the install instructions and be sure to redownload the source code. The changes between releases are listed in the <a href='https://github.com/unipept/umgap/releases' target='_blank'>changelog</a>.
+    </p>
+</div>
+</div>
+
+<div class='card'>
+    <div class='card-title card-title-colored'>
+      <h2 id="configuration" class='card-title-text'>Configuration</h2>
+    </div>
+    <div class='card-supporting-text'>
+    <p>
+      If you want to use FragGeneScanPlusPlus as gene predictor, this needs to be installed as well. Instructions can be found at <a href="https://github.com/unipept/FragGeneScanPlusPlus" target="_blank">https://github.com/unipept/FragGeneScanPlusPlus</a>.
+    </p>
+    <p>
+      Run the configuration script at <code>scripts/umgap-setup.sh</code> to interactively configure <span class='initialism'>UMGAP</span> and download the data files required for some steps of the pipeline.
+    </p>
+    <p>
+      Depending on which type of analysis you are planning, you will need the tryptic index file (less powerfull, but runs on any decent laptop) and the 9-mer index file (uses about 100GB disk space for storage and as much RAM during operation. The exact size depends on the version.)
+    </p>
+    <p>
+      To check if the configuration was successful, you can run a sample analysis with some include test data. The following command should show you a <span class="initialism">FASTA</span>-like file with a taxon ID per header.
+    </p>
+    <pre>
+<b>$ ./scripts/umgap-analyse.sh -1 testdata/A1.fq -2 testdata/A2.fq -t tryptic-sensitivity -o - | tee output.fa</pre></b>
+  </div>
+</div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

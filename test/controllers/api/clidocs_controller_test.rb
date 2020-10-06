@@ -41,14 +41,9 @@ class Api::ClidocsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:sidebar_subnav)
   end
 
-  test 'should get casestudy_metagenomics' do
+  test 'should redirect to casestudy_metagenomics' do
     get :casestudy_metagenomics
-    assert_response :success
-    assert_template :casestudy_metagenomics
-    assert_equal 'Case study: metagenomics', assigns(:title)
-    assert_equal 'Case studies', assigns(:sidebar_name)
-    assert_not_nil assigns(:sidebar_nav)
-    assert_nil assigns(:sidebar_subnav)
+    assert_response :redirect
   end
 
   test 'should get pept2prot' do
