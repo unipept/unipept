@@ -1,0 +1,54 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap uniq</samp><br>
+        <small>Joins consecutive <span class='initialism'>FASTA</span> records with the same header.</small>
+      </h1>
+    </div>
+    <p>The <code>umgap uniq</code> command can be used to join together the predictions of 2 paired ends before
+    aggregation.</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given in a <span class="initialism">FASTA</span> format on <em>standard input</em>. The content of all consecutive records
+        with the same <span class="initialism">FASTA</span> header is joined under a single header, separated by newlines (or another
+        separated set with <samp>-s</samp>).</p>
+        <p>A delimiter can be passed with the <samp>-d</samp> option to drop this delimiter and everything after it
+        from the <span class='initialism'>FASTA</span> header before comparing it.</p>
+        <pre>
+<b>$ cat input.fa</b>
+&gt;header1/1
+147206
+240495
+&gt;header1/2
+1883
+1
+1883
+1883
+<b>$ umgap uniq -d / < input.fa</b>
+&gt;header1
+147206
+240495
+1883
+1
+1883
+1883</pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+          <dt><samp>-w</samp> / <samp>--wrap</samp></dt><dd>Wrap the output sequences</dd>
+        </dl>
+        <dl class='dl-horizontal'>
+          <dt><samp>-s</samp> / <samp>--separator <em>s</em></samp></dt><dd>Separator between output items [default: newline]</dd>
+          <dt><samp>-d</samp> / <samp>--delimiter <em>d</em></samp></dt><dd>Strip <span class='initialism'>FASTA</span> headers after this string</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

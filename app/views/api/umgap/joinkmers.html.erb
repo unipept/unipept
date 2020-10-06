@@ -1,0 +1,45 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap joinkmers</samp><br>
+        <small>Aggregates a <span class='initialism'>TSV</span> stream of peptides and taxon IDs.</small>
+      </h1>
+    </div>
+    <p>The <code>umgap joinkmers</code> command takes tab-separated peptides and taxon IDs, aggregates the taxon
+    IDs where consecutive peptides are equal and outputs a tab-separated triple of peptide, consensus
+    taxon ID and taxon rank.</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given on <em>standard input</em>. If it is sorted on the first column, a complete mapping
+        from strings to aggregated taxa and its rank will be written to <em>standard output</em>. It is
+        meant to be used after the <a href='<%= api_umgap_splitkmers_path %>'><samp>umgap splitkmers</samp> </a> and <code>sort</code> commands, and it's output is ideal for <a href='<%= api_umgap_buildindex_path %>'><samp>umgap buildindex</samp></a>, but there may be further uses.</p>
+        <p>The aggregation strategy used in this command to find a consensus taxon is the hybrid approach
+        of the <code>umgap taxa2agg</code> command, with a 95% factor. This keeps the result close to the lowest
+        common ancestor, but filters out some outlying taxa.</p>
+        <p>The taxonomy to be used is passed as an argument to this command. This is a preprocessed version
+        of the <span class='initialism'>NCBI</span> taxonomy.</p>
+        <pre>
+<b>$ cat input.tsv</b>
+AAAAA	34924
+AAAAA	30423
+AAAAA	5678
+BBBBBB	48890
+BBBBBB	156563
+<b>$ umgap joinkmers taxons.tsv &lt; input.tsv</b>
+AAAAA	2759	superkingdom
+BBBBBB	9153	family</pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>
