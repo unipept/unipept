@@ -47,7 +47,7 @@ export default class App extends Vue {
     async mounted() {
         this.loading = true;
         NetworkConfiguration.BASE_URL = "";
-        QueueManager.initializeQueue();
+        QueueManager.initializeQueue(4);
         await this.readStoredAssays();
         this.loading = false;
 
