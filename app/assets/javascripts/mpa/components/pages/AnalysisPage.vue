@@ -110,7 +110,7 @@ export default class AnalysisPage extends Vue {
     }
 
     private onCreateAssay(assay: ProteomicsAssay) {
-        this.$store.dispatch("processAssay", assay);
+        this.$store.dispatch("processAssay", [assay, true]);
     }
 
     private onAssaySelection(status: boolean) {
@@ -126,7 +126,7 @@ export default class AnalysisPage extends Vue {
     private reprocessAssays() {
         for (const data of this.$store.getters.assays) {
             data.assay.setSearchConfiguration(this.$store.getters.searchConfiguration);
-            this.$store.dispatch("processAssay", data.assay);
+            this.$store.dispatch("processAssay", [data.assay, true]);
         }
     }
 

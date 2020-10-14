@@ -32,7 +32,7 @@ export default class WebAssayProcessor implements AssayProcessor {
         return this.cancelled;
     }
 
-    public async processAssay(countTable: CountTable<Peptide>): Promise<CommunicationSource> {
+    public async processAssay(countTable: CountTable<Peptide>, forceUpdate: boolean): Promise<CommunicationSource> {
         // We need to reprocess this assay and store the results in the database.
         // Process assay and write results to database.
         const pept2DataProgressNotifier: ProgressListener = {
