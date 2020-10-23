@@ -203,6 +203,82 @@
         </p>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored">
+        <h2 id="application-overview" class="card-title-text">Application overview</h2>
+      </div>
+      <div class="card-supporting-text">
+        <div id='figure-1' class="panel panel-default panel-figure">
+          <div class="panel-body">
+            <%= link_to(image_path("desktop_docs/desktop_overview.png")) do %>
+              <%= image_tag "desktop_docs/desktop_overview.png" %>
+            <% end %>
+            <p class='panel-caption'>
+              <b>Figure 1</b> Overview of the Unipept Desktop Application. The application window consists of three
+              distinct main parts: the sidebar (to the left), the project explorer (directly right of the sidebar)
+              and the content view (remainder of the application).
+            </p>
+          </div>
+        </div>
+        <p>
+          See Figure 1 for a full overview of the application's main window. The application consists of three main
+          parts: the sidebar, the project explorer and the content view. The sidebar provides access to the distinct
+          functions and analysis pipelines that are supported by the Unipept Desktop Application:
+        </p>
+        <div class="media">
+          <div class="media-left media-middle">
+            <%= image_tag "desktop_docs/desktop_home_button.png", :class => "media-object button-thumb" %>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Home</h4>
+            Use the Home button to return to the application's starting point (e.g. if you want to switch between
+            projects).
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-left media-middle">
+            <%= image_tag "desktop_docs/desktop_single_analysis_button.png", :class => "media-object button-thumb" %>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Single Assay Analysis</h4>
+            The single assay analysis is designed to provide all available information related to a single assay.
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-left media-middle">
+            <%= image_tag "desktop_docs/desktop_comparative_button.png", :class => "media-object button-thumb" %>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Comparative Analysis</h4>
+            The comparative analysis allows you to compare multiple assays with each other. You can select items from
+            different data sources that should be compared across assays after which a heatmap visualization will be
+            generated.
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-left media-middle">
+            <%= image_tag "desktop_docs/desktop_single_peptide_button.png", :class => "media-object button-thumb" %>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Tryptic Peptide Analysis</h4>
+            The tryptic peptide analysis pipeline generates a summary with all information that is known for a single
+            tryptic peptide. This includes a list of all proteins in which a given peptide is contained, all
+            functional annotations related with these proteins, as well as the lowest common ancestor for this peptide.
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-left media-middle">
+            <%= image_tag "desktop_docs/desktop_settings_button.png", :class => "media-object button-thumb" %>
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">Settings</h4>
+            This button brings you to the settings page, which allows you to configure the application (e.g. how many
+            CPU cores can be used, which endpoint should be used, ...).
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="col-xs-3">
     <%= render 'api/shared/sidebar' %>

@@ -158,7 +158,9 @@ UnipeptWeb::Application.routes.draw do
 
   # desktop docs
   namespace :api, path: 'desktop' do
-    get '/', to: 'desktop#index', as: 'desktop'
+    get '/',    to: 'desktop#index', as: 'desktop'
+    get 'home', to: 'desktop#home',  as: 'desktop/home'
+    get 'ssa',  to: 'desktop#ssa',   as: 'desktop/ssa'
   end
 
   # The priority is based upon order of creation:
