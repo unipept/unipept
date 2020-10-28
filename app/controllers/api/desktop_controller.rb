@@ -4,34 +4,48 @@ class Api::DesktopController < ApplicationController
 
 
   def index
-    @title = 'Unipept Desktop'
-    @sidebar_name = 'Overview'
+    @title = 'Unipept Desktop - Getting started'
+    @sidebar_name = 'Getting started'
     @sidebar_subnav = [
         'Installation',
-        'Updates',
-        'Application overview'
+        'Updates'
     ]
   end
 
-  def home
-    @title = 'Unipept Desktop Home'
-    @sidebar_name = 'Home'
+  def application_overview
+    @title = 'Unipept Desktop - Application overview'
+    @sidebar_name = 'Application overview'
     @sidebar_subnav = [
-        'First time use'
+        'First time use',
+        'Navigation overview'
     ]
   end
 
-  def single_assay_analysis
-    @title = 'Unipept Desktop Single Assay Analysis'
-    @sidebar_name = 'Single assay analysis'
+  def project_management
+    @title = 'Unipept Desktop - Project management'
+    @sidebar_name = 'Project management'
+    @sidebar_subnav = [
+        'Project structure',
+        'Physical structure'
+    ]
+  end
+
+  def settings
+    @title = 'Unipept Desktop - Settings'
+    @sidebar_name = 'Settings'
+    @sidebar_subnav = [
+        'Change endpoint',
+        'Concurrency control'
+    ]
   end
 
   private
   def set_sidebar_nav
     @sidebar_nav = [
-        { name: 'Overview',                path: api_desktop_path },
-        { name: 'Home',                    path: api_desktop_home_path },
-        { name: 'Single assay analysis',   path: api_desktop_ssa_path }
+        { name: 'Getting started',      path: api_desktop_path },
+        { name: 'Application overview', path: api_desktop_application_overview_path },
+        { name: 'Project management',   path: api_desktop_project_management_path },
+        { name: 'Settings',             path: api_desktop_settings_path }
     ]
   end
 

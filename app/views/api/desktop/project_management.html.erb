@@ -1,0 +1,74 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <h1 class="api-title">Unipept Desktop - Project management</h1>
+    <p class="lead">
+      Projects are a central concept to the Unipept Desktop Application and aid to organize a collection of samples.
+    </p>
+
+    <div class="card">
+      <div class="card-title card-title-colored">
+        <h2 id="project_structure" class="card-title-text">Project structure</h2>
+      </div>
+      <div class="card-supporting-text">
+        <p>
+          A project is a collection of studies, and every study is a collection of assays. This terminology adheres to
+          the definitions found in the ISA-tab standard.
+        </p>
+        <h3>Study</h3>
+        <p>
+          A study is a collection of assays that are somehow related. They, for example, all originate from the same
+          object under study. Every study needs to be uniquely named, no two studies with the same name in the same
+          project can exist! The application will inform you of a conflict, should one arise.
+        </p>
+        <h3>Assay</h3>
+        <p>
+          An assay corresponds directly to a list of peptides and the configuration of search settings for this assay.
+          Note that a project can thus contain multiple assays with the same peptide content, but with a different
+          search configuration. Every assay should be uniquely named within a study. Assays with the same name can only
+          occur within one project, if they belong to different studies.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored">
+        <h2 id="physical_structure" class="card-title-text">Physical structure</h2>
+      </div>
+      <div class="card-supporting-text">
+        <div>
+          A project corresponds to a folder on your local hard drive and contains the following files / folders:
+
+          <ul>
+            <li>
+              <strong>metadata.sqlite</strong>: This file is a SQLite-database that keeps track of the analysis results
+              and metadata that belongs to this project.
+            </li>
+            <li>
+              <strong>subfolder per study</strong>: One folder per study is present. A study's name is derived from the
+              folder's name. The study's name in the application will change if you change the name of this folder.
+              <ul>
+                <li>
+                  <strong>file per assay</strong>: The study folder also contains one file per assay that belongs to
+                  this study. These files end in the &quot;.pep&quot; extension and contain one peptide per line.
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="apidocs-callout apidocs-callout-info">
+          <h4>External modifications</h4>
+          <p>
+            Please note that the Unipept Desktop Application keeps track of changes made to the physical structure of a
+            project. This means that you can edit projects with external applications after which the application will
+            automatically adjust. You can copy and paste items to and from the project folder, rename folder and files
+            to respectively update study and assay names, update assay files, etc.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>
