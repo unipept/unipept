@@ -1,0 +1,213 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <h1 class='api-title'>Unipept Desktop
+      documentation
+      <small>v<%= Rails.application.config.versions[:desktop] %></small>
+    </h1>
+    <p class='lead'>
+      The Unipept Desktop application allows, in contrast to the web application, to analyse much larger samples, to
+      store analysis results offline, to extensively compare assays with each other and to better manage samples.
+    </p>
+    <p>
+      Unipept's web application provides users with the ability to analyze a metaproteomics sample and extract
+      taxonomic and functional information from environmental samples. Our web app provides interactive visualizations
+      to researchers and allows them to, for example, filter out all functions that are associated with a specific
+      taxon. Due to its inherent web-based nature, the size and amount of samples that can be analysed are rather
+      limited.
+    </p>
+    <p>
+      The Unipept Desktop application, however, is not limited in the amount of memory and storage that it can
+      consume, allowing us to process datasets with much more peptides than before. All analysis results in the desktop
+      app are stored as part of a project directory. Once an analysis has been performed, the computed results can
+      easily be restored without the need to analyse the assay again. Projects can be easily shared with other
+      researchers and analysis can be performed offline, if required. Another advantage of the desktop application is
+      the ability to better compare multiple datasets (assays) with each other. This allows you to gain a deeper
+      understanding of the interactions that are taking place in a complex environment.
+    </p>
+    <p>
+      Our desktop application is open source under the <span class="initialism">MIT</span> License and all code is
+      available on <a href='https://github.com/unipept/unipept-desktop' target="_blank">GitHub</a>. Changes between
+      releases are listed in the
+      <a href='https://github.com/unipept/unipept-desktop/releases' target='_blank'>changelog</a>
+      . In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to
+      contact us by email (<a href='mailto:unipept@ugent.be'>unipept@ugent.be</a>), or
+      <a href='https://github.com/unipept/unipept-desktop/issues' target='_blank'>create an issue</a> on Github.
+    </p>
+
+    <div class="card">
+      <div class="card-title card-title-colored">
+        <h2 id="installation" class="card-title-text">Installation</h2>
+      </div>
+      <div class="card-supporting-text">
+        <div>
+          In order to use the Unipept Desktop Application, it needs to be installed first. You can always download the
+          most recent version for your operating system from the
+          <a href="https://github.com/unipept/unipept-desktop/releases">releases on GitHub</a>. Direct links for the
+          different operating systems are also available (these links will always point to the most recent version):
+          <div style="text-align: center; margin-top: 8px; margin-bottom: 8px;">
+            <a
+              href="https://github.com/unipept/unipept-desktop/releases/latest/download/Unipept-Desktop-Setup-0.5.0.exe"
+              type="button"
+              class="btn btn-info">
+              Download for Windows
+            </a>
+            <a
+              href="https://github.com/unipept/unipept-desktop/releases/latest/download/Unipept-Desktop-0.5.0.dmg"
+              type="button"
+              class="btn btn-info">
+              Download for macOS
+            </a>
+            <a
+              href="https://github.com/unipept/unipept-desktop/releases/latest/download/Unipept-Desktop-0.5.0.AppImage"
+              type="button"
+              class="btn btn-info">
+              Download for Linux
+            </a>
+          </div>
+        </div>
+        <p>
+          All required dependencies will automatically be installed using the installation packages provided above. If a
+          specific installer is not suitable for your current operating system (e.g. specific flavours of Linux that do
+          not support AppImage's), you can always clone the repository and build the project yourselves.
+        </p>
+        <h2>Installation on Windows</h2>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">1. Start the installer package</h4>
+            Double-click the installer package to start the installation. You will be greeted by a window that asks
+            for your explicit approval to install our application. Click "More info".
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_windows_1.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_windows_1.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">2. Proceed with security checks</h4>
+            A new button appears &quot;Run anyway&quot;. Click this button to start the installation process. Windows
+            shows this warning as part of the &quot;SmartScreen Security&quot; system. This system protects your
+            computer from running potentially unsafe apps. Windows displays this message for our application since it's
+            very new, without a large userbase yet. The more people start to use this app, the faster it will be trusted
+            by Microsoft.
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_windows_2.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_windows_2.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">3. Installation process is started</h4>
+            The installation process is now started, and a progress bar should be visible. This process should not take
+            longer than one minute on most modern systems. Please wait for the installer to disappear (without any
+            errors). Once it's gone, the installation process is fully finished.
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_windows_3.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_windows_3.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">4. Installation process is done</h4>
+            You can now start the application, by double clicking it's shortcut on your desktop or by selecting it from
+            the applications list in Windows.
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_windows_4.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_windows_4.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+
+        <h2>Installation on macOS</h2>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">1. Mount the installer image</h4>
+            Double-click the downloaded &quot;Unipept.dmg&quot; file to mount the installer image. A new window pops up
+            in which you need to drag the Unipept Desktop logo into your applications folder.
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_macos_1.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_macos_1.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">2. Installation process is done</h4>
+            Look for the installed application in Launchpad and start Unipept Desktop.
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_macos_2.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_macos_2.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+
+        <h2>Installation on Linux (Ubuntu)</h2>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">1. Open AppImage properties</h4>
+            Right-click the downloaded &quot;Unipept.AppImage&quot; file and select &quot;properties&quot;. A properties
+            window will pop up.
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_ubuntu_1.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_ubuntu_1.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">2. Enable executable permissions</h4>
+            Click the &quot;permissions&quot; tab and check the box before &quot;Allow executing file as program&quot;.
+            Close the window.
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_ubuntu_2.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_ubuntu_2.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+        <div class="media">
+          <div class="media-body">
+            <h4 class="media-heading">3. Open the application</h4>
+            Double-click the downloaded AppImage-file to start the application.
+          </div>
+          <div class="media-right media-middle">
+            <%= link_to(image_path("desktop_docs/unipept_desktop_ubuntu_3.png")) do %>
+              <%= image_tag "desktop_docs/unipept_desktop_ubuntu_3.png", :class => "media-object screen-thumb" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored">
+        <h2 id="updates" class="card-title-text">Updates</h2>
+      </div>
+      <div class="card-supporting-text">
+        <p>
+          The Unipept Desktop Application will check for updates automatically. Once an update is found, the new version
+          of the application will automatically be downloaded and a progress bar at the bottom of the application
+          appears.Once the application is done downloading the new application, the update is installed in the
+          background. After the installation finishes, a notification pops up and requests the user to restart the
+          application to complete the update.
+        </p>
+        <p>
+          It's not mandatory to restart the application immediately after an update is installed. Note, however, that
+          the new version will only take effect after restarting the app.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

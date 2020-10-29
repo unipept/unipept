@@ -156,6 +156,14 @@ UnipeptWeb::Application.routes.draw do
     get 'printindex',               to: 'umgap#printindex',             as: 'umgap/printindex'
   end
 
+  # desktop docs
+  namespace :api, path: 'desktop' do
+    get '/',                    to: 'desktop#index',                 as: 'desktop'
+    get 'application_overview', to: 'desktop#application_overview',  as: 'desktop/application_overview'
+    get 'project_management',   to: 'desktop#project_management',    as: 'desktop/project_management'
+    get 'settings',             to: 'desktop#settings',              as: 'desktop/settings'
+  end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
