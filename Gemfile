@@ -26,7 +26,7 @@ gem 'devise_cas_authenticatable', '~> 1.10.4'
 # needed for asset creation
 gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 
-gem 'bootsnap', '~> 1.4.6', require: false
+gem 'bootsnap', '~> 1.4.9', require: false
 
 # faster json
 gem 'oj',  '~> 3.10.13'
