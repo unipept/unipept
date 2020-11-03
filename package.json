@@ -43,7 +43,7 @@
     "vuetify-loader": "^1.6.0",
     "vuex": "^3.1.3",
     "whatwg-fetch": "^3.4.0",
-    "worker-loader": "^3.0.3",
+    "worker-loader": "^3.0.5",
     "workerize-loader": "^1.3.0"
   },
   "devDependencies": {
