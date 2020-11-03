@@ -17,7 +17,10 @@
         <% end %>
       </p>
     </div>
-    &copy; <%= Date.today.year %> Universiteit Gent.
+    <span class="footer-tos">
+      &copy; <%= Date.today.year %> Universiteit Gent.
+      <%= link_to "Terms of Service", about_path %>
+    </span>
   </div>
   <div class='footer-spacer'></div>
   <div class="footer-block">
