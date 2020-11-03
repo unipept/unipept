@@ -111,9 +111,9 @@ class PrivateApiController < HandleOptionsController
     end
   end
 
-  def metadata()
+  def metadata
     @data = {
-        :db_version => Rails.application.config.versions[:uniprot]
+      db_version: Rails.application.config.versions[:uniprot]
     }
   end
 
