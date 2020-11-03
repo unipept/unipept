@@ -1,0 +1,62 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap filter</samp><br>
+        <small>Filters a <span class='initialism'>FASTA</span> stream of peptides.</small>
+      </h1>
+    </div>
+    <p>The <code>umgap filter</code> command a <span class='initialism'>FASTA</span> stream of peptides as input and outputs a filtered stream.</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given in <span class='initialism'>FASTA</span> format on <em>standard input</em>. Per <span class='initialism'>FASTA</span> header, there may be multiple
+        peptides separated by newlines. Each of these peptides are checked against the filter criteria
+        and written to <em>standard output</em> they pass them. The criteria are specified as options:</p>
+        <ul>
+        <li><samp>-m 5</samp> sets the minimum length of the peptides to 5.</li>
+        <li><samp>-M 50</samp> sets the maximum length of the peptides to 50.</li>
+        <li><samp>-c LIK</samp> requires the peptides to contain amino acids Leucine (L), Isoleucine (I) and Lysine
+        (K).</li>
+        <li><samp>-l LIK</samp> removes the peptides containing the amino acids Leucine, Isoleucine or Lysine.</li>
+        </ul>
+        <pre>
+<b>$ cat input.fa</b>
+&gt;header1
+AYKKAGVSGHVWQSDGITNCLLRGLTRVKEAVANRDSGNGYINKVYYWTVDKRATTRDALDAGVDGIMTNYPDVITDVLN
+AYK
+K
+AGVSGHVWQSDGITNCLLR
+GLTR
+VK
+EAVANR
+DSGNGYINK
+<b>$ umgap filter &lt; input.fa</b>
+&gt;header1
+AGVSGHVWQSDGITNCLLR
+EAVANR
+DSGNGYINK
+<b>$ umgap filter -m 0 -c R -l K &lt; input.fa</b>
+&gt;header1
+AGVSGHVWQSDGITNCLLR
+GLTR
+EAVANR</pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+        <dl class='dl-horizontal'>
+          <dt><samp>-c</samp> / <samp>--contains <em>c</em></samp></dt><dd>Amino acid symbols that a sequence must contain [none by default]</dd>
+          <dt><samp>-l</samp> / <samp>--lacks <em>l</em></samp></dt><dd>Amino acid symbols that a sequence may not contain [none by default]</dd>
+          <dt><samp>-M</samp> / <samp>--maxlen <em>M</em></samp></dt><dd>Maximum length allowed [default: 50]</dd>
+          <dt><samp>-m</samp> / <samp>--minlen <em>m</em></samp></dt><dd>Minimum length required [default: 5]</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

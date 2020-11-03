@@ -1,0 +1,38 @@
+<div class="apidocs row">
+  <div class="col-xs-9">
+    <div class='page-header'>
+      <h1 class='api-title'>
+        <samp>umgap builtindex</samp><br>
+        <small>Builds an index mapping short strings to taxon IDs</small>
+      </h1>
+    </div>
+    <p>The <code>umgap buildindex</code> command takes tab-separated strings and taxon IDs, and creates a
+    finite state transducer (<span class="initialism">FST</span>) of this mapping.</p>
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text' id='input'>Usage</h2>
+      </div>
+      <div class='card-supporting-text'>
+        <p>The input is given on <em>standard input</em>. It should be in a <span class="initialism">TSV</span> format with two columns, ordered
+        by the first. The unique strings in the first column should be mapped to the integers (taxon
+        IDs) in the second column. A binary file with a compressed mapping is written to <em>standard
+        output</em>.</p>
+        <pre>
+<b>$ cat input.tsv</b>
+AAAAA	2759
+BBBBBB	9153
+<b>$ umgap buildindex &lt; input.tsv &gt; tiny.index</b>
+<b>$ umgap printindex tiny.index</b>
+AAAAA	2759
+BBBBBB	9153</pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
+          <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

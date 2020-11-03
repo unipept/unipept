@@ -26,7 +26,7 @@ import {
     SinglePeptideSummary,
     Peptide,
     CommunicationSource,
-    DefaultCommunicationSource
+    DefaultCommunicationSource, QueueManager
 } from "unipept-web-components";
 
 @Component({
@@ -42,6 +42,7 @@ export default class SingleResults extends Vue {
 
     private created() {
         NetworkConfiguration.BASE_URL = "";
+        QueueManager.initializeQueue(4);
 
         const currentRoute: string = window.location.href;
 

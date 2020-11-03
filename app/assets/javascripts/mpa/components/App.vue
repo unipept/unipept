@@ -19,7 +19,7 @@ import {
     ProteomicsAssay,
     BrowserStorageWriter,
     BrowserAssayManager,
-    NetworkConfiguration
+    NetworkConfiguration, QueueManager
 } from "unipept-web-components";
 
 @Component({
@@ -47,6 +47,7 @@ export default class App extends Vue {
     async mounted() {
         this.loading = true;
         NetworkConfiguration.BASE_URL = "";
+        QueueManager.initializeQueue(4);
         await this.readStoredAssays();
         this.loading = false;
 
