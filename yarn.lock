@@ -11656,10 +11656,10 @@ shallow-clone@^3.0.0:
   dependencies:
     kind-of "^6.0.2"
 
-shared-memory-datastructures@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/shared-memory-datastructures/-/shared-memory-datastructures-0.1.8.tgz#a227758596c8fab7eeb189bb8cd225cc863fe488"
-  integrity sha512-jRiFwm2HYrtwxtET5zn9YLWIoquz9pkKqOW8BEvPZj3lX74yU3MG1qmpPzgWhKQ2yc/JIRlVDTyapsa9r88ehw==
+shared-memory-datastructures@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/shared-memory-datastructures/-/shared-memory-datastructures-0.1.9.tgz#da42f1f7c72468e0e667a2e49fdba2e9c4775da2"
+  integrity sha512-p1cYSTQZM53dTDkurFwvN5c5+a9Yrf8zhCpD2ZfhdrIu83CjzMjBF+Xj/gYJRihDJ/TJaer0BkeaIJAGoOCVow==
   dependencies:
     fnv-plus "^1.3.1"
 
@@ -12877,10 +12877,10 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@1.2.4:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.2.4.tgz#0e7bb32f8a2f3a7aad86ce660b38ef55cf657c6d"
-  integrity sha512-PUm5tKeTL3NMm9vZMnoFgZeJV2/J1RGB1Oc6p70pNn9UDqZdWdmlo8sh/DeIy9ZnF5ByHqATDiCCY71k1UIpIQ==
+unipept-web-components@1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.2.6.tgz#177e365529c0772208a2859d3ee3ca93df45998d"
+  integrity sha512-A6zYwIhPbhSPh2OsA8PO8LJCXq9jYaxNGZ2ED1SEdICEfUYziRiMYsXUuMxkS+hb22Bp4x8+z2g8Peoyii3Wow==
   dependencies:
     async "^3.2.0"
     axios "^0.19.0"
@@ -12894,7 +12894,7 @@ unipept-web-components@1.2.4:
     html2canvas "^1.0.0-rc.5"
     jquery "^3.4.1"
     observable-fns "^0.5.1"
-    shared-memory-datastructures "0.1.8"
+    shared-memory-datastructures "0.1.9"
     unipept-heatmap "^1.0.27"
     unipept-visualizations "^1.7.3"
     uuid "^3.4.0"
