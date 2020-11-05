@@ -27,12 +27,13 @@ UnipeptWeb::Application.routes.draw do
 
   # General inforamtion
   scope :private_api, as: 'private_api' do
-    match '/*path', via: [:options], to: 'handle_options#handle_options_request'
-    match 'goterms', via: %i[get post], to: 'private_api#goterms'
-    match 'ecnumbers', via: %i[get post], to: 'private_api#ecnumbers'
-    match 'taxa', via: %i[get post], to: 'private_api#taxa'
-    match "interpros", via: %i[get, post], :to => "private_api#interpros"
-    match "proteins", via: %i[get, post], :to => "private_api#proteins"
+    match "/*path", via: [:options], :to => "handle_options#handle_options_request"
+    match "goterms", via: [:get, :post], :to => "private_api#goterms"
+    match "ecnumbers",     via: [:get, :post], :to => "private_api#ecnumbers"
+    match "taxa",     via: [:get, :post], :to => "private_api#taxa"
+    match "interpros", via: [:get, :post], :to => "private_api#interpros"
+    match "proteins", via: [:get, :post], :to => "private_api#proteins"
+    match "metadata", via: [:get, :post], :to => "private_api#metadata"
   end
 
   # search
