@@ -12922,10 +12922,10 @@ unipept-visualizations@^1.7.3:
   resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-1.7.3.tgz#10a4c6f4cf745b88aaf353fbb74ddf2cb9b6584e"
   integrity sha512-g9AM+44twT+qQpg4kHhupamMoBr4QscjqjQY8Pdk7cdWHvZs5HuIVTNtH44IbAtN08x9+U3BTT+lp+ZEJpaoFw==
 
-unipept-web-components@1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.2.6.tgz#177e365529c0772208a2859d3ee3ca93df45998d"
-  integrity sha512-A6zYwIhPbhSPh2OsA8PO8LJCXq9jYaxNGZ2ED1SEdICEfUYziRiMYsXUuMxkS+hb22Bp4x8+z2g8Peoyii3Wow==
+unipept-web-components@1.2.7:
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.2.7.tgz#749b2b9d9294e9a4c3ecaf43530609aaac3ba459"
+  integrity sha512-0vYXzx/V6PxTLtxbMRyz4IlCxuIbWVzClLK6mPriCfxgBKl8qyFMBAwuwu+NNyCQEHofbHOLwsXJ/pzUp8gUfA==
   dependencies:
     async "^3.2.0"
     axios "^0.19.0"
@@ -13272,14 +13272,7 @@ vue-loader@15.9.5:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
-vue-property-decorator@^8.1.0:
-  version "8.4.1"
-  resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-8.4.1.tgz#fd8045b8678e1348fed57f9149279e00e404ed38"
-  integrity sha512-8R4Us7DxFO0rwAL/2fv6vaZL8Oa4n/HGanHODYGTcvQHwT0FYJr9UuuFm2GoWAIXQu1mDO03HNeHswFp9vmTVA==
-  dependencies:
-    vue-class-component "^7.1.0"
-
-vue-property-decorator@^8.4.1:
+vue-property-decorator@^8.1.0, vue-property-decorator@^8.4.1:
   version "8.5.1"
   resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-8.5.1.tgz#571a91cf8d2b507f537d79bf8275af3184572fff"
   integrity sha512-O6OUN2OMsYTGPvgFtXeBU3jPnX5ffQ9V4I1WfxFQ6dqz6cOUbR3Usou7kgFpfiXDvV7dJQSFcJ5yUPgOtPPm1Q==
@@ -13389,12 +13382,7 @@ vuetify@^2.3.16, vuetify@^2.3.8:
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.3.16.tgz#fc60e54e8d5e7e15c845f8d1fd68cfba3877f22c"
   integrity sha512-LHPqY+Gmyb/75xJscO0a3CuB4ZdpqHLNaGMAbmfTyapI8Q02+hjABEZzitFU/XObD2KhrNWPJzmGZPhbshGUzg==
 
-vuex@^3.0.1:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.1.3.tgz#f2ad73e3fb73691698b38c93f66e58e267947180"
-  integrity sha512-k8vZqNMSNMgKelVZAPYw5MNb2xWSmVgCKtYKAptvm9YtZiOXnRXFWu//Y9zQNORTrm3dNj1n/WaZZI26tIX6Mw==
-
-vuex@^3.1.3:
+vuex@^3.0.1, vuex@^3.1.3:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.5.1.tgz#f1b8dcea649bc25254cf4f4358081dbf5da18b3d"
   integrity sha512-w7oJzmHQs0FM9LXodfskhw9wgKBiaB+totOdb8sNzbTB2KDCEEwEs29NzBZFh/lmEK1t5tDmM1vtsO7ubG1DFw==
