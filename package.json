@@ -8,7 +8,7 @@
     "@babel/plugin-proposal-decorators": "^7.10.5",
     "@babel/preset-typescript": "^7.10.4",
     "@rails/webpacker": "^5.2.1",
-    "@types/d3": "^5.7.2",
+    "@types/d3": "^6.2.0",
     "@types/jquery": "^3.3.34",
     "babel-loader": "^8.1.0",
     "babel-preset-typescript-vue": "^1.1.1",
