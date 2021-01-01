@@ -98,4 +98,4 @@ group :development do
   gem 'sprockets', '~> 3.7.2'
 end
 
-gem "octokit", "~> 4.18"
+gem "octokit", "~> 4.20"
