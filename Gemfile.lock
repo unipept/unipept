@@ -64,7 +64,7 @@ GEM
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 14.0)
     ast (2.4.1)
-    autoprefixer-rails (9.8.6.3)
+    autoprefixer-rails (10.1.0.0)
       execjs
     bcrypt (3.1.15)
     bindex (0.8.1)
@@ -314,7 +314,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate (~> 3.1.1)
-  autoprefixer-rails (~> 9.8.6)
+  autoprefixer-rails (~> 10.1.0)
   bootsnap (~> 1.4.6)
   byebug (~> 11.1.1)
   capistrano (~> 3.14.1)
