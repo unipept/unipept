@@ -395,10 +395,17 @@
 <!--   -->392734
 <!--   -->>read3
 <!--   -->332163</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Visualisation</h2></div>
+      <div class="card-supporting-text">
         <p>
-          Finally, the whole sample is summarized using e.g. a frequency table,
-          showing the number of reads mapping to each taxon,
-          or one of the many visualizations Unipept offers.
+          Now that we have the results of our analysis, we'd like to visualise them.
+          A CSV frequency table and an interactive visualisations are available
+          as the <code>taxa2freq</code> and <code>taxa2tree</code> commands.
+          The first shows the number of reads mapping to each taxon in a format easily imported in other programs.
         </p>
         <pre>
 <!--   --><b>$</b> grep -v '^>' classification.fa | umgap taxa2freq -r species taxons.tsv | tee report.csv
@@ -409,8 +416,14 @@
           The <code>grep</code> command will drop the FASTA headers,
           allowing the <code>report</code> command to snap each taxon to either a species or "unknown"
           and report the frequency table of the results.
-          This command will prove more useful with larger input.
         </p>
+        <p>
+          The latter will send the results to the Unipept API, where an interactive HTML-visualisation will be rendered.
+          The page can either be saved to a file, or you can request a shareable URL with <code>--url</code>.
+        </p>
+        <pre>
+<!--   --><b>$</b> umgap taxa2tree --url < classification.fa
+<!--   --><a href="https://bl.ocks.org/5960ffd859fb17439d7975896f513bc3">https://bl.ocks.org/5960ffd859fb17439d7975896f513bc3</a></pre>
       </div>
     </div>
 
