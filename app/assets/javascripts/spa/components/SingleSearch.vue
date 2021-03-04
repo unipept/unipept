@@ -25,10 +25,6 @@ export default class SingleSearch extends Vue {
     private sequence: Peptide = "";
     private equateIl: boolean = true;
 
-    private mounted() {
-        console.log("SINGLE SEARCH APP...");
-    }
-
     private onSearch(sequence: Peptide, equateIl: boolean) {
         this.sequence = sequence;
         this.equateIl = equateIl;

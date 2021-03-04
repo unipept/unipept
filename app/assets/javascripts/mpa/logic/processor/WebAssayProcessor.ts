@@ -8,7 +8,7 @@ import {
     PeptideTrust,
     AssayProcessor,
     PeptideData,
-    NetworkConfiguration, DefaultCommunicationSource
+    NetworkConfiguration, DefaultCommunicationSource, SearchConfiguration
 } from "unipept-web-components";
 import WebCommunicationSource from "./../communication/WebCommunicationSource";
 
@@ -32,7 +32,7 @@ export default class WebAssayProcessor implements AssayProcessor {
         return this.cancelled;
     }
 
-    public async processAssay(countTable: CountTable<Peptide>, forceUpdate: boolean): Promise<CommunicationSource> {
+    public async processAssay(countTable: CountTable<Peptide>, forceUpdate: boolean, searchSettings: SearchConfiguration): Promise<CommunicationSource> {
         // We need to reprocess this assay and store the results in the database.
         // Process assay and write results to database.
         const pept2DataProgressNotifier: ProgressListener = {
@@ -41,10 +41,13 @@ export default class WebAssayProcessor implements AssayProcessor {
 
         this.pept2DataCommunicator = new Pept2DataCommunicator();
 
+        console.log("Processing!");
+        console.log(searchSettings);
+
         // Preload all data for this assay
         await this.pept2DataCommunicator.process(
             countTable,
-            this.assay.getSearchConfiguration(),
+            searchSettings,
             pept2DataProgressNotifier
         );
 
