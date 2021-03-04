@@ -19,7 +19,7 @@ import {
     ProteomicsAssay,
     BrowserStorageWriter,
     BrowserAssayManager,
-    NetworkConfiguration, QueueManager
+    NetworkConfiguration, QueueManager, SearchConfiguration
 } from "unipept-web-components";
 
 @Component({
@@ -46,7 +46,7 @@ export default class App extends Vue {
 
     async mounted() {
         this.loading = true;
-        NetworkConfiguration.BASE_URL = "";
+        NetworkConfiguration.BASE_URL = "https://unipept.ugent.be";
         QueueManager.initializeQueue(4);
         await this.readStoredAssays();
         this.loading = false;
@@ -64,11 +64,13 @@ export default class App extends Vue {
             assay.setPeptides(this.peptides.trimRight().split(/\n/));
             assay.setDate(new Date());
             assay.setName(name);
-            assay.setSearchConfiguration({
-                equateIl: this.il.toLowerCase() === "true",
-                filterDuplicates: this.dupes.toLowerCase() === "true",
-                enableMissingCleavageHandling: this.missed.toLowerCase() === "true"
-            });
+            assay.setSearchConfiguration(
+                new SearchConfiguration(
+                    this.il.toLowerCase() === "true",
+                    this.dupes.toLowerCase() === "true",
+                    this.missed.toLowerCase() === "true"
+                )
+            );
 
             await this.$store.dispatch("addAssay", assay);
             this.isAnalysis = true;
