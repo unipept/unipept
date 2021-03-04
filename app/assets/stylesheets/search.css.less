@@ -102,7 +102,7 @@ h2.ghead::after {
     clear: both;
 }
 
-.unipept-sunburst h2.ghead {
+.sunburst h2.ghead {
     margin-right: 32px;
 }
 
@@ -142,40 +142,29 @@ h2.ghead::after {
 }
 
 // tooltip
-#tooltip.tip {
-    position: absolute;
-    z-index: 10;
-    visibility: hidden;
-}
-.tip {
-    top: 0;   // to be overwritten by JS
-    left: 0;  // to be overwritten by JS
-    background-color: #fff;
-    padding: 5px;
-    border: 1px solid @hairlinegray;
-    border-radius: 2px;
-    .shadow-z5();
+.unipept-tooltip a {
+  color: white;
 }
 
-.full-screen .unipept-sunburst {
+.full-screen .sunburst {
     width: 100%;
 }
-.unipept-sunburst {
+.sunburst {
     background-color: white;
 }
-.full-screen .unipept-sunburst > svg {
+.full-screen .sunburst > svg {
     overflow: visible;
 }
-.unipept-sunburst .toHide {
+.sunburst .toHide {
     pointer-events: none;
 }
-.unipept-sunburst > svg .arc {
+.sunburst > svg .arc {
     cursor: pointer;
 }
-.unipept-sunburst > svg .arc:hover {
+.sunburst > svg .arc:hover {
     fill-opacity: 0.9;
 }
-.full-screen .unipept-sunburst .sunburst-breadcrumbs {
+.full-screen .sunburst .sunburst-breadcrumbs {
     width: 250px;
     margin-right: 10px;
 }
