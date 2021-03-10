@@ -6,7 +6,7 @@ jobs:
   test:
     env:
       RAILS_ENV: "test"
-      DATABASE_URL: "mysql2://root:unipept@mysql:3306/unipept_test"
+      DATABASE_URL: "mysql2://root:unipept@127.0.0.1:3306/unipept_test"
     runs-on: ubuntu-latest
     services:
       mysql:
