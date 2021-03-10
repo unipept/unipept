@@ -32,7 +32,7 @@ gem 'bootsnap', '~> 1.4.6', require: false
 gem 'oj',  '~> 3.10.13'
 
 gem 'multi_json',  '~> 1.15.0'
-gem 'jbuilder',  '~> 2.10.0'
+gem 'jbuilder',  '~> 2.11.2'
 
 # imagemagick bindings
 gem 'rmagick',  '~> 4.1.1', require: false
