@@ -13523,10 +13523,10 @@ vue-docgen-api@^4.31.1:
     ts-map "^1.0.3"
     vue-inbrowser-compiler-utils "^4.31.1"
 
-vue-fullscreen@^2.1.6:
-  version "2.1.6"
-  resolved "https://registry.npmjs.org/vue-fullscreen/-/vue-fullscreen-2.1.6.tgz"
-  integrity sha512-p2lJYm/RgTHOqARlnljZlOGW/+sQFuSkV20Tje0lfzYoZnqSVR+vC0ytOX5aE0iebMUze63RBNPwpxuxjv6ucA==
+vue-fullscreen@^2.1.6, vue-fullscreen@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/vue-fullscreen/-/vue-fullscreen-2.3.1.tgz#7aa7bc9c855755747a365c06aaf262cb20e3c83e"
+  integrity sha512-Ysn0GQnsoAoKST8KIgYL73tnmfMx90yCoTCOBuWpfcsJ8VQNLBzu6hpLRKadI2dQ63Pqtsj71UcTPlM1d2g+oQ==
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
