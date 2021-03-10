@@ -67,22 +67,13 @@ jobs:
         bundle exec rails test
   lint:
     runs-on: ubuntu-latest
-    container:
-      image: ruby:2.7.1
     steps:
-    - uses: actions/checkout@v1
-    - name: Cache Ruby dependencies
-      uses: actions/cache@v1
+    - uses: actions/checkout@v2
+    - name: Use ruby 2.7
+      uses: ruby/setup-ruby@v1
       with:
-        path: /usr/local/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gem-
-    - name: Install dependencies
-      run: |
-        gem install bundler:2.0.2
-        bundle config path
-        bundle install --jobs 4 --retry 3
+        ruby-version: 2.7.2
+        bundler-cache: true
     - name: Lint with rubocop
       env:
         RAILS_ENV: "test"
