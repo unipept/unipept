@@ -5,11 +5,9 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: ruby:2.7.1
-      env:
-        RAILS_ENV: "test"
-        DATABASE_URL: "mysql2://root:unipept@mysql:3306/unipept_test"
+    env:
+      RAILS_ENV: "test"
+      DATABASE_URL: "mysql2://root:unipept@mysql:3306/unipept_test"
     services:
       mysql:
         image: mariadb
@@ -19,6 +17,10 @@ jobs:
           MYSQL_HOST: "localhost"
     steps:
     - uses: actions/checkout@v2
+    - name: Use ruby from .ruby-version
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true
     - name: Install node and yarn
       run: |
         apt-get update
@@ -28,13 +30,6 @@ jobs:
         curl -sL https://deb.nodesource.com/setup_12.x | bash -
         apt-get update
         apt-get -y --no-install-recommends install nodejs yarn
-    - name: Cache Ruby dependencies
-      uses: actions/cache@v1
-      with:
-        path: /usr/local/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-gem-
     - name: Get the Yarn cache directory
       id: yarn-cache
       run: |
@@ -53,11 +48,8 @@ jobs:
         key: ${{ runner.os }}-node_modules-fix-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
         restore-keys: |
           ${{ runner.os }}-node_modules-fix-
-    - name: Install dependencies
+    - name: Install JS dependencies
       run: |
-        gem install bundler:2.0.2
-        bundle config path
-        bundle install --jobs 4 --retry 3
         yarn install
     - name: Run tests
       env:
