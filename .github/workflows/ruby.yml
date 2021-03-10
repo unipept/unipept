@@ -21,15 +21,10 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         bundler-cache: true
-    - name: Install node and yarn
-      run: |
-        apt-get update
-        apt-get -y install --no-install-recommends apt-transport-https
-        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-        echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
-        curl -sL https://deb.nodesource.com/setup_12.x | bash -
-        apt-get update
-        apt-get -y --no-install-recommends install nodejs yarn
+    - name: Use node 12
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
     - name: Get the Yarn cache directory
       id: yarn-cache
       run: |
