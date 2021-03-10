@@ -22,7 +22,7 @@
     "jquery": "^3.5.1",
     "less": "^3.11.1",
     "less-loader": "^7.0.2",
-    "null-loader": "^4.0.0",
+    "null-loader": "^4.0.1",
     "regenerator-runtime": "^0.13.5",
     "sass": "^1.29.0",
     "sass-loader": "^10.0.5",
