@@ -4,10 +4,10 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
     env:
       RAILS_ENV: "test"
       DATABASE_URL: "mysql2://root:unipept@mysql:3306/unipept_test"
+    runs-on: ubuntu-latest
     services:
       mysql:
         image: mariadb
@@ -15,6 +15,9 @@ jobs:
           MYSQL_DATABASE: "unipept_test"
           MYSQL_ROOT_PASSWORD: "unipept"
           MYSQL_HOST: "localhost"
+        ports:
+        - 3306:3306
+        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v2
     - name: Use ruby from .ruby-version
