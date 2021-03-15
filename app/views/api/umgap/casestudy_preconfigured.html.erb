@@ -2,6 +2,72 @@
   <div class="col-xs-9">
     <h1 class="api-title">Case Study: Running a preconfigured metagenomics pipeline</h1>
     <p class="lead">This case study shows how to set up and run the preconfigured scripts of the <span class="initialism">UMGAP</span> for the taxonomic analysis of a metagenomics dataset.</p>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Introduction</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          The Unipept Metagenomics Analysis Pipeline (UMGAP) is accompanied by 3 scripts:
+          <code>umgap-setup.sh</code>, <code>umgap-analyse.sh</code> and <code>umgap-visualize.sh</code>.
+          The setup script deals with downloading prebuilt databases and checking and linking external tools.
+          The analyse script runs several analyses in sequence.
+          The visualize script creates webpages from the results of the analyse script.
+        </p>
+        <p>
+          The following pipelines are preconfigured: <ul>
+            <li><strong><span class='initialism'>UMGAP</span> High Precision:</strong> Optimized for high precision identifications on your metagenomics reads.</li>
+            <li><strong><span class='initialism'>UMGAP</span> Max Precision:</strong> Optimized for highest precision, with a small setback on sensitivity.</li>
+            <li><strong><span class='initialism'>UMGAP</span> Tryptic Precision:</strong> Made for fast analyses on your laptop. Fewer results, but accurate.</li>
+            <li><strong><span class='initialism'>UMGAP</span> High Sensitivity:</strong> Optimized for high sensitivity identifications on metagenomics reads.</li>
+            <li><strong><span class='initialism'>UMGAP</span> Max Sensitivity:</strong> Optimized for highest sensitivity, with a small setback on precision.</li>
+            <li><strong><span class='initialism'>UMGAP</span> Tryptic Sensitivity:</strong> Made for fast analyses on your laptop. Get a quick overview of your data.</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Setup</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          The preconfigured pipelines require some databases and external tools.
+          The setup script will help you to get these in the right place.
+          If you're planning to use the tryptic precision, tryptic sensitivity, high precision or max precision pipelines,
+           you'll need to <a href="https://github.com/unipept/FragGeneScanPlusPlus/">install FragGeneScan++</a>.
+          In this casestudy, we will use the two tryptic pipelines, so we don't have to download the (large) 9-mer index.
+        </p>
+        <pre style="max-height: initial;">
+<!--   --><b>$</b> umgap-setup.sh -f /opt/FragGeneScanPlusPlus
+<!--   -->Use '/home/ninewise/.config/unipept' as configuration directory? [y]/n y
+<!--   -->Created directory /home/ninewise/.config/unipept.
+<!--   -->Found, tested and remembered the FragGeneScan++ location.
+<!--   -->Use '/home/ninewise/.local/share/unipept' as data directory? [y]/n y
+<!--   -->Created directory /home/ninewise/.local/share/unipept.
+<!--   -->Checking the latest version on the server.
+<!--   -->Latest version is 2020-12-02.
+<!--   -->
+<!--   -->For any type of analysis, you need a taxonomony. For mapping tryptic or
+<!--   -->9-mer peptides to it, you need the respective index file of the same
+<!--   -->version.
+<!--   -->
+<!--   -->Would you like to download the taxonomy from 2020-12-02 (115MiB)? [y]/n y
+<!--   -->Would you like to download the tryptic index from 2020-12-02 (12GiB)? [y]/n y
+<!--   -->Would you like to download the 9-mer index from 2020-12-02 (152GiB)? [y]/n n
+<!--   -->  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+<!--   -->                                 Dload  Upload   Total   Spent    Left  Speed
+<!--   -->100  114M  100  114M    0     0  6477k      0  0:00:18  0:00:18 --:--:-- 6332k
+<!--   -->  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+<!--   -->                                 Dload  Upload   Total   Spent    Left  Speed
+<!--   -->100   12G  100   12G    0     0  5076k      0  0:34:12  0:34:12 --:--:-- 5790k</pre>
+      </div>
+      <dl class='dl-horizontal'>
+        <dt><samp>-c dir</samp></dt><dd>Set a different configuration directory.</dd>
+        <dt><samp>-f dir</samp></dt><dd>Link the location of your FragGeneScan installation.</dd>
+        <dt><samp>-d dir</samp></dt><dd>Set a different location for downloading the database files. This can be on a separate disk.</dd>
+        <dt><samp>-y</samp></dt><dd>Download all files of the latest version without asking for confirmation.</dd>
+      </dl>
+    </div>
+
   </div>
   <div class="col-xs-3">
     <%= render 'api/shared/sidebar' %>
