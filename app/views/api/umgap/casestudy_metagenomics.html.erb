@@ -403,9 +403,9 @@
       <div class="card-supporting-text">
         <p>
           Now that we have the results of our analysis, we'd like to visualise them.
-          A CSV frequency table and an interactive visualisations are available
+          A frequency table and a interactive visualisations are available
           as the <code>taxa2freq</code> and <code>taxa2tree</code> commands.
-          The first shows the number of reads mapping to each taxon in a format easily imported in other programs.
+          The first shows the number of reads mapping to each taxon in CSV format, easily imported in other programs.
         </p>
         <pre>
 <!--   --><b>$</b> grep -v '^>' classification.fa | umgap taxa2freq -r species taxons.tsv | tee report.csv
@@ -418,8 +418,8 @@
           and report the frequency table of the results.
         </p>
         <p>
-          The latter will send the results to the Unipept API, where an interactive HTML-visualisation will be rendered.
-          The page can either be saved to a file, or you can request a shareable URL with <code>--url</code>.
+          The <code>taxa2tree</code> command will send the results to the Unipept webserver, where an interactive HTML-visualisation will be created.
+          The webpage can either be saved to a file, or you can request a shareable URL with <code>--url</code>.
         </p>
         <pre>
 <!--   --><b>$</b> umgap taxa2tree --url < classification.fa
