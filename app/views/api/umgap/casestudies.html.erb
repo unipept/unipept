@@ -7,18 +7,50 @@
     <p class='lead'>
       This page explores several uses of the Unipept MetaGenomics Analysis Pipeline.
     </p>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Introduction</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          The Unipept Metagenomics Analysis Pipeline (<span class="initialism">UMGAP</span>) is a tool for mapping (short) metagenomics reads to taxa,
+          rivalling state of the art alternatives such as Kraken (2014)
+          with the additional benefit of species level identification.
+          <span class="initialism">UMGAP</span> achieves this by transforming the mapping task into a metaproteomics problem
+          by using various alternative gene predictors on the metagenomics reads
+          and processing the resulting data with the existing Unipept Metaproteomics Analysis Pipeline.
+          Each step in <span class="initialism">UMGAP</span> is highly configurable.
+        </p>
+      </div>
+    </div>
+
     <div class='card'>
       <div class='card-title card-title-colored'>
-        <h2 class='card-title-text'>Analysis of a metagenomics dataset</h2>
+        <h2 class='card-title-text'>Preconfigured analysis of a metagenomics dataset</h2>
+      </div>
+      <div class='card-supporting-text'>
+        The easiest way to use the UMGAP for a taxonomic analysis of a metagenomic dataset
+        is with one of the 6 preconfigured pipelines.
+        This case study analyses the same dataset twice, using two different pipelines.
+      </div>
+      <div class="card-actions card-border">
+        <a href='<%= api_umgap_casestudy_preconfigured_path %>' class='btn-text pull-right'>get started</a>
+      </div>
+    </div>
+
+    <div class='card'>
+      <div class='card-title card-title-colored'>
+        <h2 class='card-title-text'>Complete configuration walkthrough</h2>
       </div>
       <div class='card-supporting-text'>
         This case study shows how to use UMGAP for the taxonomic analysis of a metagenomics dataset.
-        </div>
+        It shows every step of the pipeline in detail, refering to the documentation for alternative options.
+      </div>
       <div class="card-actions card-border">
-        <a href='<%= api_clidocs_casestudy_metagenomics_path %>' class='btn-text pull-right'>get started</a>
+        <a href='<%= api_umgap_casestudy_configured_path %>' class='btn-text pull-right'>get started</a>
       </div>
     </div>
   </div>
+
   <div class="col-xs-3">
     <%= render 'api/shared/sidebar' %>
   </div>
