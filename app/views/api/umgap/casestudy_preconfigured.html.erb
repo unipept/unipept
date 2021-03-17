@@ -94,6 +94,37 @@
       </dl>
     </div>
 
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Visualize</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          After analysis, you probably want to view the results.
+          While the output format is easily parsed,
+           you can also use the visualize script to create importable CSV frequency tables
+           and interactive visualisations.
+          The interactive visualisations can be stored locally or hosted online.
+          The following snippet creates all three in turn.
+        </p>
+        <pre style="max-height: initial;">
+<!--   --><b>$</b> umgap-visualize.sh -i tryptic-sensitivity-output.fa.gz -t -r phylum
+<!--   -->2	1117	Cyanobacteria
+<!--   -->4	57723	Acidobacteria
+<!--   -->4	201174	Actinobacteria
+<!--   -->5	1224	Proteobacteria
+<!--   -->160	1	root
+<!--   --><b>$</b> umgap-visualize.sh -i tryptic-sensitivity-output.fa.gz -w > tryptic-sensitivity.html
+<!--   --><b>$</b> umgap-visualize.sh -i tryptic-sensitivity-output.fa.gz -u
+<!--   --><a href="https://bl.ocks.org/11b7809d6754b9530cf1a49d93a8d568">https://bl.ocks.org/11b7809d6754b9530cf1a49d93a8d568</a></pre>
+      </div>
+      <dl class='dl-horizontal'>
+        <dt><samp>-i file</samp></dt><dd>Analysis output file, optionally compressed.</dd>
+        <dt><samp>-t</samp></dt><dd>Output a CSV frequency table on species rank.</dd>
+        <dt><samp>-w</samp></dt><dd>Output an HTML webpage of an interactive visualization.</dd>
+        <dt><samp>-u</samp></dt><dd>Print a shareable URL to a online interactive visualisation.</dd>
+        <dt><samp>-r rank</samp></dt><dd>Set the rank for the CSV frequency table (default: species).</dd>
+      </dl>
+    </div>
+
     <h2>References</h2>
     <ul>
       <li>Lindgreen, S., Adair, K. L., &amp; Gardner, P. P. (2016). An evaluation of the accuracy and speed of metagenome analysis tools. <em>Scientific reports</em>, 6, 19233.</li>
