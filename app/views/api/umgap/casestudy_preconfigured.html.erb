@@ -32,17 +32,24 @@
         <p>
           The preconfigured pipelines require some databases and external tools.
           The setup script will help you to get these in the right place.
+          In general, you only need to run this script once,
+           but you can also use it to verify the file locations and download newer versions of the data.
           If you're planning to use the tryptic precision, tryptic sensitivity, high precision or max precision pipelines,
-           you'll need to <a href="https://github.com/unipept/FragGeneScanPlusPlus/">install FragGeneScan++</a>.
-          In this casestudy, we will use the two tryptic pipelines, so we don't have to download the (large) 9-mer index.
+           you'll need to <a href="https://github.com/unipept/FragGeneScanPlusPlus/">install FragGeneScan++</a> first.
+          In this casestudy, we will use the two tryptic pipelines, so we don't have to download the 9-mer index (~12GiB, rather than ~150GiB).
+        </p>
+        <p>
+          Following code snippet shows the interaction with the setup script.
+          It starts out by asking the relevant questions, without delay.
+          At the end, it downloads the relevant files in sequence, without further interaction.
         </p>
         <pre style="max-height: initial;">
 <!--   --><b>$</b> umgap-setup.sh -f /opt/FragGeneScanPlusPlus
-<!--   -->Use '/home/ninewise/.config/unipept' as configuration directory? [y]/n y
-<!--   -->Created directory /home/ninewise/.config/unipept.
+<!--   -->Use '/home/user/.config/unipept' as configuration directory? [y]/n y
+<!--   -->Created directory /home/user/.config/unipept.
 <!--   -->Found, tested and remembered the FragGeneScan++ location.
-<!--   -->Use '/home/ninewise/.local/share/unipept' as data directory? [y]/n y
-<!--   -->Created directory /home/ninewise/.local/share/unipept.
+<!--   -->Use '/home/user/.local/share/unipept' as data directory? [y]/n y
+<!--   -->Created directory /home/user/.local/share/unipept.
 <!--   -->Checking the latest version on the server.
 <!--   -->Latest version is 2020-12-02.
 <!--   -->
@@ -59,13 +66,20 @@
 <!--   -->  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
 <!--   -->                                 Dload  Upload   Total   Spent    Left  Speed
 <!--   -->100   12G  100   12G    0     0  5076k      0  0:34:12  0:34:12 --:--:-- 5790k</pre>
+        <p>
+          To change where the setup script will store the configuration and downloaded files,
+           add some of the options detailed below.
+          If you're familiar with the setup script,
+           or you're running the script within another script,
+           you can add the <code>-y</code> flag to run without interaction.
+        </p>
+        <dl class='dl-horizontal'>
+          <dt><samp>-c dir</samp></dt><dd>Set a different configuration directory.</dd>
+          <dt><samp>-f dir</samp></dt><dd>Link the location of your FragGeneScan installation.</dd>
+          <dt><samp>-d dir</samp></dt><dd>Set a different location for downloading the database files. This can be on a separate disk.</dd>
+          <dt><samp>-y</samp></dt><dd>Download all files of the latest version without asking for confirmation.</dd>
+        </dl>
       </div>
-      <dl class='dl-horizontal'>
-        <dt><samp>-c dir</samp></dt><dd>Set a different configuration directory.</dd>
-        <dt><samp>-f dir</samp></dt><dd>Link the location of your FragGeneScan installation.</dd>
-        <dt><samp>-d dir</samp></dt><dd>Set a different location for downloading the database files. This can be on a separate disk.</dd>
-        <dt><samp>-y</samp></dt><dd>Download all files of the latest version without asking for confirmation.</dd>
-      </dl>
     </div>
 
     <div class="card">
@@ -83,15 +97,15 @@
 <!--   --><b>$</b> umgap-analyse.sh -1 sample-1.fq -2 sample-2.fq -t tryptic-precision -o tryptic-precision-output.fa -1 sample-1.fq -2 sample-2.fq -t tryptic-sensitivity -z -o tryptic-sensitivity-output.fa.gz
 <!--   --><b>$</b> head -2 tryptic-precision-output.fa
 <!--   --><b>$</b> zcat tryptic-precision-output.fa.gz | head -2</pre>
+        <dl class='dl-horizontal'>
+          <dt><samp>-c dir</samp></dt><dd>Set a different configuration directory.</dd>
+          <dt><samp>-z</samp></dt><dd>Request compression of the output file.</dd>
+          <dt><samp>-1 file</samp></dt><dd>Single ended (or first pair-ended) FASTA or FASTQ input file, optionally compressed.</dd>
+          <dt><samp>-2 file</samp></dt><dd>Second pair-ended FASTA or FASTQ input file, optionally compressed.</dd>
+          <dt><samp>-t</samp></dt><dd>Type of the analysis (high precision by default).</dd>
+          <dt><samp>-o file</samp></dt><dd>The output file.</dd>
+        </dl>
       </div>
-      <dl class='dl-horizontal'>
-        <dt><samp>-c dir</samp></dt><dd>Set a different configuration directory.</dd>
-        <dt><samp>-z</samp></dt><dd>Request compression of the output file.</dd>
-        <dt><samp>-1 file</samp></dt><dd>Single ended (or first pair-ended) FASTA or FASTQ input file, optionally compressed.</dd>
-        <dt><samp>-2 file</samp></dt><dd>Second pair-ended FASTA or FASTQ input file, optionally compressed.</dd>
-        <dt><samp>-t</samp></dt><dd>Type of the analysis (high precision by default).</dd>
-        <dt><samp>-o file</samp></dt><dd>The output file.</dd>
-      </dl>
     </div>
 
     <div class="card">
