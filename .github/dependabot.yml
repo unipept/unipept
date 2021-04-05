@@ -1,0 +1,21 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "13:00"
+    timezone: Europe/Brussels
+  open-pull-requests-limit: 99
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "13:00"
+    timezone: Europe/Brussels
+  open-pull-requests-limit: 99
+  ignore:
+  - dependency-name: d3
+    versions:
+    - ">= 4.a"
+    - "< 5"
