@@ -48,12 +48,10 @@ class Lineage < ApplicationRecord
   belongs_to :superclass_t,       foreign_key: 'superclass',    primary_key: 'id',  class_name: 'Taxon'
   belongs_to :class_t,            foreign_key: 'class',         primary_key: 'id',  class_name: 'Taxon'
   belongs_to :subclass_t,         foreign_key: 'subclass',      primary_key: 'id',  class_name: 'Taxon'
-  belongs_to :infraclass_t,       foreign_key: 'infraclass',    primary_key: 'id',  class_name: 'Taxon'
   belongs_to :superorder_t,       foreign_key: 'superorder',    primary_key: 'id',  class_name: 'Taxon'
   belongs_to :order_t,            foreign_key: 'order',         primary_key: 'id',  class_name: 'Taxon'
   belongs_to :suborder_t,         foreign_key: 'suborder',      primary_key: 'id',  class_name: 'Taxon'
   belongs_to :infraorder_t,       foreign_key: 'infraorder',    primary_key: 'id',  class_name: 'Taxon'
-  belongs_to :parvorder_t,        foreign_key: 'parvorder',     primary_key: 'id',  class_name: 'Taxon'
   belongs_to :superfamily_t,      foreign_key: 'superfamily',   primary_key: 'id',  class_name: 'Taxon'
   belongs_to :family_t,           foreign_key: 'family',        primary_key: 'id',  class_name: 'Taxon'
   belongs_to :subfamily_t,        foreign_key: 'subfamily',     primary_key: 'id',  class_name: 'Taxon'
@@ -65,21 +63,22 @@ class Lineage < ApplicationRecord
   belongs_to :species_subgroup_t, foreign_key: 'species_subgroup', primary_key: 'id', class_name: 'Taxon'
   belongs_to :species_t,          foreign_key: 'species',       primary_key: 'id',  class_name: 'Taxon'
   belongs_to :subspecies_t,       foreign_key: 'subspecies',    primary_key: 'id',  class_name: 'Taxon'
+  belongs_to :strain_t,           foreign_key: 'strain',        primary_key: 'id',  class_name: 'Taxon'
   belongs_to :varietas_t,         foreign_key: 'varietas',      primary_key: 'id',  class_name: 'Taxon'
   belongs_to :forma_t,            foreign_key: 'forma',         primary_key: 'id',  class_name: 'Taxon'
 
   ORDER = %i[superkingdom kingdom subkingdom superphylum phylum subphylum
-             superclass class_ subclass infraclass superorder order suborder
-             infraorder parvorder superfamily family subfamily tribe
+             superclass class_ subclass superorder order suborder
+             infraorder superfamily family subfamily tribe
              subtribe genus subgenus species_group species_subgroup
-             species subspecies varietas forma].freeze
+             species subspecies strain varietas forma].freeze
 
   ORDER_T = %i[superkingdom_t kingdom_t subkingdom_t superphylum_t phylum_t
-               subphylum_t superclass_t class_t subclass_t infraclass_t
-               superorder_t order_t suborder_t infraorder_t parvorder_t superfamily_t
+               subphylum_t superclass_t class_t subclass_t
+               superorder_t order_t suborder_t infraorder_t superfamily_t
                family_t subfamily_t tribe_t subtribe_t genus_t subgenus_t
                species_group_t species_subgroup_t species_t subspecies_t
-               varietas_t forma_t].freeze
+               strain_t varietas_t forma_t].freeze
 
   scope :with_names, -> { includes(ORDER_T) }
 
