@@ -36,3 +36,19 @@ namespace :deploy do
     end
   end
 end
+
+namespace :deploy do
+  desc "Uploads a robots.txt that mandates the site as off-limits to crawlers"
+  task :block_robots, :roles => :app do
+    content = [
+      '# This is a staging site. Do not index.',
+      'User-agent: *',
+      'Disallow: /'
+    ].join($/)
+
+    logger.info "Uploading blocking robots.txt"
+    put content, "#{release_path}/public/robots.txt"
+  end
+end
+
+after "deploy:update_code", "deploy:block_robots"
