@@ -1,5 +1,16 @@
 <div class="apidocs row">
   <div class="col-xs-9">
+    <div class="apidocs-callout apidocs-callout-warning">
+      <h4>Getting started with UMGAP</h4>
+      <p>Get from a paired-end FASTQ sample to an interactive visualisation in 4 commands.</p>
+      <pre><b>$</b> git clone https://github.com/unipept/umgap.git && cd umgap <em># download source code</em>
+<!--    --><b>$</b> cargo install --path . <em># <a href='<%= api_umgap_casestudies_path %>#installation'>install UMGAP</a></em>
+<!--    --><b>$</b> git clone https://github.com/unipept/FragGeneScanPlusPlus.git FGSpp <em># download gene predictor</em>
+<!--    --><b>$</b> cd FGSpp && make && cd .. <em># install gene predictor</em>
+<!--    --><b>$</b> ./scripts/umgap-setup.sh -f FGSpp<em># interactive <a href='<%= api_umgap_casestudy_basic_path %>#setup'>setup</a></em>
+<!--    --><b>$</b> ./scripts/umgap-analyse.sh -1 <a href="https://raw.githubusercontent.com/unipept/umgap/master/testdata/A1.fq" download="A1.fq">A1.fq</a> -2 <a href="https://raw.githubusercontent.com/unipept/umgap/master/testdata/A1.fq" download="A2.fq">A2.fq</a> -t tryptic-precision -o results.fa <em># run analysis</a></em>
+<!--    --><b>$</b> ./scripts/umgap-visualize.sh -i results.fa -u <em># get interactive results</a></em></pre>
+    </div>
     <h1 class='api-title'>
       <span class="initialism">UMGAP</span> documentation
     </h1>
