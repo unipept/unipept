@@ -1,0 +1,176 @@
+<div class="apidocs casestudies row">
+  <div class="col-xs-9">
+    <h1 class="api-title">Case Study: Running a preconfigured metagenomics pipeline</h1>
+    <p class="lead">This case study shows how to set up and run the preconfigured scripts of the <span class="initialism">UMGAP</span> for the taxonomic analysis of a metagenomics dataset.</p>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Introduction</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          The Unipept Metagenomics Analysis Pipeline (UMGAP) is accompanied by 3 scripts:
+          <code>umgap-setup.sh</code>, <code>umgap-analyse.sh</code> and <code>umgap-visualize.sh</code>.
+          The setup script deals with downloading prebuilt databases and checking and linking external tools.
+          The analyse script runs several analyses in sequence.
+          The visualize script creates webpages from the results of the analyse script.
+        </p>
+        <p>
+          The following pipelines are preconfigured: <ul>
+            <li><strong><span class='initialism'>UMGAP</span> High Precision:</strong> Optimized for high precision identifications on your metagenomics reads.</li>
+            <li><strong><span class='initialism'>UMGAP</span> Max Precision:</strong> Optimized for highest precision, with a small setback on sensitivity.</li>
+            <li><strong><span class='initialism'>UMGAP</span> Tryptic Precision:</strong> Made for fast analyses on your laptop. Fewer results, but accurate.</li>
+            <li><strong><span class='initialism'>UMGAP</span> High Sensitivity:</strong> Optimized for high sensitivity identifications on metagenomics reads.</li>
+            <li><strong><span class='initialism'>UMGAP</span> Max Sensitivity:</strong> Optimized for highest sensitivity, with a small setback on precision.</li>
+            <li><strong><span class='initialism'>UMGAP</span> Tryptic Sensitivity:</strong> Made for fast analyses on your laptop. Get a quick overview of your data.</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text" id="setup">Setup</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          The preconfigured pipelines require some databases and external tools.
+          The setup script will help you to get these in the right place.
+          In general, you only need to run this script once,
+           but you can also use it to verify the file locations and download newer versions of the data.
+          If you're planning to use the tryptic precision, tryptic sensitivity, high precision or max precision pipelines,
+           you'll need to <a href="https://github.com/unipept/FragGeneScanPlusPlus/">install FragGeneScan++</a> first.
+          In this casestudy, we will use a tryptic pipeline, so we don't have to download the 9-mer index (~12GiB, rather than ~150GiB).
+        </p>
+        <p>
+          Following code snippet shows the interaction with the setup script.
+          It starts out by asking the relevant questions, without delay.
+          At the end, it downloads the relevant files in sequence, without further interaction.
+        </p>
+        <pre style="max-height: initial;">
+<!--   --><b>$</b> umgap-setup.sh -f /opt/FragGeneScanPlusPlus
+<!--   -->Use '/home/user/.config/unipept' as configuration directory? [y]/n y
+<!--   -->Created directory /home/user/.config/unipept.
+<!--   -->Found, tested and remembered the FragGeneScan++ location.
+<!--   -->Use '/home/user/.local/share/unipept' as data directory? [y]/n y
+<!--   -->Created directory /home/user/.local/share/unipept.
+<!--   -->Checking the latest version on the server.
+<!--   -->Latest version is 2020-12-02.
+<!--   -->
+<!--   -->For any type of analysis, you need a taxonomony. For mapping tryptic or
+<!--   -->9-mer peptides to it, you need the respective index file of the same
+<!--   -->version.
+<!--   -->
+<!--   -->Would you like to download the taxonomy from 2020-12-02 (115MiB)? [y]/n y
+<!--   -->Would you like to download the tryptic index from 2020-12-02 (12GiB)? [y]/n y
+<!--   -->Would you like to download the 9-mer index from 2020-12-02 (152GiB)? [y]/n n
+<!--   -->  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+<!--   -->                                 Dload  Upload   Total   Spent    Left  Speed
+<!--   -->100  114M  100  114M    0     0  6477k      0  0:00:18  0:00:18 --:--:-- 6332k
+<!--   -->  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+<!--   -->                                 Dload  Upload   Total   Spent    Left  Speed
+<!--   -->100   12G  100   12G    0     0  5076k      0  0:34:12  0:34:12 --:--:-- 5790k</pre>
+        <p>
+          To change where the setup script will store the configuration and downloaded files,
+           add some of the options detailed below.
+          If you're familiar with the setup script,
+           or you're running the script within another script,
+           you can add the <code>-y</code> flag to run without interaction.
+        </p>
+        <dl class='dl-horizontal'>
+          <dt><samp>-c dir</samp></dt><dd>Set a different configuration directory.</dd>
+          <dt><samp>-f dir</samp></dt><dd>Link the location of your FragGeneScan installation.</dd>
+          <dt><samp>-d dir</samp></dt><dd>Set a different location for downloading the database files. This can be on a separate disk.</dd>
+          <dt><samp>-y</samp></dt><dd>Download all files of the latest version without asking for confirmation.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Analyse</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          When setup is complete, the analyse script will automatically use the downloaded databases and linked tools.
+          The input data consists of a 100 paired-end reads sampled from a dataset
+            generated by Lindgreen <i>et al.</i> (2016) for their metabenchmark.
+          With these paired-end reads in the <a href="https://raw.githubusercontent.com/unipept/umgap/master/testdata/A1.fq" download="A1.fq">A1.fq</a>
+            and <a href="https://raw.githubusercontent.com/unipept/umgap/master/testdata/A2.fq" download="A2.fq">A2.fq</a> files,
+            the commands are as follows.
+        </p>
+        <pre style="max-height: initial;">
+<!--   --><b>$</b> head -4 A1.fq
+<!--   -->@1198114###CP002480-_Acidobacteria_733918/1
+<!--   -->ATCGCGCACGCGGCCGATGCCCCAGAAGAGATTGACAGCGGTGGGGCGGGCGGCGGCGAGGTGGTCGCAGATCTCGGCGACCTCTGCGTTGAGGGTCGGG
+<!--   -->+
+<!--   -->AADEGGAGIIEIHFHKHJKKJKHIJJIIKCJAHBFKKFHIJIF;JIH5DE$I>CBE$E:FGEJCGABEEECCDKD?D?C$ECEEE;CEEDEEAD=?ED$D
+<!--   --><b>$</b> umgap-analyse.sh -1 A1.fq -2 A2.fq -t tryptic-precision -o tryptic-precision-output.fa
+<!--   --><b>$</b> head -2 tryptic-precision-output.fa
+<!--   -->>1198114###CP002480-_Acidobacteria_733918/1_1_100_-
+<!--   -->1</pre>
+        <p>
+          It seems the pipeline cannot be more specific than <emph>root</emph> (Taxon ID 1) for the first read.
+        </p>
+        <p>
+          If you used a non-default configuration directory for setup,
+           you'll need to pass the same directory here, with the <code>-c</code> option.
+          When running the pipeline on large samples, it may be useful to compress the output.
+          Use the <code>-z</code> flag to <span class="initialism">GZIP</span> the results.
+          Should the input be <span class="initialism">GZIP</span>-compressed,
+           the script will detect this.
+          Note that all arguments can be repeated to bundle multiple analysis,
+           each series ending with a <code>-o</code> option.
+        </p>
+        <dl class='dl-horizontal'>
+          <dt><samp>-c dir</samp></dt><dd>Set a different configuration directory.</dd>
+          <dt><samp>-z</samp></dt><dd>Request compression of the output file.</dd>
+          <dt><samp>-1 file</samp></dt><dd>Single ended FASTA or first pair-ended FASTQ input file, optionally compressed.</dd>
+          <dt><samp>-2 file</samp></dt><dd>Second pair-ended FASTQ input file, optionally compressed.</dd>
+          <dt><samp>-t</samp></dt><dd>Type of the analysis (high precision by default).</dd>
+          <dt><samp>-o file</samp></dt><dd>The output file.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title card-title-colored"><h2 class="card-title-text">Visualize</h2></div>
+      <div class="card-supporting-text">
+        <p>
+          After analysis, you probably want to view the results.
+          While the analyse script output format is easily parsed,
+           you can also use the visualize script to create importable CSV frequency tables
+           and interactive visualisations.
+          The interactive visualisations can be stored locally or hosted online.
+          The following snippet creates all three in turn.
+        </p>
+        <pre style="max-height: initial;">
+<!--   --><b>$</b> umgap-visualize.sh -i tryptic-precision-output.fa -t -r phylum
+<!--   -->2	1117	Cyanobacteria
+<!--   -->4	57723	Acidobacteria
+<!--   -->4	201174	Actinobacteria
+<!--   -->5	1224	Proteobacteria
+<!--   -->160	1	root
+<!--   --><b>$</b> umgap-visualize.sh -i tryptic-sensitivity-output.fa.gz -w > tryptic-sensitivity.html
+<!--   --><b>$</b> umgap-visualize.sh -i tryptic-sensitivity-output.fa.gz -u
+<!--   --><a href="https://bl.ocks.org/11b7809d6754b9530cf1a49d93a8d568">https://bl.ocks.org/11b7809d6754b9530cf1a49d93a8d568</a></pre>
+        <p>
+          The CSV tables contain a record for each taxon found in the sample.
+          A record contains, in order, the frequency of the taxon, the taxon ID and (for convenience) the taxon name.
+          All records will be at the same specified taxon rank or at root (unidentified).
+        </p>
+        <dl class='dl-horizontal'>
+          <dt><samp>-i file</samp></dt><dd>Analysis output file, optionally compressed.</dd>
+          <dt><samp>-t</samp></dt><dd>Output a CSV frequency table on species rank.</dd>
+          <dt><samp>-w</samp></dt><dd>Output an HTML webpage of an interactive visualization.</dd>
+          <dt><samp>-u</samp></dt><dd>Print a shareable URL to a online interactive visualisation.</dd>
+          <dt><samp>-r rank</samp></dt><dd>Set the rank for the CSV frequency table (default: species).</dd>
+        </dl>
+        <%= image_tag "api/umgap/treeview.png" %>
+      </div>
+    </div>
+
+    <h2>References</h2>
+    <ul>
+      <li>Lindgreen, S., Adair, K. L., &amp; Gardner, P. P. (2016). An evaluation of the accuracy and speed of metagenome analysis tools. <em>Scientific reports</em>, 6, 19233.</li>
+    </ul>
+
+  </div>
+  <div class="col-xs-3">
+    <%= render 'api/shared/sidebar' %>
+  </div>
+</div>

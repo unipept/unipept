@@ -21,11 +21,21 @@ class Api::UmgapControllerTest < ActionController::TestCase
     assert_not_nil assigns(:sidebar_subnav)
   end
 
-  test 'should get casestudy_metagenomics' do
-    get :casestudy_metagenomics
+  test 'should get casestudy_advanced' do
+    get :casestudy_advanced
     assert_response :success
-    assert_template :casestudy_metagenomics
-    assert_equal 'Case study: metagenomics', assigns(:title)
+    assert_template :casestudy_advanced
+    assert_equal 'Case study: configure your own metagenomics pipeline', assigns(:title)
+    assert_equal 'Case studies', assigns(:sidebar_name)
+    assert_not_nil assigns(:sidebar_nav)
+    assert_not_nil assigns(:sidebar_subnav)
+  end
+
+  test 'should get casestudy_basic' do
+    get :casestudy_basic
+    assert_response :success
+    assert_template :casestudy_basic
+    assert_equal 'Case study: running a preconfigured metagenomics pipeline', assigns(:title)
     assert_equal 'Case studies', assigns(:sidebar_name)
     assert_not_nil assigns(:sidebar_nav)
     assert_not_nil assigns(:sidebar_subnav)

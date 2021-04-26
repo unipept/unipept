@@ -1,7 +1,7 @@
 class Api::UmgapController < ApplicationController
   before_action :set_header
   before_action :set_sidebar_nav
-  before_action :set_case_subnav, only: %i[casestudies casestudy_metagenomics]
+  before_action :set_case_subnav, only: %i[casestudies casestudy_basic casestudy_advanced]
 
   def index
     @title = 'Unipept MetaGenomics Analysis Pipeline'
@@ -15,8 +15,14 @@ class Api::UmgapController < ApplicationController
     @study = ''
   end
 
-  def casestudy_metagenomics
-    @title = 'Case study: metagenomics'
+  def casestudy_basic
+    @title = 'Case study: running a preconfigured metagenomics pipeline'
+    @sidebar_name = 'Case studies'
+    @study = 'Metagenomics'
+  end
+
+  def casestudy_advanced
+    @title = 'Case study: configure your own metagenomics pipeline'
     @sidebar_name = 'Case studies'
     @study = 'Metagenomics'
   end
@@ -151,7 +157,10 @@ class Api::UmgapController < ApplicationController
   end
 
   def set_case_subnav
-    @sidebar_subnav = [['Metagenomics', api_umgap_casestudy_metagenomics_path]]
+    @sidebar_subnav = [
+      ['Preconfigured pipelines', api_umgap_casestudy_basic_path],
+      ['Advanced configuration', api_umgap_casestudy_advanced_path]
+    ]
   end
 
   def set_header
