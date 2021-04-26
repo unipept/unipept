@@ -6,12 +6,15 @@
             <span>Mesuere et al. (2016) Bioinformatics</span>
             <a target="_blank" href="https://doi.org/10.1093/bioinformatics/btw039">doi:10.1093/bioinformatics/btw039</a>
         <% elsif @header_class == "CLI" %>
-            <span>Mesuere et al. (2017) Journal of Proteomics</span>
-            <a target="_blank" href="https://doi.org/10.1016/j.jprot.2017.05.022">doi:10.1016/j.jprot.2017.05.022</a>
+            <span>Verschaffelt et al. (2020) Bioinformatics</span>
+            <a target="_blank" href="https://doi.org/10.1093/bioinformatics/btaa553">doi.org/10.1093/bioinformatics/btaa553</a>
         <% elsif @header_class == "peptidome" %>
             <span>Mesuere et al. (2016) Proteomics</span>
             <a target="_blank" href="https://doi.org/10.1002/pmic.201600023">doi:10.1002/pmic.201600023</a>
-        <% else %>
+        <% elsif @header_class == "desktop" %>
+          <span>Verschaffelt et al. (2021) Journal of Proteome Research</span>
+          <a href="https://doi.org/10.1021/acs.jproteome.0c00855" target="_blank">doi.org/10.1021/acs.jproteome.0c00855</a>
+      <% else %>
             <span>Gurdeep Singh et al. (2019) Journal of Proteome Research</span>
             <a href="https://doi.org/10.1021/acs.jproteome.8b00716" target="_blank">doi:10.1021/acs.jproteome.8b00716</a>
         <% end %>
