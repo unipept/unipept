@@ -35,7 +35,7 @@ gem 'multi_json',  '~> 1.15.0'
 gem 'jbuilder',  '~> 2.11.2'
 
 # imagemagick bindings
-gem 'rmagick',  '~> 4.1.1', require: false
+gem 'rmagick',  '~> 4.2.2', require: false
 
 # The dynamic stylesheet language for the Rails asset pipeline.
 # Allows other gems to extend Less load path.
