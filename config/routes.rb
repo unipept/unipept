@@ -136,6 +136,7 @@ UnipeptWeb::Application.routes.draw do
     get 'casestudies',              to: 'umgap#casestudies',             as: 'umgap/casestudies'
     get 'casestudies/advanced',     to: 'umgap#casestudy_advanced',      as: 'umgap/casestudy_advanced'
     get 'casestudies/basic',        to: 'umgap#casestudy_basic',         as: 'umgap/casestudy_basic'
+    get 'casestudies/comparative',  to: 'umgap#casestudy_comparative',   as: 'umgap/casestudy_comparative'
     get 'fastq2fasta',              to: 'umgap#fastq2fasta',             as: 'umgap/fastq2fasta'
     get 'translate',                to: 'umgap#translate',               as: 'umgap/translate'
     get 'prot2tryp',                to: 'umgap#prot2tryp',               as: 'umgap/prot2tryp'

@@ -41,6 +41,16 @@ class Api::UmgapControllerTest < ActionController::TestCase
     assert_not_nil assigns(:sidebar_subnav)
   end
 
+  test 'should get casestudy_comparative' do
+    get :casestudy_comparative
+    assert_response :success
+    assert_template :casestudy_comparative
+    assert_equal 'Case study: running a comparative analysis on 8 samples', assigns(:title)
+    assert_equal 'Case studies', assigns(:sidebar_name)
+    assert_not_nil assigns(:sidebar_nav)
+    assert_not_nil assigns(:sidebar_subnav)
+  end
+
   test 'should get fastq2fasta' do
     get :fastq2fasta
     assert_response :success
