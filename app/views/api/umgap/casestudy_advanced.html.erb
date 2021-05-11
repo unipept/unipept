@@ -411,13 +411,13 @@
           The first shows the number of reads mapping to each taxon in CSV format, easily imported in other programs.
         </p>
         <pre>
-<!--   --><b>$</b> grep -v '^>' classification.fa | umgap taxa2freq -r species taxons.tsv | tee report.csv
-<!--   -->1,332163,Candidatus Solibacter usitatus
-<!--   -->1,392734,Terriglobus roseus
-<!--   -->1,940615,Granulicella tundricola</pre>
+<!--   --><b>$</b> umgap taxa2freq -r species taxons.tsv < classification.fa | tee report.csv
+<!--   -->taxon id,taxon name,stdin
+<!--   -->332163,Candidatus Solibacter usitatus,1
+<!--   -->392734,Terriglobus roseus,1
+<!--   -->940615,Granulicella tundricola,1</pre>
         <p>
-          The <code>grep</code> command will drop the <span class="initialism">FASTA</span> headers,
-          allowing the <code>report</code> command to snap each taxon to either a species or "unknown"
+          The <code>taxa2freq</code> command to snap each taxon to either a species or root (unknown)
           and report the frequency table of the results.
         </p>
         <p>
@@ -448,9 +448,10 @@
 <!--          -->  umgap taxa2agg taxons.tsv |              # aggregating all taxa
 <!--          -->  grep -v '^>' |                           # dropping headers
 <!--          -->  umgap taxa2freq taxons.tsv               # make frequency table
-<!--   -->1,332163,Candidatus Solibacter usitatus
-<!--   -->1,392734,Terriglobus roseus
-<!--   -->1,940615,Granulicella tundricola</pre>
+<!--   -->taxon id,taxon name,stdin
+<!--   -->332163,Candidatus Solibacter usitatus,1
+<!--   -->392734,Terriglobus roseus,1
+<!--   -->940615,Granulicella tundricola,1</pre>
         <p>
           This command processes the complete Metabenchmark A1 dataset containing 116 million paired-end reads
           in a VM (8 cores, 200GB RAM) on our computational server (16 Intel Xeon CPU E5-2650 v2 at 2.60GHz,
