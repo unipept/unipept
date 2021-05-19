@@ -75,12 +75,10 @@ ActiveRecord::Schema.define(version: 0) do
     t.integer "superclass", limit: 3
     t.integer "class", limit: 3
     t.integer "subclass", limit: 3
-    t.integer "infraclass", limit: 3
     t.integer "superorder", limit: 3
     t.integer "order", limit: 3
     t.integer "suborder", limit: 3
     t.integer "infraorder", limit: 3
-    t.integer "parvorder", limit: 3
     t.integer "superfamily", limit: 3
     t.integer "family", limit: 3
     t.integer "subfamily", limit: 3
@@ -92,6 +90,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.integer "species_subgroup", limit: 3
     t.integer "species", limit: 3
     t.integer "subspecies", limit: 3
+    t.integer "strain", limit: 3
     t.integer "varietas", limit: 3
     t.integer "forma", limit: 3
   end
