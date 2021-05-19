@@ -1,10 +1,10 @@
 module ApiHelper
   def lineage_info(lineage, include_names = false)
-    if @v1
-      order = Lineage::ORDER_V1
-    else
-      order = Lineage::ORDER
-    end
+    order = if @v1
+              Lineage::ORDER_V1
+            else
+              Lineage::ORDER
+            end
 
     ids = order.map { |o| lineage.try(o) }
     ids = ids.map { |i| i.nil? || i == -1 ? nil : i.abs }
