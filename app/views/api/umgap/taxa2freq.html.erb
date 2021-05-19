@@ -3,19 +3,20 @@
     <div class='page-header'>
       <h1 class='api-title'>
         <samp>umgap taxa2freq</samp><br>
-        <small>Counts ranked taxon occurrences in a stream of taxon IDs.</small>
+        <small>Counts ranked taxon occurrences in a stream of taxon IDs or arguments.</small>
       </h1>
     </div>
     <p>The <code>umgap taxa2freq</code> command creates a frequency table of a list of taxa on a given target rank
-    (species by default).</p>
+    (species by default). When invoked with file arguments, it adds a column for each file.</p>
     <div class='card'>
       <div class='card-title card-title-colored'>
         <h2 class='card-title-text' id='input'>Usage</h2>
       </div>
       <div class='card-supporting-text'>
-        <p>The input is given on <em>standard input</em>, a single taxon ID on each line. Each taxon that is more
+        <p>The input is given on <em>standard input</em>, or in multiple file arguments,
+        a single taxon ID on each line. Each taxon that is more
         specific than the target rank is counted towards its ancestor on the target rank. Each taxon
-        less specific than the target rank is counted towards root. The command outputs a <span class='initialism'>TSV</span> table of
+        less specific than the target rank is counted towards root. The command outputs a <span class='initialism'>CSV</span> table of
         counts, taxon IDs and their names.</p>
         <p>The taxonomy to be used is passed as an argument to this command. This is a preprocessed version
         of the <span class='initialism'>NCBI</span> taxonomy.</p>
@@ -33,12 +34,18 @@
 9606
 8287
 <b>$ umgap taxa2freq taxons.tsv &lt; input.txt</b>
-2	1	root
-9	9606	Homo sapiens</pre>
+taxon id,taxon name,stdin
+1,root,2
+9606,Homo sapiens,9
+<b>$ umgap taxa2freq taxons.tsv input.txt input.txt</b>
+taxon id,taxon name,input.txt,input.txt
+1,root,2,2
+9606,Homo sapiens,9,9</pre>
         <p>With the <samp>-r</samp> option, the default species rank can be set to any named rank.</p>
         <pre>
 <b>$ umgap taxa2freq -r phylum taxons.tsv &lt; input.txt</b>
-10	7711	Chordata</pre>
+taxon id,taxon name,stdin
+7711,Chordata,10</pre>
         <dl class='dl-horizontal'>
           <dt><samp>-h</samp> / <samp>--help</samp></dt><dd>Prints help information</dd>
           <dt><samp>-V</samp> / <samp>--version</samp></dt><dd>Prints version information</dd>
