@@ -29,7 +29,7 @@ class Api::ClidocsController < ApplicationController
   end
 
   def casestudy_metagenomics
-    redirect_to api_umgap_casestudy_metagenomics_path
+    redirect_to api_umgap_casestudies_path
   end
 
   def pept2lca

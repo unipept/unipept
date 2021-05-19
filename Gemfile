@@ -11,7 +11,7 @@ gem 'mysql2', '~> 0.5.3'
 gem 'webpacker', '~> 5.2.1'
 
 # Use Puma as the app server
-gem 'puma', '~> 4.1'
+gem 'puma', '~> 5.2'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
@@ -20,19 +20,19 @@ gem 'puma', '~> 4.1'
 gem 'will_paginate', '~>3.3.0'
 
 # cas auth
-gem 'devise', '~> 4.7.1'
+gem 'devise', '~> 4.7.3'
 gem 'devise_cas_authenticatable', '~> 1.10.4'
 
 # needed for asset creation
 gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 
-gem 'bootsnap', '~> 1.4.6', require: false
+gem 'bootsnap', '~> 1.7.2', require: false
 
 # faster json
-gem 'oj',  '~> 3.10.13'
+gem 'oj',  '~> 3.11.2'
 
 gem 'multi_json',  '~> 1.15.0'
-gem 'jbuilder',  '~> 2.10.0'
+gem 'jbuilder',  '~> 2.11.2'
 
 # imagemagick bindings
 gem 'rmagick',  '~> 4.1.1', require: false
@@ -42,7 +42,7 @@ gem 'rmagick',  '~> 4.1.1', require: false
 gem 'less-rails',  '~> 5.0.0'
 
 # auto css prefixer
-gem 'autoprefixer-rails',  '~> 9.8.6'
+gem 'autoprefixer-rails',  '~> 10.2.4'
 
 # Uglifier minifies JavaScript files by wrapping UglifyJS to be accessible
 # in Ruby
@@ -58,14 +58,14 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '~> 11.1.1', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '~> 3.33.0'
+  gem 'capybara', '~> 3.35.3'
   gem 'selenium-webdriver', '~> 3.142.7'
 
   gem 'poltergeist', '~> 1.18.1'
   gem 'rails-controller-testing', '~> 1.0.4'
 end
 
-gem 'listen', '~> 3.2.1'
+gem 'listen', '~> 3.4.1'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
@@ -94,8 +94,8 @@ group :development do
   gem 'guard', '~> 2.16.2'
   gem 'guard-minitest', '~> 2.4.6' # auto run tests
   gem 'rubocop', '~> 0.90.0'
-  gem 'rake', '~> 13.0.1'
+  gem 'rake', '~> 13.0.3'
   gem 'sprockets', '~> 3.7.2'
 end
 
-gem "octokit", "~> 4.18"
+gem "octokit", "~> 4.20"

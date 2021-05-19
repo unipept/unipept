@@ -36,3 +36,17 @@ namespace :deploy do
     end
   end
 end
+
+namespace :deploy do
+  before :publishing, :block_robots do
+    on roles :all do
+      content = [
+        '# This is a staging site. Do not index.',
+        'User-agent: *',
+        'Disallow: /'
+      ].join($/)
+
+      upload! StringIO.new(content), "#{release_path}/public/robots.txt"
+    end
+  end
+end
