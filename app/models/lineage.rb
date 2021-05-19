@@ -12,12 +12,10 @@
 #  superclass       :integer
 #  class            :integer
 #  subclass         :integer
-#  infraclass       :integer
 #  superorder       :integer
 #  order            :integer
 #  suborder         :integer
 #  infraorder       :integer
-#  parvorder        :integer
 #  superfamily      :integer
 #  family           :integer
 #  subfamily        :integer
@@ -29,6 +27,7 @@
 #  species_subgroup :integer
 #  species          :integer
 #  subspecies       :integer
+#  strain           :integer
 #  varietas         :integer
 #  forma            :integer
 #
@@ -48,12 +47,10 @@ class Lineage < ApplicationRecord
   belongs_to :superclass_t,       foreign_key: 'superclass',    primary_key: 'id',  class_name: 'Taxon'
   belongs_to :class_t,            foreign_key: 'class',         primary_key: 'id',  class_name: 'Taxon'
   belongs_to :subclass_t,         foreign_key: 'subclass',      primary_key: 'id',  class_name: 'Taxon'
-  belongs_to :infraclass_t,       foreign_key: 'infraclass',    primary_key: 'id',  class_name: 'Taxon'
   belongs_to :superorder_t,       foreign_key: 'superorder',    primary_key: 'id',  class_name: 'Taxon'
   belongs_to :order_t,            foreign_key: 'order',         primary_key: 'id',  class_name: 'Taxon'
   belongs_to :suborder_t,         foreign_key: 'suborder',      primary_key: 'id',  class_name: 'Taxon'
   belongs_to :infraorder_t,       foreign_key: 'infraorder',    primary_key: 'id',  class_name: 'Taxon'
-  belongs_to :parvorder_t,        foreign_key: 'parvorder',     primary_key: 'id',  class_name: 'Taxon'
   belongs_to :superfamily_t,      foreign_key: 'superfamily',   primary_key: 'id',  class_name: 'Taxon'
   belongs_to :family_t,           foreign_key: 'family',        primary_key: 'id',  class_name: 'Taxon'
   belongs_to :subfamily_t,        foreign_key: 'subfamily',     primary_key: 'id',  class_name: 'Taxon'
@@ -65,16 +62,30 @@ class Lineage < ApplicationRecord
   belongs_to :species_subgroup_t, foreign_key: 'species_subgroup', primary_key: 'id', class_name: 'Taxon'
   belongs_to :species_t,          foreign_key: 'species',       primary_key: 'id',  class_name: 'Taxon'
   belongs_to :subspecies_t,       foreign_key: 'subspecies',    primary_key: 'id',  class_name: 'Taxon'
+  belongs_to :strain_t,           foreign_key: 'strain',        primary_key: 'id',  class_name: 'Taxon'
   belongs_to :varietas_t,         foreign_key: 'varietas',      primary_key: 'id',  class_name: 'Taxon'
   belongs_to :forma_t,            foreign_key: 'forma',         primary_key: 'id',  class_name: 'Taxon'
 
   ORDER = %i[superkingdom kingdom subkingdom superphylum phylum subphylum
+             superclass class_ subclass superorder order suborder
+             infraorder superfamily family subfamily tribe
+             subtribe genus subgenus species_group species_subgroup
+             species subspecies strain varietas forma].freeze
+
+  ORDER_T = %i[superkingdom_t kingdom_t subkingdom_t superphylum_t phylum_t
+               subphylum_t superclass_t class_t subclass_t
+               superorder_t order_t suborder_t infraorder_t superfamily_t
+               family_t subfamily_t tribe_t subtribe_t genus_t subgenus_t
+               species_group_t species_subgroup_t species_t subspecies_t strain_t
+               varietas_t forma_t].freeze
+
+  ORDER_V1 = %i[superkingdom kingdom subkingdom superphylum phylum subphylum
              superclass class_ subclass infraclass superorder order suborder
              infraorder parvorder superfamily family subfamily tribe
              subtribe genus subgenus species_group species_subgroup
              species subspecies varietas forma].freeze
 
-  ORDER_T = %i[superkingdom_t kingdom_t subkingdom_t superphylum_t phylum_t
+  ORDER_V1_T = %i[superkingdom_t kingdom_t subkingdom_t superphylum_t phylum_t
                subphylum_t superclass_t class_t subclass_t infraclass_t
                superorder_t order_t suborder_t infraorder_t parvorder_t superfamily_t
                family_t subfamily_t tribe_t subtribe_t genus_t subgenus_t
@@ -83,7 +94,7 @@ class Lineage < ApplicationRecord
 
   scope :with_names, -> { includes(ORDER_T) }
 
-  # rails 4.2+ checks the values befor using them in queries
+  # rails 4.2+ checks the values before using them in queries
   # Eager loading the Taxa results in a range error if there are -1 values
   # http://metaskills.net/2015/01/06/activerecord-42s-type-casting/
   # This code disables the rangecheck for UnsignedIntegers
