@@ -48,7 +48,7 @@ module UnipeptWeb
 
     # Increase key space limit to allow for larger requests to succeed (which is for example required by large requests
     # to taxa2tree)
-    Rack::Utils.key_space_limit = 1048576
+    Rack::Utils.key_space_limit = 10485760
 
     MultiJson.use :Oj
   end
