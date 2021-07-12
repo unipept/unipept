@@ -37,7 +37,7 @@
     "vue-loader": "15.9.6",
     "vue-property-decorator": "^8.4.1",
     "vue-router": "^3.4.8",
-    "vue-styleguidist": "^4.31.1",
+    "vue-styleguidist": "^4.40.0",
     "vue-template-compiler": "^2.6.12",
     "vuetify": "^2.3.16",
     "vuetify-loader": "^1.7.2",
