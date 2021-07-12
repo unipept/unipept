@@ -37,7 +37,7 @@
 <!--   -->     -O ftp.sra.ebi.ac.uk/vol1/fastq/ERR165/006/ERR1654126/ERR1654126_2.fastq.gz</pre>
         <p>
           While these files are downloading (combined size is 42GB), you can
-          <a href="https://unipept.ugent.be/umgap#installation">install and configure UMGAP</a>.
+          <a href='<%= api_umgap_path %>#installation'>install and configure UMGAP</a>.
           For this case study, we'll need the NCBI taxonomy and the 9-mer index file (152GB),
           so answer "yes" when the setup script asks for those.
         </p>
@@ -114,7 +114,9 @@
           spread over all 8 samples. The Mucoromycota and Ciliophora phyla,
           however, are overrepresented in the 4 chitin-rich samples.
         </p>
-        <%= image_tag "api/umgap/comparison.svg" %>
+        <div class="full-width-screen">
+          <%= image_tag "api/umgap/comparison.svg" %>
+        </div>
       </div>
     </div>
 

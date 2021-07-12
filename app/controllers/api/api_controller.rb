@@ -290,6 +290,9 @@ class Api::ApiController < ApplicationController
 
   # handles the parameters
   def set_params
+    # is the user using v1 of the API or v2?
+    @v1 = request.env['PATH_INFO'].include? 'v1'
+
     unsafe_hash = params.to_unsafe_h
     @input = unsafe_hash[:input]
     if @input.is_a? Hash        # hash

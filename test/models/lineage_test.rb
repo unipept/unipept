@@ -12,12 +12,10 @@
 #  superclass       :integer
 #  class            :integer
 #  subclass         :integer
-#  infraclass       :integer
 #  superorder       :integer
 #  order            :integer
 #  suborder         :integer
 #  infraorder       :integer
-#  parvorder        :integer
 #  superfamily      :integer
 #  family           :integer
 #  subfamily        :integer
@@ -29,6 +27,7 @@
 #  species_subgroup :integer
 #  species          :integer
 #  subspecies       :integer
+#  strain           :integer
 #  varietas         :integer
 #  forma            :integer
 #
@@ -71,8 +70,6 @@ class LineageTest < ActiveSupport::TestCase
     lineage.next_t
     assert_equal 4, lineage.get_iterator_position
     lineage.set_iterator_position(27)
-    assert lineage.has_next?
-    lineage.set_iterator_position(28)
     assert_not lineage.has_next?
   end
 
@@ -87,7 +84,7 @@ class LineageTest < ActiveSupport::TestCase
 
   test 'should give correct result for to_a' do
     lineage = lineages(:lineage1)
-    array = ['', 'kingdom1', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'species1', '', '', '']
+    array = ['', 'kingdom1', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'species1', '', '', '', '']
     assert_equal array, lineage.to_a
   end
 
