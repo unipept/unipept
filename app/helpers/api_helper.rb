@@ -1,11 +1,17 @@
 module ApiHelper
   def lineage_info(lineage, include_names = false)
-    ids = Lineage::ORDER.map { |o| lineage.try(o) }
+    order = if @v1
+              Lineage::ORDER_V1
+            else
+              Lineage::ORDER
+            end
+
+    ids = order.map { |o| lineage.try(o) }
     ids = ids.map { |i| i.nil? || i == -1 ? nil : i.abs }
-    id_names = Lineage::ORDER.map { |s| s == :class_ ? 'class_id' : "#{s}_id" }
+    id_names = order.map { |s| s == :class_ ? 'class_id' : "#{s}_id" }
 
     if include_names
-      names = Lineage::ORDER.map { |s| s == :class_ ? 'class_name' : "#{s}_name" }
+      names = order.map { |s| s == :class_ ? 'class_name' : "#{s}_name" }
       a = names.zip(lineage.to_a)
       b = id_names.zip(ids)
       lineage_info = Hash[b.zip(a).flatten(1)]
