@@ -13438,10 +13438,10 @@ unipept-visualizations@^2.0.5:
     d3 "^6.2.0"
     regenerator-runtime "^0.13.7"
 
-unipept-web-components@1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.4.2.tgz#ec2be8c9b730899edb628bc7efc3f6ec2121824f"
-  integrity sha512-+pN+hAkqXXzsqWSklNBH3A4kgfwBx00aV2giIJN+M3G/29gFejWxIb60YZHJ80HViXe8gyUVhWYBjbM2L+baag==
+unipept-web-components@1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-1.4.3.tgz#0f0e96e52357e23a626a620b7c08324301bfff6b"
+  integrity sha512-cnBtH7L1xuwWlTb3y2JFhWcSgTbFfiizegrRTGGI1xhbd+jZZb98X6RHb/fOycfZem2rVdDR0goodluGJvvZtA==
   dependencies:
     async "^3.2.0"
     axios "^0.21.1"
@@ -13789,14 +13789,7 @@ vue-loader@15.9.6:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
-vue-property-decorator@^8.1.0:
-  version "8.4.1"
-  resolved "https://registry.npmjs.org/vue-property-decorator/-/vue-property-decorator-8.4.1.tgz"
-  integrity sha512-8R4Us7DxFO0rwAL/2fv6vaZL8Oa4n/HGanHODYGTcvQHwT0FYJr9UuuFm2GoWAIXQu1mDO03HNeHswFp9vmTVA==
-  dependencies:
-    vue-class-component "^7.1.0"
-
-vue-property-decorator@^8.4.1:
+vue-property-decorator@^8.1.0, vue-property-decorator@^8.4.1:
   version "8.5.1"
   resolved "https://registry.npmjs.org/vue-property-decorator/-/vue-property-decorator-8.5.1.tgz"
   integrity sha512-O6OUN2OMsYTGPvgFtXeBU3jPnX5ffQ9V4I1WfxFQ6dqz6cOUbR3Usou7kgFpfiXDvV7dJQSFcJ5yUPgOtPPm1Q==
@@ -13907,12 +13900,7 @@ vuetify@^2.3.16, vuetify@^2.3.8:
   resolved "https://registry.npmjs.org/vuetify/-/vuetify-2.3.16.tgz"
   integrity sha512-LHPqY+Gmyb/75xJscO0a3CuB4ZdpqHLNaGMAbmfTyapI8Q02+hjABEZzitFU/XObD2KhrNWPJzmGZPhbshGUzg==
 
-vuex@^3.0.1:
-  version "3.1.3"
-  resolved "https://registry.npmjs.org/vuex/-/vuex-3.1.3.tgz"
-  integrity sha512-k8vZqNMSNMgKelVZAPYw5MNb2xWSmVgCKtYKAptvm9YtZiOXnRXFWu//Y9zQNORTrm3dNj1n/WaZZI26tIX6Mw==
-
-vuex@^3.1.3:
+vuex@^3.0.1, vuex@^3.1.3:
   version "3.5.1"
   resolved "https://registry.npmjs.org/vuex/-/vuex-3.5.1.tgz"
   integrity sha512-w7oJzmHQs0FM9LXodfskhw9wgKBiaB+totOdb8sNzbTB2KDCEEwEs29NzBZFh/lmEK1t5tDmM1vtsO7ubG1DFw==
