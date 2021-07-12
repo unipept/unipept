@@ -4,7 +4,7 @@
       <h4>Getting started with UMGAP</h4>
       <p>Go from a paired-end FASTQ sample to an interactive visualisation in 7 simple commands.</p>
       <pre><b>$</b> git clone https://github.com/unipept/umgap.git && cd umgap <em># download source code</em>
-<!--    --><b>$</b> cargo install --path . <em># <a href='<%= api_umgap_casestudies_path %>#installation'>install UMGAP</a></em>
+<!--    --><b>$</b> cargo install --path . <em># <a href='<%= api_umgap_path %>#installation'>install UMGAP</a></em>
 <!--    --><b>$</b> git clone https://github.com/unipept/FragGeneScanPlusPlus.git FGSpp <em># download gene predictor</em>
 <!--    --><b>$</b> cd FGSpp && make && cd .. <em># install gene predictor</em>
 <!--    --><b>$</b> ./scripts/umgap-setup.sh -f FGSpp<em># interactive <a href='<%= api_umgap_casestudy_basic_path %>#setup'>setup</a></em>
@@ -157,7 +157,7 @@ umgap 0.3.5</pre>
       To check if the configuration was successful, you can run a sample analysis with some include test data. The following command should show you a <span class="initialism">FASTA</span>-like file with a taxon ID per header.
     </p>
     <pre>
-<b>$ ./scripts/umgap-analyse.sh -1 testdata/A1.fq -2 testdata/A2.fq -t tryptic-sensitivity -o - | tee output.fa</pre></b>
+<b>$ ./scripts/umgap-analyse.sh -1 testdata/A1.fq -2 testdata/A2.fq -t tryptic-sensitivity -o - | tee output.fa</b></pre>
   </div>
 </div>
   </div>

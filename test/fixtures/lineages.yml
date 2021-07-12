@@ -12,12 +12,10 @@
 #  superclass       :integer
 #  class            :integer
 #  subclass         :integer
-#  infraclass       :integer
 #  superorder       :integer
 #  order            :integer
 #  suborder         :integer
 #  infraorder       :integer
-#  parvorder        :integer
 #  superfamily      :integer
 #  family           :integer
 #  subfamily        :integer
@@ -29,6 +27,7 @@
 #  species_subgroup :integer
 #  species          :integer
 #  subspecies       :integer
+#  strain           :integer
 #  varietas         :integer
 #  forma            :integer
 #

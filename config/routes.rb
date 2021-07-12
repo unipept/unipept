@@ -92,6 +92,21 @@ UnipeptWeb::Application.routes.draw do
     match 'messages' => 'api#messages', via: %i[get post]
   end
 
+  namespace :api, path: 'api/v2' do
+    match 'pept2taxa' => "api#pept2taxa", via: %i[get post]
+    match 'pept2lca' => "api#pept2lca", via: %i[get post]
+    match 'taxa2lca' => 'api#taxa2lca', via: %i[get post]
+    match 'pept2prot' => 'api#pept2prot', via: %i[get post]
+    match 'pept2funct' => 'api#pept2funct', via: %i[get post]
+    match 'pept2ec' => 'api#pept2ec', via: %i[get post]
+    match 'pept2go' => 'api#pept2go', via: %i[get post]
+    match 'pept2interpro' => 'api#pept2interpro', via: %i[get post]
+    match 'taxa2tree' => 'api#taxa2tree', via: %i[get post]
+    match 'peptinfo' => 'api#peptinfo', via: %i[get post]
+    match 'taxonomy' => 'api#taxonomy', via: %i[get post]
+    match 'messages' => 'api#messages', via: %i[get post]
+  end
+
   # API docs
   namespace :api, path: 'apidocs' do
     get '/',          to: 'apidocs#index',      as: 'apidocs'
