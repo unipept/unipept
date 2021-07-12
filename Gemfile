@@ -20,7 +20,7 @@ gem 'puma', '~> 5.2'
 gem 'will_paginate', '~>3.3.0'
 
 # cas auth
-gem 'devise', '~> 4.7.3'
+gem 'devise', '~> 4.8.0'
 gem 'devise_cas_authenticatable', '~> 1.10.4'
 
 # needed for asset creation
