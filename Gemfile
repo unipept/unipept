@@ -29,7 +29,7 @@ gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 gem 'bootsnap', '~> 1.7.2', require: false
 
 # faster json
-gem 'oj',  '~> 3.11.2'
+gem 'oj',  '~> 3.12.2'
 
 gem 'multi_json',  '~> 1.15.0'
 gem 'jbuilder',  '~> 2.11.2'
