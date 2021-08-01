@@ -65,7 +65,7 @@ group :development, :test do
   gem 'rails-controller-testing', '~> 1.0.4'
 end
 
-gem 'listen', '~> 3.4.1'
+gem 'listen', '~> 3.6.0'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
