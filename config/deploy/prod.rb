@@ -1,8 +1,17 @@
 set :stage, :prod
 
+set :rvm_type, :user
+
+set :default_environment, {
+  'PATH' => "/home/unipept/.rvm/gems/ruby-2.7.1/bin:/home/unipept/.rvm/gems/ruby-2.7.1@global/bin:/usr/share/rvm/rubies/ruby-2.7.1/bin:$PATH",
+  'RUBY_VERSION' => 'ruby-2.7.1',
+  'GEM_HOME'     => '/home/unipept/.rvm/gems/ruby-2.7.1',
+  'GEM_PATH'     => '/home/unipept/.rvm/gems/ruby-2.7.1:/home/unipept/.rvm/gems/ruby-2.7.1@global',
+}
+
 # don't specify db as it's not needed for unipept
-server 'rick.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
-  port: 4840
+server 'unipeptweb.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
+  port: 22
 }
 
 set :branch, 'production'
