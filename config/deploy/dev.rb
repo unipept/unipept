@@ -1,5 +1,7 @@
 set :stage, :dev
 
+set :deploy_to, '/home/bmesuere/rails'
+
 # don't specify db as it's not needed for unipept
 server 'morty.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
