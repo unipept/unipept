@@ -47,6 +47,7 @@ export default class App extends Vue {
     async mounted() {
         this.loading = true;
         NetworkConfiguration.BASE_URL = "https://api.unipept.ugent.be";
+        NetworkConfiguration.PARALLEL_API_REQUESTS = 2;
         QueueManager.initializeQueue(4);
         await this.readStoredAssays();
         this.loading = false;
