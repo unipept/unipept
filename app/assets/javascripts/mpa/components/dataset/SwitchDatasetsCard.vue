@@ -111,7 +111,6 @@ export default class SwitchDatasetsCard extends Vue {
     }
 
     get isInProgress(): boolean {
-        console.log("In progress: " + this.$store.getters.assays.some(a => a.analysisMetaData.progress < 1));
         return this.$store.getters.assays.some(a => a.analysisMetaData.progress < 1);
     }
 
