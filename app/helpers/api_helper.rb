@@ -12,7 +12,14 @@ module ApiHelper
 
     if include_names
       names = order.map { |s| s == :class_ ? 'class_name' : "#{s}_name" }
-      a = names.zip(lineage.to_a)
+      lineage_arr = lineage.to_a
+      # repair array to be consistent with ranks that have been added or deleted in v2 of the API
+      if @v1
+        lineage_arr = lineage_arr.insert(9, "")
+        lineage_arr = lineage_arr.insert(14, "")
+        lineage_arr.delete_at(26)
+      end
+      a = names.zip(lineage_arr)
       b = id_names.zip(ids)
       lineage_info = Hash[b.zip(a).flatten(1)]
     else

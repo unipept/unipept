@@ -17,5 +17,3 @@ rm -f ./node_modules/unipept-web-components/dist/unipept-web-components.umd.min.
 node link_with_web_components_watch.js
 #ln -s ../unipept-web-components/dist/unipept-web-components.umd.min.js ./node_modules/unipept-web-components/dist/unipept-web-components.umd.min.js
 
-
-
