@@ -1,9 +1,10 @@
 set :stage, :api
 
-set :deploy_to, '/home/bmesuere/rails'
+set :deploy_to, '/home/unipept/rails'
 
 # don't specify db as it's not needed for unipept
-server 'api.unipept.ugent.be', user: 'bmesuere', roles: %i[web app], ssh_options: {
+# Can be used for sherlock, rick and mycroft
+server 'sherlock.ugent.be', user: 'unipept', roles: %i[web app], ssh_options: {
   port: 4840
 }
 
