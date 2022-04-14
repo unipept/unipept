@@ -41,7 +41,7 @@ export default class SingleResults extends Vue {
     private communicationSource: CommunicationSource = new DefaultCommunicationSource();
 
     private created() {
-        NetworkConfiguration.BASE_URL = "";
+        NetworkConfiguration.BASE_URL = "https://api.unipept.ugent.be";
         QueueManager.initializeQueue(4);
 
         const currentRoute: string = window.location.href;

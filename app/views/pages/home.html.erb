@@ -25,6 +25,22 @@
 <br>
 <div class="row features">
   <div class="col-xs-4">
+    <a href="<%= api_umgap_path %>">
+      <div class="card feature">
+        <div class="card-media">
+          <object data="<%= asset_path('home_feature_umgap.svg') %>" type="image/svg+xml"></object>
+          <div class="click-catcher"></div>
+        </div>
+        <div class="card-title card-title-image">
+          <h2 class="card-title-text">UMGAP</h2>
+        </div>
+        <div class="card-supporting-text">
+          Use the Unipept MetaGenomics Analysis Pipeline to assign taxonomic labels to your <b>shotgun metagenomics reads</b>. The results are available as taxonomic frequency tables and interactive visualizations. The UMGAP is a collection of command line tools. Combine them into your own pipeline to identify (short) shotgun metagenomics reads.
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-xs-4">
     <a href="<%= search_single_path %>">
       <div class="card feature">
         <div class="card-media">
@@ -55,36 +71,19 @@
       </div>
     </a>
   </div>
-  <div class="col-xs-4">
-    <a href="<%= peptide_finder_path %>">
-      <div class="card feature">
-        <div class="card-media">
-          <object data="<%= asset_path('home_feature_pancore.svg') %>" type="image/svg+xml"></object>
-          <div class="click-catcher"></div>
-        </div>
-        <div class="card-title card-title-image">
-          <h2 class="card-title-text">Unique Peptide Finder</h2>
-        </div>
-        <div class="card-supporting-text">
-          The unique peptide finder is an interactive web application that lets you find <b>unique tryptic peptides</b> for a species or genus of your choice. The user friendly application is powered by the UniProt proteomes with the possibility of adding your genomes and lets you download lists of unique peptides, which can be used for <b>targeted proteomics</b> experiments.
-        </div>
-      </div>
-    </a>
-  </div>
 </div>
 <div class="row features">
   <div class="col-xs-4">
-    <a href="<%= peptidome_clustering_path %>">
+    <a href="<%= api_desktop_path %>">
       <div class="card feature">
         <div class="card-media">
-          <object data="<%= asset_path('home_feature_cluster.svg') %>" type="image/svg+xml"></object>
-          <div class="click-catcher"></div>
+          <img src="<%= asset_path('home_feature_desktop.png') %>" alt="Unipept Desktop">
         </div>
         <div class="card-title card-title-image">
-          <h2 class="card-title-text">Peptidome Clustering</h2>
+          <h2 class="card-title-text">Unipept Desktop</h2>
         </div>
         <div class="card-supporting-text">
-          Peptidome clustering builds on the foundations of the user friendly unique peptide finder interface to let you select a <b>set of genomes</b> of your choice, and <b>calculate similarities</b> between them based on their tryptic peptidome. The result is shown as a similarity matrix and a phylogenetic tree.
+          The Unipept Desktop application allows, in contrast to the web application, to analyse much larger samples, to store analysis results offline, to extensively compare assays with each other and to better manage samples. This application is powered by the Electron framework and runs on almost all systems.
         </div>
       </div>
     </a>
@@ -124,6 +123,40 @@
         </div>
         <div class="card-supporting-text">
           <span class="label label-success">New</span> The Unipept <b>command line interface</b> (<span class='initialism'>CLI</span>) is a wrapper around the Unipept <span class='initialism'>API</span> that offers an easy way to <b>integrate Unipept</b> functionality into your data processing <b>pipelines and scripts</b>. These pages cover installation and usage instructions, an overview of all available options and several use cases.
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+<div class="row features">
+  <div class="col-xs-4">
+    <a href="<%= peptide_finder_path %>">
+      <div class="card feature">
+        <div class="card-media">
+          <object data="<%= asset_path('home_feature_pancore.svg') %>" type="image/svg+xml"></object>
+          <div class="click-catcher"></div>
+        </div>
+        <div class="card-title card-title-image">
+          <h2 class="card-title-text">Unique Peptide Finder</h2>
+        </div>
+        <div class="card-supporting-text">
+          The unique peptide finder is an interactive web application that lets you find <b>unique tryptic peptides</b> for a species or genus of your choice. The user friendly application is powered by the UniProt proteomes with the possibility of adding your genomes and lets you download lists of unique peptides, which can be used for <b>targeted proteomics</b> experiments.
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="col-xs-4">
+    <a href="<%= peptidome_clustering_path %>">
+      <div class="card feature">
+        <div class="card-media">
+          <object data="<%= asset_path('home_feature_cluster.svg') %>" type="image/svg+xml"></object>
+          <div class="click-catcher"></div>
+        </div>
+        <div class="card-title card-title-image">
+          <h2 class="card-title-text">Peptidome Clustering</h2>
+        </div>
+        <div class="card-supporting-text">
+          Peptidome clustering builds on the foundations of the user friendly unique peptide finder interface to let you select a <b>set of genomes</b> of your choice, and <b>calculate similarities</b> between them based on their tryptic peptidome. The result is shown as a similarity matrix and a phylogenetic tree.
         </div>
       </div>
     </a>

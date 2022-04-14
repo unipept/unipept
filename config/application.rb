@@ -38,13 +38,17 @@ module UnipeptWeb
     config.filter_parameters += [:password]
 
     config.versions = {
-      unipept: '4.4.4',
+      unipept: '4.6.2',
       gem: '2.2.1',
-      uniprot: '2020.01',
-      desktop: '0.5.0'
+      uniprot: '2021.03',
+      desktop: '1.2.1'
     }
 
     config.api_host = 'api.unipept.ugent.be'
+
+    # Increase key space limit to allow for larger requests to succeed (which is for example required by large requests
+    # to taxa2tree)
+    Rack::Utils.key_space_limit = 10485760
 
     MultiJson.use :Oj
   end
