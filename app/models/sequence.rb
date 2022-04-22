@@ -72,7 +72,7 @@ class Sequence < ApplicationRecord
   end
 
   def self.missed_cleavage(sequence, equate_il)
-    # Commentaar toevoegen eerste optimalisatie
+    # If no missed cleavages are detected in the given sequence, an empty array will be returned.
     sequences = sequence
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
