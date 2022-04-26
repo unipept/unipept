@@ -52,22 +52,57 @@ class UniprotEntry < ApplicationRecord
   #
   # @param entries list of UniprotEnteries that match the sequence
   def self.summarize_fa(entries)
-    # Count GO term occurences
-    data = entries
-           .flat_map(&:go_cross_references)
-           .each_with_object(Hash.new(0)) { |term, acc| acc[term.go_term_code] += 1; }
+    data = Hash.new(0)
 
-    # Count EC numbers occurences
-    data = entries
-           .flat_map(&:ec_cross_references)
-           .each_with_object(data) { |num, acc| acc['EC:' + num.ec_number_code] += 1; }
+    uniprot_entry_ids = entries.map(&:id)
+
+    # Count GO term occurences
+    ups_with_go = Set.new
+    uniprot_entry_ids
+      .each_slice(50) do |id_batch|
+        GoCrossReference
+          .where(uniprot_entry_id: id_batch)
+          .all
+          .each do |cr|
+            ups_with_go.add(cr.uniprot_entry_id)
+            # Also count in how many proteins this GO term occurs
+            data[cr.go_term_code] += 1
+          end
+      end
+
+    # Count EC Term occurences
+    ups_with_ec = Set.new
+    uniprot_entry_ids
+      .each_slice(50) do |id_batch|
+      EcCrossReference
+        .where(uniprot_entry_id: id_batch)
+        .all
+        .each do |cr|
+        ups_with_ec.add(cr.uniprot_entry_id)
+        # Also count in how many proteins this EC number occurs
+        data['EC:' + cr.ec_number_code] += 1
+      end
+    end
+
+    # Count InterPro code occurences
+    ups_with_ipr = Set.new
+    uniprot_entry_ids
+      .each_slice(50) do |id_batch|
+      InterproCrossReference
+        .where(uniprot_entry_id: id_batch)
+        .all
+        .each do |cr|
+        ups_with_ipr.add(cr.uniprot_entry_id)
+        data['IPR:' + cr.interpro_entry_code] += 1
+      end
+    end
 
     {
       'num' => {
         'all' => entries.length,
-        'EC' => entries.count { |e| !e.ec_cross_references.empty? },
-        'GO' => entries.count { |e| !e.go_cross_references.empty? },
-        'IPR' => entries.count { |e| !e.interpro_cross_references.empty? }
+        'EC' => ups_with_ec.length,
+        'GO' => ups_with_go.length,
+        'IPR' => ups_with_ipr.length
       },
       'data' => data
     }
