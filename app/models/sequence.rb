@@ -72,12 +72,21 @@ class Sequence < ApplicationRecord
   end
 
   def self.missed_cleavage(sequence, equate_il)
+    # If no missed cleavages are detected in the given sequence, an empty array will be returned.
     sequences = sequence
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
                 .gsub(/([KR])([^P])/, "\\1\n\\2")
-                .lines.map(&:strip).to_a
+                .lines.map(&:strip).reject { |i| i.length.zero? }.to_a
 
-    # search the most unique sequence
+    # If only one sequence is present in this array, no missed cleavages were detected for this sequence and we don't
+    # need to continue computing these (since it will not make any difference anyway).
+    return nil if sequences.length <= 1
+
+    # search the most unique sequence. For each sequence (or thus tryptic peptide here), we can look up all the
+    # original proteins in which it occurs. Then we need to check if the original peptide (with missed cleavages)
+    # fully occurs in these original proteins (the proteins in which not the complete original peptide is present
+    # need to be discarded). It thus makes sense to only look at the proteins from the peptide that's associated
+    # with the least amount of proteins.
     p_counts = Sequence.where(sequence: sequences)
                        .joins(equate_il ? :peptides : :original_peptides)
                        .group('sequences.id')
@@ -85,15 +94,28 @@ class Sequence < ApplicationRecord
 
     return nil if p_counts.empty?
 
-    entries = Sequence
-              .includes(Sequence.peptides_relation_name(equate_il) => { uniprot_entry: %i[lineage ec_cross_references go_cross_references] })
-              .find(p_counts.min_by(&:num_of_peptides).id)
-              .peptides(equate_il).map(&:uniprot_entry).to_set
-              .select { |e| e.protein_contains?(sequence, equate_il) }
+    entries = []
+
+    Sequence
+      .find(p_counts.min_by(&:num_of_peptides).id)
+      .peptides(equate_il)
+      .each_slice(50) do |peptide_batch|
+        entries += UniprotEntry
+                   .where(id: peptide_batch.map(&:uniprot_entry_id))
+                   .all
+                   .to_set
+                   .select { |e| e.protein_contains?(sequence, equate_il) }
+      end
 
     return nil if entries.empty?
 
-    lineages = entries.map(&:lineage).uniq.compact
+    lineages = []
+    entries
+      .map(&:taxon_id)
+      .each_slice(50) { |taxon_slice| lineages += Lineage.where(taxon_id: taxon_slice).all }
+
+    lineages = lineages.uniq.compact
+
     lca = Lineage.calculate_lca_taxon(lineages)
 
     fadata = UniprotEntry.summarize_fa(entries)
