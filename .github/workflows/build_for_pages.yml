@@ -1,0 +1,27 @@
+name: Publish web to GitHub Pages.
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+  
+permissions:
+  contents: write
+  
+jobs:
+  build_for_pages:
+    runs-on: ubuntu-latest
+    env:
+      GH_ACTION: true
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v2
+      - name: Install and build.
+        run: |
+          npm install
+          npm run build
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist

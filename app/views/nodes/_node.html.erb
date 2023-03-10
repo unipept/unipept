@@ -1,9 +1,0 @@
-<li>
-    <%= node.name %>
-    <% if !node.data[:self_count].nil? %> 
- (<%= node.data[:self_count] %>)
-    <% end %>
-</li>
-<ul>
-    <%=render node.children%>
-</ul>
