@@ -11,6 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 const directory = './../unipept-web-components/dist'
+const typesDirectory = './../unipept-web-components/types'
 
 const errHandler = function(err) {
     if (err) {
@@ -21,22 +22,28 @@ const errHandler = function(err) {
 console.log("Watching file system for changes...");
 
 // Watch for changes to the web components directory.
-chokidar.watch(directory).on('all', (event, currentPath) => {
-    if (!currentPath.includes('/node_modules') && !currentPath.includes('/.git')) {
-        const filteredPath = currentPath.replace('../unipept-web-components', './node_modules/unipept-web-components');
-        const directory = path.dirname(filteredPath);
-        switch(event) {
-            case 'add':
-                fs.mkdirSync(directory, { recursive: true }, errHandler);
-                fs.copyFile(currentPath, filteredPath, errHandler);
-                break;
-            case 'change':
-                fs.copyFile(currentPath, filteredPath, errHandler);
-                break;
-            case 'unlink':
-                fs.unlink(filteredPath, errHandler);
-                break;
+function watchDirectory(dir) {
+    chokidar.watch(dir).on('all', (event, currentPath) => {
+        if (!currentPath.includes('/node_modules') && !currentPath.includes('/.git')) {
+            const filteredPath = currentPath.replace('../unipept-web-components', './node_modules/unipept-web-components');
+            const directory = path.dirname(filteredPath);
+            switch(event) {
+                case 'add':
+                    fs.mkdirSync(directory, { recursive: true }, errHandler);
+                    fs.copyFile(currentPath, filteredPath, errHandler);
+                    break;
+                case 'change':
+                    fs.copyFile(currentPath, filteredPath, errHandler);
+                    break;
+                case 'unlink':
+                    fs.unlink(filteredPath, errHandler);
+                    break;
+            }
+            console.log(event, currentPath);
         }
-        console.log(event, currentPath);
-    }
-});
+    });
+}
+
+watchDirectory(directory);
+watchDirectory(typesDirectory);
+

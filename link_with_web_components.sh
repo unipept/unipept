@@ -9,6 +9,9 @@
 # This script assumes that the unipept-web-components project and the unipept project
 # live in the same parent folder.
 
+# Remove types folder
+rm -rf ./node_modules/unipept-web-components/types/*
+
 # First remove the original dist data and link both together
 rm -f ./node_modules/unipept-web-components/dist/unipept-web-components.umd.min.js
 

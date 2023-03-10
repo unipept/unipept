@@ -1,29 +1,43 @@
 {
-    "compilerOptions": {
-        "declaration": false,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "downlevelIteration": true,
-        "allowSyntheticDefaultImports": true,
-        "strict": false,
-        "strictPropertyInitialization": false,
-        "useDefineForClassFields": false,
-        "allowJs": true,
-        "lib": ["es6", "dom"],
-        "module": "es6",
-        "moduleResolution": "node",
-        "baseUrl": ".",
-        "paths": {
-            "*": ["node_modules/*", "app/javascript/*"]
-        },
-        "sourceMap": true,
-        "target": "es6"
-    },
-    "exclude": [
-        "**/*.spec.ts",
-        "node_modules",
-        "vendor",
-        "public"
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "types": [
+      "node",
+      "webpack-env",
+      "vuetify",
+      "unipept-web-components"
     ],
-    "compileOnSave": false
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
