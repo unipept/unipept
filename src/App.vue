@@ -109,7 +109,7 @@ const githubCommunicator = new GithubCommunicator();
 const unipeptCommunicator = new UnipeptCommunicator();
 
 onBeforeMount(async () => {
-    const web = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-web/releases");
+    const web = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept/releases");
     unipeptVersion.value = web.tag_name.replace("v", "");
     uniprotVersion.value = await unipeptCommunicator.uniprotVersion();
 });

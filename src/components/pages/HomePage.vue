@@ -130,16 +130,16 @@ const loading = ref<boolean>(true);
 const services = ref<Service[]>([]);
 
 onBeforeMount(async () => {
-    const API = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept/releases");
-    const CLI = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-cli/releases");
-    const Web = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-web/releases");
-    const Desktop = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-desktop/releases");
+    const api = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-api/releases");
+    const cli = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-cli/releases");
+    const web = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept/releases");
+    const desktop = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-desktop/releases");
 
     services.value = [
-        { name: "API", icon: "mdi-api", version: API.tag_name.replace(/^v/, ""), date: API.published_at, to: "/news/api" },
-        { name: "CLI", icon: "mdi-console", version: CLI.tag_name.replace(/^v/, ""), date: CLI.published_at, to: "/news/cli" },
-        { name: "Web app", icon: "mdi-web", version: Web.tag_name.replace(/^v/, ""), date: Web.published_at, to: "/news/web" },
-        { name: "Desktop app", icon: "mdi-desktop-tower-monitor", version: Desktop.tag_name.replace(/^v/, ""), date: Desktop.published_at, to: "/news/desktop" }
+        { name: "API", icon: "mdi-api", version: api.tag_name.replace(/^v/, ""), date: api.published_at, to: "/news/api" },
+        { name: "CLI", icon: "mdi-console", version: cli.tag_name.replace(/^v/, ""), date: cli.published_at, to: "/news/cli" },
+        { name: "Web app", icon: "mdi-web", version: web.tag_name.replace(/^v/, ""), date: web.published_at, to: "/news/web" },
+        { name: "Desktop app", icon: "mdi-desktop-tower-monitor", version: desktop.tag_name.replace(/^v/, ""), date: desktop.published_at, to: "/news/desktop" }
     ];
 
     loading.value = false;
