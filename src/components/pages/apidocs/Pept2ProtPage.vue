@@ -4,56 +4,56 @@
             <Initialism>POST</Initialism> /api/v1/pept2prot
         </h1>
         <h3 class="font-weight-light">Returns the set of UniProt entries containing a given tryptic peptide.</h3>
-        
+
         <v-divider class="my-2" />
 
         <p>
-            This method returns the list of UniProt entries containing a given tryptic peptide. This is the same information as provided on the Protein matches 
+            This method returns the list of UniProt entries containing a given tryptic peptide. This is the same information as provided on the Protein matches
             tab when performing a search with the <RLink to="/tpa" router>Tryptic Peptide Analysis</RLink> in the web interface.
         </p>
 
         <!-- Request Card -->
         <HeaderBodyCard id="request" title="Request">
             <p>
-                The pept2prot method can be used by doing a <Initialism>HTTP POST</Initialism>-request (preferred) or <Initialism>GET</Initialism>-request to 
-                <Code>https://api.unipept.ugent.be/api/v1/pept2prot</Code>. <RLink to="#parameters" router>Parameters</RLink> can be included in the request body 
-                (<Initialism>POST</Initialism>) or in the query string (<Initialism>GET</Initialism>). The only required parameter is <Code>input[]</Code>, which 
+                The pept2prot method can be used by doing a <Initialism>HTTP POST</Initialism>-request (preferred) or <Initialism>GET</Initialism>-request to
+                <Code>https://api.unipept.ugent.be/api/v1/pept2prot</Code>. <RLink to="#parameters" router>Parameters</RLink> can be included in the request body
+                (<Initialism>POST</Initialism>) or in the query string (<Initialism>GET</Initialism>). The only required parameter is <Code>input[]</Code>, which
                 takes one or more tryptic peptides.
             </p>
 
             <h3>input</h3>
             <p>
-                <Code>input[]</Code> is a required parameter that takes one or more tryptic peptides. Unipept will return the list of UniProt entries that contain 
-                any of the <Code>input[]</Code> peptides in their protein sequence. To pass multiple peptides at once, simply add multiple <Code>input[]</Code> 
+                <Code>input[]</Code> is a required parameter that takes one or more tryptic peptides. Unipept will return the list of UniProt entries that contain
+                any of the <Code>input[]</Code> peptides in their protein sequence. To pass multiple peptides at once, simply add multiple <Code>input[]</Code>
                 parameters (see <RLink to="#example2" router>example</RLink>).
             </p>
 
             <StaticAlert title="Input size">
                 <p>
-                    Unipept puts no restrictions on the number of peptides passed to the <Code>input[]</Code> parameter. Keep in mind that searching for lots of 
-                    peptides at once may cause the request to timeout or, in the case of a <Initialism>GET</Initialism>-request, exceed the maximum 
+                    Unipept puts no restrictions on the number of peptides passed to the <Code>input[]</Code> parameter. Keep in mind that searching for lots of
+                    peptides at once may cause the request to timeout or, in the case of a <Initialism>GET</Initialism>-request, exceed the maximum
                     <Initialism>URL</Initialism> length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
                 </p>
             </StaticAlert>
 
             <h3>equate_il</h3>
             <p>
-                <Code>equate_il</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter 
-                defaults to <Code>false</Code>. When the parameter is set to <Code>true</Code>, isoleucine (I) and leucine (L) are equated when matching tryptic 
-                peptides to UniProt entries. This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the 
+                <Code>equate_il</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter
+                defaults to <Code>false</Code>. When the parameter is set to <Code>true</Code>, isoleucine (I) and leucine (L) are equated when matching tryptic
+                peptides to UniProt entries. This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the
                 <RLink to="/tpa" router>Tryptic Peptide Analysis</RLink> in the web interface.
             </p>
-            
+
             <h3>extra</h3>
             <p>
-                <Code>extra</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter 
-                defaults to <Code>false</Code>. When the parameter is set to <Code>true</Code>, Unipept will return additional information fields. See the  
+                <Code>extra</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter
+                defaults to <Code>false</Code>. When the parameter is set to <Code>true</Code>, Unipept will return additional information fields. See the
                 <RLink to="#response" router>response</RLink> section for an overview of the information fields returned.
             </p>
 
             <StaticAlert title="Performance penalty">
                 <p>
-                    Setting <Code>extra</Code> to <Code>true</Code> has a performance penalty inferred from additional database queries. Do not use this parameter 
+                    Setting <Code>extra</Code> to <Code>true</Code> has a performance penalty inferred from additional database queries. Do not use this parameter
                     unless the extra information fields are needed.
                 </p>
             </StaticAlert>
@@ -62,7 +62,7 @@
         <!-- Response Card -->
         <HeaderBodyCard id="response" title="Response" class="mt-5">
             <p class="mb-2">
-                Matching UniProt entries are returned as a list of <Initialism>JSON</Initialism> objects. By default, each object contains the following information 
+                Matching UniProt entries are returned as a list of <Initialism>JSON</Initialism> objects. By default, each object contains the following information
                 fields extracted from the UniProt entry:
 
                 <ul class="my-3">
@@ -72,17 +72,13 @@
                     <li><Code>taxon_id</Code>: the NCBI taxon id of the organism associated with the matching record</li>
                 </ul>
 
-                When the <Code>extra</Code> parameter is set to <Code>true</Code>, objects contain the following additional fields extracted from the 
+                When the <Code>extra</Code> parameter is set to <Code>true</Code>, objects contain the following additional fields extracted from the
                 UniProt entry:
 
                 <ul class="mt-3">
                     <li><Code>taxon_name</Code>: the name of the organism associated with the matching UniProt entry</li>
                     <li><Code>ec_references</Code>: a space separated list of associated <Initialism>EC</Initialism> numbers</li>
                     <li><Code>go_references</Code>: a space separated list of associated <Initialism>GO</Initialism> terms</li>
-                    <li><Code>refseq_ids</Code>: a space separated list of associated RefSeq accession numbers</li>
-                    <li><Code>refseq_protein_ids</Code>: a space separated list of associated RefSeq protein accession numbers</li>
-                    <li><Code>insdc_ids</Code>: a space separated list of associated insdc accession numbers</li>
-                    <li><Code>insdc_protein_ids</Code>: a space separated list of associated insdc protein accession numbers</li>
                 </ul>
             </p>
         </HeaderBodyCard>
@@ -142,12 +138,12 @@
 
         <h2 id="examples" class="font-weight-light mt-10 mb-n2">Examples</h2>
 
-        <ExampleCard 
-            title="Retrieve all UniProt entries containing a given tryptic peptide" 
+        <ExampleCard
+            title="Retrieve all UniProt entries containing a given tryptic peptide"
             :response="response1"
         >
             <template v-slot:description>
-                This example retrieves all UniProt entries containing the peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i>. The result is the same as 
+                This example retrieves all UniProt entries containing the peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i>. The result is the same as
                 this search with the Tryptic Peptide Analysis in the web interface.
             </template>
             <template v-slot:post>
@@ -158,15 +154,15 @@
             </template>
         </ExampleCard>
 
-        <ExampleCard 
+        <ExampleCard
             id="example2"
             class="mt-5"
-            title="Retrieve all UniProt entries containing any of multiple tryptic peptides" 
+            title="Retrieve all UniProt entries containing any of multiple tryptic peptides"
             :response="response2"
         >
             <template v-slot:description>
-                This example retrieves all UniProt entries containing either the tryptic peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i> or the 
-                tryptic peptide <i><Initialism>APVLSDSSCK</Initialism></i>. The result is the same as the combination of this search and this search with the 
+                This example retrieves all UniProt entries containing either the tryptic peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i> or the
+                tryptic peptide <i><Initialism>APVLSDSSCK</Initialism></i>. The result is the same as the combination of this search and this search with the
                 Tryptic Peptide Analysis in the web interface.
             </template>
             <template v-slot:post>
@@ -177,13 +173,13 @@
             </template>
         </ExampleCard>
 
-        <ExampleCard 
+        <ExampleCard
             class="mt-5"
-            title="Retrieve all UniProt entries containing a single tryptic peptide, while equating I and L" 
+            title="Retrieve all UniProt entries containing a single tryptic peptide, while equating I and L"
             :response="response3"
         >
             <template v-slot:description>
-                This example retrieves all UniProt entries containing the tryptic peptide <i><Initialism>APVLSDSSCK</Initialism></i>. In searching, isoleucine (I) 
+                This example retrieves all UniProt entries containing the tryptic peptide <i><Initialism>APVLSDSSCK</Initialism></i>. In searching, isoleucine (I)
                 and leucine (L) are considered equal. The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
             <template v-slot:post>
@@ -194,13 +190,13 @@
             </template>
         </ExampleCard>
 
-        <ExampleCard 
+        <ExampleCard
             class="mt-5"
-            title="Retrieve all UniProt entries containing a single tryptic peptide and return extra information" 
+            title="Retrieve all UniProt entries containing a single tryptic peptide and return extra information"
             :response="response4"
         >
             <template v-slot:description>
-                This example retrieves all UniProt entries containing the tryptic peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i>, including additional 
+                This example retrieves all UniProt entries containing the tryptic peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i>, including additional
                 information fields that are not returned by default. The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
             <template v-slot:post>
