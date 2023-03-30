@@ -4,25 +4,12 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to deploy (commit tag version is used if not specified)'
-        required: false
 
 jobs:
   deploy-web:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set version identifier if not specified
-      if: ${{ github.event.inputs.version == "" }}
-      id: vars
-      run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
-    - name: Set version identifier if specified
-      if: ${{ github.event.inputs.version != "" }}
-      id: vars
-      run: echo "tag=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
     - name: Install SSH key
       uses: shimataro/ssh-key-action@v2
       with:
@@ -30,4 +17,4 @@ jobs:
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
     - name: Start deploying requested version
       run: |
-        echo "deploy web v${{ steps.vars.outputs.tag }}" | ssh -p 4840 unipept@unipeptapi.ugent.be
+        echo "deploy web $GITHUB_SHA" | ssh -p 4840 unipept@unipeptapi.ugent.be
