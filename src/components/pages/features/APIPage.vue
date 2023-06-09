@@ -111,6 +111,17 @@ const navigation = [
         ]
     },
     {
+        name: "protinfo",
+        link: "/apidocs/protinfo",
+        children: [
+            { name: "Request", link: "#request" },
+            { name: "Response", link: "#response" },
+            { name: "Parameters", link: "#parameters" },
+            { name: "Examples", link: "#examples" },
+            { name: "Try it", link: "#try" }
+        ]
+    },
+    {
         name: "taxa2lca",
         link: "/apidocs/taxa2lca",
         children: [

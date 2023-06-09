@@ -23,6 +23,7 @@ import {
     APIPept2InterproPage,
     APIPept2FunctPage,
     APIPeptInfoPage,
+    APIProtInfoPage,
     APITaxa2LcaPage,
     APITaxa2TreePage,
     APITaxonomyPage
@@ -169,6 +170,7 @@ const routes = [
             { path: "pept2interpro", component: APIPept2InterproPage, meta: apidocsMeta },
             { path: "pept2funct", component: APIPept2FunctPage, meta: apidocsMeta },
             { path: "peptinfo", component: APIPeptInfoPage, meta: apidocsMeta },
+            { path: "protinfo", component: APIProtInfoPage, meta: apidocsMeta },
             { path: "taxa2lca", component: APITaxa2LcaPage, meta: apidocsMeta },
             { path: "taxa2tree", component: APITaxa2TreePage, meta: apidocsMeta },
             { path: "taxonomy", component: APITaxonomyPage, meta: apidocsMeta },
