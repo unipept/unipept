@@ -119,7 +119,7 @@ export default class UnipeptCommunicator {
             params.append("input[]", inp);
         }
 
-        return await fetch(this.prepareURL("http://localhost:3000/api/v1/", "protinfo.json", params)).then(r => r.json());
+        return await fetch(this.prepareURL("https://api.unipept.ugent.be/api/v1/", "protinfo.json", params)).then(r => r.json());
     }
 
     public async taxa2lca(input: string[], extra = false, names = false): Promise<string[]> {
