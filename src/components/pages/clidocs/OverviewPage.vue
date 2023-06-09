@@ -215,6 +215,11 @@ const functions = [
         link: "/clidocs/peptinfo"  
     },
     { 
+        resource: "unipept protinfo", 
+        description: "Returns functional and taxonomic information for a given UniProt id.",
+        link: "/clidocs/protinfo"  
+    },
+    { 
         resource: "unipept taxa2lca", 
         description: "Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.",
         link: "/clidocs/taxa2lca"  

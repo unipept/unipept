@@ -143,6 +143,15 @@ const navigation = [
         ]
     },
     {
+        name: "unipept protinfo",
+        link: "/clidocs/protinfo",
+        children: [
+            { name: "Input", link: "#input" },
+            { name: "Output", link: "#output" },
+            { name: "Options", link: "#options" }
+        ]
+    },
+    {
         name: "unipept taxa2lca",
         link: "/clidocs/taxa2lca",
         children: [

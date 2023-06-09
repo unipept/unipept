@@ -13,6 +13,7 @@ import CLIPept2GoPage from "./Pept2GoPage.vue";
 import CLIPept2InterproPage from "./Pept2InterproPage.vue";
 import CLIPept2FunctPage from "./Pept2FunctPage.vue";
 import CLIPeptInfoPage from "./PeptInfoPage.vue";
+import CLIProtInfoPage from "./ProtInfoPage.vue";
 import CLITaxa2LcaPage from "./Taxa2LcaPage.vue";
 import CLITaxa2TreePage from "./Taxa2TreePage.vue";
 import CLITaxonomyPage from "./TaxonomyPage.vue";
@@ -33,6 +34,7 @@ export {
     CLIPept2InterproPage,
     CLIPept2FunctPage,
     CLIPeptInfoPage,
+    CLIProtInfoPage,
     CLITaxa2LcaPage,
     CLITaxa2TreePage,
     CLITaxonomyPage

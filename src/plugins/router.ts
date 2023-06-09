@@ -46,6 +46,7 @@ import {
     CLIPept2InterproPage,
     CLIPept2FunctPage,
     CLIPeptInfoPage,
+    CLIProtInfoPage,
     CLITaxa2LcaPage,
     CLITaxa2TreePage,
     CLITaxonomyPage
@@ -196,6 +197,7 @@ const routes = [
             { path: "pept2interpro", component: CLIPept2InterproPage, meta: clidocsMeta },
             { path: "pept2funct", component: CLIPept2FunctPage, meta: clidocsMeta },
             { path: "peptinfo", component: CLIPeptInfoPage, meta: clidocsMeta },
+            { path: "protinfo", component: CLIProtInfoPage, meta: clidocsMeta },
             { path: "taxa2lca", component: CLITaxa2LcaPage, meta: clidocsMeta },
             { path: "taxa2tree", component: CLITaxa2TreePage, meta: clidocsMeta },
             { path: "taxonomy", component: CLITaxonomyPage, meta: clidocsMeta }
