@@ -1,11 +1,42 @@
 import { defineStore } from "pinia";
-import { SinglePeptideAnalysisStatus, Peptide, CountTable, Pept2DataCommunicator, NcbiId, NcbiOntologyProcessor, ProteinProcessor, NcbiResponseCommunicator, GoResponseCommunicator, EcOntologyProcessor, EcProteinCountTableProcessor, EcResponseCommunicator, GoOntologyProcessor, GoProteinCountTableProcessor, InterproOntologyProcessor, InterproProteinCountTableProcessor, InterproResponseCommunicator, PeptideData, NcbiTaxon, Ontology, GoCode, GoDefinition, EcCode, EcDefinition, InterproCode, InterproDefinition, NcbiTree, computeEcTree, ProteinResponseCommunicator } from "unipept-web-components";
+import {
+    SinglePeptideAnalysisStatus,
+    Peptide,
+    CountTable,
+    Pept2DataCommunicator,
+    NcbiId,
+    NcbiOntologyProcessor,
+    ProteinProcessor,
+    NcbiResponseCommunicator,
+    GoResponseCommunicator,
+    EcOntologyProcessor,
+    EcProteinCountTableProcessor,
+    EcResponseCommunicator,
+    GoOntologyProcessor,
+    GoProteinCountTableProcessor,
+    InterproOntologyProcessor,
+    InterproProteinCountTableProcessor,
+    InterproResponseCommunicator,
+    PeptideData,
+    NcbiTaxon,
+    Ontology,
+    GoCode,
+    GoDefinition,
+    EcCode,
+    EcDefinition,
+    InterproCode,
+    InterproDefinition,
+    NcbiTree,
+    computeEcTree,
+    ProteinResponseCommunicator,
+    PeptideCountTableProcessor
+} from "unipept-web-components";
 import { ref } from "vue";
 import useConfigurationStore from "./ConfigurationStore";
 
 const useSingleAnalysis = defineStore('single-analysis', () => {
     const configuration = useConfigurationStore();
-    
+
     const pept2DataCommunicator = new Pept2DataCommunicator(
         configuration.unipeptApiUrl,
         configuration.peptideDataBatchSize,
@@ -40,7 +71,7 @@ const useSingleAnalysis = defineStore('single-analysis', () => {
         ecTree: { count: 0, selfCount: 0 }
     } as SinglePeptideAnalysisStatus)
 
-    const setPeptide = (peptide: Peptide) => assay.value.peptide = peptide; 
+    const setPeptide = (peptide: Peptide) => assay.value.peptide = peptide;
 
     const setEquateIl = (equateIl: boolean) => assay.value.equateIl = equateIl;
 
@@ -52,10 +83,8 @@ const useSingleAnalysis = defineStore('single-analysis', () => {
 
         setInProgress(true);
 
-        const peptideMap = new Map<Peptide, number>();
-        peptideMap.set(peptide, 1);
-
-        const peptideCountTable = new CountTable<Peptide>(peptideMap);
+        const peptideCountTableProcessor = new PeptideCountTableProcessor();
+        const peptideCountTable= await peptideCountTableProcessor.getPeptideCountTable([peptide], false, false, equateIl)
 
         const [pept2Data, trust] = await pept2DataCommunicator.process(peptideCountTable, false, equateIl);
 
@@ -106,7 +135,7 @@ const useSingleAnalysis = defineStore('single-analysis', () => {
         const interproOntologyProcessor = new InterproOntologyProcessor(interproCommunicator);
         const interproOntology = await interproOntologyProcessor.getOntology(interproProteinProcessor.getCountTable());
 
-        assay.value.peptideData = pept2Data.get(peptide)!;        
+        assay.value.peptideData = pept2Data.get(peptide)!;
         assay.value.ncbiOntology = ncbiOntology;
         assay.value.proteinProcessor = proteinProcessor;
         assay.value.goProteinCountTableProcessor = goProteinProcessor;
