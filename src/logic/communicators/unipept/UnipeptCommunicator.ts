@@ -112,6 +112,16 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "peptinfo.json", params)).then(r => r.json());
     }
 
+    public async protinfo(input: string[]): Promise<string[]> {
+        const params = new URLSearchParams();
+
+        for(const inp of input) {
+            params.append("input[]", inp);
+        }
+
+        return await fetch(this.prepareURL("https://api.unipept.ugent.be/api/v1/", "protinfo.json", params)).then(r => r.json());
+    }
+
     public async taxa2lca(input: string[], extra = false, names = false): Promise<string[]> {
         const params = new URLSearchParams({
             extra: extra.toString(),

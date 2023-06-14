@@ -7,6 +7,7 @@ import APIPept2GoPage from "./Pept2GoPage.vue";
 import APIPept2InterproPage from "./Pept2InterproPage.vue";
 import APIPept2FunctPage from "./Pept2FunctPage.vue";
 import APIPeptInfoPage from "./PeptInfoPage.vue";
+import APIProtInfoPage from "./ProtInfoPage.vue";
 import APITaxa2LcaPage from "./Taxa2LcaPage.vue";
 import APITaxa2TreePage from "./Taxa2TreePage.vue";
 import APITaxonomyPage from "./TaxonomyPage.vue";
@@ -21,6 +22,7 @@ export {
     APIPept2InterproPage,
     APIPept2FunctPage,
     APIPeptInfoPage,
+    APIProtInfoPage,
     APITaxa2LcaPage,
     APITaxa2TreePage,
     APITaxonomyPage

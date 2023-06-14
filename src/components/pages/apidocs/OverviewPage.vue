@@ -90,6 +90,11 @@ const functions = [
         link: "/apidocs/peptinfo"  
     },
     { 
+        resource: "POST /api/v1/protinfo", 
+        description: "Returns functional information and the taxonomic identifier for a given uniprot ID.",
+        link: "/apidocs/protinfo"  
+    },
+    { 
         resource: "POST /api/v1/taxa2lca", 
         description: "Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.",
         link: "/apidocs/taxa2lca"  

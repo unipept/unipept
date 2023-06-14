@@ -23,6 +23,7 @@ import {
     APIPept2InterproPage,
     APIPept2FunctPage,
     APIPeptInfoPage,
+    APIProtInfoPage,
     APITaxa2LcaPage,
     APITaxa2TreePage,
     APITaxonomyPage
@@ -45,6 +46,7 @@ import {
     CLIPept2InterproPage,
     CLIPept2FunctPage,
     CLIPeptInfoPage,
+    CLIProtInfoPage,
     CLITaxa2LcaPage,
     CLITaxa2TreePage,
     CLITaxonomyPage
@@ -169,6 +171,7 @@ const routes = [
             { path: "pept2interpro", component: APIPept2InterproPage, meta: apidocsMeta },
             { path: "pept2funct", component: APIPept2FunctPage, meta: apidocsMeta },
             { path: "peptinfo", component: APIPeptInfoPage, meta: apidocsMeta },
+            { path: "protinfo", component: APIProtInfoPage, meta: apidocsMeta },
             { path: "taxa2lca", component: APITaxa2LcaPage, meta: apidocsMeta },
             { path: "taxa2tree", component: APITaxa2TreePage, meta: apidocsMeta },
             { path: "taxonomy", component: APITaxonomyPage, meta: apidocsMeta },
@@ -194,6 +197,7 @@ const routes = [
             { path: "pept2interpro", component: CLIPept2InterproPage, meta: clidocsMeta },
             { path: "pept2funct", component: CLIPept2FunctPage, meta: clidocsMeta },
             { path: "peptinfo", component: CLIPeptInfoPage, meta: clidocsMeta },
+            { path: "protinfo", component: CLIProtInfoPage, meta: clidocsMeta },
             { path: "taxa2lca", component: CLITaxa2LcaPage, meta: clidocsMeta },
             { path: "taxa2tree", component: CLITaxa2TreePage, meta: clidocsMeta },
             { path: "taxonomy", component: CLITaxonomyPage, meta: clidocsMeta }
