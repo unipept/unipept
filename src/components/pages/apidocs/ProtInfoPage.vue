@@ -103,8 +103,6 @@
 
         <h2 id="examples" class="font-weight-light mt-10 mb-n2">Examples</h2>
 
-        <!-- TODO: aanvullen vanaf hier -->
-
         <ExampleCard 
             title="Retrieve the functional ec-numbers, go-terms, InterPro entries and organism associated with a given UniProt id" 
             :response="response1"
