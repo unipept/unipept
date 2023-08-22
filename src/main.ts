@@ -1,15 +1,20 @@
-import Vue from "vue"
-import App from "./App.vue"
-import vuetify from "./plugins/vuetify"
-import router from "./plugins/router"
-import pinia from "./plugins/pinia"
+/**
+ * main.ts
+ *
+ * Bootstraps Vuetify and other plugins then mounts the App`
+ */
 
-Vue.config.productionTip = false
+// Components
+import App from './App.vue'
 
-new Vue({
-    // @ts-ignore
-    vuetify,
-    router,
-    pinia,
-    render: h => h(App)
-}).$mount("#app")
+// Composables
+import { createApp } from 'vue'
+
+// Plugins
+import { registerPlugins } from '@/plugins'
+
+const app = createApp(App)
+
+registerPlugins(app)
+
+app.mount('#app')
