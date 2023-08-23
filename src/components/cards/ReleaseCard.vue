@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-card v-if="!release.tag_name">
-            <v-card-title class="blue white--text">
+            <v-card-title class="bg-blue text-white pa-4 ">
                 This application has not yet been released
             </v-card-title>
         </v-card>
@@ -14,12 +14,15 @@
             <v-hover>
                 <template #default="{ hover }">
                     <v-card :hover="hover">
-                        <v-card-title class="blue white--text">
+                        <v-card-title class="bg-blue text-white pa-4 ">
                             Unipept {{ release.tag_name.replace(/^v/, "") }}
+                            <div
+                                style="font-size: 16px; line-height: 1rem;"
+                                class="font-weight-light"
+                            >
+                                Posted on {{ formatDate(release.published_at) }}
+                            </div>
                         </v-card-title>
-                        <v-card-subtitle class="blue white--text">
-                            Posted on {{ formatDate(release.published_at) }}
-                        </v-card-subtitle>
 
                         <v-card-text
                             v-if="changelog.description"
@@ -34,12 +37,12 @@
                                 :key="i"
                                 class="align-center px-0"
                             >
-                                <li class="nobull">
+                                <li style="list-style-type: none;">
                                     <v-chip
                                         v-if="item.tag"
                                         class="me-2"
                                         :class="item.tag"
-                                        x-small
+                                        size="x-small"
                                         label
                                     >
                                         {{ item.tag }}
@@ -113,9 +116,5 @@ a {
     font-weight: 800 !important;
     text-transform: uppercase;
     align-content: center;
-}
-
-.nobull {
-    list-style-type: none;
 }
 </style>

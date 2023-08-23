@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-text class="pa-0">
+        <v-card-text class="pa-2">
             <v-list-item
                 class="grow"
                 :subtitle="title"

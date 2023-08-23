@@ -1,6 +1,10 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
 
+const newsMeta = {
+    publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
+    publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+};
 
 const routes = [
     {
@@ -18,6 +22,18 @@ const routes = [
             publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
             publicationLink: "doi:10.1021/acs.jproteome.8b00716"
         }
+    },
+    {
+        path: "/news",
+        component: () => import("@/components/pages/NewsPage.vue"),
+        children: [
+            { path: "", component: () => import("@/components/pages/news/NewsOverviewPage.vue"), meta: newsMeta },
+            { path: "api", component: () => import("@/components/pages/news/APINewsPage.vue"), meta: newsMeta },
+            { path: "cli", component: () => import("@/components/pages/news/CLINewsPage.vue"), meta: newsMeta },
+            { path: "web", component: () => import("@/components/pages/news/WebNewsPage.vue"), meta: newsMeta },
+            { path: "desktop", component: () => import("@/components/pages/news/DesktopNewsPage.vue"), meta: newsMeta },
+        ],
+        meta: newsMeta
     },
 ]
 

@@ -1,7 +1,6 @@
 <template>
     <v-tabs
-        vertical
-        slider-size="3"
+        direction="vertical"
         color="secondary"
     >
         <div

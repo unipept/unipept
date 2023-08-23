@@ -7,7 +7,7 @@
             hide-on-scroll
             class="px-lg-16"
         >
-            <h2>
+            <h2 class="pl-4">
                 <router-link
                     to="/"
                     class="homepage-title"
@@ -270,5 +270,9 @@ td {
     margin-bottom: 12px;
     max-height: 350px;
     font-size: 90%;
+}
+
+.v-tab {
+    text-transform: none !important;
 }
 </style>
