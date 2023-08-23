@@ -1,0 +1,5 @@
+@use 'vuetify/settings' with (
+  $tab-slider-size: 5px,
+  $navigation-drawer-border-width: 0px,
+  $card-text-font-size: 16px
+);

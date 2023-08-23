@@ -35,13 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { MultiProteomicsAnalysisStatus, PeptideUtils, useCsvDownload } from 'unipept-web-components';
+import { MultiProteomicsAnalysisStatus, PeptideUtils, useCsvDownload } from "unipept-web-components";
 import AnalyticsCommunicator from '@/logic/communicators/analytics/AnalyticsCommunicator';
 import { mergeProps, ref } from "vue";
 
 export interface Props {
     assayStatus: MultiProteomicsAnalysisStatus;
-
     buttonText: string
 }
 

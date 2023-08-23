@@ -1,21 +1,16 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
 
+
 const routes = [
-  {
-    path: '/',
-    component: () => import('@/layouts/default/Default.vue'),
-    children: [
-      {
-        path: '',
-        name: 'Home',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
-      },
-    ],
-  },
+    {
+        path: "/",
+        component: () => import("@/components/pages/HomePage.vue"),
+        meta: {
+            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
+            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+        }
+    },
 ]
 
 const router = createRouter({
@@ -23,4 +18,4 @@ const router = createRouter({
   routes,
 })
 
-export default router
+export default router;

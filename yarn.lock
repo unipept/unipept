@@ -278,9 +278,9 @@
     "@types/d3-selection" "^2"
 
 "@types/d3-dsv@^2":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@types/d3-dsv/-/d3-dsv-2.0.3.tgz#f3f503638613a8b7d87c093bceb433b58e066305"
-  integrity sha512-15sp4Z+ZVWuZuV0QEDu4cu/0C5vlD+JYXaUMDs8JTWpTJjcrAtjyR1vVwEfbgmU5kLNOOMRTlDCYyWWFx7eh/w==
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@types/d3-dsv/-/d3-dsv-2.0.4.tgz#1fae3e6d1ed0fca46979672d267a3d0ae477a7ae"
+  integrity sha512-TAzdow31phQqV8gAkEt2ldG0EilpJMa5lc3VcgM5BWZRalKIEWTHXBXaVJkhJYEmsw3V3WZ88FDIcG+NozmqWA==
 
 "@types/d3-ease@^2":
   version "2.0.2"
@@ -462,6 +462,11 @@
   version "7.5.0"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.0.tgz#591c1ce3a702c45ee15f47a42ade72c2fd78978a"
   integrity sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==
+
+"@types/web-bluetooth@^0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.17.tgz#5c9f3c617f64a9735d7b72a7cc671e166d900c40"
+  integrity sha512-4p9vcSmxAayx72yn70joFoL44c9MO/0+iVEBIQXe3v2h2SiAsEIo/G5v6ObFWvNKRFjbrVadNf9LqEEZeQPzdA==
 
 "@types/webfontloader@^1.6.35":
   version "1.6.35"
@@ -781,6 +786,28 @@
   dependencies:
     find-cache-dir "^3.3.2"
     upath "^2.0.1"
+
+"@vueuse/core@^10.3.0":
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-10.3.0.tgz#b2dab7821ef206811b925fc935163c38056fd82b"
+  integrity sha512-BEM5yxcFKb5btFjTSAFjTu5jmwoW66fyV9uJIP4wUXXU8aR5Hl44gndaaXp7dC5HSObmgbnR2RN+Un1p68Mf5Q==
+  dependencies:
+    "@types/web-bluetooth" "^0.0.17"
+    "@vueuse/metadata" "10.3.0"
+    "@vueuse/shared" "10.3.0"
+    vue-demi ">=0.14.5"
+
+"@vueuse/metadata@10.3.0":
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-10.3.0.tgz#14fe6cc909573785f73a56e4d9351edf3830b796"
+  integrity sha512-Ema3YhNOa4swDsV0V7CEY5JXvK19JI/o1szFO1iWxdFg3vhdFtCtSTP26PCvbUpnUtNHBY2wx5y3WDXND5Pvnw==
+
+"@vueuse/shared@10.3.0":
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-10.3.0.tgz#ce6b4b6860e14aaa293025dcf0cbe1036a25869f"
+  integrity sha512-kGqCTEuFPMK4+fNWy6dUOiYmxGcUbtznMwBZLC1PubidF4VZY05B+Oht7Jh7/6x4VOWGpvu3R37WHi81cKpiqg==
+  dependencies:
+    vue-demi ">=0.14.5"
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
@@ -2156,7 +2183,7 @@ unipept-visualizations@^2.1.0:
 
 "unipept-web-components@file:./unipept-web-components-v2.1.0.tgz":
   version "2.1.0"
-  resolved "file:./unipept-web-components-v2.1.0.tgz#c88794eeb15fce4300f43ea85074e60875416a0f"
+  resolved "file:./unipept-web-components-v2.1.0.tgz#7dbd0e7e2fe396f4bed584384ffbcf6ec3c6a7c7"
   dependencies:
     "@mdi/font" "7.0.96"
     async "^3.2.4"
@@ -2192,7 +2219,7 @@ uuid@^9.0.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
   integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
-vite-plugin-vuetify@^1.0.0:
+vite-plugin-vuetify@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/vite-plugin-vuetify/-/vite-plugin-vuetify-1.0.2.tgz#d1777c63aa1b3a308756461b3d0299fd101ee8f4"
   integrity sha512-MubIcKD33O8wtgQXlbEXE7ccTEpHZ8nPpe77y9Wy3my2MWw/PgehP9VqTp92BLqr0R1dSL970Lynvisx3UxBFw==
