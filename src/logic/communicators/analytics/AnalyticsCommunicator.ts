@@ -47,11 +47,9 @@ export default class AnalyticsCommunicator {
             return;
         }
 
-        // @ts-ignore
-        this.gtag('config', 'G-P3VRXFGD5B', {
-            'send_page_view': false
-        });
-        // @ts-ignore
+        // @ts-ignore (TODO add to global types)
+        this.gtag('config', 'G-P3VRXFGD5B', { 'send_page_view': false });
+        // @ts-ignore (TODO add to global types)
         this.gtag('event', event_name, event_params);
     }
 

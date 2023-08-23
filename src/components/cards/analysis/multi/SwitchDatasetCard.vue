@@ -72,7 +72,10 @@
             <div class="text-center pt-4">
                 <v-tooltip text="Compare samples above using a heatmap.">
                     <template #activator="{ props }">
-                        <v-btn @click="dialogOpen = true">
+                        <v-btn
+                            v-bind="props"
+                            @click="dialogOpen = true"
+                        >
                             Compare samples
                         </v-btn>
                     </template>
@@ -120,10 +123,10 @@
 </template>
 
 <script setup lang="ts">
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
 import { storeToRefs } from 'pinia';
 import { Assay, StringUtils, HeatmapWizardMulti } from 'unipept-web-components';
 import { withDefaults, defineProps, ref } from 'vue';
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 export interface Props {
     assaySelectionInProgress: boolean

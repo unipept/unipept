@@ -198,6 +198,7 @@ onBeforeMount(async () => {
 
 
 <style lang="scss">
+//noinspection CssUnknownTarget (Intellij does not yet consider the package.json exports field)
 @import "unipept-web-components/style.css";
 
 body {
