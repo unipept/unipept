@@ -10,14 +10,15 @@
                         size="36px"
                         color="primary"
                     >
-                        <img
+                        <v-img
                             v-if="imgUrl"
                             alt="Avatar"
                             :src="imgUrl"
-                        >
+                            :cover="false"
+                        />
                         <span
                             v-else
-                            class="font-weight-bold mb-0 white--text"
+                            class="font-weight-bold mb-0 text-white"
                         >
                             {{ initials }}
                         </span>
