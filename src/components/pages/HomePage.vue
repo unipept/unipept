@@ -56,9 +56,9 @@
                             v-bind="props"
                         >
                             With tryptic peptide analysis, you can submit a single
-                            <span class='font-weight-bold'>tryptic peptide</span> that can be 5
+                            <span class="font-weight-bold">tryptic peptide</span> that can be 5
                             to 50 residues long. The application will respond with a list of
-                            <span class='font-weight-bold'>all Uniprot entries</span>
+                            <span class="font-weight-bold">all Uniprot entries</span>
                             wherein the peptide was found along with a complete taxonomic lineage derived from the
                             NCBI taxonomy. These lineages are presented as a comprehensible table and using an
                             interactive tree view.

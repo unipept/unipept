@@ -1,6 +1,11 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
 
+const tpaMeta = {
+    publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
+    publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+};
+
 const newsMeta = {
     publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
     publicationLink: "doi:10.1021/acs.jproteome.8b00716"
@@ -14,6 +19,17 @@ const routes = [
             publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
             publicationLink: "doi:10.1021/acs.jproteome.8b00716"
         }
+    },
+    {
+        path: "/tpa",
+        component: () => import("@/components/pages/features/TrypticPeptideAnalysisPage.vue"),
+        meta: tpaMeta
+    },
+    {
+        path: "/tpa/:sequence",
+        name: "tpaResult",
+        component: () => import("@/components/pages/features/TrypticPeptideAnalysisResultPage.vue"),
+        meta: tpaMeta
     },
     {
         path: "/about",

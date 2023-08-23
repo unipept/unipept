@@ -24,7 +24,7 @@
                             color="green"
                             prepend-icon="mdi-flag"
                         >
-                            New
+                            Updated
                         </v-chip>
 
                         <v-tooltip

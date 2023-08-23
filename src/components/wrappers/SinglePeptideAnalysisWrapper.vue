@@ -7,9 +7,9 @@
             go-link
             ec-link
             interpro-link
-            @go-link-clicked="() => onGoClicked($router)"
-            @ec-link-clicked="() => onEcClicked($router)"
-            @interpro-link-clicked="() => onInterproClicked($router)"
+            @go-link-clicked="() => onGoClicked()"
+            @ec-link-clicked="() => onEcClicked()"
+            @interpro-link-clicked="() => onInterproClicked()"
         />
         <single-peptide-analysis
             id="Analysis"
@@ -23,9 +23,9 @@
 <script setup lang="ts">
 import { defineProps, ref } from 'vue';
 import { SinglePeptideSummary, SinglePeptideAnalysis } from 'unipept-web-components';
-import { useSingleAnalysis } from '@/stores';
 import { useFullscreen } from '@vueuse/core';
-import { Router } from "vue-router";
+import useSingleAnalysis from "@/store/SingleAnalysisStore";
+import { useRouter } from "vue-router";
 
 export interface Props {
     peptide: string
@@ -42,21 +42,17 @@ const currentTab = ref<string>("matched-proteins");
 
 analysisStore.analyse(peptide, equateIl);
 
-const onGoClicked = (router: Router) => {
+const router = useRouter();
+
+const onGoClicked = () => {
     currentTab.value = "go-terms";
-    // https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
-    router.push({ path: '#Analysis' }).catch(() => {});
 }
 
-const onEcClicked = (router: Router) => {
+const onEcClicked = () => {
     currentTab.value = "ec-numbers";
-    // https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
-    router.push({ path: '#Analysis' }).catch(() => {});
 }
 
-const onInterproClicked = (router: Router) => {
+const onInterproClicked = () => {
     currentTab.value = "interpro";
-    // https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
-    router.push({ path: '#Analysis' }).catch(() => {});
 }
 </script>

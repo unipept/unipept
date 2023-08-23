@@ -5,7 +5,7 @@
             lg="8"
             offset-lg="2"
         >
-            <tryptic-peptide-analysis-search-card/>
+            <tryptic-peptide-analysis-search-card />
         </v-col>
     </v-container>
 </template>
