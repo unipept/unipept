@@ -123,7 +123,8 @@
                         :width="600"
                         scrollable
                     >
-                        <missing-peptides-modal :missed-peptides="activeAssayStatus.data.trust.missedPeptides" />
+                        <!-- TODO fix this -->
+<!--                        <missing-peptides-modal :missed-peptides="activeAssayStatus.data.trust.missedPeptides" />-->
                     </v-dialog>
                 </div>
             </div>
@@ -132,12 +133,11 @@
 </template>
 
 <script setup lang="ts">
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
 import { computed, ref, watch } from 'vue';
-import MissingPeptidesModal from '@/components/modals/MissingPeptidesModal.vue';
 import PeptideExportButton from '@/components/buttons/PeptideExportButton.vue';
 import AnalyticsCommunicator from '@/logic/communicators/analytics/AnalyticsCommunicator';
 import { storeToRefs } from "pinia";
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 const multiAnalysisStore = useMultiAnalysis();
 

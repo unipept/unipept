@@ -81,9 +81,9 @@
 
 <script setup lang="ts">
 import useId from '@/composables/useId';
-import useConfigurationStore from '@/stores/ConfigurationStore';
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
 import { onMounted, ref } from 'vue';
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
+import useConfigurationStore from "@/store/ConfigurationStore";
 
 interface SampleDataset {
     id: string,

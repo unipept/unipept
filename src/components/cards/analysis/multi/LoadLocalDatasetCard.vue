@@ -87,10 +87,10 @@
 </template>
 
 <script setup lang="ts">
-import useAssays from '@/stores/AssayStore';
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
 import { Assay } from "unipept-web-components";
 import { ref } from 'vue';
+import useAssays from "@/store/AssayStore";
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 const assayStore = useAssays();
 const multiAnalysisStore = useMultiAnalysis();

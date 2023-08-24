@@ -53,10 +53,10 @@
 
 <script setup lang="ts">
 import { Ref, ref } from "vue";
-import useAssays from '@/stores/AssayStore';
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
 import useId from '@/composables/useId';
 import { VForm } from "vuetify/components";
+import useAssays from "@/store/AssayStore";
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 const assayStore = useAssays();
 const multiAnalysisStore = useMultiAnalysis();

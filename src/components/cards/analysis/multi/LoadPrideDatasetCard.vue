@@ -109,13 +109,13 @@
 </template>
 
 <script setup lang="ts">
-import useAssays from '@/stores/AssayStore';
 import { Ref, ref } from "vue";
 import { PrideCommunicator, Peptide } from 'unipept-web-components';
 import useId from '@/composables/useId';
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
-import useConfigurationStore from '@/stores/ConfigurationStore';
 import { VForm } from "vuetify/components";
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
+import useAssays from "@/store/AssayStore";
+import useConfigurationStore from "@/store/ConfigurationStore";
 
 const assayStore = useAssays();
 const multiAnalysisStore = useMultiAnalysis();

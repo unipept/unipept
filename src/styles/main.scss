@@ -3,3 +3,8 @@
 @use 'vuetify';
 
 // replace with @use 'vuetify' with (...)
+
+// Global styles for the rest of the application
+.link, .link:visited, .link:hover  {
+  color: #2196f3;
+}

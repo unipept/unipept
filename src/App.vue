@@ -214,12 +214,12 @@ body {
     display: none !important;
 }
 
-.link {
+footer .link {
     color: #9e9e9e !important;
     text-decoration: none;
 }
 
-.link:hover {
+footer .link:hover {
     color: white !important;
     text-decoration: none;
 }
