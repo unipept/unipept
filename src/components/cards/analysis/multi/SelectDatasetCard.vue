@@ -23,6 +23,7 @@
                         two-line
                         :title="dataset.assay.name"
                         :subtitle="dataset.assay.amountOfPeptides + ' peptides'"
+                        class="py-4"
                     >
                         <template #append>
                             <div class="d-flex flex-column align-end">

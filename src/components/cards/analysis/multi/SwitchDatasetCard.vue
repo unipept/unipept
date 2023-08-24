@@ -1,74 +1,82 @@
 <template>
     <v-card class="d-flex flex-column">
-        <v-tabs
-            class="flex-grow-0"
-            style="pointer-events: none;"
-            slider-color="primary"
-            background-color="primary"
-            dark
-        >
-            <v-tab>Metaproteomics Analysis</v-tab>
-        </v-tabs>
+        <v-card-title class="bg-primary text-white">
+            Metaproteomics analysis
+        </v-card-title>
 
         <v-card-text v-if="multiAnalysisStore.empty">
             <span>Please add one or more datasets by clicking the plus button above...</span>
         </v-card-text>
 
-        <div
+        <v-card-text
             v-else
-            class="flex-grow-1"
+            class="d-flex flex-column px-0"
         >
-            <v-list
-                v-model="multiAnalysisStore.activeAssayStatus"
-                two-line
-            >
-                <v-list-item
-                    v-for="assayStatus in assayStatuses"
-                    :key="assayStatus.assay.id"
-                    :value="assayStatus"
-                    ripple
-                    :title="assayStatus.assay.name"
-                    :subtitle="done(assayStatus) ? assayStatus.assay.amountOfPeptides + ' peptides': (calculating(assayStatus) ? 'Computing estimated time remaining...' : '~' + StringUtils.secondsToTimeString(assayStatus.progress.eta / 1000 ) + ' remaining...')"
-                    @click="activateAssay(assayStatus.assay)"
+            <div class="flex-grow-1">
+                <v-list
+                    v-model="multiAnalysisStore.activeAssayStatus"
+                    two-line
                 >
-                    <template #prepend>
-                        <div
-                            v-if="multiAnalysisStore.analysisCompleted(assayStatus.assay.id)"
-                            class="select-dataset-radio"
-                        >
-                            <v-radio-group v-model="multiAnalysisStore.activeAssayStatus">
-                                <v-radio :value="assayStatus" />
-                            </v-radio-group>
-                        </div>
-                        <v-progress-circular
-                            v-else
-                            :rotate="-90"
-                            :size="24"
-                            :value="assayStatus.progress.currentValue"
-                            color="primary"
-                        />
-                    </template>
+                    <v-list-item
+                        v-for="assayStatus in assayStatuses"
+                        :key="assayStatus.assay.id"
+                        :value="assayStatus"
+                        ripple
+                        :title="assayStatus.assay.name"
+                        :subtitle="done(assayStatus) ? assayStatus.assay.amountOfPeptides + ' peptides': (calculating(assayStatus) ? 'Computing estimated time remaining...' : '~' + StringUtils.secondsToTimeString(assayStatus.progress.eta / 1000 ) + ' remaining...')"
+                        class="py-4 px-2"
+                        @click="activateAssay(assayStatus.assay)"
+                    >
+                        <template #prepend>
+                            <div
+                                v-if="multiAnalysisStore.analysisCompleted(assayStatus.assay.id)"
+                            >
+                                <v-radio-group
+                                    v-model="multiAnalysisStore.activeAssayStatus"
+                                    hide-details
+                                    color="primary"
+                                    class="mr-2"
+                                >
+                                    <v-radio :value="assayStatus" />
+                                </v-radio-group>
+                            </div>
+                            <v-progress-circular
+                                v-else
+                                :rotate="-90"
+                                :size="24"
+                                :value="assayStatus.progress.currentValue"
+                                class="mr-2"
+                                color="primary"
+                            />
+                        </template>
 
-                    <template #append>
-                        <div class="d-flex justify-end">
-                            <span>{{ dateToString(assayStatus.assay.createdAt) }}</span>
-                            <v-tooltip text="Remove assay from analysis.">
-                                <template #activator="{ props }">
-                                    <v-btn
-                                        icon="mdi-delete-outline"
-                                        v-bind="props"
-                                        @click.stop="removeAssay(assayStatus.assay)"
-                                    />
-                                </template>
-                            </v-tooltip>
-                        </div>
-                    </template>
-                </v-list-item>
-            </v-list>
-        </div>
+                        <template #append>
+                            <div class="d-flex flex-column align-end mr-2">
+                                <span class="text-body-2 text-medium-emphasis">
+                                    {{ dateToString(assayStatus.assay.createdAt) }}
+                                </span>
+                                <v-tooltip text="Remove dataset from analysis.">
+                                    <template #activator="{ props }">
+                                        <v-btn
+                                            class="fix-icon-list-position"
+                                            variant="text"
+                                            icon="mdi-delete-outline"
+                                            v-bind="props"
+                                            size="small"
+                                            density="compact"
+                                            @click="removeAssay(dataset.assay)"
+                                        />
+                                    </template>
+                                </v-tooltip>
+                            </div>
+                        </template>
+                    </v-list-item>
+                </v-list>
+            </div>
 
-        <v-card-text>
             <v-divider />
+
+
             <div class="text-center pt-4">
                 <v-tooltip text="Compare samples above using a heatmap.">
                     <template #activator="{ props }">

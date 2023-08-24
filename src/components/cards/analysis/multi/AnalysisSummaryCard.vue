@@ -1,16 +1,10 @@
 <template>
     <v-card class="d-flex flex-column flex-grow-1">
-        <v-tabs
-            class="flex-grow-0"
-            style="pointer-events: none;"
-            slider-color="primary"
-            background-color="primary"
-            dark
-        >
-            <v-tab>Analysis summary</v-tab>
-        </v-tabs>
+        <v-card-title class="bg-primary text-white">
+            Analysis summary
+        </v-card-title>
 
-        <v-card-text style="flex-grow: 1; display: flex; flex-direction: column;">
+        <v-card-text class="mt-4 d-flex flex-column flex-grow-1">
             <div v-if="!activeAssayStatus">
                 <v-alert type="error">
                     There currently is no active assay. Please select one from the list on the left or add a new assay.
@@ -28,59 +22,59 @@
             </div>
 
             <div v-else>
-                <div class="subtitle-1">
+                <h3 class="mb-2">
                     Peptide list
-                </div>
+                </h3>
                 <v-textarea
                     v-model="peptides"
                     :readonly="true"
                 />
 
-                <div class="subtitle-1">
+                <h3 class="mn-2">
                     Search settings
-                </div>
+                </h3>
 
-                <div class="d-flex">
-                    <v-switch
-                        v-model="equateIl"
-                        class="pt-0 mt-0"
-                        inset
-                        dense
-                    />
-                    <v-tooltip text="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.">
-                        <template #activator="{ props }">
-                            <span v-bind="props">Equate I and L</span>
-                        </template>
-                    </v-tooltip>
-                </div>
+                <v-tooltip text="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries">
+                    <template #activator="{ props }">
+                        <v-checkbox
+                            v-model="equateIl"
+                            class="pt-0 mt-0"
+                            density="compact"
+                            hide-details
+                            color="primary"
+                            label="Equate I and L"
+                            v-bind="props"
+                        />
+                    </template>
+                </v-tooltip>
 
-                <div class="d-flex mt-n2">
-                    <v-switch
-                        v-model="filterDuplicates"
-                        class="pt-0 mt-0"
-                        inset
-                        dense
-                    />
-                    <v-tooltip text="Remove duplicate peptides from the input before searching.">
-                        <template #activator="{ props }">
-                            <span v-bind="props">Filter duplicate peptides</span>
-                        </template>
-                    </v-tooltip>
-                </div>
+                <v-tooltip text="Remove duplicate peptides from the input before searching.">
+                    <template #activator="{ props }">
+                        <v-checkbox
+                            v-model="filterDuplicates"
+                            class="pt-0 mt-0"
+                            density="compact"
+                            hide-details
+                            color="primary"
+                            label="Filter duplicate peptides"
+                            v-bind="props"
+                        />
+                    </template>
+                </v-tooltip>
 
-                <div class="d-flex mt-n2">
-                    <v-switch
-                        v-model="cleavageHandling"
-                        class="pt-0 mt-0"
-                        inset
-                        dense
-                    />
-                    <v-tooltip text="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!">
-                        <template #activator="{ props }">
-                            <span v-bind="props">Advanced missed cleavage handling</span>
-                        </template>
-                    </v-tooltip>
-                </div>
+                <v-tooltip text="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!">
+                    <template #activator="{ props }">
+                        <v-checkbox
+                            v-model="cleavageHandling"
+                            class="pt-0 mt-0"
+                            density="compact"
+                            hide-details
+                            color="primary"
+                            label="Advanced missed cleavage handling"
+                            v-bind="props"
+                        />
+                    </template>
+                </v-tooltip>
 
                 <div class="card-actions d-flex flex-wrap justify-center">
                     <v-tooltip text="Restart search with selected samples using the settings chosen above.">
