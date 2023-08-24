@@ -7,6 +7,7 @@
                 <a
                     href="http://www.ebi.ac.uk/pride/"
                     target="_blank"
+                    class="link"
                 >
                     PRIDE
                 </a>

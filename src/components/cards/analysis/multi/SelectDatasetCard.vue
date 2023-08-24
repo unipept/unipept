@@ -24,18 +24,25 @@
                         :title="dataset.assay.name"
                         :subtitle="dataset.assay.amountOfPeptides + ' peptides'"
                     >
-                        <template #prepend>
-                            <v-tooltip text="Remove dataset from analysis.">
-                                <template #activator="{ props }">
-                                    <v-btn
-                                        class="fix-icon-list-position"
-                                        variant="text"
-                                        icon="mdi-delete-outline"
-                                        v-bind="props"
-                                        @click="removeAssay(dataset.assay)"
-                                    />
-                                </template>
-                            </v-tooltip>
+                        <template #append>
+                            <div class="d-flex flex-column align-end">
+                                <span class="text-body-2 text-medium-emphasis">
+                                    {{ dateToString(dataset.assay.createdAt) }}
+                                </span>
+                                <v-tooltip text="Remove dataset from analysis.">
+                                    <template #activator="{ props }">
+                                        <v-btn
+                                            class="fix-icon-list-position"
+                                            variant="text"
+                                            icon="mdi-delete-outline"
+                                            v-bind="props"
+                                            size="small"
+                                            density="compact"
+                                            @click="removeAssay(dataset.assay)"
+                                        />
+                                    </template>
+                                </v-tooltip>
+                            </div>
                         </template>
                     </v-list-item>
                 </v-list>

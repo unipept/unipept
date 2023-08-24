@@ -23,9 +23,9 @@
                 v-else
                 :key="dataset.id"
             >
-                <b>Environment:</b> {{ dataset.environment }}
+                <b>Environment: </b> {{ dataset.environment }}
                 <br>
-                <b>Reference:</b>
+                <b>Reference: </b>
                 <small>
                     {{ dataset.reference }}
                     <a
@@ -60,7 +60,8 @@
                             <v-select
                                 v-model="selectedSampleDataset[dataset.id]"
                                 :items="dataset.datasets"
-                                item-text="name"
+                                item-title="name"
+                                variant="underlined"
                             />
                         </v-col>
                         <v-col

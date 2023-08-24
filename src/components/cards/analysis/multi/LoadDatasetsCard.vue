@@ -3,7 +3,7 @@
         <v-tabs
             v-model="currentTab"
             slider-color="secondary"
-            background-color="primary"
+            bg-color="primary"
             dark
         >
             <v-tab value="create">
