@@ -47,7 +47,10 @@
                 </div>
             </v-alert>
 
-            <div v-else>
+            <div
+                v-else
+                class="dark-label"
+            >
                 <h3 class="mb-2">
                     Peptide list
                 </h3>
@@ -62,7 +65,7 @@
 
                 <v-tooltip text="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries">
                     <template #activator="{ props }">
-                        <v-checkbox
+                        <v-switch
                             v-model="equateIl"
                             class="pt-0 mt-0"
                             density="compact"
@@ -70,13 +73,14 @@
                             color="primary"
                             label="Equate I and L"
                             v-bind="props"
+                            inset
                         />
                     </template>
                 </v-tooltip>
 
                 <v-tooltip text="Remove duplicate peptides from the input before searching.">
                     <template #activator="{ props }">
-                        <v-checkbox
+                        <v-switch
                             v-model="filterDuplicates"
                             class="pt-0 mt-0"
                             density="compact"
@@ -84,13 +88,14 @@
                             color="primary"
                             label="Filter duplicate peptides"
                             v-bind="props"
+                            inset
                         />
                     </template>
                 </v-tooltip>
 
                 <v-tooltip text="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!">
                     <template #activator="{ props }">
-                        <v-checkbox
+                        <v-switch
                             v-model="cleavageHandling"
                             class="pt-0 mt-0"
                             density="compact"
@@ -98,23 +103,25 @@
                             color="primary"
                             label="Advanced missed cleavage handling"
                             v-bind="props"
+                            inset
                         />
                     </template>
                 </v-tooltip>
 
                 <div class="card-actions d-flex flex-wrap justify-center">
                     <v-tooltip text="Restart search with selected samples using the settings chosen above.">
-                        <v-btn
-                            class="mr-3 mb-2"
-                            :disabled="!dirty()"
-                            color="primary"
-                            @click="reprocess()"
-                        >
-                            <v-icon left>
-                                mdi-restore
-                            </v-icon>
-                            Update
-                        </v-btn>
+                        <template #activator="{ props }">
+                            <v-btn
+                                class="mr-3 mb-2"
+                                :disabled="!dirty()"
+                                color="primary"
+                                v-bind="props"
+                                prepend-icon="mdi-restore"
+                                @click="reprocess()"
+                            >
+                                Update
+                            </v-btn>
+                        </template>
                     </v-tooltip>
 
                     <peptide-export-button
@@ -223,10 +230,15 @@ multiAnalysisStore.$subscribe((mutation, state) => {
 </script>
 
 <style scoped>
-.loading-container {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, 0);
-}
+    .loading-container {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, 0);
+    }
+
+    .dark-label .v-label {
+        color: black !important;
+        opacity: 0.87 !important;
+    }
 </style>

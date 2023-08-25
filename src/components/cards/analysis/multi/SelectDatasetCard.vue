@@ -48,14 +48,14 @@
                     </v-list-item>
                 </v-list>
             </div>
-            <div>
+            <div class="dark-label">
                 <h3 class="mb-2">
                     Search settings
                 </h3>
 
                 <v-tooltip text="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.">
                     <template #activator="{ props }">
-                        <v-checkbox
+                        <v-switch
                             v-model="equateIl"
                             class="pt-0 mt-0"
                             density="compact"
@@ -63,13 +63,14 @@
                             v-bind="props"
                             hide-details
                             color="primary"
+                            inset
                         />
                     </template>
                 </v-tooltip>
 
                 <v-tooltip text="Remove duplicate peptides from the input before searching.">
                     <template #activator="{ props }">
-                        <v-checkbox
+                        <v-switch
                             v-model="filterDuplicates"
                             class="pt-0 mt-0"
                             density="compact"
@@ -77,13 +78,14 @@
                             v-bind="props"
                             hide-details
                             color="primary"
+                            inset
                         />
                     </template>
                 </v-tooltip>
 
                 <v-tooltip text="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!">
                     <template #activator="{ props }">
-                        <v-checkbox
+                        <v-switch
                             v-model="cleavageHandling"
                             class="pt-0 mt-0"
                             density="compact"
@@ -91,6 +93,7 @@
                             v-bind="props"
                             hide-details
                             color="primary"
+                            inset
                         />
                     </template>
                 </v-tooltip>
@@ -164,7 +167,7 @@ const dateToString = (date: Date) => {
 };
 </script>
 
-<style scoped>
+<style>
     .shaking {
         animation-name: shaker;
         animation-duration: 0.2s;
@@ -178,5 +181,9 @@ const dateToString = (date: Date) => {
     }
     .selected-placeholder {
         display: inline-block;
+    }
+    .dark-label .v-label {
+        color: black !important;
+        opacity: 0.87 !important;
     }
 </style>

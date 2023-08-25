@@ -25,167 +25,160 @@
             </v-col>
         </v-row>
 
-        <v-row v-if="multiAnalysisStore.activeAssayStatus">
-            <v-col
-                v-if="filtered()"
-                cols="12"
-            >
-                <v-alert
-                    class="mb-0"
-                    type="info"
-                    variant="outlined"
+        <template v-if="multiAnalysisStore.activeAssayStatus">
+            <v-row>
+                <v-col
+                    v-if="filtered()"
+                    cols="12"
                 >
-                    <v-col class="grow pa-0">
-                        <b>
-                            Filtered results:
-                        </b>
-                        these results are limited to the {{ multiAnalysisStore.activeAssayStatus.filteredData.trust.matchedPeptides }} peptides specific to
-                        <b>
-                            {{ taxon()?.name }} ({{ taxon()?.rank }})
-                        </b>
-                    </v-col>
-                    <v-col class="shrink pa-0 ml-3">
-                        <v-btn
-                            color="primary"
-                            size="small"
-                            @click="updateSelectedTaxonId(1)"
-                        >
-                            Reset filter
-                        </v-btn>
-                    </v-col>
-                </v-alert>
-            </v-col>
-
-            <v-col
-                class="pb-0"
-                cols="12"
-            >
-                <visualization-overview
-                    :analysis-in-progress="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
-                    :ec-tree="ecTree()"
-                    :go-count-table-processor="multiAnalysisStore.activeAssayStatus?.filteredData?.goCountTableProcessor"
-                    :go-ontology="multiAnalysisStore.activeAssayStatus?.goOntology"
-                    :ec-count-table-processor="multiAnalysisStore.activeAssayStatus?.filteredData?.ecCountTableProcessor"
-                    :ec-ontology="multiAnalysisStore.activeAssayStatus?.ecOntology"
-                    :interpro-count-table-processor="multiAnalysisStore.activeAssayStatus?.filteredData?.interproCountTableProcessor"
-                    :interpro-ontology="multiAnalysisStore.activeAssayStatus?.interproOntology"
-                    :ncbi-count-table-processor="multiAnalysisStore.activeAssayStatus?.data?.lcaCountTableProcessor"
-                    :ncbi-ontology="multiAnalysisStore.activeAssayStatus?.ncbiOntology"
-                    :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
-                    :filter-id="multiAnalysisStore.activeAssayStatus?.filterId"
-                    :error="activeAssayStatus?.error?.status"
-                    @update-selected-taxon-id="updateSelectedTaxonId"
-                />
-            </v-col>
-
-            <v-col
-                class="pt-2"
-                cols="12"
-            >
-                <v-card>
-                    <v-tabs
-                        v-model="currentTab"
-                        slider-color="secondary"
-                        bg-color="primary"
-                        dark
+                    <v-alert
+                        class="mb-0"
+                        type="info"
+                        variant="tonal"
                     >
-                        <v-tab value="go-terms">
-                            GO terms
-                        </v-tab>
-                        <v-tab value="ec-numbers">
-                            EC numbers
-                        </v-tab>
-                        <v-tab value="interpro">
-                            Interpro
-                        </v-tab>
-                        <v-spacer />
-                        <v-menu
-                            ref="sortMenu"
-                            close-on-content-click
-                            location="bottom"
+                        <div style="width: 100%">
+                            <span>
+                                <span class="font-weight-bold">Filtered results:</span> these results are limited to the {{ multiAnalysisStore.activeAssayStatus.filteredData.trust.matchedPeptides }} peptides specific to <span class="font-weight-bold">{{ taxon()?.name }} ({{ taxon()?.rank }})</span>
+                            </span>
+                            <v-btn
+                                color="primary"
+                                size="small"
+                                class="float-end"
+                                @click="updateSelectedTaxonId(1)"
+                            >
+                                Reset filter
+                            </v-btn>
+                        </div>
+                    </v-alert>
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col cols="12">
+                    <visualization-overview
+                        :analysis-in-progress="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
+                        :ec-tree="ecTree()"
+                        :go-count-table-processor="multiAnalysisStore.activeAssayStatus?.filteredData?.goCountTableProcessor"
+                        :go-ontology="multiAnalysisStore.activeAssayStatus?.goOntology"
+                        :ec-count-table-processor="multiAnalysisStore.activeAssayStatus?.filteredData?.ecCountTableProcessor"
+                        :ec-ontology="multiAnalysisStore.activeAssayStatus?.ecOntology"
+                        :interpro-count-table-processor="multiAnalysisStore.activeAssayStatus?.filteredData?.interproCountTableProcessor"
+                        :interpro-ontology="multiAnalysisStore.activeAssayStatus?.interproOntology"
+                        :ncbi-count-table-processor="multiAnalysisStore.activeAssayStatus?.data?.lcaCountTableProcessor"
+                        :ncbi-ontology="multiAnalysisStore.activeAssayStatus?.ncbiOntology"
+                        :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
+                        :filter-id="multiAnalysisStore.activeAssayStatus?.filterId"
+                        :error="activeAssayStatus?.error?.status"
+                        @update-selected-taxon-id="updateSelectedTaxonId"
+                    />
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col cols="12">
+                    <v-card>
+                        <v-tabs
+                            v-model="currentTab"
+                            slider-color="secondary"
+                            bg-color="primary"
+                            dark
                         >
-                            <template #activator="{ props }">
-                                <v-btn
-                                    variant="text"
-                                    v-bind="props"
-                                    class="align-self-center mr-4"
-                                    prepend-icon="mdi-sort-descending"
-                                    append-icon="mdi-menu-down"
-                                >
-                                    {{ sortPeptidePercentage ? 'Peptides %' : 'Peptides' }}
-                                </v-btn>
-                            </template>
+                            <v-tab value="go-terms">
+                                GO terms
+                            </v-tab>
+                            <v-tab value="ec-numbers">
+                                EC numbers
+                            </v-tab>
+                            <v-tab value="interpro">
+                                Interpro
+                            </v-tab>
+                            <v-spacer />
+                            <v-menu
+                                ref="sortMenu"
+                                close-on-content-click
+                                location="bottom"
+                            >
+                                <template #activator="{ props }">
+                                    <v-btn
+                                        variant="text"
+                                        v-bind="props"
+                                        class="align-self-center mr-4"
+                                        prepend-icon="mdi-sort-descending"
+                                        append-icon="mdi-menu-down"
+                                    >
+                                        {{ sortPeptidePercentage ? 'Peptides %' : 'Peptides' }}
+                                    </v-btn>
+                                </template>
 
-                            <v-list class="grey-lighten-3">
-                                <v-list-item
-                                    density="compact"
-                                    class="menu-header"
-                                    title="Sort by number of peptides in related proteins"
-                                >
-                                    Sort by number of peptides in related proteins
-                                    <!-- TODO: fix sorting peptides modal here! -->
-<!--                                    <sorting-peptides-modal />-->
-                                </v-list-item>
-                                <v-list-item
-                                    title="Peptides %"
-                                    @click="sortPeptidePercentage = true"
-                                />
-                                <v-list-item
-                                    title="Peptides"
-                                    @click="sortPeptidePercentage = false"
-                                />
-                            </v-list>
-                        </v-menu>
-                    </v-tabs>
+                                <v-list class="grey-lighten-3">
+                                    <v-list-item
+                                        density="compact"
+                                        class="menu-header"
+                                        title="Sort by number of peptides in related proteins"
+                                    >
+                                        Sort by number of peptides in related proteins
+                                        <!-- TODO: fix sorting peptides modal here! -->
+    <!--                                    <sorting-peptides-modal />-->
+                                    </v-list-item>
+                                    <v-list-item
+                                        title="Peptides %"
+                                        @click="sortPeptidePercentage = true"
+                                    />
+                                    <v-list-item
+                                        title="Peptides"
+                                        @click="sortPeptidePercentage = false"
+                                    />
+                                </v-list>
+                            </v-menu>
+                        </v-tabs>
 
-                    <v-window
-                        v-model="currentTab"
-                        class="mb-5"
-                    >
-                        <v-window-item value="go-terms">
-                            <go-summary-card
-                                :analysis-in-progress="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id) || !multiAnalysisStore.filterCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
-                                :go-processor="multiAnalysisStore.activeAssayStatus.filteredData?.goCountTableProcessor"
-                                :go-ontology="multiAnalysisStore.activeAssayStatus?.goOntology"
-                                :ncbi-processor="multiAnalysisStore.activeAssayStatus?.data?.lcaCountTableProcessor"
-                                :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
-                                :show-percentage="sortPeptidePercentage"
-                                :download-item="downloadGoItem"
-                                :filter="multiAnalysisStore.activeAssayStatus.filterPercentage || 5"
-                                @filter-percentage-change="onUpdateFilterPercentage"
-                            />
-                        </v-window-item>
-                        <v-window-item value="ec-numbers">
-                            <ec-summary-card
-                                :analysis-in-progress="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id) || !multiAnalysisStore.filterCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
-                                :ec-processor="multiAnalysisStore.activeAssayStatus.filteredData?.ecCountTableProcessor"
-                                :ec-ontology="multiAnalysisStore.activeAssayStatus?.ecOntology"
-                                :ec-tree="ecTree()"
-                                :ncbi-processor="multiAnalysisStore.activeAssayStatus?.data?.lcaCountTableProcessor"
-                                :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
-                                :show-percentage="sortPeptidePercentage"
-                                :download-item="downloadEcItem"
-                                :filter="multiAnalysisStore.activeAssayStatus.filterPercentage || 5"
-                                @filter-percentage-change="onUpdateFilterPercentage"
-                            />
-                        </v-window-item>
-                        <v-window-item value="interpro">
-                            <interpro-summary-card
-                                :analysis-in-progress="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id) || !multiAnalysisStore.filterCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
-                                :interpro-processor="multiAnalysisStore.activeAssayStatus.filteredData?.interproCountTableProcessor"
-                                :interpro-ontology="multiAnalysisStore.activeAssayStatus?.interproOntology"
-                                :ncbi-processor="multiAnalysisStore.activeAssayStatus?.data?.lcaCountTableProcessor"
-                                :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
-                                :show-percentage="sortPeptidePercentage"
-                                :download-item="downloadInterproItem"
-                                :filter="multiAnalysisStore.activeAssayStatus.filterPercentage || 5"
-                                @filter-percentage-change="onUpdateFilterPercentage"
-                            />
-                        </v-window-item>
-                    </v-window>
-                </v-card>
-            </v-col>
-        </v-row>
+                        <v-window
+                            v-model="currentTab"
+                            class="mb-5"
+                        >
+                            <v-window-item value="go-terms">
+                                <go-summary-card
+                                    :analysis-in-progress="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id) || !multiAnalysisStore.filterCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
+                                    :go-processor="multiAnalysisStore.activeAssayStatus.filteredData?.goCountTableProcessor"
+                                    :go-ontology="multiAnalysisStore.activeAssayStatus?.goOntology"
+                                    :ncbi-processor="multiAnalysisStore.activeAssayStatus?.data?.lcaCountTableProcessor"
+                                    :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
+                                    :show-percentage="sortPeptidePercentage"
+                                    :download-item="downloadGoItem"
+                                    :filter="multiAnalysisStore.activeAssayStatus.filterPercentage || 5"
+                                    @filter-percentage-change="onUpdateFilterPercentage"
+                                />
+                            </v-window-item>
+                            <v-window-item value="ec-numbers">
+                                <ec-summary-card
+                                    :analysis-in-progress="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id) || !multiAnalysisStore.filterCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
+                                    :ec-processor="multiAnalysisStore.activeAssayStatus.filteredData?.ecCountTableProcessor"
+                                    :ec-ontology="multiAnalysisStore.activeAssayStatus?.ecOntology"
+                                    :ec-tree="ecTree()"
+                                    :ncbi-processor="multiAnalysisStore.activeAssayStatus?.data?.lcaCountTableProcessor"
+                                    :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
+                                    :show-percentage="sortPeptidePercentage"
+                                    :download-item="downloadEcItem"
+                                    :filter="multiAnalysisStore.activeAssayStatus.filterPercentage || 5"
+                                    @filter-percentage-change="onUpdateFilterPercentage"
+                                />
+                            </v-window-item>
+                            <v-window-item value="interpro">
+                                <interpro-summary-card
+                                    :analysis-in-progress="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id) || !multiAnalysisStore.filterCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
+                                    :interpro-processor="multiAnalysisStore.activeAssayStatus.filteredData?.interproCountTableProcessor"
+                                    :interpro-ontology="multiAnalysisStore.activeAssayStatus?.interproOntology"
+                                    :ncbi-processor="multiAnalysisStore.activeAssayStatus?.data?.lcaCountTableProcessor"
+                                    :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
+                                    :show-percentage="sortPeptidePercentage"
+                                    :download-item="downloadInterproItem"
+                                    :filter="multiAnalysisStore.activeAssayStatus.filterPercentage || 5"
+                                    @filter-percentage-change="onUpdateFilterPercentage"
+                                />
+                            </v-window-item>
+                        </v-window>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </template>
 
         <v-row
             v-else
