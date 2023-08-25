@@ -12,7 +12,7 @@
             </div>
 
             <div
-                v-else-if="loading"
+                v-else-if="activeAssayStatus.analysisInProgress"
                 class="d-flex loading-container"
             >
                 <v-progress-circular
@@ -20,6 +20,32 @@
                     color="primary"
                 />
             </div>
+
+            <v-alert
+                v-else-if="activeAssayStatus.error.status"
+                type="error"
+                class="flex-grow-0"
+            >
+                <div class="flex-grow-1">
+                    <div>
+                        An error occurred during the analysis of this assay.
+                    </div>
+                    <div class="font-weight-bold mt-2">
+                        Error details:
+                    </div>
+                    <div>
+                        {{ activeAssayStatus.error.message }}
+                    </div>
+                    <div v-if="activeAssayStatus.error.object && (activeAssayStatus.error.object as Error).stack">
+                        <div class="font-weight-bold mt-2">
+                            Stack trace:
+                        </div>
+                        <div>
+                            {{ (activeAssayStatus.error.object as Error).stack }}
+                        </div>
+                    </div>
+                </div>
+            </v-alert>
 
             <div v-else>
                 <h3 class="mb-2">

@@ -73,6 +73,7 @@
                     :ncbi-ontology="multiAnalysisStore.activeAssayStatus?.ncbiOntology"
                     :ncbi-tree="multiAnalysisStore.activeAssayStatus?.data?.tree"
                     :filter-id="multiAnalysisStore.activeAssayStatus?.filterId"
+                    :error="activeAssayStatus?.error?.status"
                     @update-selected-taxon-id="updateSelectedTaxonId"
                 />
             </v-col>
@@ -85,7 +86,7 @@
                     <v-tabs
                         v-model="currentTab"
                         slider-color="secondary"
-                        background-color="primary"
+                        bg-color="primary"
                         dark
                     >
                         <v-tab value="go-terms">

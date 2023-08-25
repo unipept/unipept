@@ -18,28 +18,37 @@
                     two-line
                 >
                     <v-list-item
-                        v-for="assayStatus in assayStatuses"
+                        v-for="assayStatus in (assayStatuses as MultiProteomicsAnalysisStatus[])"
                         :key="assayStatus.assay.id"
                         :value="assayStatus"
                         ripple
                         :title="assayStatus.assay.name"
                         :subtitle="done(assayStatus) ? assayStatus.assay.amountOfPeptides + ' peptides': (calculating(assayStatus) ? 'Computing estimated time remaining...' : '~' + StringUtils.secondsToTimeString(assayStatus.progress.eta / 1000 ) + ' remaining...')"
-                        class="py-4 px-2"
+                        class="pa-4"
                         @click="activateAssay(assayStatus.assay)"
                     >
                         <template #prepend>
-                            <div
-                                v-if="multiAnalysisStore.analysisCompleted(assayStatus.assay.id)"
+                            <v-radio-group
+                                v-if="assayStatus.analysisReady"
+                                v-model="multiAnalysisStore.activeAssayStatus"
+                                hide-details
+                                color="primary"
+                                class="mr-2"
                             >
-                                <v-radio-group
-                                    v-model="multiAnalysisStore.activeAssayStatus"
-                                    hide-details
-                                    color="primary"
-                                    class="mr-2"
-                                >
-                                    <v-radio :value="assayStatus" />
-                                </v-radio-group>
-                            </div>
+                                <v-radio :value="assayStatus" />
+                            </v-radio-group>
+                            <v-avatar v-else-if="assayStatus.error.status">
+                                <v-tooltip :text="`An error occurred during analysis: ${assayStatus.error.message}.`">
+                                    <template #activator="{ props }">
+                                        <v-icon
+                                            v-bind="props"
+                                            color="error"
+                                        >
+                                            mdi-alert-circle-outline
+                                        </v-icon>
+                                    </template>
+                                </v-tooltip>
+                            </v-avatar>
                             <v-progress-circular
                                 v-else
                                 :rotate="-90"
@@ -64,7 +73,7 @@
                                             v-bind="props"
                                             size="small"
                                             density="compact"
-                                            @click="removeAssay(dataset.assay)"
+                                            @click="removeAssay(assayStatus.assay)"
                                         />
                                     </template>
                                 </v-tooltip>
@@ -132,8 +141,8 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { Assay, StringUtils, HeatmapWizardMulti } from 'unipept-web-components';
-import { withDefaults, defineProps, ref } from 'vue';
+import { Assay, StringUtils, HeatmapWizardMulti, MultiProteomicsAnalysisStatus } from "unipept-web-components";
+import { withDefaults, defineProps, ref, Ref } from "vue";
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 export interface Props {

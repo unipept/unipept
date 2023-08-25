@@ -1,7 +1,31 @@
 import { defineStore } from "pinia";
-import { EcCountTableProcessor, EcOntologyProcessor, EcResponseCommunicator, GoCountTableProcessor, GoOntologyProcessor, GoResponseCommunicator, InterproCountTableProcessor, InterproOntologyProcessor, InterproResponseCommunicator, LcaCountTableProcessor, MultiProteomicsAnalysisStatus, NcbiId, NcbiOntologyProcessor, NcbiResponseCommunicator, NcbiTaxon, NcbiTree, NcbiTreeNode, Ontology, Pept2DataCommunicator, Peptide, PeptideCountTableProcessor, PeptideTrustProcessor, ProgressUtils } from "unipept-web-components";
+import {
+    EcCountTableProcessor,
+    EcOntologyProcessor,
+    EcResponseCommunicator,
+    GoCountTableProcessor,
+    GoOntologyProcessor,
+    GoResponseCommunicator,
+    InterproCountTableProcessor,
+    InterproOntologyProcessor,
+    InterproResponseCommunicator,
+    LcaCountTableProcessor,
+    MultiProteomicsAnalysisStatus,
+    NcbiId,
+    NcbiOntologyProcessor,
+    NcbiResponseCommunicator,
+    NcbiTaxon,
+    NcbiTree,
+    NcbiTreeNode,
+    Ontology,
+    Pept2DataCommunicator,
+    Peptide,
+    PeptideCountTableProcessor,
+    PeptideTrustProcessor,
+    ProgressUtils
+} from "unipept-web-components";
 import { Assay } from "unipept-web-components";
-import { computed, ref } from "vue";
+import { computed, ref, toRaw } from "vue";
 import useConfigurationStore from "./ConfigurationStore";
 
 const enum ProgressSteps {
@@ -72,7 +96,7 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
     NcbiResponseCommunicator.setup(configuration.unipeptApiUrl, configuration.ncbiBatchSize);
     const ncbiCommunicator = new NcbiResponseCommunicator();
 
-    const assayStatuses = ref<MultiProteomicsAnalysisStatus[]>([] as MultiProteomicsAnalysisStatus[]);
+    const assayStatuses = ref<MultiProteomicsAnalysisStatus[]>([]);
     const activeAssayStatus = ref<MultiProteomicsAnalysisStatus | undefined>(undefined);
 
     const empty = computed(() => assayStatuses.value.length === 0);
@@ -136,7 +160,10 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
         try {
             const peptideCountTableProcessor = new PeptideCountTableProcessor();
             const peptideCountTable = await peptideCountTableProcessor.getPeptideCountTable(
-                assay.peptides, assayStatus.cleavageHandling, assayStatus.filterDuplicates,assayStatus.equateIl
+                toRaw(assay.peptides),
+                assayStatus.cleavageHandling,
+                assayStatus.filterDuplicates,
+                assayStatus.equateIl
             );
 
             const [pept2Data, trust] = await pept2DataCommunicator.process(
@@ -222,6 +249,7 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
                 trust: trust
             };
         } catch(error: any) {
+            console.error(error);
             assayStatus.error = {
                 status: true,
                 message: error.message,
@@ -229,8 +257,8 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             };
         } finally {
             assayStatus.analysisInProgress = false;
-            assayStatus.analysisReady = true;
-            assayStatus.filterReady = true;
+            assayStatus.analysisReady = !assayStatus.error.status;
+            assayStatus.filterReady = !assayStatus.error.status;
 
             updateProgress(assay, 100, ProgressSteps.COMPLETED, false);
         }
@@ -319,6 +347,7 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
                 trust: filteredTrust
             };
         } catch(error: any) {
+            console.error(error);
             assayStatus.error = {
                 status: true,
                 message: error.message,
@@ -336,7 +365,7 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
         const assayIndex = findAssayIndex(assayId);
         const assayStatus = assayStatuses.value[assayIndex];
 
-        return assayStatus.progress.currentStep === ProgressSteps.COMPLETED;
+        return assayStatus.analysisReady && !assayStatus.analysisInProgress;
     }
 
     const addAssay = (assay: Assay) => {
