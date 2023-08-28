@@ -138,6 +138,7 @@
                         {{ activeAssayStatus.data.trust.searchedPeptides }} peptides. Unfortunately,
                         <a
                             style="cursor: pointer;"
+                            class="link"
                             @click="showMissedPeptides = true"
                         >
                             {{ activeAssayStatus.data.trust.missedPeptides.length }}
@@ -145,14 +146,10 @@
                         peptides couldn't be found.
                     </span>
 
-                    <v-dialog
+                    <missing-peptides-dialog
                         v-model="showMissedPeptides"
-                        :width="600"
-                        scrollable
-                    >
-                        <!-- TODO fix this -->
-<!--                        <missing-peptides-modal :missed-peptides="activeAssayStatus.data.trust.missedPeptides" />-->
-                    </v-dialog>
+                        :missed-peptides="activeAssayStatus.data.trust.missedPeptides"
+                    />
                 </div>
             </div>
         </v-card-text>
@@ -165,6 +162,7 @@ import PeptideExportButton from '@/components/buttons/PeptideExportButton.vue';
 import AnalyticsCommunicator from '@/logic/communicators/analytics/AnalyticsCommunicator';
 import { storeToRefs } from "pinia";
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
+import MissingPeptidesDialog from "@/components/dialogs/MissingPeptidesDialog.vue";
 
 const multiAnalysisStore = useMultiAnalysis();
 

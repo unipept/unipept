@@ -12,15 +12,17 @@
             </template>
 
             <template #item.action="{ item }">
-                <a
-                    :href="url(item.raw.peptide)"
-                    target="_blank"
-                    class="font-regular d-flex"
-                >
-                    <v-icon class="pl-2">
-                        mdi-open-in-new
-                    </v-icon>
-                </a>
+                <v-tooltip text="Open in new tab and BLAST peptide.">
+                    <template #activator="{ props }">
+                        <v-btn
+                            icon="mdi-open-in-new"
+                            size="small"
+                            variant="plain"
+                            v-bind="props"
+                            @click="openItem(item.raw.peptide)"
+                        />
+                    </template>
+                </v-tooltip>
             </template>
         </v-data-table>
     </div>
@@ -29,6 +31,7 @@
 <script setup lang="ts">
 import { Peptide } from 'unipept-web-components';
 import { computed, ref } from "vue";
+import { VDataTable } from "vuetify/labs/VDataTable";
 
 export interface Props {
     items: Peptide[]
@@ -60,6 +63,10 @@ const itemObjects = computed(() => {
         };
     });
 });
+
+const openItem = function(peptide: Peptide) {
+    window.open(url(peptide), "_blank");
+}
 
 const url = (peptide: Peptide) => {
     return "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on" +
