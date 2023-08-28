@@ -112,11 +112,14 @@
                                     <v-list-item
                                         density="compact"
                                         class="menu-header"
-                                        title="Sort by number of peptides in related proteins"
                                     >
                                         Sort by number of peptides in related proteins
-                                        <!-- TODO: fix sorting peptides modal here! -->
-    <!--                                    <sorting-peptides-modal />-->
+                                        <v-btn
+                                            icon="mdi-help-circle"
+                                            variant="text"
+                                            size="small"
+                                            @click="sortingPeptidesDialogOpen = true"
+                                        />
                                     </v-list-item>
                                     <v-list-item
                                         title="Peptides %"
@@ -128,6 +131,7 @@
                                     />
                                 </v-list>
                             </v-menu>
+                            <sorting-peptides-dialog v-model="sortingPeptidesDialogOpen" />
                         </v-tabs>
 
                         <v-window
@@ -229,6 +233,7 @@ import {
 } from "unipept-web-components";
 import { storeToRefs } from 'pinia';
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
+import SortingPeptidesDialog from "@/components/dialogs/SortingPeptidesDialog.vue";
 
 const multiAnalysisStore = useMultiAnalysis();
 
@@ -239,6 +244,8 @@ const displaySummary = ref<boolean>(false);
 const sortPeptidePercentage = ref<boolean>(false);
 
 const currentTab = ref<number>(0);
+
+const sortingPeptidesDialogOpen = ref<boolean>(false);
 
 const { downloadString } = useCsvDownload();
 
