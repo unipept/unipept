@@ -53,8 +53,8 @@
                                 v-else
                                 :rotate="-90"
                                 :size="24"
+                                style="margin-left: 8px; margin-right: 16px;"
                                 :value="assayStatus.progress.currentValue"
-                                class="mr-2"
                                 color="primary"
                             />
                         </template>
