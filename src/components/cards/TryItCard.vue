@@ -3,27 +3,23 @@
         title="Try it"
         large-title
     >
-        <p class="mt-2">
+        <div class="mb-2">
             Use the API explorer form below to call the {{ command }} method on live data and see the response.
-        </p>
+        </div>
 
         <slot />
 
-        <template #extension>
-            <v-divider />
+        <v-divider class="mt-2" />
 
-            <v-card-text
-                class="grey lighten-4"
-            >
-                <h4>
-                    Response
-                </h4>
-                <json
-                    class="limited"
-                    :object="response"
-                />
-            </v-card-text>
-        </template>
+        <div class="mt-2">
+            <h4>
+                Response
+            </h4>
+            <json
+                class="limited"
+                :object="response"
+            />
+        </div>
     </header-body-card>
 </template>
 

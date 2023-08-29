@@ -182,8 +182,4 @@ const dateToString = (date: Date) => {
     .selected-placeholder {
         display: inline-block;
     }
-    .dark-label .v-label {
-        color: black !important;
-        opacity: 0.87 !important;
-    }
 </style>

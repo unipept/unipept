@@ -13,3 +13,16 @@
 .text-primary .v-switch__thumb {
   background-color: #2196f3 !important;
 }
+
+.v-card-title + .v-card-text {
+  padding-top: 16px !important;
+}
+
+ul {
+  margin-left: 16px;
+}
+
+.dark-label .v-label {
+  color: black !important;
+  opacity: 0.87 !important;
+}

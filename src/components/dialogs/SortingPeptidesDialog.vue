@@ -19,7 +19,7 @@
             </v-card-title>
             <v-card-text>
                 <p>The functional annotations can be sorted on two metrics:</p>
-                <ul class="ml-4">
+                <ul>
                     <li>
                         <strong>Peptides</strong>:
                         The absolute number of peptides that are associated with a given

@@ -259,19 +259,6 @@ td {
     filter: drop-shadow(0 0 0.50rem gray);
 }
 
-.boxed {
-    display: block;
-    border: 1px solid #cccccc;
-    border-radius: 2px;
-    padding: 8px;
-    background-color: #f5f5f5;
-    overflow: auto;
-    line-height: 1.5;
-    margin-bottom: 12px;
-    max-height: 350px;
-    font-size: 90%;
-}
-
 .v-tab {
     text-transform: none !important;
 }

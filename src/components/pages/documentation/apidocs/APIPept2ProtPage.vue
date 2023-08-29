@@ -83,7 +83,7 @@
                 Matching UniProt entries are returned as a list of <initialism>JSON</initialism> objects. By default, each object contains the following information
                 fields extracted from the UniProt entry:
 
-                <ul class="my-3 ml-4">
+                <ul class="my-3">
                     <li><inline-code>peptide</inline-code>: the peptide that matched this record</li>
                     <li><inline-code>uniprot_id</inline-code>: the UniProt accession number of the matching record</li>
                     <li><inline-code>protein_name</inline-code>: the name of the protein of the matching record</li>
@@ -93,7 +93,7 @@
                 When the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>, objects contain the following additional fields extracted from the
                 UniProt entry:
 
-                <ul class="mt-3 ml-4">
+                <ul class="mt-3">
                     <li><inline-code>taxon_name</inline-code>: the name of the organism associated with the matching UniProt entry</li>
                     <li><inline-code>ec_references</inline-code>: a space separated list of associated <initialism>EC</initialism> numbers</li>
                     <li><inline-code>go_references</inline-code>: a space separated list of associated <initialism>GO</initialism> terms</li>
@@ -257,80 +257,55 @@
             :response="tryItResponse"
             command="pept2prot"
         >
-            <template>
-                <v-row>
-                    <v-col
-                        class="font-weight-bold"
-                        cols="12"
-                        md="2"
-                    >
+            <v-row>
+                <v-col cols="12">
+                    <h3 class="font-weight-medium">
                         Input[]
-                    </v-col>
-                    <v-col
-                        cols="12"
-                        md="10"
-                    >
-                        <v-textarea
-                            v-model="input"
-                            class="pt-0 mt-0"
-                            clearable
-                            no-resize
-                            filled
-                            clear-icon="mdi-close-circle"
-                        />
-                    </v-col>
-                </v-row>
+                    </h3>
+                    <v-textarea
+                        v-model="input"
+                        class="pt-0 mt-0"
+                        clearable
+                        no-resize
+                        filled
+                        clear-icon="mdi-close-circle"
+                    />
+                </v-col>
 
-                <v-row>
-                    <v-col
-                        class="font-weight-bold"
-                        cols="4"
-                        sm="2"
-                    >
-                        equate_il
-                    </v-col>
-                    <v-col
-                        cols="8"
-                        sm="10"
-                    >
-                        <v-switch
-                            v-model="equate_il"
-                            class="pt-0 mt-0"
-                            inset
-                        />
-                    </v-col>
-                </v-row>
-
-                <v-row>
-                    <v-col
-                        class="font-weight-bold"
-                        cols="4"
-                        sm="2"
-                    >
-                        extra
-                    </v-col>
-                    <v-col
-                        cols="8"
-                        sm="10"
-                    >
-                        <v-switch
-                            v-model="extra"
-                            class="pt-0 mt-0"
-                            inset
-                        />
-                    </v-col>
-                </v-row>
-
-                <v-row class="justify-end mx-0 mb-0 ">
+                <v-col
+                    cols="12"
+                    class="dark-label"
+                >
+                    <h3 class="font-weight-medium">
+                        Parameters
+                    </h3>
+                    <v-switch
+                        v-model="extra"
+                        color="primary"
+                        inset
+                        label="extra"
+                        density="compact"
+                        hide-details
+                    />
+                    <v-switch
+                        v-model="equate_il"
+                        color="primary"
+                        inset
+                        label="equate_il"
+                        density="compact"
+                        hide-details
+                    />
+                </v-col>
+                <v-col cols="12">
                     <v-btn
-                        class="col-12 col-sm-2"
+                        class="col-12 col-sm-2 float-end"
                         color="primary"
                         @click="doRequest"
                     >
                         Try it!
                     </v-btn>
-                </v-row>
-            </template>
+                </v-col>
+            </v-row>
         </try-it-card>
     </v-container>
 </template>
@@ -346,7 +321,7 @@ import initialism from '@/components/highlights/initialism.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
 import ExampleCard from '@/components/cards/ExampleCard.vue';
 import TryItCard from '@/components/cards/TryItCard.vue';
-import r-link from '@/components/highlights/ResourceLink.vue';
+import RLink from '@/components/highlights/ResourceLink.vue';
 
 const unipeptCommunicator = new UnipeptCommunicator();
 
