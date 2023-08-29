@@ -6,10 +6,30 @@ const tpaMeta = {
     publicationLink: "doi:10.1021/acs.jproteome.8b00716"
 };
 
+const apidocsMeta = {
+    publication: "Mesuere et al. (2016) Bioinformatics",
+    publicationLink: "doi:10.1093/bioinformatics/btw039"
+};
+
+const clidocsMeta = {
+    publication: "Verschaffelt et al. (2020) Bioinformatics",
+    publicationLink: "doi.org/10.1093/bioinformatics/btaa553"
+};
+
+const metagenomicsMeta = {
+    publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
+    publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+};
+
 const newsMeta = {
     publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
     publicationLink: "doi:10.1021/acs.jproteome.8b00716"
 };
+
+const desktopMeta = {
+    publication: "Verschaffelt et al. (2021) Journal of Proteome Research",
+    publicationLink: "doi.org/10.1021/acs.jproteome.0c00855"
+}
 
 const routes = [
     {
@@ -40,6 +60,25 @@ const routes = [
         }
     },
     {
+        path: "/apidocs",
+        component: () => import("@/components/pages/features/APIPage.vue"),
+        children: [
+            { path: "", component: () => import("@/components/pages/documentation/apidocs/APIDocsOverviewPage.vue"), meta: apidocsMeta },
+            { path: "pept2prot", component: () => import("@/components/pages/documentation/apidocs/APIPept2ProtPage.vue"), meta: apidocsMeta },
+            { path: "pept2taxa", component: () => import("@/components/pages/documentation/apidocs/APIPept2TaxaPage.vue"), meta: apidocsMeta },
+            { path: "pept2lca", component: () => import("@/components/pages/documentation/apidocs/APIPept2LcaPage.vue"), meta: apidocsMeta },
+            { path: "pept2ec", component: () => import("@/components/pages/documentation/apidocs/APIPept2EcPage.vue"), meta: apidocsMeta },
+            { path: "pept2go", component: () => import("@/components/pages/documentation/apidocs/APIPept2GoPage.vue"), meta: apidocsMeta },
+            { path: "pept2interpro", component: () => import("@/components/pages/documentation/apidocs/APIPept2InterproPage.vue"), meta: apidocsMeta },
+            { path: "pept2funct", component: () => import("@/components/pages/documentation/apidocs/APIPept2FunctPage.vue"), meta: apidocsMeta },
+            { path: "peptinfo", component: () => import("@/components/pages/documentation/apidocs/APIPeptInfoPage.vue"), meta: apidocsMeta },
+            { path: "taxa2lca", component: () => import("@/components/pages/documentation/apidocs/APITaxa2LcaPage.vue"), meta: apidocsMeta },
+            { path: "taxa2tree", component: () => import("@/components/pages/documentation/apidocs/APITaxa2TreePage.vue"), meta: apidocsMeta },
+            { path: "taxonomy", component: () => import("@/components/pages/documentation/apidocs/APITaxonomyPage.vue"), meta: apidocsMeta },
+        ],
+        meta: apidocsMeta
+    },
+    {
         path: "/about",
         component:  () => import("@/components/pages/AboutPage.vue"),
         meta: {
@@ -62,8 +101,23 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
+    history: createWebHistory(process.env.BASE_URL),
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        if (to.hash) {
+            // Go to appended anchor in the url
+            return {
+                el: to.hash,
+                behavior: "smooth"
+            }
+        } else if (savedPosition) {
+            // Go to a saved location (history)
+            return savedPosition;
+        } else {
+            // Go to the top of the page
+            return { x: 0, y: 0 }
+        }
+    }
 })
 
 export default router;

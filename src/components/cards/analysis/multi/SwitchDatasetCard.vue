@@ -105,13 +105,20 @@
             width="1000px"
         >
             <v-card style="min-height: 700px;">
-                <v-card-title color="primary" >
+                <v-card-title
+                    class="d-flex"
+                >
                     Heatmap wizard
                     <v-spacer />
-                    <v-btn
-                        icon="mdi-close"
-                        @click="dialogOpen = false"
-                    />
+                    <div class="justify-end">
+                        <v-btn
+                            icon="mdi-close"
+                            variant="plain"
+                            size="small"
+                            density="compact"
+                            @click="dialogOpen = false"
+                        />
+                    </div>
                 </v-card-title>
                 <div>
                     <heatmap-wizard-multi

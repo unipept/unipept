@@ -1,6 +1,11 @@
 <template>
-    <header-body-card title="Try it">
-        <p>Use the API explorer form below to call the {{ command }} method on live data and see the response.</p>
+    <header-body-card
+        title="Try it"
+        large-title
+    >
+        <p class="mt-2">
+            Use the API explorer form below to call the {{ command }} method on live data and see the response.
+        </p>
 
         <slot />
 

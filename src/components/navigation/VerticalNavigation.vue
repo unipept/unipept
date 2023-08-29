@@ -9,7 +9,7 @@
         >
             <v-tab
                 :to="item.link"
-                exact-path
+                exact
             >
                 {{ item.name }}
             </v-tab>
@@ -21,7 +21,7 @@
                     v-for="child in item.children"
                     :key="child.name"
                     class="v-tab-child"
-                    :to="child.link"
+                    @click="navigate(child.link)"
                 >
                     {{ child.name }}
                 </v-tab>
@@ -32,6 +32,9 @@
 
 <script setup lang="ts">
 import { NavigationItem } from './NavigationItem';
+import useNavigation from "@/composables/useNavigation";
+
+const { navigate } = useNavigation();
 
 export interface Props {
     items: NavigationItem[]

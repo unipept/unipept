@@ -1,6 +1,9 @@
 <template>
     <v-card>
-        <v-card-title class="pa-4 bg-primary text-white">
+        <v-card-title
+            class="pa-4 bg-primary text-white"
+            :class="{ 'large-title': largeTitle }"
+        >
             {{ title }}
         </v-card-title>
 
@@ -14,12 +17,17 @@
 
 <script setup lang="ts">
 export interface Props {
-    title: string
+    title: string,
+    largeTitle?: boolean
 }
 
-/* eslint-disable */
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+    largeTitle: false
+});
 </script>
 
 <style scoped>
+.large-title {
+    font-size: 1.25rem;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-text class="mt-4">
+        <v-card-text>
             <h4>
                 Example <small>{{ title }}</small>
             </h4>
@@ -15,9 +15,9 @@
             </boxed>
 
             <initialism><b>get</b></initialism>
-            <Boxed>
+            <boxed>
                 <slot name="get" />
-            </Boxed>
+            </boxed>
         </v-card-text>
 
         <v-divider />
@@ -41,6 +41,7 @@ export interface Props {
 }
 
 defineProps<Props>();
+
 </script>
 
 <style scoped>

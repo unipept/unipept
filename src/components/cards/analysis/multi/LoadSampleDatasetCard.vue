@@ -34,7 +34,10 @@
                         title="Article website"
                         :href="dataset.url"
                     >
-                        <v-icon class="pb-1 primary--text" size="small">
+                        <v-icon
+                            class="pb-1 text-primary"
+                            size="small"
+                        >
                             mdi-link-variant
                         </v-icon>
                     </a>
@@ -46,7 +49,7 @@
                     >
                         <span class="glyphicon glyphicon-share-alt"></span>
                         <v-icon
-                            class="pb-1 primary--text"
+                            class="pb-1 text-primary"
                             size="small"
                         >
                             mdi-share
