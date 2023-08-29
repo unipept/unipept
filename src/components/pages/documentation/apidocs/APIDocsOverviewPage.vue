@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            Unipept <Initialism>API</Initialism> documentation <small>v2.0</small>
+            Unipept <initialism>API</initialism> documentation <small>v2.0</small>
         </h1>
         <h3 class="font-weight-light">
             Most of the peptide analysis workflows provided by Unipept are available as web services.
@@ -9,7 +9,7 @@
         </h3>
 
         <p class="mt-5">
-            The Unipept API is HTTP-based and always returns JSON objects as response. The current version of the <Initialism>API</Initialism> provides
+            The Unipept API is HTTP-based and always returns JSON objects as response. The current version of the <initialism>API</initialism> provides
             11 endpoints.
         </p>
 
@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
-import Initialism from '@/components/highlights/Initialism.vue';
+import initialism from '@/components/highlights/initialism.vue';
 import ResourceLink from '@/components/highlights/ResourceLink.vue';
 import useNavigation from "@/composables/useNavigation";
 

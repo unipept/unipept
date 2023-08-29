@@ -1,357 +1,447 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            <Initialism>POST</Initialism> /api/v1/pept2taxa
+            <initialism>POST</initialism> /api/v1/pept2taxa
         </h1>
-        <h3 class="font-weight-light">Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide.</h3>
-        
+        <h3 class="font-weight-light">
+            Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide.
+        </h3>
+
         <v-divider class="my-2" />
 
         <p>
-            This method returns the set of organisms associated with the UniProt entries containing a given tryptic peptide. This is the same information as 
-            provided on the <i>Lineage table</i> tab when performing a search with the <RLink to="/tpa" router>Tryptic Peptide Analysis</RLink> in the web interface. 
+            This method returns the set of organisms associated with the UniProt entries containing a given tryptic peptide.
+            This is the same information as provided on the <i>Lineage table</i> tab when performing a search with the <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link> in the web interface.
         </p>
 
         <!-- Request Card -->
-        <HeaderBodyCard id="request" title="Request">
-            <p>
-                The pept2taxa method can be used by doing a <Initialism>HTTP POST</Initialism>-request (preferred) or <Initialism>GET</Initialism>-request to 
-                <Code>https://api.unipept.ugent.be/api/v1/pept2taxa</Code>. <RLink to="#parameters" router>Parameters</RLink> can be included in the request body 
-                (<Initialism>POST</Initialism>) or in the query string (<Initialism>GET</Initialism>). The only required parameter is <Code>input[]</Code>, which 
-                takes one or more tryptic peptides.
-            </p>
-
-            <h3>input</h3>
-            <p>
-                <Code>input[]</Code> is a required parameter that takes one or more tryptic peptides. Unipept will return the set of organisms associated with the 
-                UniProt entries that contain any of the <Code>input[]</Code> peptides in their protein sequence. To pass multiple peptides at once, simply add 
-                multiple <Code>input[]</Code> parameters (see <RLink to="#example2" router>example</RLink>).
-            </p>
-
-            <StaticAlert title="Input size">
+        <header-body-card
+            id="request"
+            title="Request"
+            large-title
+        >
+            <v-card-text>
                 <p>
-                    Unipept puts no restrictions on the number of peptides passed to the <Code>input[]</Code> parameter. Keep in mind that searching for lots of 
-                    peptides at once may cause the request to timeout or, in the case of a <Initialism>GET</Initialism>-request, exceed the maximum 
-                    <Initialism>URL</Initialism> length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
+                    The pept2taxa method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/pept2taxa</inline-code>.
+                    <r-link to="#parameters" router>Parameters</r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
+                    The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
                 </p>
-            </StaticAlert>
 
-            <h3>equate_il</h3>
-            <p>
-                <Code>equate_il</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter 
-                defaults to <Code>false</Code>. When the parameter is set to <Code>true</Code>, isoleucine (I) and leucine (L) are equated when matching tryptic 
-                peptides to UniProt entries. This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the 
-                <RLink to="/tpa" router>Tryptic Peptide Analysis</RLink> in the web interface.
-            </p>
-
-            <h3>extra</h3>
-            <p>
-                <Code>extra</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter 
-                defaults to <Code>false</Code>. When the parameter is set to <Code>true</Code>, Unipept will return the complete lineage of each organism. See the  
-                <RLink to="#response" router>response</RLink> section for an overview of the information fields returned.
-            </p>
-
-            <h3>names</h3>
-            <p>
-                <Code>names</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter 
-                defaults to <Code>false</Code>. When both <Code>names</Code> and <Code>extra</Code> are set to <Code>true</Code>, Unipept will return the names of 
-                all ranks in the lineage of each organism. Setting only <Code>names</Code> to <Code>true</Code> will not result in additional information fields 
-                being returned. See the <RLink to="#response" router>response</RLink> section for an overview of the information fields returned. 
-            </p>
-
-            <StaticAlert title="Performance penalty">
+                <h3 class="font-weight-medium">
+                    input
+                </h3>
                 <p>
-                    Setting <Code>names</Code> to <Code>true</Code> has a performance penalty inferred from additional database queries. Do not use this parameter 
-                    unless the extra information fields are needed.
+                    <inline-code>input[]</inline-code> is a required parameter that takes one or more tryptic peptides.
+                    Unipept will return the set of organisms associated with the UniProt entries that contain any of the <inline-code>input[]</inline-code> peptides in their protein sequence.
+                    To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link to="#example2" router>example</r-link>).
                 </p>
-            </StaticAlert>
-        </HeaderBodyCard>
+
+                <static-alert title="Input size">
+                    <p>
+                        Unipept puts no restrictions on the number of peptides passed to the <inline-code>input[]</inline-code> parameter.
+                        Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <initialism>GET</initialism>-request, exceed the maximum <initialism>URL</initialism> length.
+                        When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
+                    </p>
+                </static-alert>
+
+                <h3 class="font-weight-medium">
+                    equate_il
+                </h3>
+                <p>
+                    <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>. When not set explicitly, the parameter
+                    defaults to <inline-code>false</inline-code>. When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching tryptic
+                    peptides to UniProt entries. This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the
+                    <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link> in the web interface.
+                </p>
+
+                <h3 class="font-weight-medium">
+                    extra
+                </h3>
+                <p>
+                    <inline-code>extra</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                    When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                    When the parameter is set to <inline-code>true</inline-code>, Unipept will return the complete lineage of each organism.
+                    See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
+                </p>
+
+                <h3 class="font-weight-medium">
+                    names
+                </h3>
+                <p>
+                    <inline-code>names</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                    When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                    When both <inline-code>names</inline-code> and <inline-code>extra</inline-code> are set to <inline-code>true</inline-code>, Unipept will return the names of all ranks in the lineage of each organism.
+                    Setting only <inline-code>names</inline-code> to <inline-code>true</inline-code> will not result in additional information fields being returned.
+                    See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
+                </p>
+
+                <static-alert title="Performance penalty">
+                    <p>
+                        Setting <inline-code>names</inline-code> to <inline-code>true</inline-code> has a performance penalty inferred from additional database queries.
+                        Do not use this parameter unless the extra information fields are needed.
+                    </p>
+                </static-alert>
+            </v-card-text>
+        </header-body-card>
 
         <!-- Response Card -->
-        <HeaderBodyCard id="response" title="Response" class="mt-5">
-            <p class="mb-2">
-                The organisms associated with matching UniProt entries are returned as a list of <Initialism>json</Initialism> objects. By default, each object 
-                contains the following information fields extracted from the UniProt entry and <Initialism>NCBI</Initialism> taxonomy: 
+        <header-body-card
+            id="response"
+            title="Response"
+            class="mt-5"
+            large-title
+        >
+            <v-card-text>
+                The organisms associated with matching UniProt entries are returned as a list of <initialism>json</initialism> objects. By default, each object
+                contains the following information fields extracted from the UniProt entry and <initialism>NCBI</initialism> taxonomy:
 
-                <ul class="my-3">
-                    <li><Code>peptide</Code>: the peptide that matched this record</li>
-                    <li><Code>taxon_id</Code>: the <Initialism>NCBI</Initialism> taxon id of the organism associated with the matching record</li>
-                    <li><Code>taxon_name</Code>: the name of the organism associated with the matching record</li>
-                    <li><Code>taxon_rank</Code>: the taxonomic rank of the organism associated with the matching record</li>
+                <ul class="my-3 ml-4">
+                    <li><inline-code>peptide</inline-code>: the peptide that matched this record</li>
+                    <li><inline-code>taxon_id</inline-code>: the <initialism>NCBI</initialism> taxon id of the organism associated with the matching record</li>
+                    <li><inline-code>taxon_name</inline-code>: the name of the organism associated with the matching record</li>
+                    <li><inline-code>taxon_rank</inline-code>: the taxonomic rank of the organism associated with the matching record</li>
                 </ul>
 
-                When the <Code>extra</Code> parameter is set to <Code>true</Code>, objects contain additional information about the lineages of the organism 
-                extracted from the <Initialism>NCBI</Initialism> taxonomy. The taxon id of each rank in the lineage is specified using the following information 
-                fields:
+                When the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>, objects contain additional information about the lineages of the organism extracted from the <initialism>NCBI</initialism> taxonomy.
+                The taxon id of each rank in the lineage is specified using the following information fields:
 
-                <ul class="multi-column my-3">
-                    <li><Code>superkingdom_id</Code></li>
-                    <li><Code>kingdom_id</Code></li>
-                    <li><Code>subkingdom_id</Code></li>
-                    <li><Code>superphylum_id</Code></li>
-                    <li><Code>phylum_id</Code></li>
-                    <li><Code>subphylum_id</Code></li>
-                    <li><Code>superclass_id</Code></li>
-                    <li><Code>class_id</Code></li>
-                    <li><Code>subclass_id</Code></li>
-                    <li><Code>infraclass_id</Code></li>
-                    <li><Code>superorder_id</Code></li>
-                    <li><Code>order_id</Code></li>
-                    <li><Code>suborder_id</Code></li>
-                    <li><Code>infraorder_id</Code></li>
-                    <li><Code>parvorder_id</Code></li>
-                    <li><Code>superfamily_id</Code></li>
-                    <li><Code>family_id</Code></li>
-                    <li><Code>subfamily_id</Code></li>
-                    <li><Code>tribe_id</Code></li>
-                    <li><Code>subtribe_id</Code></li>
-                    <li><Code>genus_id</Code></li>
-                    <li><Code>subgenus_id</Code></li>
-                    <li><Code>species_group_id</Code></li>
-                    <li><Code>species_subgroup_id</Code></li>
-                    <li><Code>species_id</Code></li>
-                    <li><Code>subspecies_id</Code></li>
-                    <li><Code>varietas_id</Code></li>
-                    <li><Code>forma_id</Code></li>
+                <ul class="multi-column my-3 ml-4">
+                    <li><inline-code>superkingdom_id</inline-code></li>
+                    <li><inline-code>kingdom_id</inline-code></li>
+                    <li><inline-code>subkingdom_id</inline-code></li>
+                    <li><inline-code>superphylum_id</inline-code></li>
+                    <li><inline-code>phylum_id</inline-code></li>
+                    <li><inline-code>subphylum_id</inline-code></li>
+                    <li><inline-code>superclass_id</inline-code></li>
+                    <li><inline-code>class_id</inline-code></li>
+                    <li><inline-code>subclass_id</inline-code></li>
+                    <li><inline-code>infraclass_id</inline-code></li>
+                    <li><inline-code>superorder_id</inline-code></li>
+                    <li><inline-code>order_id</inline-code></li>
+                    <li><inline-code>suborder_id</inline-code></li>
+                    <li><inline-code>infraorder_id</inline-code></li>
+                    <li><inline-code>parvorder_id</inline-code></li>
+                    <li><inline-code>superfamily_id</inline-code></li>
+                    <li><inline-code>family_id</inline-code></li>
+                    <li><inline-code>subfamily_id</inline-code></li>
+                    <li><inline-code>tribe_id</inline-code></li>
+                    <li><inline-code>subtribe_id</inline-code></li>
+                    <li><inline-code>genus_id</inline-code></li>
+                    <li><inline-code>subgenus_id</inline-code></li>
+                    <li><inline-code>species_group_id</inline-code></li>
+                    <li><inline-code>species_subgroup_id</inline-code></li>
+                    <li><inline-code>species_id</inline-code></li>
+                    <li><inline-code>subspecies_id</inline-code></li>
+                    <li><inline-code>varietas_id</inline-code></li>
+                    <li><inline-code>forma_id</inline-code></li>
                 </ul>
 
-                When both the <Code>names</Code> and <Code>extra</Code> parameters are set to <Code>true</Code>, objects also contain the names for each rank in 
-                the lineage using the following information fields:
+                When both the <inline-code>names</inline-code> and <inline-code>extra</inline-code> parameters are set to <inline-code>true</inline-code>, objects also contain the names for each rank in the lineage using the following information fields:
 
-                <ul class="multi-column mt-3">
-                    <li><Code>superkingdom_name</Code></li>
-                    <li><Code>kingdom_name</Code></li>
-                    <li><Code>subkingdom_name</Code></li>
-                    <li><Code>superphylum_name</Code></li>
-                    <li><Code>phylum_name</Code></li>
-                    <li><Code>subphylum_name</Code></li>
-                    <li><Code>superclass_name</Code></li>
-                    <li><Code>class_name</Code></li>
-                    <li><Code>subclass_name</Code></li>
-                    <li><Code>infraclass_name</Code></li>
-                    <li><Code>superorder_name</Code></li>
-                    <li><Code>order_name</Code></li>
-                    <li><Code>suborder_name</Code></li>
-                    <li><Code>infraorder_name</Code></li>
-                    <li><Code>parvorder_name</Code></li>
-                    <li><Code>superfamily_name</Code></li>
-                    <li><Code>family_name</Code></li>
-                    <li><Code>subfamily_name</Code></li>
-                    <li><Code>tribe_name</Code></li>
-                    <li><Code>subtribe_name</Code></li>
-                    <li><Code>genus_name</Code></li>
-                    <li><Code>subgenus_name</Code></li>
-                    <li><Code>species_group_name</Code></li>
-                    <li><Code>species_subgroup_name</Code></li>
-                    <li><Code>species_name</Code></li>
-                    <li><Code>subspecies_name</Code></li>
-                    <li><Code>varietas_name</Code></li>
-                    <li><Code>forma_name</Code></li>
+                <ul class="multi-column mt-3 ml-4">
+                    <li><inline-code>superkingdom_name</inline-code></li>
+                    <li><inline-code>kingdom_name</inline-code></li>
+                    <li><inline-code>subkingdom_name</inline-code></li>
+                    <li><inline-code>superphylum_name</inline-code></li>
+                    <li><inline-code>phylum_name</inline-code></li>
+                    <li><inline-code>subphylum_name</inline-code></li>
+                    <li><inline-code>superclass_name</inline-code></li>
+                    <li><inline-code>class_name</inline-code></li>
+                    <li><inline-code>subclass_name</inline-code></li>
+                    <li><inline-code>infraclass_name</inline-code></li>
+                    <li><inline-code>superorder_name</inline-code></li>
+                    <li><inline-code>order_name</inline-code></li>
+                    <li><inline-code>suborder_name</inline-code></li>
+                    <li><inline-code>infraorder_name</inline-code></li>
+                    <li><inline-code>parvorder_name</inline-code></li>
+                    <li><inline-code>superfamily_name</inline-code></li>
+                    <li><inline-code>family_name</inline-code></li>
+                    <li><inline-code>subfamily_name</inline-code></li>
+                    <li><inline-code>tribe_name</inline-code></li>
+                    <li><inline-code>subtribe_name</inline-code></li>
+                    <li><inline-code>genus_name</inline-code></li>
+                    <li><inline-code>subgenus_name</inline-code></li>
+                    <li><inline-code>species_group_name</inline-code></li>
+                    <li><inline-code>species_subgroup_name</inline-code></li>
+                    <li><inline-code>species_name</inline-code></li>
+                    <li><inline-code>subspecies_name</inline-code></li>
+                    <li><inline-code>varietas_name</inline-code></li>
+                    <li><inline-code>forma_name</inline-code></li>
                 </ul>
-            </p>
-        </HeaderBodyCard>
+            </v-card-text>
+        </header-body-card>
 
         <!-- Parameters Card -->
-        <HeaderBodyCard id="parameters" title="Parameters" class="mt-5">
-            <!-- TODO: table component? -->
-            <v-simple-table>
-                <template v-slot:default>
-                    <thead>
-                        <tr>
-                            <th class="text-left">Name</th>
-                            <th class="text-left">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <b>Input[]</b>
-                                <br>
-                                <i style="font-size: 85%;">required</i>
-                            </td>
-                            <td class="py-3">
-                                Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.
-                                <br>
-                                <div class="mt-3" style="font-size: 85%;">Value: String</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>equate_il</b>
-                                <br>
-                                <i style="font-size: 85%;">optional</i>
-                            </td>
-                            <td class="py-3">
-                                Equate isoleucine (I) and leucine (L).
-                                <br>
-                                <div class="mt-3" style="font-size: 85%;">Value: Must be <Code>true</Code> or <Code>false</Code> (default)</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>extra</b>
-                                <br>
-                                <i style="font-size: 85%;">optional</i>
-                            </td>
-                            <td class="py-3">
-                                Return additional information fields if <Code>true</Code>.
-                                <br>
-                                <div class="mt-3" style="font-size: 85%;">Value: Must be <Code>true</Code> or <Code>false</Code> (default)</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <b>names</b>
-                                <br>
-                                <i style="font-size: 85%;">optional</i>
-                            </td>
-                            <td class="py-3">
-                                Return names of ranks in the lineage if <Code>true</Code>.
-                                <br>
-                                <div class="mt-3" style="font-size: 85%;">Value: Must be <Code>true</Code> or <Code>false</Code> (default)</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </template>
-            </v-simple-table>
-        </HeaderBodyCard>
+        <header-body-card
+            id="parameters"
+            title="Parameters"
+            class="mt-5"
+            large-title
+        >
+            <v-table>
+                <thead>
+                    <tr>
+                        <th class="text-start">
+                            Name
+                        </th>
+                        <th class="text-start">
+                            Description
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <b>Input[]</b>
+                            <br>
+                            <i style="font-size: 85%;">required</i>
+                        </td>
+                        <td class="py-3">
+                            Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: string
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>equate_il</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Equate isoleucine (I) and leucine (L).
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>extra</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return additional information fields if <inline-code>true</inline-code>.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>names</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return names of ranks in the lineage if <inline-code>true</inline-code>.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </v-table>
+        </header-body-card>
 
-        <h2 id="examples" class="font-weight-light mt-10 mb-n2">Examples</h2>
+        <h2
+            id="examples"
+            class="font-weight-light mt-10"
+        >
+            Examples
+        </h2>
 
-        <ExampleCard 
-            title="Retrieve all organisms associated with the UniProt entries containing a given tryptic peptide" 
+        <example-card
+            title="Retrieve all organisms associated with the UniProt entries containing a given tryptic peptide"
             :response="response1"
         >
-            <template v-slot:description>
-                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i>. 
+            <template #description>
+                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>.
                 The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
-            <template v-slot:post>
+            <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR'
             </template>
-            <template v-slot:get>
+            <template #get>
                 https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR
             </template>
-        </ExampleCard>
+        </example-card>
 
-        <ExampleCard 
+        <example-card
             id="example2"
             class="mt-5"
-            title="Retrieve all organisms associated with the UniProt entries containing any of multiple tryptic peptides" 
+            title="Retrieve all organisms associated with the UniProt entries containing any of multiple tryptic peptides"
             :response="response2"
         >
-            <template v-slot:description>
-                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i> 
-                or <i><Initialism>APVLSDSSCK</Initialism></i>. The result is the same as the combination of this search and this search with the Tryptic Peptide 
-                Analysis in the web interface.
+            <template #description>
+                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> or <i><initialism>APVLSDSSCK</initialism></i>.
+                The result is the same as the combination of this search and this search with the Tryptic Peptide Analysis in the web interface.
             </template>
-            <template v-slot:post>
+            <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
             </template>
-            <template v-slot:get>
+            <template #get>
                 https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK
             </template>
-        </ExampleCard>
+        </example-card>
 
-        <ExampleCard 
+        <example-card
             class="mt-5"
-            title="Retrieve all organisms associated with the UniProt entries containing a single tryptic peptide, while equating I and L" 
+            title="Retrieve all organisms associated with the UniProt entries containing a single tryptic peptide, while equating I and L"
             :response="response3"
         >
-            <template v-slot:description>
-                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><Initialism>APVLSDSSCK</Initialism></i>. In 
-                searching, isoleucine (I) and leucine (L) are considered equal. The result is the same as this search with the Tryptic Peptide Analysis in the 
-                web interface.
+            <template #description>
+                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>APVLSDSSCK</initialism></i>.
+                In searching, isoleucine (I) and leucine (L) are considered equal.
+                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
-            <template v-slot:post>
+            <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=APVISDSSCK' -d 'equate_il=true'
             </template>
-            <template v-slot:get>
+            <template #get>
                 https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=APVISDSSCK&equate_il=true
             </template>
-        </ExampleCard>
+        </example-card>
 
-        <ExampleCard 
+        <example-card
             class="mt-5"
-            title="Retrieve all organisms and lineage associated with the UniProt entries containing a single tryptic peptide" 
+            title="Retrieve all organisms and lineage associated with the UniProt entries containing a single tryptic peptide"
             :response="response4"
         >
-            <template v-slot:description>
-                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i> 
-                including the complete lineage of these organisms. The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+            <template #description>
+                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> including the complete lineage of these organisms.
+                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
-            <template v-slot:post>
+            <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
             </template>
-            <template v-slot:get>
+            <template #get>
                 https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true
             </template>
-        </ExampleCard>
+        </example-card>
 
-        <ExampleCard 
+        <example-card
             class="mt-5"
-            title="Retrieve all organisms and lineage names associated with the UniProt entries containing a single tryptic peptide" 
+            title="Retrieve all organisms and lineage names associated with the UniProt entries containing a single tryptic peptide"
             :response="response5"
         >
-            <template v-slot:description>
-               This example retrieves all organisms associated with the UniProt entries containing the peptide <i><Initialism>AIPQLEVARPADAYETAEAYR</Initialism></i>, 
-               including the complete lineage of these organisms with the names of all ranks. The result is the same as this search with the Tryptic Peptide Analysis 
-               in the web interface.
+            <template #description>
+                This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>, including the complete lineage of these organisms with the names of all ranks.
+                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
-            <template v-slot:post>
+            <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true' -d 'names=true'
             </template>
-            <template v-slot:get>
+            <template #get>
                 https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true&names=true
             </template>
-        </ExampleCard>
+        </example-card>
 
-        <TryItCard id="try" class="mt-5" :response="tryItResponse" command="pept2taxa">
+        <try-it-card
+            id="try"
+            class="mt-5"
+            :response="tryItResponse"
+            command="pept2taxa"
+        >
             <template>
                 <v-row>
-                    <v-col class="font-weight-bold" cols=12 md=2>Input[]</v-col>
-                    <v-col cols=12 md=10>
+                    <v-col
+                        class="font-weight-bold"
+                        cols="12"
+                        md="2"
+                    >
+                        Input[]
+                    </v-col>
+                    <v-col
+                        cols="12"
+                        md="10"
+                    >
                         <v-textarea
-                            class="pt-0 mt-0"
                             v-model="input"
+                            class="pt-0 mt-0"
                             clearable
                             no-resize
                             filled
                             clear-icon="mdi-close-circle"
-                        ></v-textarea>
+                        />
                     </v-col>
                 </v-row>
 
                 <v-row>
-                    <v-col class="font-weight-bold" cols=4 sm=2>equate_il</v-col>
-                    <v-col cols=8 sm=10>
+                    <v-col
+                        class="font-weight-bold"
+                        cols="4"
+                        sm="2"
+                    >
+                        equate_il
+                    </v-col>
+                    <v-col
+                        cols="8"
+                        sm="10"
+                    >
                         <v-switch
-                            class="pt-0 mt-0"
                             v-model="equate_il"
+                            class="pt-0 mt-0"
                             inset
-                        ></v-switch>
+                        />
                     </v-col>
                 </v-row>
 
                 <v-row>
-                    <v-col class="font-weight-bold" cols=4 sm=2>extra</v-col>
-                    <v-col cols=8 sm=10>
+                    <v-col
+                        class="font-weight-bold"
+                        cols="4"
+                        sm="2"
+                    >
+                        extra
+                    </v-col>
+                    <v-col
+                        cols="8"
+                        sm="10"
+                    >
                         <v-switch
-                            class="pt-0 mt-0"
                             v-model="extra"
+                            class="pt-0 mt-0"
                             inset
-                        ></v-switch>
+                        />
                     </v-col>
                 </v-row>
 
                 <v-row>
-                    <v-col class="font-weight-bold" cols=4 sm=2>names</v-col>
-                    <v-col cols=8 sm=10>
+                    <v-col
+                        class="font-weight-bold"
+                        cols="4"
+                        sm="2"
+                    >
+                        names
+                    </v-col>
+                    <v-col
+                        cols="8"
+                        sm="10"
+                    >
                         <v-switch
-                            class="pt-0 mt-0"
                             v-model="names"
+                            class="pt-0 mt-0"
                             inset
-                        ></v-switch>
+                        />
                     </v-col>
                 </v-row>
 
@@ -365,7 +455,7 @@
                     </v-btn>
                 </v-row>
             </template>
-        </TryItCard>
+        </try-it-card>
     </v-container>
 </template>
 
@@ -375,8 +465,8 @@ import { onBeforeMount, ref } from 'vue';
 import UnipeptCommunicator from '@/logic/communicators/unipept/UnipeptCommunicator';
 
 import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
-import Code from '@/components/highlights/InlineCode.vue';
-import Initialism from '@/components/highlights/Initialism.vue';
+import InlineCode from '@/components/highlights/InlineCode.vue';
+import Initialism from '@/components/highlights/initialism.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
 import ExampleCard from '@/components/cards/ExampleCard.vue';
 import TryItCard from '@/components/cards/TryItCard.vue';

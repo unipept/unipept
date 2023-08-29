@@ -1,58 +1,58 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            <Initialism>POST</Initialism> /api/v1/taxa2lca
+            <initialism>POST</initialism> /api/v1/taxa2lca
         </h1>
         <h3 class="font-weight-light">Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.</h3>
-        
+
         <v-divider class="my-2" />
 
         <p>
-            This method calculates and returns the taxonomic lowest common ancestor for a given list of <Initialism>NCBI</Initialism> taxon identifiers. 
+            This method calculates and returns the taxonomic lowest common ancestor for a given list of <initialism>NCBI</initialism> taxon identifiers.
         </p>
 
         <!-- Request Card -->
         <HeaderBodyCard id="request" title="Request">
             <p>
-                The taxa2lca method can be used by doing a <Initialism>HTTP POST</Initialism>-request (preferred) or <Initialism>GET</Initialism>-request to 
-                <Code>https://api.unipept.ugent.be/api/v1/taxa2lca</Code>. <RLink to="#parameters" router>Parameters</RLink> can be included in the request body 
-                (<Initialism>POST</Initialism>) or in the query string (<Initialism>GET</Initialism>). The only required parameter is <Code>input[]</Code>, which 
+                The taxa2lca method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to
+                <inline-code>https://api.unipept.ugent.be/api/v1/taxa2lca</inline-code>. <r-link to="#parameters" router>Parameters</r-link> can be included in the request body
+                (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>). The only required parameter is <inline-code>input[]</inline-code>, which
                 takes one or more tryptic peptides.
             </p>
 
             <h3>input</h3>
             <p>
-                <Code>input[]</Code> is a required parameter that takes at least two taxon identifiers. Unipept will calculate and return the taxonomic lowest 
-                common ancestor of the given taxa. To pass multiple taxon identifiers, simply add multiple <Code>input[]</Code> parameters 
-                (see <RLink to="#example" router>example</RLink>).
+                <inline-code>input[]</inline-code> is a required parameter that takes at least two taxon identifiers. Unipept will calculate and return the taxonomic lowest
+                common ancestor of the given taxa. To pass multiple taxon identifiers, simply add multiple <inline-code>input[]</inline-code> parameters
+                (see <r-link to="#example" router>example</r-link>).
             </p>
 
             <StaticAlert title="Input size">
                 <p>
-                    Unipept puts no restrictions on the number of peptides passed to the <Code>input[]</Code> parameter. Keep in mind that searching for lots of 
-                    peptides at once may cause the request to timeout or, in the case of a <Initialism>GET</Initialism>-request, exceed the maximum 
-                    <Initialism>URL</Initialism> length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
+                    Unipept puts no restrictions on the number of peptides passed to the <inline-code>input[]</inline-code> parameter. Keep in mind that searching for lots of
+                    peptides at once may cause the request to timeout or, in the case of a <initialism>GET</initialism>-request, exceed the maximum
+                    <initialism>URL</initialism> length. When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
                 </p>
             </StaticAlert>
-            
+
             <h3>extra</h3>
             <p>
-                <Code>extra</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter 
-                defaults to <Code>false</Code>. When the parameter is set to <Code>true</Code>, Unipept will return the complete lineage of the taxonomic lowest 
-                common ancestor. See the <RLink to="#response" router>response</RLink> section for an overview of the information fields returned.
+                <inline-code>extra</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>. When not set explicitly, the parameter
+                defaults to <inline-code>false</inline-code>. When the parameter is set to <inline-code>true</inline-code>, Unipept will return the complete lineage of the taxonomic lowest
+                common ancestor. See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
             </p>
 
             <h3>names</h3>
             <p>
-                <Code>names</Code> is an optional parameter and can either be <Code>true</Code> or <Code>false</Code>. When not set explicitly, the parameter 
-                defaults to <Code>false</Code>. When both <Code>names</Code> and <Code>extra</Code> are set to <Code>true</Code>, Unipept will return the names of 
-                all ranks in the lineage of the taxonomic lowest common ancestor. Setting only <Code>names</Code> to <Code>true</Code> will not result in additional 
-                information fields being returned. See the <RLink to="#response" router>response</RLink> section for an overview of the information fields returned. 
+                <inline-code>names</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>. When not set explicitly, the parameter
+                defaults to <inline-code>false</inline-code>. When both <inline-code>names</inline-code> and <inline-code>extra</inline-code> are set to <inline-code>true</inline-code>, Unipept will return the names of
+                all ranks in the lineage of the taxonomic lowest common ancestor. Setting only <inline-code>names</inline-code> to <inline-code>true</inline-code> will not result in additional
+                information fields being returned. See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
             </p>
 
             <StaticAlert title="Performance penalty">
                 <p>
-                    Setting <Code>names</Code> to <Code>true</Code> has a performance penalty inferred from additional database queries. Do not use this parameter 
+                    Setting <inline-code>names</inline-code> to <inline-code>true</inline-code> has a performance penalty inferred from additional database queries. Do not use this parameter
                     unless the extra information fields are needed.
                 </p>
             </StaticAlert>
@@ -61,82 +61,82 @@
         <!-- Response Card -->
         <HeaderBodyCard id="response" title="Response" class="mt-5">
             <p class="mb-2">
-                The taxonomic lowest common ancestor for the given list of taxon identifiers is returned as a <Initialism>JSON</Initialism> object. 
-                By default, the object contains the following information fields extracted from the <Initialism>NCBI</Initialism> taxonomy: 
+                The taxonomic lowest common ancestor for the given list of taxon identifiers is returned as a <initialism>JSON</initialism> object.
+                By default, the object contains the following information fields extracted from the <initialism>NCBI</initialism> taxonomy:
 
                 <ul class="my-3">
-                    <li><Code>taxon_id</Code>: the <Initialism>NCBI</Initialism> taxon id of the taxonomic lowest common ancestor</li>
-                    <li><Code>taxon_name</Code>: the name of the taxonomic lowest common ancestor</li>
-                    <li><Code>taxon_rank</Code>: the taxonomic rank of the taxonomic lowest common ancestor</li>
+                    <li><inline-code>taxon_id</inline-code>: the <initialism>NCBI</initialism> taxon id of the taxonomic lowest common ancestor</li>
+                    <li><inline-code>taxon_name</inline-code>: the name of the taxonomic lowest common ancestor</li>
+                    <li><inline-code>taxon_rank</inline-code>: the taxonomic rank of the taxonomic lowest common ancestor</li>
                 </ul>
 
-                When the <Code>extra</Code> parameter is set to <Code>true</Code>, the object contains additional information about the lineage of the taxonomic lowest 
-                common ancestor extracted from the <Initialism>NCBI</Initialism> taxonomy. The taxon id of each rank in the lineage is specified using the following 
+                When the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>, the object contains additional information about the lineage of the taxonomic lowest
+                common ancestor extracted from the <initialism>NCBI</initialism> taxonomy. The taxon id of each rank in the lineage is specified using the following
                 information fields:
 
                 <ul class="multi-column my-3">
-                    <li><Code>superkingdom_id</Code></li>
-                    <li><Code>kingdom_id</Code></li>
-                    <li><Code>subkingdom_id</Code></li>
-                    <li><Code>superphylum_id</Code></li>
-                    <li><Code>phylum_id</Code></li>
-                    <li><Code>subphylum_id</Code></li>
-                    <li><Code>superclass_id</Code></li>
-                    <li><Code>class_id</Code></li>
-                    <li><Code>subclass_id</Code></li>
-                    <li><Code>infraclass_id</Code></li>
-                    <li><Code>superorder_id</Code></li>
-                    <li><Code>order_id</Code></li>
-                    <li><Code>suborder_id</Code></li>
-                    <li><Code>infraorder_id</Code></li>
-                    <li><Code>parvorder_id</Code></li>
-                    <li><Code>superfamily_id</Code></li>
-                    <li><Code>family_id</Code></li>
-                    <li><Code>subfamily_id</Code></li>
-                    <li><Code>tribe_id</Code></li>
-                    <li><Code>subtribe_id</Code></li>
-                    <li><Code>genus_id</Code></li>
-                    <li><Code>subgenus_id</Code></li>
-                    <li><Code>species_group_id</Code></li>
-                    <li><Code>species_subgroup_id</Code></li>
-                    <li><Code>species_id</Code></li>
-                    <li><Code>subspecies_id</Code></li>
-                    <li><Code>varietas_id</Code></li>
-                    <li><Code>forma_id</Code></li>
+                    <li><inline-code>superkingdom_id</inline-code></li>
+                    <li><inline-code>kingdom_id</inline-code></li>
+                    <li><inline-code>subkingdom_id</inline-code></li>
+                    <li><inline-code>superphylum_id</inline-code></li>
+                    <li><inline-code>phylum_id</inline-code></li>
+                    <li><inline-code>subphylum_id</inline-code></li>
+                    <li><inline-code>superclass_id</inline-code></li>
+                    <li><inline-code>class_id</inline-code></li>
+                    <li><inline-code>subclass_id</inline-code></li>
+                    <li><inline-code>infraclass_id</inline-code></li>
+                    <li><inline-code>superorder_id</inline-code></li>
+                    <li><inline-code>order_id</inline-code></li>
+                    <li><inline-code>suborder_id</inline-code></li>
+                    <li><inline-code>infraorder_id</inline-code></li>
+                    <li><inline-code>parvorder_id</inline-code></li>
+                    <li><inline-code>superfamily_id</inline-code></li>
+                    <li><inline-code>family_id</inline-code></li>
+                    <li><inline-code>subfamily_id</inline-code></li>
+                    <li><inline-code>tribe_id</inline-code></li>
+                    <li><inline-code>subtribe_id</inline-code></li>
+                    <li><inline-code>genus_id</inline-code></li>
+                    <li><inline-code>subgenus_id</inline-code></li>
+                    <li><inline-code>species_group_id</inline-code></li>
+                    <li><inline-code>species_subgroup_id</inline-code></li>
+                    <li><inline-code>species_id</inline-code></li>
+                    <li><inline-code>subspecies_id</inline-code></li>
+                    <li><inline-code>varietas_id</inline-code></li>
+                    <li><inline-code>forma_id</inline-code></li>
                 </ul>
 
-                When both the <Code>names</Code> and <Code>extra</Code> parameters are set to <Code>true</Code>, objects also contain the names for each rank in 
+                When both the <inline-code>names</inline-code> and <inline-code>extra</inline-code> parameters are set to <inline-code>true</inline-code>, objects also contain the names for each rank in
                 the lineage using the following information fields:
 
                 <ul class="multi-column mt-3">
-                    <li><Code>superkingdom_name</Code></li>
-                    <li><Code>kingdom_name</Code></li>
-                    <li><Code>subkingdom_name</Code></li>
-                    <li><Code>superphylum_name</Code></li>
-                    <li><Code>phylum_name</Code></li>
-                    <li><Code>subphylum_name</Code></li>
-                    <li><Code>superclass_name</Code></li>
-                    <li><Code>class_name</Code></li>
-                    <li><Code>subclass_name</Code></li>
-                    <li><Code>infraclass_name</Code></li>
-                    <li><Code>superorder_name</Code></li>
-                    <li><Code>order_name</Code></li>
-                    <li><Code>suborder_name</Code></li>
-                    <li><Code>infraorder_name</Code></li>
-                    <li><Code>parvorder_name</Code></li>
-                    <li><Code>superfamily_name</Code></li>
-                    <li><Code>family_name</Code></li>
-                    <li><Code>subfamily_name</Code></li>
-                    <li><Code>tribe_name</Code></li>
-                    <li><Code>subtribe_name</Code></li>
-                    <li><Code>genus_name</Code></li>
-                    <li><Code>subgenus_name</Code></li>
-                    <li><Code>species_group_name</Code></li>
-                    <li><Code>species_subgroup_name</Code></li>
-                    <li><Code>species_name</Code></li>
-                    <li><Code>subspecies_name</Code></li>
-                    <li><Code>varietas_name</Code></li>
-                    <li><Code>forma_name</Code></li>
+                    <li><inline-code>superkingdom_name</inline-code></li>
+                    <li><inline-code>kingdom_name</inline-code></li>
+                    <li><inline-code>subkingdom_name</inline-code></li>
+                    <li><inline-code>superphylum_name</inline-code></li>
+                    <li><inline-code>phylum_name</inline-code></li>
+                    <li><inline-code>subphylum_name</inline-code></li>
+                    <li><inline-code>superclass_name</inline-code></li>
+                    <li><inline-code>class_name</inline-code></li>
+                    <li><inline-code>subclass_name</inline-code></li>
+                    <li><inline-code>infraclass_name</inline-code></li>
+                    <li><inline-code>superorder_name</inline-code></li>
+                    <li><inline-code>order_name</inline-code></li>
+                    <li><inline-code>suborder_name</inline-code></li>
+                    <li><inline-code>infraorder_name</inline-code></li>
+                    <li><inline-code>parvorder_name</inline-code></li>
+                    <li><inline-code>superfamily_name</inline-code></li>
+                    <li><inline-code>family_name</inline-code></li>
+                    <li><inline-code>subfamily_name</inline-code></li>
+                    <li><inline-code>tribe_name</inline-code></li>
+                    <li><inline-code>subtribe_name</inline-code></li>
+                    <li><inline-code>genus_name</inline-code></li>
+                    <li><inline-code>subgenus_name</inline-code></li>
+                    <li><inline-code>species_group_name</inline-code></li>
+                    <li><inline-code>species_subgroup_name</inline-code></li>
+                    <li><inline-code>species_name</inline-code></li>
+                    <li><inline-code>subspecies_name</inline-code></li>
+                    <li><inline-code>varietas_name</inline-code></li>
+                    <li><inline-code>forma_name</inline-code></li>
                 </ul>
             </p>
         </HeaderBodyCard>
@@ -145,7 +145,7 @@
         <HeaderBodyCard id="parameters" title="Parameters" class="mt-5">
             <!-- TODO: table component? -->
             <v-simple-table>
-                <template v-slot:default>
+                <template #default>
                     <thead>
                         <tr>
                             <th class="text-left">Name</th>
@@ -172,9 +172,9 @@
                                 <i style="font-size: 85%;">optional</i>
                             </td>
                             <td class="py-3">
-                                Return additional lineage information fields if <Code>true</Code>.
+                                Return additional lineage information fields if <inline-code>true</inline-code>.
                                 <br>
-                                <div class="mt-3" style="font-size: 85%;">Value: Must be <Code>true</Code> or <Code>false</Code> (default)</div>
+                                <div class="mt-3" style="font-size: 85%;">Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)</div>
                             </td>
                         </tr>
                         <tr>
@@ -184,9 +184,9 @@
                                 <i style="font-size: 85%;">optional</i>
                             </td>
                             <td class="py-3">
-                                Return names of ranks in the lineage if <Code>true</Code>.
+                                Return names of ranks in the lineage if <inline-code>true</inline-code>.
                                 <br>
-                                <div class="mt-3" style="font-size: 85%;">Value: Must be <Code>true</Code> or <Code>false</Code> (default)</div>
+                                <div class="mt-3" style="font-size: 85%;">Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)</div>
                             </td>
                         </tr>
                     </tbody>
@@ -196,61 +196,61 @@
 
         <h2 id="examples" class="font-weight-light mt-10 mb-n2">Examples</h2>
 
-        <ExampleCard 
+        <ExampleCard
             id="example"
-            title="Calculate the taxonomic lowest common ancestor for a given list of taxon identifiers" 
+            title="Calculate the taxonomic lowest common ancestor for a given list of taxon identifiers"
             :response="response1"
         >
-            <template v-slot:description>
-                This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id 
-                <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</RLink>), 
-                <i>Bacteroides intestinalis</i> (taxon id <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</RLink>) 
-                and <i>Coprobacter fastidiosus</i> (taxon id <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</RLink>).
+            <template #description>
+                This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id
+                <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>),
+                <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</r-link>)
+                and <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</r-link>).
             </template>
-            <template v-slot:post>
+            <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
             </template>
-            <template v-slot:get>
+            <template #get>
                 https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853
             </template>
         </ExampleCard>
 
-        <ExampleCard 
+        <ExampleCard
             class="mt-5"
-            title="Retrieve the taxonomic lowest common ancestor and its lineage for a given list of taxon identifiers" 
+            title="Retrieve the taxonomic lowest common ancestor and its lineage for a given list of taxon identifiers"
             :response="response2"
         >
-            <template v-slot:description>
-                This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id 
-                <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</RLink>), 
-                <i>Bacteroides intestinalis</i> (taxon id <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</RLink>) 
-                and <i>Coprobacter fastidiosus</i> (taxon id <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</RLink>), 
+            <template #description>
+                This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id
+                <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>),
+                <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</r-link>)
+                and <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</r-link>),
                 including its complete lineage.
             </template>
-            <template v-slot:post>
+            <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true'
             </template>
-            <template v-slot:get>
+            <template #get>
                 https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true
             </template>
         </ExampleCard>
 
-        <ExampleCard 
+        <ExampleCard
             class="mt-5"
-            title="Retrieve all UniProt entries containing a single tryptic peptide, while equating I and L" 
+            title="Retrieve all UniProt entries containing a single tryptic peptide, while equating I and L"
             :response="response3"
         >
-            <template v-slot:description>
-                This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id 
-                <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</RLink>), 
-                <i>Bacteroides intestinalis</i> (taxon id <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</RLink>) 
-                and <i>Coprobacter fastidiosus</i> (taxon id <RLink to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</RLink>), 
+            <template #description>
+                This example calculates and retrieves the taxonomic lowest common ancestor of <i>Bacteroides fragilis</i> (taxon id
+                <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>),
+                <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</r-link>)
+                and <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</r-link>),
                 including its complete lineage with names.
             </template>
-            <template v-slot:post>
+            <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true' -d 'names=true'
             </template>
-            <template v-slot:get>
+            <template #get>
                 https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true&names=true
             </template>
         </ExampleCard>
@@ -314,11 +314,11 @@ import UnipeptCommunicator from '@/logic/communicators/unipept/UnipeptCommunicat
 
 import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
 import Code from '@/components/highlights/InlineCode.vue';
-import Initialism from '@/components/highlights/Initialism.vue';
+import initialism from '@/components/highlights/initialism.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
 import ExampleCard from '@/components/cards/ExampleCard.vue';
 import TryItCard from '@/components/cards/TryItCard.vue';
-import RLink from '@/components/highlights/ResourceLink.vue';
+import r-link from '@/components/highlights/ResourceLink.vue';
 
 const unipeptCommunicator = new UnipeptCommunicator();
 
