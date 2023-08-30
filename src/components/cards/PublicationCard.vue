@@ -1,11 +1,16 @@
 <template>
     <v-card>
-        <v-card-title class="blue white--text">
-            {{ title }}
+        <v-card-title
+            class="bg-blue text-white"
+            style="letter-spacing: 0.0125rem"
+        >
+            <div style="font-size: 1.25rem">
+                {{ title }}
+            </div>
+            <div>
+                {{ authors.length == 1 ? authors[0] : authors.slice(0, -1).join(", ") + ', and ' + authors[authors.length - 1] }}
+            </div>
         </v-card-title>
-        <v-card-subtitle class="blue white--text">
-            {{ authors.length == 1 ? authors[0] : authors.slice(0, -1).join(", ") + ', and ' + authors[authors.length - 1] }}
-        </v-card-subtitle>
 
         <v-divider />
 
@@ -30,20 +35,25 @@
                     <br>
                     {{ journal + ", " + year + (extra ? ", " + extra : extra) }}
                     <br>
-                    <div class="d-flex">
-                        <v-icon small>
+                    <div>
+                        <v-icon
+                            size="x-small"
+                            class="mr-1"
+                        >
                             mdi-link-variant
                         </v-icon>
+
                         <RLink :to="'https://' + doi">
                             {{ doi }}
                         </RLink>
 
                         <v-icon
-                            class="ps-2"
-                            size="small"
+                            class="ml-1"
+                            size="x-small"
                         >
                             mdi-link-variant
                         </v-icon>
+
                         <RLink :to="googleScholar">
                             Google Scholar
                         </RLink>

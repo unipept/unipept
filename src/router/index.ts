@@ -169,6 +169,14 @@ const routes = [
         ],
         meta: newsMeta
     },
+    {
+        path: "/publications",
+        component: () => import("@/components/pages/PublicationsPage.vue"),
+        meta: {
+            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
+            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+        }
+    },
 ]
 
 const router = createRouter({
