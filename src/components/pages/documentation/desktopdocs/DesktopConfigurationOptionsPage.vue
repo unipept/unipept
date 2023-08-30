@@ -32,7 +32,9 @@
                 at one point in time.
             </p>
 
-            <h3>Long running tasks</h3>
+            <h3 class="mt-6">
+                Long running tasks
+            </h3>
             <p>
                 A long running task, in this context, is defined as a task that runs in the background and takes longer
                 than a few milliseconds to complete. A good example of such a long running task is reading in all of
@@ -44,7 +46,9 @@
                 processes that might require processing power.
             </p>
 
-            <h3>API requests</h3>
+            <h3 class="mt-6">
+                API requests
+            </h3>
             <p>
                 This option determines the amount of HTTP-requests that will be performed in parallel to our API-server.
                 Setting this to a higher value will typically improve analysis performance. However, setting it too
@@ -52,10 +56,12 @@
                 to set this to a value between 1 and 5.
             </p>
 
-            <h3>Custom endpoints</h3>
+            <h3 class="mt-6">
+                Custom endpoints
+            </h3>
             <p>
                 If you are using our online service for the analysis of a sample, you are typically using the
-                <a href="https://api.unipept.ugent.be">https://api.unipept.ugent.be</a> endpoint. Sometimes, however,
+                <a class="link" href="https://api.unipept.ugent.be">https://api.unipept.ugent.be</a> endpoint. Sometimes, however,
                 you might be interested to use a custom endpoint that's set up by a third party. This allows you, for
                 example, to use a local instance of the Unipept API-server and avoid sensitive data to be sent over
                 the internet. Add custom API-endpoints that adhere to the Unipept API-specification here. You can
@@ -79,7 +85,9 @@
                 />
             </div>
 
-            <h3>Database storage location</h3>
+            <h3 class="mt-6">
+                Database storage location
+            </h3>
             <p>
                 All targeted protein reference databases that are constructed by this application need to be stored
                 in a specific location. This setting can be used to change the location on the file system of where
@@ -119,21 +127,25 @@
                 <span class="font-weight-bold">Warning:</span>
                 Make sure that Docker Desktop is properly installed on your system. Otherwise, the settings for this
                 configuration options will not have any effect (and analyses using targeted protein reference
-                databases will not work properly). Check <a href="https://docs.docker.com/get-docker/">this guide</a>
+                databases will not work properly). Check <a class="link" href="https://docs.docker.com/get-docker/">this guide</a>
                 for a quick explanation on how to install Docker on your system.
             </v-alert>
 
-            <h3>Connection settings</h3>
+            <h3 class="mt-6">
+                Connection settings
+            </h3>
             <p>
                 Unipept Desktop needs to connect to the Docker daemon in order to manage containers and images.
                 Normally, the correct default connection settings for your system are used by default. If, however,
                 the application is unable to connect to the Docker daemon, then please verify that the settings here
                 are correct and adjust where necessary. You can check
-                <a href="https://github.com/apocas/dockerode#getting-started">this webpage</a> for more information on
+                <a class="link" href="https://github.com/apocas/dockerode#getting-started">this webpage</a> for more information on
                 what configuration values are excepted.
             </p>
 
-            <h3>Docker availability</h3>
+            <h3 class="mt-6">
+                Docker availability
+            </h3>
             <p>
                 By looking at the output presented here, you can verify that the application was able to succesfully
                 connect to the Docker daemon. This output is mainly used for debugging purposes and allows you to

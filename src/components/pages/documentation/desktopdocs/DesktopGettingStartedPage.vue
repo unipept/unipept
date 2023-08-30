@@ -455,7 +455,7 @@
             class="mb-5"
             large-title
         >
-            <div class="d-flex align-center flex-column ma-6">
+            <div class="mb-6">
                 <v-img
                     :src="DesktopUpdateNotificationImage"
                     max-width="800"
@@ -481,7 +481,7 @@
                 is also available on our
                 <a class="link" href="https://github.com/unipept/unipept-desktop/releases">release notes page</a>.
             </p>
-            <div class="d-flex align-center flex-column">
+            <div class="mb-6">
                 <v-img
                     :src="DesktopUpdateChangesImage"
                     max-width="800"

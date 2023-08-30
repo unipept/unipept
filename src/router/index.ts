@@ -145,7 +145,7 @@ const routes = [
             { path: "single-assay-analysis", component: () => import("@/components/pages/documentation/desktopdocs/DesktopSingleAssayAnalysisPage.vue"), meta: desktopMeta },
             { path: "comparative-analysis", component: () => import("@/components/pages/documentation/desktopdocs/DesktopComparativeAnalysisPage.vue"), meta: desktopMeta },
             { path: "configuration", component: () => import("@/components/pages/documentation/desktopdocs/DesktopConfigurationOptionsPage.vue"), meta: desktopMeta },
-            { path: "faq", component: () => import("@/components/pages/documentation/desktopdocs/DesktopFAQPage.vue.vue"), meta: desktopMeta }
+            { path: "faq", component: () => import("@/components/pages/documentation/desktopdocs/DesktopFAQPage.vue"), meta: desktopMeta }
         ],
         meta: desktopMeta
     },

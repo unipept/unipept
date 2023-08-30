@@ -10,6 +10,7 @@
         <header-body-card
             id="faq"
             title="Frequently Asked Questions"
+            large-title
         >
             <h3 class="font-weight-bold">
                 Q: Why does the analysis using a large targeted protein reference database fail on Windows?
@@ -22,7 +23,7 @@
                 from the previous one to the one. Doing so is, however, quite technical and is not recommended for
                 non-technical users. Instead, we recommend to use a Linux system (such as Ubuntu) or a Mac in this case.
                 If you do want to move the virtual hard drive on Windows, you can follow the steps in
-                <a href="https://learn.microsoft.com/en-us/windows/wsl/vhd-size">this guide</a>.
+                <a class="link" href="https://learn.microsoft.com/en-us/windows/wsl/vhd-size">this guide</a>.
             </p>
             <h3 class="font-weight-bold">
                 Q: Is Docker always required when using the Unipept Desktop application?

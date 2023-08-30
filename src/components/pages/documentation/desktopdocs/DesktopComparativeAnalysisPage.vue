@@ -74,6 +74,7 @@
             <v-alert
                 color="info"
                 variant="outlined"
+                class="mb-6"
             >
                 <span class="font-weight-bold">Remark:</span>
                 Ticking the &quot;select all&quot; checkbox on the top left of the selection table will only select
@@ -87,20 +88,24 @@
                 The wizard will now automatically navigate to the next step.
             </p>
 
-            <h3>Select a data source for the vertical axis</h3>
+            <h3 class="mt-6">
+                Select a data source for the vertical axis
+            </h3>
             <p>
                 The second step in the wizard is identical to the first step and consists of picking features for the
                 vertical heatmap axis. Select a distinct set of features for the vertical axis in order to construct
                 a useful heatmap visualization.
             </p>
 
-            <h3>Pick a normalization type</h3>
+            <h3 class="mt-6">
+                Pick a normalization type
+            </h3>
             <p>
                 The last step of the heatmap construction wizard consists of selecting the appropriate normalization
                 type. You can choose between the following options:
             </p>
 
-            <ul>
+            <ul class="mb-2">
                 <li>
                     <span class="font-weight-bold">All:</span> compute the largest values over all cells in the heatmap
                     and normalize all cells according to this one value.
@@ -137,6 +142,7 @@
             id="inter_assay_comparison"
             title="Inter-assay comparison"
             class="mb-5"
+            large-title
         >
             <p>
                 The inter-assay comparison component of Unipept Desktop allows you to compare different features over
@@ -145,7 +151,9 @@
                 comparative heatmap visualization.
             </p>
 
-            <h3>Assay selection</h3>
+            <h3 class="mt-6">
+                Assay selection
+            </h3>
             <p>
                 The first step in the process of constructing a heatmap consists of selecting a collection of assays for
                 which you want to compare features. You can select as many assays as you'd like, but note that
@@ -165,7 +173,9 @@
             </div>
 
 
-            <h3>Data source selection</h3>
+            <h3 class="mt-6">
+                Data source selection
+            </h3>
             <p>
                 Once you have selected a collection of assays that you want to include in the comparison, you need to
                 choose a set of features that you want to compare between the different assays. A data source is one of
@@ -201,7 +211,9 @@
                 mix features from distinct data sources and visualize them at the same time in the heatmap.
             </v-alert>
 
-            <h3>Normalization</h3>
+            <h3 class="mt-6">
+                Normalization
+            </h3>
             <p>
                 The second step required for the heatmap construction consists of choosing which type of normalization
                 should be applied to the input data. There are three normalization types available:
@@ -224,14 +236,14 @@
                 </li>
             </ul>
 
-            <h3 class="mt-2">
+            <h3 class="mt-6">
                 Visualization
             </h3>
             <p>
                 Once all of the previous steps have properly been configured, the end result will be shown here. If
                 everything goes well, you will be greeted by an interactive heatmap.
             </p>
-            <div class="d-flex align-center flex-column">
+            <div>
                 <v-img
                     :src="DesktopComparisonHeatmapImage"
                     max-width="800"

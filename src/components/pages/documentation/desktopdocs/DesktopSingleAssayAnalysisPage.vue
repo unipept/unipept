@@ -16,7 +16,7 @@
                 <v-img
                     :src="DesktopSingleAssayAnalysisOverviewImage"
                     max-width="800"
-                    contain
+                    :cover="false"
                     eager
                     class="screenshot ma-6"
                 />
@@ -64,7 +64,9 @@
                 the application.
             </v-alert>
 
-            <h3>Adding one or more assays to a study</h3>
+            <h3 class="mt-6">
+                Adding one or more assays to a study
+            </h3>
             <p>
                 Once a study has been created, you can add a new assay by clicking the little file icon
                 (<v-icon x-small>mdi-file-plus-outline</v-icon>) on the right side of the study name. A dialog
@@ -78,11 +80,11 @@
                 each input file and the name of the assays will be deducted from the provided file name.
             </p>
 
-            <div class="d-flex align-center flex-column my-5">
+            <div class="my-5">
                 <v-img
                     :src="DesktopAddAssayDialogImage"
                     max-width="800"
-                    contain
+                    :cover="false"
                     eager
                     class="screenshot ma-6"
                 />
@@ -95,6 +97,7 @@
             <v-alert
                 color="info"
                 variant="outlined"
+                class="mb-4"
             >
                 <span class="font-weight-bold">Remark:</span>
                 Please note that the application only accepts text-based files containing one peptide per line. These
@@ -102,13 +105,15 @@
                 error message will be displayed.
             </v-alert>
 
-            <h3>Configuring the assays before importing</h3>
+            <h3 class="mt-6">
+                Configuring the assays before importing
+            </h3>
 
-            <div class="d-flex align-center flex-column my-5">
+            <div class="my-5">
                 <v-img
                     :src="DesktopConfigureAssaysImage"
                     max-width="800"
-                    contain
+                    :cover="false"
                     eager
                     class="screenshot ma-6"
                 />
@@ -150,7 +155,7 @@
                 </li>
             </ul>
 
-            <p>
+            <p class="mt-2">
                 Finally, click on <span class="font-weight-bold">Continue</span> to import the assays into the current
                 project and start the metaproteomic analysis.
             </p>
@@ -168,7 +173,9 @@
                 results and on the bottom is a third card that shows all functional analysis results.
             </p>
 
-            <h3>Taxonomic profile</h3>
+            <h3 class="mt-6">
+                Taxonomic profile
+            </h3>
             <p>
                 In order to explore the taxonomic composition of a sample, users can browser through 4 different
                 visualizations that each try to model the same information in a different way. This allows individual
@@ -176,11 +183,11 @@
                 of the taxonomic profile card allow you to switch between the different visualizations.
             </p>
 
-            <div class="d-flex align-center flex-column my-5">
+            <div class="my-5">
                 <v-img
                     :src="DesktopTaxonomicAnalysisImage"
                     max-width="800"
-                    contain
+                    :cover="false"
                     eager
                     class="screenshot ma-6"
                 />
@@ -190,7 +197,9 @@
                 </div>
             </div>
 
-            <h3>Functional profile</h3>
+            <h3 class="mt-6">
+                Functional profile
+            </h3>
             <p>
                 The functional profile of a sample can be explored in the last card on this page. A functional summary
                 is provided for all identified Gene Ontology terms, Enzyme Commission numbers and InterPro domains. You
@@ -198,7 +207,7 @@
                 functional card.
             </p>
 
-            <div class="d-flex align-center flex-column my-5">
+            <div class="my-5">
                 <v-img
                     :src="DesktopFunctionalAnalysisImage"
                     max-width="800"
@@ -212,7 +221,9 @@
                 </div>
             </div>
 
-            <h3>Filtering by taxon</h3>
+            <h3 class="mt-6">
+                Filtering by taxon
+            </h3>
             <p>
                 One of the key features of Unipept that distinguish it from other major metaproteomics analysis tools
                 is it's ability to keep track of the link between taxa and functions in a sample. This allows Unipept
@@ -223,7 +234,7 @@
                 bacterial taxa.
             </p>
 
-            <div class="d-flex align-center flex-column my-5">
+            <div class="my-5">
                 <v-img
                     :src="DesktopTaxonomicFilterImage"
                     max-width="800"
