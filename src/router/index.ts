@@ -79,6 +79,31 @@ const routes = [
         meta: apidocsMeta
     },
     {
+        path: "/clidocs",
+        component: () => import("@/components/pages/features/CLIPage.vue"),
+        children: [
+            { path: "", component: () => import("@/components/pages/documentation/clidocs/CLIDocsOverviewPage.vue"), meta: clidocsMeta },
+            { path: "casestudies", component: () => import("@/components/pages/documentation/clidocs/CLICaseStudiesPage.vue"), meta: clidocsMeta },
+            { path: "casestudies/tpa", component: () => import("@/components/pages/documentation/clidocs/casestudies/CLITrypticCaseStudy.vue"), meta: clidocsMeta },
+            { path: "casestudies/mpa", component: () => import("@/components/pages/documentation/clidocs/casestudies/CLIMetaproteomicsCaseStudy.vue"), meta: clidocsMeta },
+            { path: "uniprot", component: () => import("@/components/pages/documentation/clidocs/CLIUniprotPage.vue"), meta: clidocsMeta },
+            { path: "prot2pept", component: () => import("@/components/pages/documentation/clidocs/CLIProt2PeptPage.vue"), meta: clidocsMeta },
+            { path: "peptfilter", component: () => import("@/components/pages/documentation/clidocs/CLIPeptfilterPage.vue"), meta: clidocsMeta },
+            { path: "pept2lca", component: () => import("@/components/pages/documentation/clidocs/CLIPept2LcaPage.vue"), meta: clidocsMeta },
+            { path: "pept2prot", component: () => import("@/components/pages/documentation/clidocs/CLIPept2ProtPage.vue"), meta: clidocsMeta },
+            { path: "pept2taxa", component: () => import("@/components/pages/documentation/clidocs/CLIPept2TaxaPage.vue"), meta: clidocsMeta },
+            { path: "pept2ec", component: () => import("@/components/pages/documentation/clidocs/CLIPept2EcPage.vue"), meta: clidocsMeta },
+            { path: "pept2go", component: () => import("@/components/pages/documentation/clidocs/CLIPept2GoPage.vue"), meta: clidocsMeta },
+            { path: "pept2interpro", component: () => import("@/components/pages/documentation/clidocs/CLIPept2InterproPage.vue"), meta: clidocsMeta },
+            { path: "pept2funct", component: () => import("@/components/pages/documentation/clidocs/CLIPept2FunctPage.vue"), meta: clidocsMeta },
+            { path: "peptinfo", component: () => import("@/components/pages/documentation/clidocs/CLIPeptInfoPage.vue"), meta: clidocsMeta },
+            { path: "taxa2lca", component: () => import("@/components/pages/documentation/clidocs/CLIPept2TaxaPage.vue"), meta: clidocsMeta },
+            { path: "taxa2tree", component: () => import("@/components/pages/documentation/clidocs/CLITaxa2TreePage.vue"), meta: clidocsMeta },
+            { path: "taxonomy", component: () => import("@/components/pages/documentation/clidocs/CLITaxonomyPage.vue"), meta: clidocsMeta }
+        ],
+        meta: clidocsMeta
+    },
+    {
         path: "/about",
         component:  () => import("@/components/pages/AboutPage.vue"),
         meta: {
