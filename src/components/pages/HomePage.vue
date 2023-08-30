@@ -50,7 +50,7 @@
                 <router-link to="/tpa">
                     <v-hover v-slot="{ isHovering, props }">
                         <home-page-card
-                            :hover="isHovering"
+                            :hover="isHovering || false"
                             title="Tryptic Peptide Analysis"
                             :asset="homeFeatureSingleImage"
                             v-bind="props"
@@ -75,7 +75,7 @@
                 <router-link to="/mpa">
                     <v-hover v-slot="{ isHovering, props }">
                         <home-page-card
-                            :hover="isHovering"
+                            :hover="isHovering || false"
                             title="Metaproteomics Analysis"
                             :asset="homeFeatureMultiImage"
                             v-bind="props"
@@ -99,7 +99,7 @@
                 <router-link to="/desktop">
                     <v-hover v-slot="{ isHovering, props }">
                         <home-page-card
-                            :hover="isHovering"
+                            :hover="isHovering || false"
                             title="Unipept Desktop"
                             :asset="homeFeatureDesktopImage"
                             v-bind="props"
@@ -124,7 +124,7 @@
                 <router-link to="/apidocs">
                     <v-hover v-slot="{ isHovering, props }">
                         <home-page-card
-                            :hover="isHovering"
+                            :hover="isHovering || false"
                             title="API Documentation"
                             :asset="homeFeatureApiImage"
                             contain
@@ -148,7 +148,7 @@
                 <router-link to="/clidocs">
                     <v-hover v-slot="{ isHovering, props }">
                         <home-page-card
-                            :hover="isHovering"
+                            :hover="isHovering || false"
                             title="CLI Documentation"
                             :asset="homeFeatureCliImage"
                             contain
@@ -173,7 +173,7 @@
                 <router-link to="/umgap">
                     <v-hover v-slot="{ isHovering, props }">
                         <home-page-card
-                            :hover="isHovering"
+                            :hover="isHovering || false"
                             title="UMGAP"
                             :asset="homeFeatureUmgapImage"
                             contain

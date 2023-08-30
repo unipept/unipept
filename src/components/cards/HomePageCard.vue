@@ -25,7 +25,7 @@ export interface Props {
     title: string,
     asset: string,
     hover: boolean,
-    contain: boolean
+    contain?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
