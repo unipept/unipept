@@ -18,12 +18,10 @@
             >
                 <vertical-navigation
                     v-if="display.lgAndUp"
-                    class="col-lg-2 order-lg-1 d-sm-none d-lg-flex"
                     :items="navigation"
                 />
                 <horizontal-navigation
                     v-else
-                    class="col-12 order-0"
                     :items="navigation"
                 />
             </v-col>

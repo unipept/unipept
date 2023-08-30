@@ -104,6 +104,38 @@ const routes = [
         meta: clidocsMeta
     },
     {
+        path: "/umgap",
+        component: () => import("@/components/pages/features/MetagenomicsPage.vue"),
+        children: [
+            { path: "", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsOverviewPage.vue"), meta: metagenomicsMeta },
+            { path: "casestudies", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsCaseStudiesPage.vue"), meta: metagenomicsMeta },
+            { path: "casestudies/basic", component: () => import("@/components/pages/documentation/metagenomics/casestudies/MetagenomicsPreconfiguredPage.vue"), meta: metagenomicsMeta },
+            { path: "casestudies/advanced", component: () => import("@/components/pages/documentation/metagenomics/casestudies/MetagenomicsAdvancedPage.vue"), meta: metagenomicsMeta },
+            { path: "casestudies/comparative", component: () => import("@/components/pages/documentation/metagenomics/casestudies/MetagenomicsComparativePage.vue"), meta: metagenomicsMeta },
+            { path: "fastq2fasta", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsFastq2FastaPage.vue"), meta: metagenomicsMeta },
+            { path: "translate", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsTranslatePage.vue"), meta: metagenomicsMeta },
+            { path: "prot2tryp", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsProt2TrypPage.vue"), meta: metagenomicsMeta },
+            { path: "prot2kmer", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsProt2KmerPage.vue"), meta: metagenomicsMeta },
+            { path: "filter", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsFilterPage.vue"), meta: metagenomicsMeta },
+            { path: "pept2lca", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsPept2LcaPage.vue"), meta: metagenomicsMeta },
+            { path: "prot2tryp2lca", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsProt2Tryp2LcaPage.vue"), meta: metagenomicsMeta },
+            { path: "prot2kmer2lca", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsProt2Kmer2LcaPage.vue"), meta: metagenomicsMeta },
+            { path: "bestof", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsBestofPage.vue"), meta: metagenomicsMeta },
+            { path: "seedextend", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsSeedExtendPage.vue"), meta: metagenomicsMeta },
+            { path: "uniq", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsUniqPage.vue"), meta: metagenomicsMeta },
+            { path: "taxa2agg", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsTaxa2AggPage.vue"), meta: metagenomicsMeta },
+            { path: "snaptaxon", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsSnapTaxonPage.vue"), meta: metagenomicsMeta },
+            { path: "taxa2freq", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsTaxa2FreqPage.vue"), meta: metagenomicsMeta },
+            { path: "taxa2tree", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsTaxa2TreePage.vue"), meta: metagenomicsMeta },
+            { path: "taxonomy", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsTaxonomyPage.vue"), meta: metagenomicsMeta },
+            { path: "splitkmers", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsSplitKmersPage.vue"), meta: metagenomicsMeta },
+            { path: "joinkmers", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsJoinKmersPage.vue"), meta: metagenomicsMeta },
+            { path: "buildindex", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsBuildIndexPage.vue"), meta: metagenomicsMeta },
+            { path: "printindex", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsPrintIndexPage.vue"), meta: metagenomicsMeta }
+        ],
+        meta: metagenomicsMeta
+    },
+    {
         path: "/about",
         component:  () => import("@/components/pages/AboutPage.vue"),
         meta: {
