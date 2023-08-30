@@ -1,0 +1,1 @@
+class i{parse(t){const[e,...r]=t.replace(/- /g,"* ").split("* ");return{description:e,changelog:r.filter(s=>s.length).map(this.splitTag)}}splitTag(t){if(!t.startsWith("["))return{tag:null,description:t};const[e,...r]=t.split(" ");return{tag:e.replace(/^\[/,"").replace(/\]$/,"").toLowerCase(),description:r.join(" ").trimEnd()}}}export{i as D};
