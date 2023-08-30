@@ -136,6 +136,20 @@ const routes = [
         meta: metagenomicsMeta
     },
     {
+        path: "/desktop",
+        component: () => import("@/components/pages/features/DesktopPage.vue"),
+        children: [
+            { path: "", component: () => import("@/components/pages/documentation/desktopdocs/DesktopGettingStartedPage.vue"), meta: desktopMeta },
+            { path: "application-overview", component: () => import("@/components/pages/documentation/desktopdocs/DesktopApplicationOverviewPage.vue"), meta: desktopMeta },
+            { path: "project-management", component: () => import("@/components/pages/documentation/desktopdocs/DesktopProjectManagementPage.vue"), meta: desktopMeta },
+            { path: "single-assay-analysis", component: () => import("@/components/pages/documentation/desktopdocs/DesktopSingleAssayAnalysisPage.vue"), meta: desktopMeta },
+            { path: "comparative-analysis", component: () => import("@/components/pages/documentation/desktopdocs/DesktopComparativeAnalysisPage.vue"), meta: desktopMeta },
+            { path: "configuration", component: () => import("@/components/pages/documentation/desktopdocs/DesktopConfigurationOptionsPage.vue"), meta: desktopMeta },
+            { path: "faq", component: () => import("@/components/pages/documentation/desktopdocs/DesktopFAQPage.vue.vue"), meta: desktopMeta }
+        ],
+        meta: desktopMeta
+    },
+    {
         path: "/about",
         component:  () => import("@/components/pages/AboutPage.vue"),
         meta: {
