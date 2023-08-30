@@ -279,7 +279,7 @@ import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import RLink from '@/components/highlights/ResourceLink.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 
 const htmlFragment = "<results><result><go><item><go_term>GO:0003677</go_term><protein_count>268</protein_count></item><item><go_term>GO:0006351</go_term><protein_count>189</protein_count></item><item><go_term>GO:0005524</go_term><protein_count>151</protein_count></item><item><go_term>GO:0006355</go_term><protein_count>148</protein_count></item><item><go_term>GO:0016021</go_term><protein_count>136</protein_count></item><item><go_term>GO:0005622</go_term><protein_count>110</protein_count></item><item><go_term>GO:0004842</go_term><protein_count>108</protein_count></item><item><go_term>GO:0000160</go_term><protein_count>88</protein_count></item></go><peptide>AALTER</peptide><total_protein_count>1425</total_protein_count></result><result><go><item><go_term>GO:0006457</go_term><protein_count>4</protein_count></item><item><go_term>GO:0005737</go_term><protein_count>4</protein_count></item><item><go_term>GO:0005524</go_term><protein_count>4</protein_count></item><item><go_term></go_term><protein_count></protein_count></item><item><go_term></go_term><protein_count></protein_count></item><item><go_term></go_term><protein_count></protein_count></item><item><go_term></go_term><protein_count></protein_count></item><item><go_term></go_term><protein_count></protein_count></item></go><peptide>MDGTEYIIVK</peptide><total_protein_count>4</total_protein_count></result></results>"
 </script>

@@ -230,7 +230,7 @@ import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import RLink from '@/components/highlights/ResourceLink.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 
 const htmlFragment = "<results><result><taxon_id>171549</taxon_id><taxon_name>Bacteroidales</taxon_name><taxon_rank>order</taxon_rank></result></results>"
 </script>

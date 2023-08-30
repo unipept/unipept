@@ -125,7 +125,7 @@
                     </v-tooltip>
 
                     <peptide-export-button
-                        :assay-status="activeAssayStatus"
+                        :assay-status="activeAssayStatus as MultiProteomicsAnalysisStatus"
                         button-text="Download results"
                     />
                 </div>
@@ -163,6 +163,7 @@ import AnalyticsCommunicator from '@/logic/communicators/analytics/AnalyticsComm
 import { storeToRefs } from "pinia";
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
 import MissingPeptidesDialog from "@/components/dialogs/MissingPeptidesDialog.vue";
+import { MultiProteomicsAnalysisStatus } from "unipept-web-components";
 
 const multiAnalysisStore = useMultiAnalysis();
 

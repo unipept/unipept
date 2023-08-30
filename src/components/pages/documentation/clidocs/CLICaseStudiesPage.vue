@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 import useNavigation from "@/composables/useNavigation";
 
 const { navigate } = useNavigation();

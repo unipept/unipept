@@ -42,7 +42,6 @@
                 <v-spacer />
                 <v-btn
                     color="primary"
-                    text
                     variant="elevated"
                     @click="dialogOpen = false"
                 >

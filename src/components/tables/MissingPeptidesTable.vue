@@ -1,6 +1,6 @@
 <template>
     <div>
-        <!--suppress TypeScriptValidateTypes -->
+        <!-- @vue-ignore (TODO: types should work once data tables are not in labs anymore) -->
         <v-data-table
             :headers="headers"
             :loading="!items"

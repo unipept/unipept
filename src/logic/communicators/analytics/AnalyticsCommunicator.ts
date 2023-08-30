@@ -1,9 +1,7 @@
-import { Route } from "vue-router";
-
 declare const window: any;
 
 export default class AnalyticsCommunicator {
-    public async logRoute(route: Route) {
+    public async logRoute(route: any) {
         // Log the path of the route
         this.logPageView(route.path);
 

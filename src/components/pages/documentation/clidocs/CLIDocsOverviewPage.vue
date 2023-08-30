@@ -191,7 +191,7 @@ import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import InlineCode from '@/components/highlights/InlineCode.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 import useNavigation from "@/composables/useNavigation";
 
 const { navigate } = useNavigation();

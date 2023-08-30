@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import Initialism from '@/components/highlights/Initialism.vue';
 import ResourceLink from '@/components/highlights/ResourceLink.vue';
 import useNavigation from "@/composables/useNavigation";
 

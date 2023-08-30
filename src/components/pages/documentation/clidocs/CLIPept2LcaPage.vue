@@ -281,7 +281,7 @@ import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import RLink from '@/components/highlights/ResourceLink.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 
 const htmlFragment = "<results><result><peptide>AALTER</peptide><taxon_id>1</taxon_id><taxon_name>root</taxon_name><taxon_rank>no rank</taxon_rank></result><result><peptide>MDGTEYIIVK</peptide><taxon_id>1263</taxon_id><taxon_name>Ruminococcus</taxon_name><taxon_rank>genus</taxon_rank></result></results>"
 </script>

@@ -381,7 +381,7 @@ import RLink from '@/components/highlights/ResourceLink.vue';
 import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import InlineCode from '@/components/highlights/InlineCode.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 import ImageCaptionCard from '@/components/cards/ImageCaptionCard.vue';
 import CaseStudyMPAShotgunImage from '@/assets/documentation/cli/casestudy-mpa-shotgun-mpa.jpg';
 import CaseStudyMPATreeviewImage from '@/assets/documentation/cli/casestudy-mpa-treeview.png';

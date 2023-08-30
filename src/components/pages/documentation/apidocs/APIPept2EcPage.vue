@@ -322,7 +322,7 @@ import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicat
 
 import HeaderBodyCard from "@/components/cards/HeaderBodyCard.vue";
 import InlineCode from "@/components/highlights/InlineCode.vue";
-import initialism from "@/components/highlights/initialism.vue";
+import Initialism from "@/components/highlights/Initialism.vue";
 import StaticAlert from "@/components/alerts/StaticAlert.vue";
 import ExampleCard from "@/components/cards/ExampleCard.vue";
 import TryItCard from "@/components/cards/TryItCard.vue";

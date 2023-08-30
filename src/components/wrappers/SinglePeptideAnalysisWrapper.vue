@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 import { SinglePeptideSummary, SinglePeptideAnalysis } from 'unipept-web-components';
 import { useFullscreen } from '@vueuse/core';
 import useSingleAnalysis from "@/store/SingleAnalysisStore";

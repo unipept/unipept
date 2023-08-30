@@ -302,7 +302,7 @@ import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import RLink from '@/components/highlights/ResourceLink.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 
 const htmlFragment = "<results><result><peptide>ISVAQGASK</peptide><taxon_id>9606</taxon_id><taxon_name>Homo sapiens</taxon_name><taxon_rank>species</taxon_rank></result><result><peptide>MFNEIAPK</peptide><taxon_id>1262758</taxon_id><taxon_name>Blautia sp. CAG:52</taxon_name><taxon_rank>species</taxon_rank></result><result><peptide>MFNEIAPK</peptide><taxon_id>1262948</taxon_id><taxon_name>Roseburia sp. CAG:471</taxon_name><taxon_rank>species</taxon_rank></result></results>"
 </script>

@@ -51,7 +51,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
 import HeaderBodyCard from "./HeaderBodyCard.vue";
 
 export type Service = {

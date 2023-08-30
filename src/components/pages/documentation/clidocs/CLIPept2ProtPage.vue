@@ -331,7 +331,7 @@ import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import RLink from '@/components/highlights/ResourceLink.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 
 const htmlFragment = "<results><result><peptide>ISVAQGASK</peptide><uniprot_id>Q9Y6R7</uniprot_id><protein_name>IgGFc-binding protein</protein_name><taxon_id>9606</taxon_id></result><result><peptide>ISVAQGASK</peptide><uniprot_id>A0A087WXI2</uniprot_id><protein_name>IgGFc-binding protein</protein_name><taxon_id>9606</taxon_id></result><result><peptide>MDGTEYIIVK</peptide><uniprot_id>C6JD41</uniprot_id><protein_name>10 kDa chaperonin</protein_name><taxon_id>457412</taxon_id></result></results>"
 </script>

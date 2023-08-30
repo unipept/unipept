@@ -1,13 +1,14 @@
 <template>
     <single-peptide-analysis-wrapper
         class="mb-5"
-        :peptide="$route.params.sequence"
-        :equate-il="equate($route.query.equate)"
+        :peptide="route.params.sequence as string"
+        :equate-il="(route.query.equate as unknown) as boolean"
     />
 </template>
 
 <script setup lang="ts">
 import SinglePeptideAnalysisWrapper from "@/components/wrappers/SinglePeptideAnalysisWrapper.vue";
+import { useRoute } from "vue-router";
 
-const equate = (equate: string | (string | null)[]): boolean => { return !!equate };
+const route = useRoute();
 </script>

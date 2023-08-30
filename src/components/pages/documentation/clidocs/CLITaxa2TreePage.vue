@@ -207,7 +207,7 @@ import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
 import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import RLink from '@/components/highlights/ResourceLink.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 </script>
 
 <style scoped>

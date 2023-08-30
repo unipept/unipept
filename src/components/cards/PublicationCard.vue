@@ -65,15 +65,16 @@
                     xl="3"
                 >
                     <RLink :to="'https://' + doi">
-                        <v-hover>
-                            <template #default="{ hover }">
-                                <v-card :elevation="hover ? 6 : 2">
-                                    <v-img
-                                        :src="image"
-                                        :alt="image"
-                                    />
-                                </v-card>
-                            </template>
+                        <v-hover v-slot="{ isHovering, props }">
+                            <v-card
+                                :elevation="isHovering ? 6 : 2"
+                                v-bind="props"
+                            >
+                                <v-img
+                                    :src="image"
+                                    :alt="image"
+                                />
+                            </v-card>
                         </v-hover>
                     </RLink>
                 </v-col>
@@ -83,7 +84,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, withDefaults } from 'vue';
 import RLink from '../highlights/ResourceLink.vue';
 
 export interface Props {

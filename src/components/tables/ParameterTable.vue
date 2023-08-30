@@ -23,8 +23,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
 export type Parameter = {
     name: string,
     description: string

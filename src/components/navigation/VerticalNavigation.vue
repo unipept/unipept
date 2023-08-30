@@ -60,7 +60,7 @@ const matchRoute = (link: string, route: string) => {
     max-height: 35px;
 }
 
-.v-tabs /deep/ .v-slide-group__wrapper {
+:deep(.v-tabs .v-slide-group__wrapper) {
     overflow: visible !important;
 }
 

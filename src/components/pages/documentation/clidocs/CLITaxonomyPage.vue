@@ -265,7 +265,7 @@ import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
 import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import RLink from '@/components/highlights/ResourceLink.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import Initialism from '@/components/highlights/Initialism.vue';
 
 const htmlText = "<results><result><taxon_id>817</taxon_id><taxon_name>Bacteroides fragilis</taxon_name><taxon_rank>species</taxon_rank></result><result><taxon_id>329854</taxon_id><taxon_name>Bacteroides intestinalis</taxon_name><taxon_rank>species</taxon_rank></result></results>"
 </script>

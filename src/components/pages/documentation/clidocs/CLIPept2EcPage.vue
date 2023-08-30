@@ -277,7 +277,7 @@ import Boxed from '@/components/highlights/Boxed.vue';
 import Sentinel from '@/components/highlights/Sentinel.vue';
 import RLink from '@/components/highlights/ResourceLink.vue';
 import StaticAlert from '@/components/alerts/StaticAlert.vue';
-import initialism from '@/components/highlights/initialism.vue';
+import initialism from '@/components/highlights/Initialism.vue';
 
 const htmlFragment = "<results><result><ec><item><ec_number>2.3.2.27</ec_number><protein_count>111</protein_count></item><item><ec_number>2.7.13.3</ec_number><protein_count>11</protein_count></item><item><ec_number>6.2.1.3</ec_number><protein_count>11</protein_count></item><item><ec_number>6.1.1.6</ec_number><protein_count>8</protein_count></item><item><ec_number>6.3.2.13</ec_number><protein_count>8</protein_count></item><item><ec_number>2.7.4.25</ec_number><protein_count>7</protein_count></item><item><ec_number>6.1.1.22</ec_number><protein_count>6</protein_count></item><item><ec_number>3.1.26.-</ec_number><protein_count>4</protein_count></item><item><ec_number>2.3.1.29</ec_number><protein_count>4</protein_count></item><item><ec_number>2.7.1.15</ec_number><protein_count>3</protein_count></item></ec><peptide>AALTER</peptide><total_protein_count>1425</total_protein_count></result><result><peptide>MDGTEYIIVK</peptide><total_protein_count>4</total_protein_count></result></results>"
 </script>
