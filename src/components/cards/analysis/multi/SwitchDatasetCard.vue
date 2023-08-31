@@ -51,10 +51,9 @@
                             </v-avatar>
                             <v-progress-circular
                                 v-else
-                                :rotate="-90"
                                 :size="24"
                                 style="margin-left: 8px; margin-right: 16px;"
-                                :value="assayStatus.progress.currentValue"
+                                :model-value="assayStatus.progress.currentValue"
                                 color="primary"
                             />
                         </template>

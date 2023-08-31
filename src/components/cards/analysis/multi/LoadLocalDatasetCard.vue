@@ -15,8 +15,10 @@
                 :key="dataset.name"
                 :title="dataset.name"
                 :subtitle="dataset.amountOfPeptides + ' peptides'"
+                two-line
                 prepend-icon="mdi-plus"
                 ripple
+                class="py-4"
                 @click="loadAssay(dataset)"
             >
                 <template #prepend>
@@ -30,16 +32,19 @@
                 </template>
 
                 <template #append>
-                    <div class="d-flex justify-end">
-                        <span>
+                    <div class="d-flex flex-column align-end">
+                        <span class="text-body-2 text-medium-emphasis">
                             {{ dateToString(dataset.createdAt) }}
                         </span>
-                        <v-tooltip text="Delete this sample from local storage.">
+                        <v-tooltip text="Delete this assay from local storage.">
                             <template #activator="{ props }">
                                 <v-btn
                                     class="remove-assay-button"
-                                    icon="mdi-close"
+                                    variant="text"
+                                    icon="mdi-delete-outline"
                                     v-bind="props"
+                                    size="small"
+                                    density="compact"
                                     @click.stop="openConfirmationDialog(dataset)"
                                 />
                             </template>
