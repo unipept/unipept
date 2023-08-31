@@ -2,7 +2,7 @@
     <single-peptide-analysis-wrapper
         class="mb-5"
         :peptide="route.params.sequence as string"
-        :equate-il="(route.query.equate as unknown) as boolean"
+        :equate-il="route.query.equate === 'true'"
     />
 </template>
 
