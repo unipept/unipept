@@ -214,7 +214,7 @@
 import LoadDatasetsCard from '@/components/cards/analysis/multi/LoadDatasetsCard.vue';
 import SelectDatasetCard from '@/components/cards/analysis/multi/SelectDatasetCard.vue';
 import SwitchDatasetCard from '@/components/cards/analysis/multi/SwitchDatasetCard.vue';
-import { onUnmounted, ref } from 'vue';
+import { onUnmounted, ref, watch } from "vue";
 import AnalysisSummaryCard from '@/components/cards/analysis/multi/AnalysisSummaryCard.vue';
 import {
     GoSummaryCard,
@@ -248,6 +248,14 @@ const currentTab = ref<number>(0);
 const sortingPeptidesDialogOpen = ref<boolean>(false);
 
 const { downloadString } = useCsvDownload();
+
+watch(activeAssayStatus, () => {
+    console.log("Assay updated!");
+});
+
+watch(() => multiAnalysisStore.activeAssayStatus, () => {
+    console.log("Active assay updated!");
+});
 
 const filtered = () => {
     if(multiAnalysisStore.activeAssayStatus?.filterId) {

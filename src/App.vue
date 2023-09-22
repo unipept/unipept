@@ -186,7 +186,6 @@ const navItems = [
 
 QueueManager.initializeQueue(4);
 
-const githubCommunicator = new GithubCommunicator();
 const unipeptCommunicator = new UnipeptCommunicator();
 
 onBeforeMount(async () => {

@@ -25,7 +25,7 @@ import {
     ProgressUtils
 } from "unipept-web-components";
 import { Assay } from "unipept-web-components";
-import { computed, ref, toRaw } from "vue";
+import { computed, markRaw, ref, toRaw } from "vue";
 import useConfigurationStore from "./ConfigurationStore";
 
 const enum ProgressSteps {
@@ -135,6 +135,7 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
         }
 
         progress.eta = -1;
+        // triggerRef(assayStatuses);
     }
 
     const analyse = async (assay: Assay, equateIl: boolean, filterDuplicates: boolean, cleavageHandling: boolean) => {
@@ -222,11 +223,17 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
 
             // Update status
             assayStatus.assay = assay;
+            markRaw(assayStatus.assay.peptides);
             assayStatus.pept2Data = pept2Data;
+            markRaw(assayStatus.pept2Data);
             assayStatus.goOntology = goOntology;
+            markRaw(assayStatus.goOntology);
             assayStatus.ecOntology = ecOntology;
+            markRaw(assayStatus.ecOntology);
             assayStatus.interproOntology = interproOntology;
+            markRaw(assayStatus.interproOntology);
             assayStatus.ncbiOntology = ncbiOntology;
+            markRaw(assayStatus.ncbiOntology);
 
             // Update data
             assayStatus.data = {
@@ -239,6 +246,8 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
                 trust: trust
             }
 
+            markRaw(assayStatus.data);
+
             // Update filter data
             assayStatus.filteredData = {
                 peptideCountTable: peptideCountTable,
@@ -248,6 +257,8 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
                 percentage: 5,
                 trust: trust
             };
+
+            markRaw(assayStatus.filteredData);
         } catch(error: any) {
             console.error(error);
             assayStatus.error = {
@@ -261,6 +272,7 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             assayStatus.filterReady = !assayStatus.error.status;
 
             updateProgress(assay, 100, ProgressSteps.COMPLETED, false);
+            // triggerRef(assayStatuses);
         }
     }
 
@@ -346,6 +358,8 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
                 percentage: percentage,
                 trust: filteredTrust
             };
+
+            markRaw(assayStatus.filteredData);
         } catch(error: any) {
             console.error(error);
             assayStatus.error = {
@@ -358,27 +372,29 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             assayStatus.filterReady = true;
 
             updateProgress(assayStatus.assay, -1, FilterSteps.COMPLETED, true);
+            // triggerRef(assayStatuses);
         }
     }
 
     const analysisCompleted = (assayId: string) => {
         const assayIndex = findAssayIndex(assayId);
         const assayStatus = assayStatuses.value[assayIndex];
-
         return assayStatus.analysisReady && !assayStatus.analysisInProgress;
     }
 
     const addAssay = (assay: Assay) => {
-        if(findAssayIndex(assay.id) === -1) {
+        if (findAssayIndex(assay.id) === -1) {
             const filterProgress = ProgressUtils.constructProgressObject(filterSteps);
             filterProgress.currentStep = FilterSteps.COMPLETED;
 
-            assayStatuses.value.push({
+            const idx = assayStatuses.value.push({
                 assay: assay,
-
                 progress: ProgressUtils.constructProgressObject(progressSteps),
                 filterProgress: filterProgress
             } as MultiProteomicsAnalysisStatus);
+
+
+            // triggerRef(assayStatuses);
         }
     }
 
@@ -391,7 +407,6 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
 
             assayStatuses.value[assayIndex] = {
                 assay: assay,
-
                 progress: ProgressUtils.constructProgressObject(progressSteps),
                 filterProgress: filterProgress
             } as MultiProteomicsAnalysisStatus
@@ -399,6 +414,8 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             if (activeAssayStatus.value?.assay.id === assay.id) {
                 activeAssayStatus.value = assayStatuses.value[assayIndex];
             }
+
+            // triggerRef(assayStatuses);
         }
     }
 
@@ -415,17 +432,21 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             } else {
                 activeAssayStatus.value = undefined;
             }
+
+            // triggerRef(assayStatuses);
         }
     };
 
     const removeAllAssays = () => {
         assayStatuses.value.splice(0, assayStatuses.value.length);
         activeAssayStatus.value = undefined;
+        // triggerRef(assayStatuses);
     };
 
     const activateAssay = (assay: Assay) => {
         const index = findAssayIndex(assay.id);
         activeAssayStatus.value = assayStatuses.value[index];
+        // triggerRef(assayStatuses);
     }
 
     const filterAssayByRank = (assayId: string, rankId: number) => {
