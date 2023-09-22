@@ -135,7 +135,6 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
         }
 
         progress.eta = -1;
-        // triggerRef(assayStatuses);
     }
 
     const analyse = async (assay: Assay, equateIl: boolean, filterDuplicates: boolean, cleavageHandling: boolean) => {
@@ -272,7 +271,6 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             assayStatus.filterReady = !assayStatus.error.status;
 
             updateProgress(assay, 100, ProgressSteps.COMPLETED, false);
-            // triggerRef(assayStatuses);
         }
     }
 
@@ -372,7 +370,6 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             assayStatus.filterReady = true;
 
             updateProgress(assayStatus.assay, -1, FilterSteps.COMPLETED, true);
-            // triggerRef(assayStatuses);
         }
     }
 
@@ -387,14 +384,11 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             const filterProgress = ProgressUtils.constructProgressObject(filterSteps);
             filterProgress.currentStep = FilterSteps.COMPLETED;
 
-            const idx = assayStatuses.value.push({
+            assayStatuses.value.push({
                 assay: assay,
                 progress: ProgressUtils.constructProgressObject(progressSteps),
                 filterProgress: filterProgress
             } as MultiProteomicsAnalysisStatus);
-
-
-            // triggerRef(assayStatuses);
         }
     }
 
@@ -414,8 +408,6 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             if (activeAssayStatus.value?.assay.id === assay.id) {
                 activeAssayStatus.value = assayStatuses.value[assayIndex];
             }
-
-            // triggerRef(assayStatuses);
         }
     }
 
@@ -432,8 +424,6 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
             } else {
                 activeAssayStatus.value = undefined;
             }
-
-            // triggerRef(assayStatuses);
         }
     };
 
@@ -446,7 +436,6 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
     const activateAssay = (assay: Assay) => {
         const index = findAssayIndex(assay.id);
         activeAssayStatus.value = assayStatuses.value[index];
-        // triggerRef(assayStatuses);
     }
 
     const filterAssayByRank = (assayId: string, rankId: number) => {
