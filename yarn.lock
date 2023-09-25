@@ -2186,9 +2186,10 @@ unipept-visualizations@^2.1.0:
     d3 "^6.2.0"
     regenerator-runtime "^0.13.7"
 
-"unipept-web-components@file:./unipept-web-components-v2.1.0.tgz":
+unipept-web-components@^2.1.0:
   version "2.1.0"
-  resolved "file:./unipept-web-components-v2.1.0.tgz#ac5160dedd4e73670cc5b20685ac8969c566a786"
+  resolved "https://registry.yarnpkg.com/unipept-web-components/-/unipept-web-components-2.1.0.tgz#9a3d9a1e6fc82e044fc84513adacd3abb5e31a4b"
+  integrity sha512-Q9NNIPNalwxICRJ+37iRD0FuTafW2WLvlMZ3OH9R1G3kI92SwiCBInbJiOfePeI3uPJ6G5FDzX0Cj/HhWwmO/Q==
   dependencies:
     "@mdi/font" "7.0.96"
     async "^3.2.4"
