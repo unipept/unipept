@@ -34,18 +34,18 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <style scoped>
-    a {
-        text-decoration: none;
-    }
+a {
+    text-decoration: none;
+}
 
-    .feature-title {
-        opacity: 0.70;
-        background-color: black;
-        color: white;
-        margin-top: -64px;
-    }
+.feature-title {
+    opacity: 0.70;
+    background-color: black;
+    color: white;
+    margin-top: -64px;
+}
 
-    .equal {
-        height: 100%;
-    }
+.equal {
+    height: 100%;
+}
 </style>

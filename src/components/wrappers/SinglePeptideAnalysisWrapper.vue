@@ -25,8 +25,6 @@ import { ref } from 'vue';
 import { SinglePeptideSummary, SinglePeptideAnalysis } from 'unipept-web-components';
 import { useFullscreen } from '@vueuse/core';
 import useSingleAnalysis from "@/store/SingleAnalysisStore";
-import { useRouter } from "vue-router";
-
 export interface Props {
     peptide: string
     equateIl: boolean
@@ -41,8 +39,6 @@ const { toggle } = useFullscreen();
 const currentTab = ref<string>("matched-proteins");
 
 analysisStore.analyse(peptide, equateIl);
-
-const router = useRouter();
 
 const onGoClicked = () => {
     currentTab.value = "go-terms";

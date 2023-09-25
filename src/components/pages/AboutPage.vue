@@ -163,6 +163,8 @@ const members = [
     { name: "Bart Mesuere", title: "Project lead", imgUrl: "https://avatars.githubusercontent.com/u/481872?v=4" },
     { name: "Pieter Verschaffelt", title: "PostDoc", imgUrl: "https://avatars.githubusercontent.com/u/9608686?v=4" },
     { name: "Tibo Vande Moortele", title: "PhD student", imgUrl: "https://avatars.githubusercontent.com/u/34175340?v=4" },
+    { name: "Stijn De Clercq", title: "Master student 2023 - 2024", imgUrl: "" },
+    { name: "Bram Devlaminck", title: "Master student 2023 - 2024", imgUrl: "" },
     { name: "Peter Dawyndt", title: "P.I.", imgUrl: "https://avatars.githubusercontent.com/u/5736113?v=4" },
     { name: "Lennart Martens", title: "P.I.", imgUrl: "" }
 ];

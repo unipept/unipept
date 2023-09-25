@@ -198,12 +198,6 @@ const peptides = computed(() => {
     return multiAnalysisStore.activeAssayStatus.assay.peptides.join('\n');
 });
 
-watch(() => multiAnalysisStore.activeAssayStatus, () => {
-    equateIl.value = equateIlInStore.value;
-    filterDuplicates.value = filterDuplicatesInStore.value;
-    cleavageHandling.value = cleavageHandlingInStore.value;
-})
-
 const dirty = () => {
     return equateIl.value !== equateIlInStore.value ||
         filterDuplicates.value !== filterDuplicatesInStore.value ||
@@ -226,18 +220,24 @@ const reprocess = () => {
 multiAnalysisStore.$subscribe((mutation, state) => {
     loading.value = state.activeAssayStatus?.analysisInProgress || true;
 });
+
+watch(() => multiAnalysisStore.activeAssayStatus, () => {
+    equateIl.value = equateIlInStore.value;
+    filterDuplicates.value = filterDuplicatesInStore.value;
+    cleavageHandling.value = cleavageHandlingInStore.value;
+});
 </script>
 
 <style scoped>
-    .loading-container {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, 0);
-    }
+.loading-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 0);
+}
 
-    .dark-label .v-label {
-        color: black !important;
-        opacity: 0.87 !important;
-    }
+.dark-label .v-label {
+    color: black !important;
+    opacity: 0.87 !important;
+}
 </style>

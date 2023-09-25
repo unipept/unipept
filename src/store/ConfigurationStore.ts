@@ -5,6 +5,7 @@ const useConfigurationStore = defineStore('configuration', () => {
     const unipeptApiUrl = 'https://api.unipept.ugent.be';
 
     const parallelRequests = 5;
+    const taskQueueSize = 4;
 
     const peptideDataBatchSize  = 100;
     const cleavageBatchSize     = 10;
@@ -20,6 +21,7 @@ const useConfigurationStore = defineStore('configuration', () => {
     return {
         unipeptApiUrl,
         parallelRequests,
+        taskQueueSize,
         peptideDataBatchSize,
         cleavageBatchSize,
         goBatchSize,

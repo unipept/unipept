@@ -8,3 +8,4 @@ declare module '*.vue' {
 }
 
 declare const APP_VERSION: string;
+declare const TASK_QUEUE_SIZE: number;

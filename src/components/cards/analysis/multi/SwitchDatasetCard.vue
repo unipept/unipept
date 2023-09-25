@@ -148,7 +148,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { Assay, StringUtils, HeatmapWizardMulti, MultiProteomicsAnalysisStatus } from "unipept-web-components";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 export interface Props {

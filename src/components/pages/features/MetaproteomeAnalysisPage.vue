@@ -249,14 +249,6 @@ const sortingPeptidesDialogOpen = ref<boolean>(false);
 
 const { downloadString } = useCsvDownload();
 
-watch(activeAssayStatus, () => {
-    console.log("Assay updated!");
-});
-
-watch(() => multiAnalysisStore.activeAssayStatus, () => {
-    console.log("Active assay updated!");
-});
-
 const filtered = () => {
     if(multiAnalysisStore.activeAssayStatus?.filterId) {
         return multiAnalysisStore.activeAssayStatus?.filterId !== 1;
@@ -304,13 +296,6 @@ const onUpdateFilterPercentage = (percentage: number) => {
     }
 }
 
-onUnmounted(() => {
-    selector.value = true;
-    multiAnalysisStore.removeAllAssays();
-    displaySummary.value = false;
-    sortPeptidePercentage.value = false;
-});
-
 const downloadItem = async (processor: any, ontology: any, code: FunctionalCode) => {
     if(!activeAssayStatus.value) {
         return;
@@ -350,6 +335,13 @@ const downloadGoItem = async (code: string) => {
 const downloadInterproItem = async (code: string) => {
     downloadItem(activeAssayStatus.value?.filteredData?.interproCountTableProcessor, activeAssayStatus.value?.interproOntology, code);
 }
+
+onUnmounted(() => {
+    selector.value = true;
+    multiAnalysisStore.removeAllAssays();
+    displaySummary.value = false;
+    sortPeptidePercentage.value = false;
+});
 </script>
 
 <style scoped>

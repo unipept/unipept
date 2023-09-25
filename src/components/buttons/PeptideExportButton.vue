@@ -44,7 +44,6 @@ export interface Props {
     buttonText: string
 }
 
-// eslint-disable-next-line
 const props = defineProps<Props>();
 
 const exportLoading = ref<boolean>(false);

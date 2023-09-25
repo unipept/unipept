@@ -169,8 +169,10 @@
 <script setup lang="ts">
 import { QueueManager } from 'unipept-web-components';
 import { onBeforeMount, ref } from 'vue';
-import { GithubCommunicator } from "@/logic/communicators/github/GithubCommunicator";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
+import useConfigurationStore from "@/store/ConfigurationStore";
+
+const configStore = useConfigurationStore();
 
 const unipeptVersion = ref<string>("");
 const uniprotVersion = ref<string>("");
@@ -184,7 +186,7 @@ const navItems = [
     { name: "Unipept Desktop", path: "/desktop" }
 ];
 
-QueueManager.initializeQueue(4);
+QueueManager.initializeQueue(configStore.taskQueueSize);
 
 const unipeptCommunicator = new UnipeptCommunicator();
 

@@ -168,18 +168,18 @@ const dateToString = (date: Date) => {
 </script>
 
 <style>
-    .shaking {
-        animation-name: shaker;
-        animation-duration: 0.2s;
-        transform-origin: 50% 50%;
-        animation-timing-function: linear;
-    }
-    @keyframes shaker {
-        0% { transform: translate(5px, 0); }
-        50% { transform: translate(-5px, 0); }
-        100% { transform: translate(5px, 0); }
-    }
-    .selected-placeholder {
-        display: inline-block;
-    }
+.shaking {
+    animation-name: shaker;
+    animation-duration: 0.2s;
+    transform-origin: 50% 50%;
+    animation-timing-function: linear;
+}
+@keyframes shaker {
+    0% { transform: translate(5px, 0); }
+    50% { transform: translate(-5px, 0); }
+    100% { transform: translate(5px, 0); }
+}
+.selected-placeholder {
+    display: inline-block;
+}
 </style>

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { SinglePeptideAnalysisStatus, Peptide, CountTable, Pept2DataCommunicator, NcbiId, NcbiOntologyProcessor, ProteinProcessor, NcbiResponseCommunicator, GoResponseCommunicator, EcOntologyProcessor, EcProteinCountTableProcessor, EcResponseCommunicator, GoOntologyProcessor, GoProteinCountTableProcessor, InterproOntologyProcessor, InterproProteinCountTableProcessor, InterproResponseCommunicator, PeptideData, NcbiTaxon, Ontology, GoCode, GoDefinition, EcCode, EcDefinition, InterproCode, InterproDefinition, NcbiTree, computeEcTree, ProteinResponseCommunicator } from "unipept-web-components";
+import { SinglePeptideAnalysisStatus, Peptide, CountTable, Pept2DataCommunicator, NcbiId, NcbiOntologyProcessor, ProteinProcessor, NcbiResponseCommunicator, GoResponseCommunicator, EcOntologyProcessor, EcProteinCountTableProcessor, EcResponseCommunicator, GoOntologyProcessor, GoProteinCountTableProcessor, InterproOntologyProcessor, InterproProteinCountTableProcessor, InterproResponseCommunicator, NcbiTree, computeEcTree, ProteinResponseCommunicator } from "unipept-web-components";
 import { ref } from "vue";
 import useConfigurationStore from "./ConfigurationStore";
 

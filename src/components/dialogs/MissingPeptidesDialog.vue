@@ -58,6 +58,10 @@ const emit = defineEmits<{ "update:modelValue": [value: boolean] }>();
 
 const dialogOpen = ref(props.modelValue);
 
+const copyMissedPeptides = () => {
+    navigator.clipboard.writeText(props.missedPeptides.join('\n'));
+}
+
 watch(dialogOpen, (newValue) => {
     emit('update:modelValue', newValue);
 });
@@ -65,8 +69,4 @@ watch(dialogOpen, (newValue) => {
 watch(() => props.modelValue, (newValue) => {
     dialogOpen.value = newValue;
 });
-
-const copyMissedPeptides = () => {
-    navigator.clipboard.writeText(props.missedPeptides.join('\n'));
-}
 </script>
