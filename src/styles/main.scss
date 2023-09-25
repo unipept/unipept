@@ -1,0 +1,28 @@
+// We can add extra SASS variables that are globally available here.
+// In order to override existing variables, see the settings.scss file!
+@use 'vuetify';
+
+// replace with @use 'vuetify' with (...)
+
+// Global styles for the rest of the application
+.link, .link:visited, .link:hover  {
+  color: #2196f3;
+  text-decoration: none !important;
+}
+
+.text-primary .v-switch__thumb {
+  background-color: #2196f3 !important;
+}
+
+.v-card-title + .v-card-text {
+  padding-top: 16px !important;
+}
+
+ul {
+  margin-left: 16px;
+}
+
+.dark-label .v-label {
+  color: black !important;
+  opacity: 0.87 !important;
+}
