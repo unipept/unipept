@@ -67,7 +67,7 @@
         </v-app-bar>
 
         <v-main class="d-flex flex-column">
-            <v-container class="main-container flex-grow-1">
+            <v-container class="main-container flex-grow-1" style="max-width: 1400px;" fluid>
                 <router-view :key="navigationKey" />
             </v-container>
 
