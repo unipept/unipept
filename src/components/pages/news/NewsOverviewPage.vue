@@ -87,9 +87,9 @@ const latestWebRelease = ref<GithubRelease>(defaultGithubRelease);
 const latestDesktopRelease = ref<GithubRelease>(defaultGithubRelease);
 
 onBeforeMount(async () => {
-    latestAPIRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept/releases");
+    latestAPIRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-api/releases");
     latestCLIRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-cli/releases");
-    latestWebRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-web/releases");
+    latestWebRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept/releases");
     latestDesktopRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-desktop/releases");
 
     loading.value = false;

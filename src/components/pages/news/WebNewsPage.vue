@@ -39,7 +39,7 @@ const releaseParser = new WebReleaseParser();
 const releases = ref<GithubRelease[]>([]);
 
 onBeforeMount(async () => {
-    const result = await githubCommunicator.releases("https://api.github.com/repos/unipept/unipept-web/releases", 5);
+    const result = await githubCommunicator.releases("https://api.github.com/repos/unipept/unipept/releases", 5);
     releases.value = result.filter(r => !r.prerelease);
 })
 </script>
