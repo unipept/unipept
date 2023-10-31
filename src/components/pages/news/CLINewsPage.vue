@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            Unipept CLI news
+            Unipept CLI releases
         </h1>
 
         <release-card

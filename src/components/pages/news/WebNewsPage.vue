@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            Unipept web news
+            Unipept Web releases
         </h1>
 
         <release-card

@@ -2193,7 +2193,7 @@ unipept-visualizations@^2.1.0:
 
 "unipept-web-components@file:./unipept-web-components-v2.1.2.tgz":
   version "2.1.2"
-  resolved "file:./unipept-web-components-v2.1.2.tgz#b3a70fa499797d29c6620830d6c58d2118223bf9"
+  resolved "file:./unipept-web-components-v2.1.2.tgz#f90b55c78c104f397889730b395dc50080f8f46c"
   dependencies:
     "@mdi/font" "7.0.96"
     async "^3.2.4"
