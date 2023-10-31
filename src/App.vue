@@ -57,7 +57,7 @@
                     <v-tab
                         v-for="item in navItems"
                         :key="item.name"
-                        :to="item.path"
+                        @click="navigateToPage(item)"
                         class="text-white font-weight-bold"
                     >
                         {{ item.name }}
@@ -68,7 +68,7 @@
 
         <v-main class="d-flex flex-column">
             <v-container class="main-container flex-grow-1">
-                <router-view />
+                <router-view :key="navigationKey" />
             </v-container>
 
             <v-footer
@@ -169,21 +169,30 @@
 <script setup lang="ts">
 import { QueueManager } from 'unipept-web-components';
 import { onBeforeMount, ref } from 'vue';
+import { useRouter } from 'vue-router'
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
 import useConfigurationStore from "@/store/ConfigurationStore";
 
 const configStore = useConfigurationStore();
 
+const router = useRouter();
+
 const unipeptVersion = ref<string>("");
 const uniprotVersion = ref<string>("");
 
-const navItems = [
-    { name: "Tryptic Peptide Analysis", path: "/tpa" },
-    { name: "Metaproteomics Analysis", path: "/mpa" },
-    { name: "API", path: "/apidocs" },
-    { name: "CLI", path: "/clidocs" },
-    { name: "Metagenomics", path: "/umgap" },
-    { name: "Unipept Desktop", path: "/desktop" }
+type NavItem = {
+    name: string,
+    path: string,
+    forceReload: boolean
+}
+
+const navItems: NavItem[] = [
+    { name: "Tryptic Peptide Analysis", path: "/tpa", forceReload: true },
+    { name: "Metaproteomics Analysis", path: "/mpa", forceReload: true },
+    { name: "API", path: "/apidocs", forceReload: false },
+    { name: "CLI", path: "/clidocs", forceReload: false },
+    { name: "Metagenomics", path: "/umgap", forceReload: false },
+    { name: "Unipept Desktop", path: "/desktop", forceReload: false }
 ];
 
 QueueManager.initializeQueue(configStore.taskQueueSize);
@@ -194,6 +203,15 @@ onBeforeMount(async () => {
     unipeptVersion.value = APP_VERSION;
     uniprotVersion.value = await unipeptCommunicator.uniprotVersion();
 });
+
+let navigationKey = ref<number>(1);
+const navigateToPage = function(navItem: NavItem) {
+    router.push(navItem.path);
+
+    if (navItem.forceReload) {
+        navigationKey.value++;
+    }
+}
 </script>
 
 
