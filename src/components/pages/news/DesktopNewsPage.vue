@@ -30,11 +30,11 @@
 import { GithubCommunicator, GithubRelease } from '@/logic/communicators/github/GithubCommunicator';
 import { ref, onBeforeMount } from 'vue';
 import ReleaseCard from "@/components/cards/ReleaseCard.vue";
-import DesktopReleaseParser from '@/logic/parsers/github/DesktopReleaseParser';
 import ResourceLink from '@/components/highlights/ResourceLink.vue';
+import DescriptionChangelogParser from "@/logic/parsers/github/DescriptionChangelogParser";
 
 const githubCommunicator = new GithubCommunicator();
-const releaseParser = new DesktopReleaseParser();
+const releaseParser = new DescriptionChangelogParser();
 
 const releases = ref<GithubRelease[]>([]);
 

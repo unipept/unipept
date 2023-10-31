@@ -1774,6 +1774,11 @@ make-dir@^3.0.2:
   dependencies:
     semver "^6.0.0"
 
+marked@^9.1.4:
+  version "9.1.4"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-9.1.4.tgz#68d50848f1b1e264b8fa031946b4b0c3352827e9"
+  integrity sha512-Mq83CCaClhXqhf8sLQ57c1unNelHEuFadK36ga+GeXR4FeT/5ssaC5PaCRVqMA74VYorzYRqdAaxxteIanh3Kw==
+
 merge2@^1.3.0, merge2@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.4.1.tgz#4368892f885e907455a6fd7dc55c0c9d404990ae"

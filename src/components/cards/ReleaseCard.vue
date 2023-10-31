@@ -30,7 +30,7 @@
                         v-if="changelog.description"
                         class="px-5 pt-5 mb-n7"
                     >
-                        {{ changelog.description }}
+                        <div v-html="changelog.description"></div>
                     </v-card-text>
 
                     <v-card-text class="mt-5">

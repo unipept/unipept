@@ -11,6 +11,7 @@
     "@mdi/font": "7.0.96",
     "@types/uuid": "^9.0.2",
     "@vueuse/core": "^10.3.0",
+    "marked": "^9.1.4",
     "pinia": "^2.0.23",
     "roboto-fontface": "*",
     "unipept-web-components": "file:./unipept-web-components-v2.1.2.tgz",
