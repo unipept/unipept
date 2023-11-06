@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const tpaMeta = {
     publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
-    publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+    publicationLink: "doi:10.1021/acs.jproteome.8b00716",
 };
 
 const apidocsMeta = {
@@ -197,6 +197,6 @@ const router = createRouter({
             return { x: 0, y: 0 }
         }
     }
-})
+});
 
 export default router;

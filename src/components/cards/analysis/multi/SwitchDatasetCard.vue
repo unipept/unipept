@@ -103,7 +103,7 @@
             v-model="dialogOpen"
             width="1000px"
         >
-            <v-card style="min-height: 700px;">
+            <v-card>
                 <v-card-title
                     class="d-flex"
                 >
