@@ -14,7 +14,7 @@
     "marked": "^9.1.4",
     "pinia": "^2.0.23",
     "roboto-fontface": "*",
-    "unipept-web-components": "file:./unipept-web-components-v2.1.2.tgz",
+    "unipept-web-components": "^2.1.2",
     "uuid": "^9.0.0",
     "vue": "^3.2.0",
     "vue-router": "^4.0.0",

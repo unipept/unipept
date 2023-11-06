@@ -205,8 +205,8 @@ onBeforeMount(async () => {
 });
 
 let navigationKey = ref<number>(1);
-const navigateToPage = function(navItem: NavItem) {
-    router.push(navItem.path);
+const navigateToPage = async function(navItem: NavItem) {
+    await router.push(navItem.path);
 
     if (navItem.forceReload) {
         navigationKey.value++;
