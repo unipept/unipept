@@ -53,7 +53,7 @@
                             <template #activator="{ props }">
                                 <v-checkbox
                                     v-model="equateIl"
-                                    label="Equate I and L?"
+                                    label="Equate I and L"
                                     v-bind="props"
                                     color="primary"
                                 />
