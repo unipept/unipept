@@ -13,7 +13,7 @@
                 Sample data
             </v-tab>
             <v-tab value="pride">
-                Pride
+                PRIDE
             </v-tab>
             <v-tab value="local">
                 Local data
