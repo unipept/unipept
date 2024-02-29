@@ -8,7 +8,7 @@
             :items-per-page="10"
         >
             <template #item.peptide="{ item }">
-                <span>{{ item.raw.peptide }}</span>
+                <span>{{ item.peptide }}</span>
             </template>
 
             <template #item.action="{ item }">
@@ -19,7 +19,7 @@
                             size="small"
                             variant="plain"
                             v-bind="props"
-                            @click="openItem(item.raw.peptide)"
+                            @click="openItem(item.peptide)"
                         />
                     </template>
                 </v-tooltip>
@@ -31,8 +31,6 @@
 <script setup lang="ts">
 import { Peptide } from 'unipept-web-components';
 import { computed, ref } from "vue";
-import { VDataTable } from "vuetify/labs/VDataTable";
-
 export interface Props {
     items: Peptide[]
 }
