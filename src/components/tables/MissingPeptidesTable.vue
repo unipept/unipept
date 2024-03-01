@@ -31,7 +31,6 @@
 <script setup lang="ts">
 import { Peptide } from 'unipept-web-components';
 import { computed, ref } from "vue";
-import { VDataTable } from "vuetify/labs/VDataTable";
 
 export interface Props {
     items: Peptide[]
