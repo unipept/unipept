@@ -2,13 +2,13 @@ import { defineStore } from "pinia";
 
 const useConfigurationStore = defineStore('configuration', () => {
     // UNIPEPT
-    const unipeptApiUrl = 'https://api.unipept.ugent.be';
+    const unipeptApiUrl = 'http://rick.ugent.be';
 
     const parallelRequests = 5;
     const taskQueueSize = 4;
 
-    const peptideDataBatchSize  = 100;
-    const cleavageBatchSize     = 10;
+    const peptideDataBatchSize  = 1000000;
+    const cleavageBatchSize     = 1000000;
     const goBatchSize           = 100;
     const ecBatchSize           = 100;
     const interproBatchSize     = 100;
