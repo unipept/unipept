@@ -9,6 +9,30 @@
 
         <publication-card
             class="mt-5"
+            title="Unipept Desktop 2.0: Construction of Targeted Reference Protein Databases for Metaproteogenomics Analyses"
+            :authors='["Pieter Verschaffelt", "Alessandro Tanca", "Marcello Abbondio", "Tim Van Den Bossche", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere"]'
+            journal="Journal of Proteome Research"
+            year="2023"
+            doi="doi.org/10.1021/acs.jproteome.3c00091"
+            google-scholar="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&as_ylo=2023&q=Unipept+Desktop+2.0%3A+construction+of+targeted+reference+protein+databases+for+proteogenomics+analyses&btnG="
+            :image="Publication2023Image"
+        >
+            <template #abstract>
+                Unipept Desktop 2.0 is the most recent iteration of the Unipept Desktop tool that adds support for the analysis 
+                of proteogenomics datasets. Unipept Desktop now supports the automatic construction of targeted protein reference 
+                databases that only contain proteins associated with a predetermined list of taxa. This improves both the 
+                taxonomic and functional resolution of a metaproteomic analysis and yields several technical advantages. By 
+                limiting the proteins present in a reference database, it is now also possible to perform (meta)proteogenomics 
+                analyses. Since the protein reference database now lives on the user's local machine, they have complete control 
+                over the database used during an analysis. Data does no longer need to be transmitted over the internet, 
+                decreasing the time required for an analysis and better safeguarding privacy sensitive data. As a proof of 
+                concept, we present a case study in which a human gut metaproteome dataset is analyzed with Unipept Desktop 2.0 
+                using different targeted databases based on matched 16S rRNA gene sequencing data.
+            </template>
+        </publication-card>
+
+        <publication-card
+            class="mt-5"
             title="Unipept Desktop: a faster, more powerful metaproteomics results analysis tool"
             :authors='["Pieter Verschaffelt", "Tim Van Den Bossche", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere"]'
             journal="Journal of Proteome Research"
@@ -198,6 +222,7 @@
 import PublicationCard from '../cards/PublicationCard.vue';
 import Initialism from '../highlights/Initialism.vue';
 import RLink from '../highlights/ResourceLink.vue';
+import Publication2023Image from '@/assets/publications-2023.jpg';
 import Publication2021Image from '@/assets/publications-2021.jpg';
 import Publication2020Image from '@/assets/publications-2020.jpg';
 import Publication2019Image from '@/assets/publications-2019.jpg';
