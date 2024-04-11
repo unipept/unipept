@@ -3,7 +3,7 @@
   "version": "5.1.2",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build && ./post-deploy.sh",
+    "build": "vue-tsc --noEmit && vite build && ./post-build.sh",
     "preview": "vite preview",
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
