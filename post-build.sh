@@ -7,7 +7,7 @@ mkdir dist/system
 mkdir dist/system/umgap
 mkdir dist/system/umgap/${UMGAP_VERSION}
 
-printf '${UMGAP_VERSION}\n' > latest
-ln -s "/mnt/datapept/${UMGAP_VERSION}/2024-03-07/taxons.tsv" "dist/system/umgap/${UMGAP_VERSION}/taxons.tsv"
-ln -s "/mnt/datapept/${UMGAP_VERSION}/2024-03-07/tryptic.fst" "dist/system/umgap/${UMGAP_VERSION}/tryptic.fst"
-ln -s "/mnt/datapept/${UMGAP_VERSION}/2024-03-07/ninemer.fst" "dist/system/umgap/${UMGAP_VERSION}/ninemer.fst"
+printf "${UMGAP_VERSION}\n" > latest
+ln -s "/mnt/datapept/${UMGAP_VERSION}/taxons.tsv" "dist/system/umgap/${UMGAP_VERSION}/taxons.tsv"
+ln -s "/mnt/datapept/${UMGAP_VERSION}/tryptic.fst" "dist/system/umgap/${UMGAP_VERSION}/tryptic.fst"
+ln -s "/mnt/datapept/${UMGAP_VERSION}/ninemer.fst" "dist/system/umgap/${UMGAP_VERSION}/ninemer.fst"
