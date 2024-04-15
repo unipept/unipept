@@ -1,15 +1,17 @@
 <template>
-    <pre class="fs" v-html="jsonParser.parseAndHighlight(object)"></pre>
+    <pre
+        class="fs"
+        v-html="jsonParser.parseAndHighlight(object)"
+    />
 </template>
 
 <script setup lang="ts">
 import JsonParser from '@/logic/parsers/json/JsonParser';
 
 export interface Props {
-    object: Object | [Object]
+    object: any
 }
 
-/* eslint-disable */
 defineProps<Props>();
 
 const jsonParser = new JsonParser();
@@ -18,5 +20,5 @@ const jsonParser = new JsonParser();
 <style scoped>
 .fs {
     font-size: 90%;
-};
+}
 </style>

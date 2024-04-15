@@ -1,9 +1,7 @@
-import { Route } from "vue-router";
-
 declare const window: any;
 
 export default class AnalyticsCommunicator {
-    public async logRoute(route: Route) {
+    public async logRoute(route: any) {
         // Log the path of the route
         this.logPageView(route.path);
 
@@ -47,11 +45,9 @@ export default class AnalyticsCommunicator {
             return;
         }
 
-        // @ts-ignore
-        this.gtag('config', 'G-P3VRXFGD5B', {
-            'send_page_view': false
-        });
-        // @ts-ignore
+        // @ts-ignore (TODO add to global types)
+        this.gtag('config', 'G-P3VRXFGD5B', { 'send_page_view': false });
+        // @ts-ignore (TODO add to global types)
         this.gtag('event', event_name, event_params);
     }
 

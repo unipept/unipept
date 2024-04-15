@@ -1,28 +1,57 @@
 <template>
     <v-card flat>
         <v-card-text>
-            <div v-if="loading" style="display: flex; justify-content: center;">
-                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+            <div
+                v-if="loading"
+                style="display: flex; justify-content: center;"
+            >
+                <v-progress-circular
+                    indeterminate
+                    color="primary"
+                />
             </div>
-            <div v-else-if="error" class="connection-error">
+            <div
+                v-else-if="error"
+                class="connection-error"
+            >
                 <v-alert type="error">
                     Unable to retrieve list of sample datasets.
                 </v-alert>
             </div>
-            <div v-else v-for="dataset of sampleDatasets" v-bind:key="dataset.id">
-                <b>Environment:</b> {{ dataset.environment }}
+            <div
+                v-for="dataset of sampleDatasets"
+                v-else
+                :key="dataset.id"
+            >
+                <b>Environment: </b> {{ dataset.environment }}
                 <br>
-                <b>Reference:</b>
+                <b>Reference: </b>
                 <small>
                     {{ dataset.reference }}
-                    <a class="link" target="_blank" title="Article website" :href="dataset.url">
-                        <v-icon class="pb-1 primary--text" small>
+                    <a
+                        class="link"
+                        target="_blank"
+                        title="Article website"
+                        :href="dataset.url"
+                    >
+                        <v-icon
+                            class="pb-1 text-primary"
+                            size="small"
+                        >
                             mdi-link-variant
                         </v-icon>
                     </a>
-                    <a class="link" target="_blank" title="Project website" :href="dataset.projectWebsite">
+                    <a
+                        class="link"
+                        target="_blank"
+                        title="Project website"
+                        :href="dataset.projectWebsite"
+                    >
                         <span class="glyphicon glyphicon-share-alt"></span>
-                        <v-icon class="pb-1 primary--text" small>
+                        <v-icon
+                            class="pb-1 text-primary"
+                            size="small"
+                        >
                             mdi-share
                         </v-icon>
                     </a>
@@ -32,13 +61,20 @@
                     <v-row>
                         <v-col :cols="7">
                             <v-select
-                                :items="dataset.datasets"
-                                item-text="name"
                                 v-model="selectedSampleDataset[dataset.id]"
+                                :items="dataset.datasets"
+                                item-title="name"
+                                variant="underlined"
                             />
                         </v-col>
-                        <v-col :cols="5" style="display: flex; align-items: center;" class="load-dataset-button">
-                            <v-btn @click="selectSampleDataset(dataset.id)">Load dataset</v-btn>
+                        <v-col
+                            :cols="5"
+                            style="display: flex; align-items: center;"
+                            class="load-dataset-button"
+                        >
+                            <v-btn @click="selectSampleDataset(dataset.id)">
+                                Load dataset
+                            </v-btn>
                         </v-col>
                     </v-row>
                 </div>
@@ -49,9 +85,9 @@
 
 <script setup lang="ts">
 import useId from '@/composables/useId';
-import useConfigurationStore from '@/stores/ConfigurationStore';
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
 import { onMounted, ref } from 'vue';
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
+import useConfigurationStore from "@/store/ConfigurationStore";
 
 interface SampleDataset {
     id: string,
@@ -84,11 +120,10 @@ const retrieveDatasets = () => {
     loading.value = true;
     error.value = false;
 
-    // @ts-ignore
     fetch(`${configurationStore.unipeptApiUrl}/datasets/sampledata`, { method: "POST", body: JSON.stringify({}) })
         .then(response => response.json())
         .then(response => {
-            for(let item of response.sample_data) {
+            for(const item of response.sample_data) {
                 const itemDatasets = item.datasets.map((dataset: any) => {
                     return {
                         id: id(),
@@ -106,7 +141,7 @@ const retrieveDatasets = () => {
                     url: item.url,
                     datasets: itemDatasets
                 });
-                
+
                 selectedSampleDataset.value[item.id] = itemDatasets[0].name;
             }
         })

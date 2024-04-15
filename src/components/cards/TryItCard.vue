@@ -1,18 +1,26 @@
 <template>
-    <HeaderBodyCard title="Try it">
-        <p>Use the API explorer form below to call the {{ command }} method on live data and see the response.</p>
+    <header-body-card
+        title="Try it"
+        large-title
+    >
+        <div class="mb-2">
+            Use the API explorer form below to call the {{ command }} method on live data and see the response.
+        </div>
 
-        <slot></slot>
+        <slot />
 
-        <template v-slot:extension>
-            <v-divider />
+        <v-divider class="mt-2" />
 
-            <v-card-text class="grey lighten-4">
-                <h4>Response</h4>
-                <Json class="limited" :object="response"/>
-            </v-card-text>
-        </template>
-    </HeaderBodyCard>
+        <div class="mt-2">
+            <h4>
+                Response
+            </h4>
+            <json
+                class="limited"
+                :object="response"
+            />
+        </div>
+    </header-body-card>
 </template>
 
 <script setup lang="ts">
@@ -24,7 +32,6 @@ export interface Props {
     command: string
 }
 
-/* eslint-disable */
 defineProps<Props>();
 </script>
 
@@ -33,7 +40,6 @@ defineProps<Props>();
     display: block;
     border: 1px solid #cccccc;
     border-radius: 2px;
-    padding: 8px;
     background-color: #f5f5f5;
     overflow: auto;
     line-height: 0;

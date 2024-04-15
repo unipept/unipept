@@ -1,97 +1,142 @@
 <template>
     <v-card class="d-flex flex-column">
-        <v-tabs
-            class="flex-grow-0"
-            style="pointer-events: none;"
-            slider-color="primary"
-            background-color="primary"
-            dark
-        >
-            <v-tab>Metaproteomics Analysis</v-tab>
-        </v-tabs>
+        <v-card-title class="bg-primary text-white">
+            Metaproteomics analysis
+        </v-card-title>
 
         <v-card-text v-if="multiAnalysisStore.empty">
             <span>Please add one or more datasets by clicking the plus button above...</span>
         </v-card-text>
 
-        <div v-else class="flex-grow-1">
-            <v-list two-line v-model="multiAnalysisStore.activeAssayStatus">
-                <v-list-item
-                    v-for="assayStatus in assayStatuses"
-                    :key="assayStatus.assay.id"
-                    :value="assayStatus"
-                    @click="activateAssay(assayStatus.assay)"
-                    ripple
+        <v-card-text
+            v-else
+            class="d-flex flex-column px-0"
+        >
+            <div class="flex-grow-1">
+                <v-list
+                    v-model="multiAnalysisStore.activeAssayStatus"
+                    two-line
                 >
-                    <v-list-item-action>
-                        <div v-if="multiAnalysisStore.analysisCompleted(assayStatus.assay.id)" class="select-dataset-radio">
-                            <v-radio-group v-model="multiAnalysisStore.activeAssayStatus">
-                                <v-radio :value="assayStatus"></v-radio>
+                    <v-list-item
+                        v-for="assayStatus in (assayStatuses as MultiProteomicsAnalysisStatus[])"
+                        :key="assayStatus.assay.id"
+                        :value="assayStatus"
+                        ripple
+                        :title="assayStatus.assay.name"
+                        :subtitle="done(assayStatus) ? assayStatus.assay.amountOfPeptides + ' peptides': (calculating(assayStatus) ? 'Computing estimated time remaining...' : '~' + StringUtils.secondsToTimeString(assayStatus.progress.eta / 1000 ) + ' remaining...')"
+                        class="pa-4"
+                        @click="activateAssay(assayStatus.assay)"
+                    >
+                        <template #prepend>
+                            <v-radio-group
+                                v-if="assayStatus.analysisReady"
+                                v-model="multiAnalysisStore.activeAssayStatus"
+                                hide-details
+                                color="primary"
+                                class="mr-2"
+                            >
+                                <v-radio :value="assayStatus" />
                             </v-radio-group>
-                        </div>
-                        <v-progress-circular v-else 
-                            :rotate="-90" 
-                            :size="24" 
-                            :value="assayStatus.progress.currentValue" 
-                            color="primary"
-                        />
-                    </v-list-item-action>
-                    
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            {{ assayStatus.assay.name }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle v-if="done(assayStatus)">
-                            {{ assayStatus.assay.amountOfPeptides }} peptides
-                        </v-list-item-subtitle>
-                        <v-list-item-subtitle v-else-if="calculating(assayStatus)">
-                            Computing estimated time remaining...
-                        </v-list-item-subtitle>
-                        <v-list-item-subtitle v-else>
-                            ~{{ StringUtils.secondsToTimeString(assayStatus.progress.eta / 1000 ) }} remaining...
-                        </v-list-item-subtitle>
-                    </v-list-item-content>
+                            <v-avatar v-else-if="assayStatus.error.status">
+                                <v-tooltip :text="`An error occurred during analysis: ${assayStatus.error.message}.`">
+                                    <template #activator="{ props }">
+                                        <v-icon
+                                            v-bind="props"
+                                            color="error"
+                                        >
+                                            mdi-alert-circle-outline
+                                        </v-icon>
+                                    </template>
+                                </v-tooltip>
+                            </v-avatar>
+                            <v-progress-circular
+                                v-else
+                                :size="24"
+                                style="margin-left: 8px; margin-right: 16px;"
+                                :model-value="assayStatus.progress.currentValue"
+                                color="primary"
+                            />
+                        </template>
 
-                    <v-list-item-action>
-                        <v-list-item-action-text>
-                            {{ dateToString(assayStatus.assay.createdAt) }}
-                        </v-list-item-action-text>
-                        <tooltip message="Remove assay from analysis.">
-                            <v-icon @click="removeAssay(assayStatus.assay)" v-on:click.stop>mdi-delete-outline</v-icon>
-                        </tooltip>
-                    </v-list-item-action>
-                </v-list-item>
-            </v-list>
-        </div>
-        <v-card-text>
-            <v-divider></v-divider>
+                        <template #append>
+                            <div class="d-flex flex-column align-end mr-2">
+                                <span class="text-body-2 text-medium-emphasis">
+                                    {{ dateToString(assayStatus.assay.createdAt) }}
+                                </span>
+                                <v-tooltip text="Remove dataset from analysis.">
+                                    <template #activator="{ props }">
+                                        <v-btn
+                                            class="fix-icon-list-position"
+                                            variant="text"
+                                            icon="mdi-delete-outline"
+                                            v-bind="props"
+                                            size="small"
+                                            density="compact"
+                                            @click="removeAssay(assayStatus.assay)"
+                                        />
+                                    </template>
+                                </v-tooltip>
+                            </div>
+                        </template>
+                    </v-list-item>
+                </v-list>
+            </div>
+
+            <v-divider />
+
+
             <div class="text-center pt-4">
-                <tooltip message="Compare samples above using a heatmap.">
-                    <v-btn :disabled="false" @click="dialogOpen = true">
-                        Compare samples
-                    </v-btn>
-                </tooltip>
+                <v-tooltip text="Compare samples above using a heatmap.">
+                    <template #activator="{ props }">
+                        <v-btn
+                            v-bind="props"
+                            @click="dialogOpen = true"
+                        >
+                            Compare samples
+                        </v-btn>
+                    </template>
+                </v-tooltip>
             </div>
         </v-card-text>
 
-        <v-dialog v-model="dialogOpen" width="1000px">
-            <v-card style="min-height: 700px;">
-                <v-card-title color="primary" >
+        <v-dialog
+            v-model="dialogOpen"
+            width="1000px"
+        >
+            <v-card>
+                <v-card-title
+                    class="d-flex"
+                >
                     Heatmap wizard
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click="dialogOpen = false">
-                        <v-icon>mdi-close</v-icon>
-                    </v-btn>
+                    <v-spacer />
+                    <div class="justify-end">
+                        <v-btn
+                            icon="mdi-close"
+                            variant="plain"
+                            size="small"
+                            density="compact"
+                            @click="dialogOpen = false"
+                        />
+                    </div>
                 </v-card-title>
                 <div>
-                    <HeatmapWizardMulti
+                    <heatmap-wizard-multi
                         v-if="multiAnalysisStore.activeAssayStatus"
                         :loading="!multiAnalysisStore.analysisCompleted(multiAnalysisStore.activeAssayStatus.assay.id)"
                         :assays="multiAnalysisStore.assayStatuses"
                     />
-                    <div v-else style="display: flex; justify-content: center;">
-                        <div class="text-xs-center" style="margin-top: 25px;">
-                            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                    <div
+                        v-else
+                        style="display: flex; justify-content: center;"
+                    >
+                        <div
+                            class="text-xs-center"
+                            style="margin-top: 25px;"
+                        >
+                            <v-progress-circular
+                                indeterminate
+                                color="primary"
+                            />
                         </div>
                     </div>
                 </div>
@@ -101,10 +146,10 @@
 </template>
 
 <script setup lang="ts">
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
 import { storeToRefs } from 'pinia';
-import { Assay, StringUtils, Tooltip, HeatmapWizardMulti } from 'unipept-web-components';
-import { withDefaults, defineProps, ref } from 'vue';
+import { Assay, StringUtils, HeatmapWizardMulti, MultiProteomicsAnalysisStatus } from "unipept-web-components";
+import { computed, ref } from "vue";
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 export interface Props {
     assaySelectionInProgress: boolean

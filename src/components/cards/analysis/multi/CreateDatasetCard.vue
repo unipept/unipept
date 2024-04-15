@@ -1,12 +1,18 @@
 <template>
     <v-card flat>
         <v-card-text>
-            <v-form ref="form" v-model="validForm" lazy-validation>
+            <v-form
+                ref="form"
+                v-model="validForm"
+            >
                 <v-row class="my-1">
-                    <v-col class="pb-0" cols=12>
+                    <v-col
+                        class="pb-0"
+                        cols="12"
+                    >
                         <v-textarea
-                            class="pt-0 mt-0"
                             v-model="peptideList"
+                            class="pt-0 mt-0"
                             label="Peptide list"
                             :rules="peptideListRules"
                             :spellcheck="false"
@@ -17,23 +23,27 @@
                     </v-col>
                 </v-row>
 
-                <Tooltip message="This name will be shown on the results page. Handy if you have many open tabs.">
-                    <v-text-field
-                        v-model="datasetName"
-                        label="Name this dataset"
-                        placeholder="e.g. Sample B5"
-                        :rules="datasetNameRules"
-                        clearable
-                    />
-                </Tooltip>
+                <v-tooltip text="This name will be shown on the results page. Handy if you have many open tabs.">
+                    <template #activator="{ props }">
+                        <v-text-field
+                            v-model="datasetName"
+                            label="Name this dataset"
+                            placeholder="e.g. Sample B5"
+                            :rules="datasetNameRules"
+                            clearable
+                            v-bind="props"
+                        />
+                    </template>
+                </v-tooltip>
 
                 <div class="d-flex justify-center mt-2">
                     <v-btn
                         class="text-center"
+                        prepend-icon="mdi-plus"
                         :disabled="!validForm"
                         @click="createAssay"
                     >
-                        <v-icon left>mdi-plus</v-icon> Add to selected datasets
+                        Add to selected datasets
                     </v-btn>
                 </div>
             </v-form>
@@ -42,18 +52,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import useAssays from '@/stores/AssayStore';
-import { Tooltip } from "unipept-web-components";
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
+import { Ref, ref } from "vue";
 import useId from '@/composables/useId';
+import { VForm } from "vuetify/components";
+import useAssays from "@/store/AssayStore";
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 const assayStore = useAssays();
 const multiAnalysisStore = useMultiAnalysis();
 
 const { id } = useId();
 
-const form = ref(null);
+const form: Ref<VForm | null> = ref(null);
 const validForm = ref(false);
 const peptideList = ref("");
 const datasetName = ref("");
@@ -79,7 +89,6 @@ const createAssay = () => {
 
     assayStore.add(assay);
     multiAnalysisStore.addAssay(assay);
-    // @ts-ignore
-    form.value.reset();
+    form.value?.reset();
 }
 </script>

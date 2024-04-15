@@ -1,15 +1,35 @@
-import Vue from "vue";
-import Vuetify from "vuetify";
+/**
+ * plugins/vuetify.ts
+ *
+ * Framework documentation: https://vuetifyjs.com`
+ */
 
-Vue.use(Vuetify);
+// Styles
+import "@mdi/font/css/materialdesignicons.css";
+import "@/styles/main.scss";
 
-export default new Vuetify({
+// Composables
+import { createVuetify } from "vuetify"
+
+// https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
+export default createVuetify({
     theme: {
         themes: {
             light: {
-                primary: "#2196F3",
-                secondary: "#FFC107"
-            }
+                colors: {
+                    primary: "#2196F3",
+                    secondary: "#FFC107"
+                },
+            },
+        },
+    },
+    defaults: {
+        VTooltip: {
+            openDelay: 500,
+            location: "bottom"
+        },
+        VDialog: {
+            maxWidth: 1000
         }
     }
-});
+})

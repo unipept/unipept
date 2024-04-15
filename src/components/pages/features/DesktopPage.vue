@@ -1,18 +1,41 @@
 <template>
     <v-container style="max-width: 1200px;">
         <v-row>
-            <div class="col-lg-10 order-lg-0 order-1 pt-0">
-                <router-view></router-view>
-            </div>
-            <VerticalNavigation v-if="$vuetify.breakpoint.lgAndUp" class="col-lg-2 order-lg-1 d-sm-none d-lg-flex" :items="navigation" />
-            <HorizontalNavigation v-else class="col-12 order-0" :items="navigation" />
+            <v-col
+                class="pt-0"
+                sm="12"
+                lg="10"
+                order-sm="1"
+                order-lg="0"
+            >
+                <router-view />
+            </v-col>
+            <v-col
+                sm="12"
+                lg="2"
+                order-sm="0"
+                order-lg="1"
+            >
+                <vertical-navigation
+                    v-if="display.lgAndUp"
+                    :items="navigation"
+                />
+                <horizontal-navigation
+                    v-else
+                    :items="navigation"
+                />
+            </v-col>
         </v-row>
     </v-container>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+import { useDisplay } from "vuetify";
 import VerticalNavigation from "@/components/navigation/VerticalNavigation.vue";
 import HorizontalNavigation from "@/components/navigation/HorizontalNavigation.vue";
+
+const display = ref(useDisplay());
 
 const navigation = [
     {

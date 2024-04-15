@@ -1,23 +1,22 @@
 <template>
     <v-alert
-        class="pb-2"
-        border="left"
-        colored-border
+        class="pb-2 my-4"
+        variant="outlined"
+        border="start"
         color="secondary"
         elevation="1"
+        :title="title"
     >
-        <h2 class="secondary--text font-weight-light mb-1">{{ title }}</h2>
-        <slot></slot>
+        <slot />
     </v-alert>
 </template>
 
 <script setup lang="ts">
 export interface Props {
-    title: String
+    title: string
 }
 
-/* eslint-disable */
-defineProps<Props>()
+defineProps<Props>();
 </script>
 
 <style scoped>

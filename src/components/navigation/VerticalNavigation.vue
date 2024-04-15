@@ -1,11 +1,28 @@
 <template>
-    <v-tabs vertical slider-size="3" color="secondary">
-        <div v-for="item in items" :key="item.name">
-            <v-tab :to="item.link" exact-path>
+    <v-tabs
+        direction="vertical"
+        color="secondary"
+    >
+        <div
+            v-for="item in items"
+            :key="item.name"
+        >
+            <v-tab
+                :to="item.link"
+                exact
+            >
                 {{ item.name }}
             </v-tab>
-            <div class="sub-tabs" v-if="matchRoute(item.link, $route.path)">
-                <v-tab v-for="child in item.children" class="v-tab-child" :key="child.name" :to="child.link">
+            <div
+                v-if="matchRoute(item.link, $route.path)"
+                class="sub-tabs"
+            >
+                <v-tab
+                    v-for="child in item.children"
+                    :key="child.name"
+                    class="v-tab-child"
+                    @click="navigate(child.link)"
+                >
                     {{ child.name }}
                 </v-tab>
             </div>
@@ -15,12 +32,14 @@
 
 <script setup lang="ts">
 import { NavigationItem } from './NavigationItem';
+import useNavigation from "@/composables/useNavigation";
+
+const { navigate } = useNavigation();
 
 export interface Props {
     items: NavigationItem[]
 }
 
-/* eslint-disable */
 defineProps<Props>();
 
 const matchRoute = (link: string, route: string) => {
@@ -41,7 +60,7 @@ const matchRoute = (link: string, route: string) => {
     max-height: 35px;
 }
 
-.v-tabs /deep/ .v-slide-group__wrapper {
+:deep(.v-tabs .v-slide-group__wrapper) {
     overflow: visible !important;
 }
 
@@ -55,7 +74,7 @@ const matchRoute = (link: string, route: string) => {
     from {
         max-height: 0px;
     }
-  
+
     to {
         max-height: 200px;
     }

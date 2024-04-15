@@ -1,44 +1,67 @@
 <template>
     <div>
         <v-card v-if="!release.tag_name">
-            <v-card-title class="blue white--text">This application has not yet been released</v-card-title>
+            <v-card-title class="bg-blue text-white pa-4 ">
+                This application has not yet been released
+            </v-card-title>
         </v-card>
 
-        <a v-else :href="release.html_url" target="_blank">
-            <v-hover>
-                <template v-slot:default="{ hover }">
-                    <v-card :hover="hover">
-                        <v-card-title class="blue white--text">Unipept {{ release.tag_name.replace(/^v/, "") }}</v-card-title>
-                        <v-card-subtitle class="blue white--text">Posted on {{ formatDate(release.published_at) }}</v-card-subtitle>
-
-                        <v-card-text 
-                            v-if="changelog.description"
-                            class="px-5 pt-5 mb-n7"
+        <a
+            v-else
+            :href="release.html_url"
+            target="_blank"
+        >
+            <v-hover v-slot="{ isHovering, props }">
+                <v-card
+                    :hover="isHovering"
+                    v-bind="props"
+                >
+                    <v-card-title class="bg-blue text-white pa-4 ">
+                        Unipept {{ release.tag_name.replace(/^v/, "") }}
+                        <div
+                            style="font-size: 16px; line-height: 1rem;"
+                            class="font-weight-light"
                         >
-                            {{ changelog.description }}
-                        </v-card-text>
+                            Posted on {{ formatDate(release.published_at) }}
+                        </div>
+                    </v-card-title>
 
-                        <v-card-text class="mt-5">
-                            <ul class="align-center px-0" v-for="(item, i) in changelog.changelog" :key="i">
-                                <li class="nobull">
-                                    <v-chip
-                                        v-if="item.tag"
-                                        class="me-2"
-                                        :class="item.tag"
-                                        x-small
-                                        label
-                                    >
-                                        {{ item.tag }}
-                                    </v-chip>
-                                    {{ item.description }}
-                                </li>
-                            </ul>
-                            <Rlink class="d-flex justify-end" :to="release.html_url">View on GitHub</Rlink>
-                        </v-card-text>
+                    <v-card-text
+                        v-if="changelog.description"
+                        class="px-5 pt-5 mb-n7"
+                    >
+                        <div v-html="changelog.description"></div>
+                    </v-card-text>
 
-                        <slot name="extension"></slot>
-                    </v-card>
-                </template>
+                    <v-card-text class="mt-5">
+                        <ul
+                            v-for="(item, i) in changelog.changelog"
+                            :key="i"
+                            class="align-center px-0"
+                        >
+                            <li style="list-style-type: none;">
+                                <v-chip
+                                    v-if="item.tag"
+                                    class="me-2"
+                                    :class="item.tag"
+                                    size="x-small"
+                                    label
+                                >
+                                    {{ item.tag }}
+                                </v-chip>
+                                {{ item.description }}
+                            </li>
+                        </ul>
+                        <Rlink
+                            class="d-flex justify-end"
+                            :to="release.html_url"
+                        >
+                            View on GitHub
+                        </Rlink>
+                    </v-card-text>
+
+                    <slot name="extension" />
+                </v-card>
             </v-hover>
         </a>
     </div>
@@ -54,7 +77,6 @@ export interface Props {
     parser: ReleaseParser
 }
 
-/* eslint-disable */
 const { release, parser } = defineProps<Props>()
 
 const formatDate = (dateString: string) => {
@@ -95,9 +117,5 @@ a {
     font-weight: 800 !important;
     text-transform: uppercase;
     align-content: center;
-}
-
-.nobull {
-    list-style-type: none;
 }
 </style>

@@ -1,48 +1,51 @@
 <template>
-    <v-card :elevation="hover ? 6 : 2" class="equal">
+    <v-card
+        :elevation="hover ? 6 : 2"
+        class="equal"
+    >
         <v-img
             height="300"
             :src="asset"
             :alt="asset"
-            :contain="contain"
+            :cover="!contain"
         />
 
-        <v-card-title class="feature-title">{{ title }}</v-card-title>
+        <v-card-title class="feature-title pa-4">
+            {{ title }}
+        </v-card-title>
 
         <v-card-text class="mt-4">
-            <slot></slot>
+            <slot />
         </v-card-text>
     </v-card>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+export interface Props {
+    title: string,
+    asset: string,
+    hover: boolean,
+    contain?: boolean
+}
 
-export default defineComponent({
-    name: "HomePageCard",
-    setup() { },
-    props: {
-        title: String,
-        asset: String,
-        hover: Boolean,
-        contain: Boolean
-    }
-});
+withDefaults(defineProps<Props>(), {
+    contain: false,
+})
 </script>
 
 <style scoped>
-    a {
-        text-decoration: none;
-    }
+a {
+    text-decoration: none;
+}
 
-    .feature-title {
-        opacity: 0.70;
-        background-color: black;
-        color: white;
-        margin-top: -64px;
-    }
+.feature-title {
+    opacity: 0.70;
+    background-color: black;
+    color: white;
+    margin-top: -64px;
+}
 
-    .equal {
-        height: 100%;
-    }
+.equal {
+    height: 100%;
+}
 </style>

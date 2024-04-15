@@ -4,26 +4,66 @@
             <h1 class="font-weight-light">
                 Latest API version
             </h1>
-            <ReleaseCard class="mb-2" :release="latestAPIRelease" :parser="descriptionChangelogParser"></ReleaseCard>
-            <ResourceLink class="d-flex justify-end" to="news/api" router>Go to API changelog</ResourceLink>
-            
+            <release-card
+                class="mb-2"
+                :release="latestAPIRelease"
+                :parser="descriptionChangelogParser"
+            />
+            <resource-link
+                class="d-flex justify-end"
+                to="news/api"
+                router
+            >
+                Go to API changelog
+            </resource-link>
+
             <h1 class="font-weight-light">
                 Latest CLI version
             </h1>
-            <ReleaseCard class="mb-2" :release="latestCLIRelease" :parser="descriptionChangelogParser"></ReleaseCard>
-            <ResourceLink class="d-flex justify-end" to="news/cli" router>Go to CLI changelog</ResourceLink>
-            
+            <release-card
+                class="mb-2"
+                :release="latestCLIRelease"
+                :parser="descriptionChangelogParser"
+            />
+            <resource-link
+                class="d-flex justify-end"
+                to="news/cli"
+                router
+            >
+                Go to CLI changelog
+            </resource-link>
+
             <h1 class="font-weight-light">
                 Latest Web version
             </h1>
-            <ReleaseCard class="mb-2" :release="latestWebRelease" :parser="descriptionChangelogParser"></ReleaseCard>
-            <ResourceLink class="d-flex justify-end" to="news/web" router>Go to web changelog</ResourceLink>
-            
+            <release-card
+                class="mb-2"
+                :release="latestWebRelease"
+                :parser="descriptionChangelogParser"
+            />
+            <resource-link
+                class="d-flex justify-end"
+                to="news/web"
+                router
+            >
+                Go to web changelog
+            </resource-link>
+
             <h1 class="font-weight-light">
                 Latest Desktop version
             </h1>
-            <ReleaseCard class="mb-2" :release="latestDesktopRelease" :parser="desktopReleaseParser"></ReleaseCard>
-            <ResourceLink class="d-flex justify-end" to="news/desktop" router>Go to desktop changelog</ResourceLink>
+            <release-card
+                class="mb-2"
+                :release="latestDesktopRelease"
+                :parser="desktopReleaseParser"
+            />
+            <resource-link
+                class="d-flex justify-end"
+                to="news/desktop"
+                router
+            >
+                Go to desktop changelog
+            </resource-link>
         </div>
     </div>
 </template>
@@ -47,9 +87,9 @@ const latestWebRelease = ref<GithubRelease>(defaultGithubRelease);
 const latestDesktopRelease = ref<GithubRelease>(defaultGithubRelease);
 
 onBeforeMount(async () => {
-    latestAPIRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept/releases");
+    latestAPIRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-api/releases");
     latestCLIRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-cli/releases");
-    latestWebRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-web/releases");
+    latestWebRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept/releases");
     latestDesktopRelease.value = await githubCommunicator.latestRelease("https://api.github.com/repos/unipept/unipept-desktop/releases");
 
     loading.value = false;

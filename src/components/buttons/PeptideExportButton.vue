@@ -1,48 +1,49 @@
 <template>
-    <div>
-        <tooltip message="Download a CSV-file with the results of this analysis.">
-            <v-menu offset-y bottom left origin="top right">
-                <template v-slot:activator="{ on }">
-                    <v-btn min-width="187" :disabled="assayStatus.analysisInProgress || exportLoading" v-on="on" color="default">
-                        <div v-if="!exportLoading">
-                            <v-icon>
-                                mdi-download
-                            </v-icon>
-                            {{ buttonText }}
-                            <v-icon>mdi-menu-down</v-icon>
-                        </div>
-                        <v-progress-circular v-else indeterminate color="black" :size="20">
-                        </v-progress-circular>
+    <v-menu>
+        <template #activator="{ props: menu }">
+            <v-tooltip text="Download a CSV-file with the results of this analysis.">
+                <template #activator="{ props: tooltip }">
+                    <v-btn
+                        min-width="187"
+                        :disabled="assayStatus.analysisInProgress || exportLoading"
+                        v-bind="mergeProps(menu, tooltip)"
+                        color="default"
+                        :loading="exportLoading"
+                        prepend-icon="mdi-download"
+                        append-icon="mdi-menu-down"
+                    >
+                        {{ buttonText }}
                     </v-btn>
                 </template>
-                <v-list>
-                    <v-list-item @click="downloadCsv('csv (,)')">
-                        <v-list-item-title>Comma-separated (international)</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="downloadCsv('csv (;)', ';', ',')">
-                        <v-list-item-title>Semi-colon-separated (Europe)</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="downloadCsv('tsv', '\t', ';')">
-                        <v-list-item-title>Tab-separated</v-list-item-title>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
-        </tooltip>
-    </div>
+            </v-tooltip>
+        </template>
+        <v-list>
+            <v-list-item
+                title="Comma-separated (international)"
+                @click="downloadCsv('csv (,)')"
+            />
+            <v-list-item
+                title="Semi-colon-separated (Europe)"
+                @click="downloadCsv('csv (;)', ';', ',')"
+            />
+            <v-list-item
+                title="Tab-separated"
+                @click="downloadCsv('tsv', '\t', ';')"
+            />
+        </v-list>
+    </v-menu>
 </template>
 
 <script setup lang="ts">
-import { MultiProteomicsAnalysisStatus, PeptideUtils, Tooltip, useCsvDownload } from 'unipept-web-components';
+import { MultiProteomicsAnalysisStatus, PeptideUtils, useCsvDownload } from "unipept-web-components";
 import AnalyticsCommunicator from '@/logic/communicators/analytics/AnalyticsCommunicator';
-import { ref } from 'vue';
+import { mergeProps, ref } from "vue";
 
 export interface Props {
     assayStatus: MultiProteomicsAnalysisStatus;
-
     buttonText: string
 }
 
-// eslint-disable-next-line
 const props = defineProps<Props>();
 
 const exportLoading = ref<boolean>(false);

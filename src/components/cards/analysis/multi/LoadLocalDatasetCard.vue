@@ -6,41 +6,58 @@
             </span>
         </v-card-text>
 
-        <v-list two-line class="stored-assays-list">
-            <v-list-item 
-                v-for="dataset of assayStore.assays" 
+        <v-list
+            two-line
+            class="stored-assays-list"
+        >
+            <v-list-item
+                v-for="dataset of assayStore.assays"
                 :key="dataset.name"
+                :title="dataset.name"
+                :subtitle="dataset.amountOfPeptides + ' peptides'"
+                two-line
+                prepend-icon="mdi-plus"
+                ripple
+                class="py-4"
                 @click="loadAssay(dataset)"
-                ripple 
             >
-                <v-list-item-action>
-                    <Tooltip message="Select this dataset for analysis.">
-                        <v-icon>mdi-plus</v-icon>
-                    </Tooltip>
-                </v-list-item-action>
-                <v-list-item-content>
-                    <v-list-item-title>
-                        {{ dataset.name }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                        {{ dataset.amountOfPeptides }} peptides
-                    </v-list-item-subtitle>
-                </v-list-item-content>
+                <template #prepend>
+                    <v-tooltip text="Select this dataset for analysis.">
+                        <template #activator="{ props }">
+                            <v-icon v-bind="props">
+                                mdi-plus
+                            </v-icon>
+                        </template>
+                    </v-tooltip>
+                </template>
 
-                <v-list-item-action>
-                    <v-list-item-action-text>
-                        {{ dateToString(dataset.createdAt) }}
-                    </v-list-item-action-text>
-                    <Tooltip message="Delete this sample from local storage.">
-                        <v-btn class="remove-assay-button" icon text @click="openConfirmationDialog(dataset)" v-on:click.stop>
-                            <v-icon color="grey darken-1">mdi-close</v-icon>
-                        </v-btn>
-                    </Tooltip>
-                </v-list-item-action>
+                <template #append>
+                    <div class="d-flex flex-column align-end">
+                        <span class="text-body-2 text-medium-emphasis">
+                            {{ dateToString(dataset.createdAt) }}
+                        </span>
+                        <v-tooltip text="Delete this assay from local storage.">
+                            <template #activator="{ props }">
+                                <v-btn
+                                    class="remove-assay-button"
+                                    variant="text"
+                                    icon="mdi-delete-outline"
+                                    v-bind="props"
+                                    size="small"
+                                    density="compact"
+                                    @click.stop="openConfirmationDialog(dataset)"
+                                />
+                            </template>
+                        </v-tooltip>
+                    </div>
+                </template>
             </v-list-item>
         </v-list>
 
-        <v-dialog v-model="confirmationDialogOpen" max-width="400">
+        <v-dialog
+            v-model="confirmationDialogOpen"
+            max-width="400"
+        >
             <v-card>
                 <v-card-title>Confirm sample deletion?</v-card-title>
 
@@ -50,13 +67,22 @@
                 </v-card-text>
 
                 <v-card-actions>
-                    <v-spacer></v-spacer>
+                    <v-spacer />
 
-                    <v-btn class="confirmation-cancel-button" color="black" text @click="closeConfirmationDialog">
+                    <v-btn
+                        class="confirmation-cancel-button"
+                        color="black"
+                        variant="text"
+                        @click="closeConfirmationDialog"
+                    >
                         Cancel
                     </v-btn>
 
-                    <v-btn color="primary" text @click="removeAssay(confirmationDialogAssay); closeConfirmationDialog()">
+                    <v-btn
+                        color="primary"
+                        variant="text"
+                        @click="removeAssay(confirmationDialogAssay); closeConfirmationDialog()"
+                    >
                         OK
                     </v-btn>
                 </v-card-actions>
@@ -66,10 +92,10 @@
 </template>
 
 <script setup lang="ts">
-import useAssays from '@/stores/AssayStore';
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
-import { Assay, Tooltip } from "unipept-web-components";
+import { Assay } from "unipept-web-components";
 import { ref } from 'vue';
+import useAssays from "@/store/AssayStore";
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
 
 const assayStore = useAssays();
 const multiAnalysisStore = useMultiAnalysis();

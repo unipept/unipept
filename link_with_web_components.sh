@@ -13,7 +13,7 @@
 rm -rf ./node_modules/unipept-web-components/types/*
 
 # First remove the original dist data and link both together
-rm -f ./node_modules/unipept-web-components/dist/unipept-web-components.umd.min.js
+rm -f ./node_modules/unipept-web-components/dist/unipept-web-components.*
 
 # Then, start a watcher that automatically applies changes made to the original web components into our local copy
 # inside of node_modules

@@ -2,9 +2,24 @@
     <v-card flat>
         <v-card-text>
             <h3>Load data from the PRIDE archive</h3>
-            <p>You can easily load data from the <a href="http://www.ebi.ac.uk/pride/" target="_blank">PRIDE</a> data repository. Simply enter an assay id (e.g. 8500) in the field below and click the 'Load PRIDE Dataset' button. The corresponding dataset will then be fetched using the PRIDE API and loaded into the search form on the left.</p>
-            
-            <v-form v-model="validInputForm" @submit="fetchPrideDataset">
+            <p>
+                You can easily load data from the
+                <a
+                    href="http://www.ebi.ac.uk/pride/"
+                    target="_blank"
+                    class="link"
+                >
+                    PRIDE
+                </a>
+                data repository.
+                Simply enter an assay id (e.g. 8500) in the field below and click the 'Load PRIDE Dataset' button.
+                The corresponding dataset will then be fetched using the PRIDE API and loaded into the search form on the left.
+            </p>
+
+            <v-form
+                v-model="validInputForm"
+                @submit="fetchPrideDataset"
+            >
                 <v-text-field
                     v-model="prideId"
                     label="Assay id"
@@ -19,8 +34,9 @@
                         class="text-center"
                         :disabled="!validInputForm || loading"
                         type="submit"
+                        prepend-icon="mdi-cloud-download"
                     >
-                        <v-icon left>mdi-cloud-download</v-icon> Fetch PRIDE dataset
+                        Fetch PRIDE dataset
                     </v-btn>
                 </div>
             </v-form>
@@ -28,19 +44,31 @@
 
         <v-divider />
 
-        <v-card-text v-if="error" class="connection-error">
+        <v-card-text
+            v-if="error"
+            class="connection-error"
+        >
             <v-alert type="error">
-               {{ error }}
+                {{ error }}
             </v-alert>
         </v-card-text>
 
-        <v-card-text v-else class="pt-0">
-            <v-form ref="form" v-model="validForm">
+        <v-card-text
+            v-else
+            class="pt-0"
+        >
+            <v-form
+                ref="form"
+                v-model="validForm"
+            >
                 <v-row class="my-1">
-                    <v-col class="pb-0" cols=12>
+                    <v-col
+                        class="pb-0"
+                        cols="12"
+                    >
                         <v-textarea
-                            class="pt-0 mt-0"
                             v-model="peptideList"
+                            class="pt-0 mt-0"
                             label="Peptide list"
                             :loading="loading"
                             :rules="peptideListRules"
@@ -52,24 +80,28 @@
                     </v-col>
                 </v-row>
 
-                <Tooltip message="This name will be shown on the results page. Handy if you have many open tabs.">
-                    <v-text-field
-                        v-model="datasetName"
-                        label="Name this dataset"
-                        placeholder="e.g. PRIDE assay 123909"
-                        :loading="loading"
-                        :rules="datasetNameRules"
-                        clearable
-                    />
-                </Tooltip>
+                <v-tooltip text="This name will be shown on the results page. Handy if you have many open tabs.">
+                    <template #activator="{ props }">
+                        <v-text-field
+                            v-model="datasetName"
+                            label="Name this dataset"
+                            placeholder="e.g. PRIDE assay 123909"
+                            :loading="loading"
+                            :rules="datasetNameRules"
+                            clearable
+                            v-bind="props"
+                        />
+                    </template>
+                </v-tooltip>
 
                 <div class="d-flex justify-center mt-2">
                     <v-btn
                         class="text-center"
                         :disabled="!validForm"
+                        prepend-icon="mdi-plus"
                         @click="createAssay"
                     >
-                        <v-icon left>mdi-plus</v-icon> Add to selected datasets
+                        Add to selected datasets
                     </v-btn>
                 </div>
             </v-form>
@@ -78,12 +110,13 @@
 </template>
 
 <script setup lang="ts">
-import useAssays from '@/stores/AssayStore';
-import { ref } from 'vue';
-import { Tooltip, PrideCommunicator, Peptide } from 'unipept-web-components';
+import { Ref, ref } from "vue";
+import { PrideCommunicator, Peptide } from 'unipept-web-components';
 import useId from '@/composables/useId';
-import useMultiAnalysis from '@/stores/MultiAnalysisStore';
-import useConfigurationStore from '@/stores/ConfigurationStore';
+import { VForm } from "vuetify/components";
+import useMultiAnalysis from "@/store/MultiAnalysisStore";
+import useAssays from "@/store/AssayStore";
+import useConfigurationStore from "@/store/ConfigurationStore";
 
 const assayStore = useAssays();
 const multiAnalysisStore = useMultiAnalysis();
@@ -97,13 +130,13 @@ const error = ref<string>("");
 const validInputForm = ref<boolean>(false);
 const prideId = ref<string>("");
 
-const form = ref(null);
+const form: Ref<VForm | null> = ref(null);
 const validForm = ref(false);
 const peptideList = ref("");
 const datasetName = ref("");
 
 const prideInputRules = [
-    (value: string) => !!value || 'Please enter a valid PRIDE assay number'  
+    (value: string) => !!value || 'Please enter a valid PRIDE assay number'
 ];
 
 const peptideListRules = [
@@ -127,7 +160,6 @@ const fetchPrideDataset = (event: Event) => {
 
     datasetName.value = "PRIDE assay " + prideId.value;
 
-    // @ts-ignore
     const communicator = new PrideCommunicator(configurationStore.prideApiPeptideUrl, configurationStore.prideBatchSize);
     communicator.getPeptides(prideId.value)
         .then((peptides: Peptide[]) => {
@@ -154,7 +186,6 @@ const createAssay = () => {
 
     assayStore.add(assay);
     multiAnalysisStore.addAssay(assay);
-    // @ts-ignore
-    form.value.reset();
+    form.value?.reset();
 }
 </script>

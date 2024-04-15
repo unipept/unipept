@@ -1,19 +1,28 @@
 <template>
     <div>
+        <!-- @vue-ignore (TODO: types should work once data tables are not in labs anymore) -->
         <v-data-table
             :headers="headers"
             :loading="!items"
             :items="itemObjects"
-            :itemsPerPage="10"
+            :items-per-page="10"
         >
             <template #item.peptide="{ item }">
-                <span>{{ item.peptide }}</span>
+                <span>{{ item.raw.peptide }}</span>
             </template>
 
             <template #item.action="{ item }">
-                <a :href="url(item.peptide)" target="_blank" class="font-regular d-flex">
-                    <v-icon class="pl-2">mdi-open-in-new</v-icon>
-                </a>
+                <v-tooltip text="Open in new tab and BLAST peptide.">
+                    <template #activator="{ props }">
+                        <v-btn
+                            icon="mdi-open-in-new"
+                            size="small"
+                            variant="plain"
+                            v-bind="props"
+                            @click="openItem(item.raw.peptide)"
+                        />
+                    </template>
+                </v-tooltip>
             </template>
         </v-data-table>
     </div>
@@ -21,30 +30,31 @@
 
 <script setup lang="ts">
 import { Peptide } from 'unipept-web-components';
-import { computed } from 'vue';
+import { computed, ref } from "vue";
+import { VDataTable } from "vuetify/labs/VDataTable";
 
 export interface Props {
     items: Peptide[]
 }
 
-/* eslint-disable */
 const props = defineProps<Props>();
 
-const headers = [
+const headers = ref([
     {
-        text: "Peptide",
+        title: "Peptide",
         align: "start",
-        value: "peptide",
-        width: "90%"
+        key: "peptide",
+        width: "90%",
+        sortable: true
     },
     {
-        text: "Actions",
+        title: "Actions",
         align: "center",
-        value: "action",
+        key: "action",
         width: "10%",
         sortable: false
     }
-];
+]);
 
 const itemObjects = computed(() => {
     return props.items.map((item) => {
@@ -53,6 +63,10 @@ const itemObjects = computed(() => {
         };
     });
 });
+
+const openItem = function(peptide: Peptide) {
+    window.open(url(peptide), "_blank");
+}
 
 const url = (peptide: Peptide) => {
     return "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on" +
@@ -66,11 +80,11 @@ const url = (peptide: Peptide) => {
 </script>
 
 <style scoped>
-    a {
-        text-decoration: none;
-    }
+a {
+    text-decoration: none;
+}
 
-    a:hover {
-        text-decoration: none;
-    }
+a:hover {
+    text-decoration: none;
+}
 </style>

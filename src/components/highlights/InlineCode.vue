@@ -1,6 +1,6 @@
 <template>
     <code>
-        <slot></slot>
+        <slot />
     </code>
 </template>
 
@@ -11,5 +11,5 @@ code {
     background-color: #f9f2f4 !important;
     border-radius: 2px !important;
     font-size: 90%;
-};
+}
 </style>

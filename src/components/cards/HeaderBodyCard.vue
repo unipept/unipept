@@ -1,23 +1,33 @@
 <template>
     <v-card>
-        <v-card-title class="blue white--text">{{ title }}</v-card-title>
+        <v-card-title
+            class="pa-4 bg-primary text-white"
+            :class="{ 'large-title': largeTitle }"
+        >
+            {{ title }}
+        </v-card-title>
 
-        <v-card-text class="mt-4">
-            <slot></slot>
+        <v-card-text>
+            <slot />
         </v-card-text>
 
-        <slot name="extension"></slot>
+        <slot name="extension" />
     </v-card>
 </template>
 
 <script setup lang="ts">
 export interface Props {
-    title: String
+    title: string,
+    largeTitle?: boolean
 }
 
-/* eslint-disable */
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+    largeTitle: false
+});
 </script>
 
 <style scoped>
+.large-title {
+    font-size: 1.25rem;
+}
 </style>
