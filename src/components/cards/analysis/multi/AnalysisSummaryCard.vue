@@ -93,10 +93,12 @@
                     </template>
                 </v-tooltip>
 
+               <missed-cleavage-alert />
+
                 <v-tooltip text="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!">
                     <template #activator="{ props }">
                         <v-switch
-                            v-model="cleavageHandling"
+                            :model-value="true"
                             class="pt-0 mt-0"
                             density="compact"
                             hide-details
@@ -104,6 +106,7 @@
                             label="Advanced missed cleavage handling"
                             v-bind="props"
                             inset
+                            disabled
                         />
                     </template>
                 </v-tooltip>
@@ -164,6 +167,7 @@ import { storeToRefs } from "pinia";
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
 import MissingPeptidesDialog from "@/components/dialogs/MissingPeptidesDialog.vue";
 import { MultiProteomicsAnalysisStatus } from "unipept-web-components";
+import MissedCleavageAlert from "@/components/alerts/MissedCleavageAlert.vue";
 
 const multiAnalysisStore = useMultiAnalysis();
 

@@ -83,10 +83,11 @@
                     </template>
                 </v-tooltip>
 
+                <missed-cleavage-alert />
                 <v-tooltip text="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!">
                     <template #activator="{ props }">
                         <v-switch
-                            v-model="cleavageHandling"
+                            :model-value="true"
                             class="pt-0 mt-0"
                             density="compact"
                             label="Advanced missed cleavage handling"
@@ -94,6 +95,7 @@
                             hide-details
                             color="primary"
                             inset
+                            disabled
                         />
                     </template>
                 </v-tooltip>
@@ -125,6 +127,7 @@ import { ref } from 'vue';
 import { Assay } from "unipept-web-components";
 import AnalyticsCommunicator from '@/logic/communicators/analytics/AnalyticsCommunicator';
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
+import MissedCleavageAlert from "@/components/alerts/MissedCleavageAlert.vue";
 
 const emit = defineEmits(['search']);
 
