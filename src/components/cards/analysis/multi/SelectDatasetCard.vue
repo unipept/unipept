@@ -83,22 +83,23 @@
                     </template>
                 </v-tooltip>
 
-                <missed-cleavage-alert />
-                <v-tooltip text="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!">
-                    <template #activator="{ props }">
-                        <v-switch
-                            :model-value="true"
-                            class="pt-0 mt-0"
-                            density="compact"
-                            label="Advanced missed cleavage handling"
-                            v-bind="props"
-                            hide-details
-                            color="primary"
-                            inset
-                            disabled
-                        />
-                    </template>
-                </v-tooltip>
+                <custom-tooltip style="width: 100%;">
+                    <v-switch
+                        :model-value="true"
+                        class="pt-0 mt-0"
+                        density="compact"
+                        hide-details
+                        color="primary"
+                        inset
+                        disabled
+                    >
+                        <template #label>
+                            <span class="text-black">
+                                Advanced missed cleavage handling <v-icon class="ml-1" icon="$info" />
+                            </span>
+                        </template>
+                    </v-switch>
+                </custom-tooltip>
 
                 <div class="d-flex justify-center mt-4">
                     <v-btn
@@ -127,7 +128,7 @@ import { ref } from 'vue';
 import { Assay } from "unipept-web-components";
 import AnalyticsCommunicator from '@/logic/communicators/analytics/AnalyticsCommunicator';
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
-import MissedCleavageAlert from "@/components/alerts/MissedCleavageAlert.vue";
+import CustomTooltip from "@/components/cards/analysis/multi/CustomTooltip.vue";
 
 const emit = defineEmits(['search']);
 
@@ -184,5 +185,8 @@ const dateToString = (date: Date) => {
 }
 .selected-placeholder {
     display: inline-block;
+}
+.v-selection-control--disabled {
+    opacity: 1 !important;
 }
 </style>
