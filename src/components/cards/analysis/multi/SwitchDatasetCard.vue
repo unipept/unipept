@@ -84,7 +84,6 @@
 
             <v-divider />
 
-
             <div class="text-center pt-4">
                 <v-tooltip text="Compare samples above using a heatmap.">
                     <template #activator="{ props }">

@@ -93,20 +93,23 @@
                     </template>
                 </v-tooltip>
 
-                <v-tooltip text="Recombine subpeptides of miscleavages. Enabling this has a serious performance impact!">
-                    <template #activator="{ props }">
-                        <v-switch
-                            v-model="cleavageHandling"
-                            class="pt-0 mt-0"
-                            density="compact"
-                            hide-details
-                            color="primary"
-                            label="Advanced missed cleavage handling"
-                            v-bind="props"
-                            inset
-                        />
-                    </template>
-                </v-tooltip>
+                <custom-tooltip style="width: 100%;">
+                    <v-switch
+                        :model-value="true"
+                        class="pt-0 mt-0"
+                        density="compact"
+                        hide-details
+                        color="primary"
+                        inset
+                        disabled
+                    >
+                        <template #label>
+                            <span class="text-black">
+                                Advanced missed cleavage handling <v-icon class="ml-1" icon="$info" />
+                            </span>
+                        </template>
+                    </v-switch>
+                </custom-tooltip>
 
                 <div class="card-actions d-flex flex-wrap justify-center">
                     <v-tooltip text="Restart search with selected samples using the settings chosen above.">
@@ -164,6 +167,8 @@ import { storeToRefs } from "pinia";
 import useMultiAnalysis from "@/store/MultiAnalysisStore";
 import MissingPeptidesDialog from "@/components/dialogs/MissingPeptidesDialog.vue";
 import { MultiProteomicsAnalysisStatus } from "unipept-web-components";
+import MissedCleavageAlert from "@/components/alerts/MissedCleavageAlert.vue";
+import CustomTooltip from "@/components/cards/analysis/multi/CustomTooltip.vue";
 
 const multiAnalysisStore = useMultiAnalysis();
 
