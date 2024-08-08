@@ -19,7 +19,8 @@ export default class AnalyticsCommunicator {
             sequenceAmount: sequenceAmount,
             equateIl: equateIl,
             filterDuplicates: filterDuplicates,
-            missedCleavages: missedCleavages,
+            // Always true!
+            missedCleavages: true,
             reprocessed: reprocessed
         });
     }
