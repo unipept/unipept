@@ -143,7 +143,7 @@ const useMultiAnalysis = defineStore('multi-analysis', () => {
 
         assayStatus.equateIl = equateIl;
         assayStatus.filterDuplicates = filterDuplicates;
-        assayStatus.cleavageHandling = cleavageHandling;
+        assayStatus.cleavageHandling = true;
 
         if(!activeAssayStatus.value) {
             activeAssayStatus.value = assayStatus;

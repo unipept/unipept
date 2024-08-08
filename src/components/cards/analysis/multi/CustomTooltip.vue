@@ -37,13 +37,14 @@ let hideTooltipTimer: number | null = null;
 
 // Function to start the timer for showing the tooltip
 const startShowTooltipTimer = () => {
+    cancelHideTooltipTimer();
     if (showTooltipTimer !== null) {
         clearTimeout(showTooltipTimer);
         showTooltipTimer = null;
     } // Clear any existing show timer
     showTooltipTimer = window.setTimeout(() => {
         visible.value = true;
-    }, 300); // Show tooltip after 200ms
+    }, 300); // Show tooltip after 300ms
 };
 
 // Function to cancel the show tooltip timer

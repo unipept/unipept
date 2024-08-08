@@ -7,8 +7,8 @@ const useConfigurationStore = defineStore('configuration', () => {
     const parallelRequests = 5;
     const taskQueueSize = 4;
 
-    const peptideDataBatchSize  = 100;
-    const cleavageBatchSize     = 10;
+    const peptideDataBatchSize  = 200;
+    const cleavageBatchSize     = 200;
     const goBatchSize           = 100;
     const ecBatchSize           = 100;
     const interproBatchSize     = 100;
