@@ -192,7 +192,8 @@ const navItems: NavItem[] = [
     { name: "API", path: "/apidocs", forceReload: false },
     { name: "CLI", path: "/clidocs", forceReload: false },
     { name: "Metagenomics", path: "/umgap", forceReload: false },
-    { name: "Unipept Desktop", path: "/desktop", forceReload: false }
+    { name: "Unipept Desktop", path: "/desktop", forceReload: false },
+    { name: "Test", path: "/test", forceReload: false },
 ];
 
 QueueManager.initializeQueue(configStore.taskQueueSize);
