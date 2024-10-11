@@ -1,10 +1,17 @@
 <template>
-    <v-dialog v-model="dialogOpen" max-width="80%">
+    <v-dialog
+        v-model="dialogOpen"
+        max-width="80%"
+    >
         <v-card>
             <v-card-title class="d-flex align-center">
                 <h2>Create custom database</h2>
                 <v-spacer />
-                <v-btn icon flat @click="dialogOpen = false">
+                <v-btn
+                    icon
+                    flat
+                    @click="dialogOpen = false"
+                >
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
             </v-card-title>
@@ -12,7 +19,10 @@
             <v-divider />
 
             <v-card-text class="mt-2">
-                <v-stepper-vertical color="primary" flat>
+                <v-stepper-vertical
+                    color="primary"
+                    flat
+                >
                     <template #default="{ step, next, prev }">
                         <v-stepper-vertical-item
                             :complete="step > 1"
@@ -45,7 +55,12 @@
                             </v-form>
 
                             <template #next>
-                                <v-btn color="primary" :disabled="!isValidDatabaseName" @click="next">Continue</v-btn>
+                                <v-btn
+                                    color="primary"
+                                    text="Continue"
+                                    :disabled="!isValidDatabaseName"
+                                    @click="next"
+                                />
                             </template>
 
                             <template #prev />
@@ -78,15 +93,27 @@
                                 </v-row>
 
                                 <v-row>
-                                    <v-col cols="6" class="d-flex flex-column">
-                                        <v-btn color="primary" variant="tonal" @click="filter = Filter.Manually; next()">
-                                            Manually filter database
-                                        </v-btn>
+                                    <v-col
+                                        cols="6"
+                                        class="d-flex flex-column"
+                                    >
+                                        <v-btn
+                                            color="primary"
+                                            text="Manually filter database"
+                                            variant="tonal"
+                                            @click="filter = Filter.Manually; next()"
+                                        />
                                     </v-col>
-                                    <v-col cols="6" class="d-flex flex-column">
-                                        <v-btn color="primary" variant="tonal" @click="filter = Filter.ReferenceProteomes; next()">
-                                            Construct from reference proteomes
-                                        </v-btn>
+                                    <v-col
+                                        cols="6"
+                                        class="d-flex flex-column"
+                                    >
+                                        <v-btn
+                                            color="primary"
+                                            text="Construct from reference proteomes"
+                                            variant="tonal"
+                                            @click="filter = Filter.ReferenceProteomes; next()"
+                                        />
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -112,11 +139,21 @@
                             <taxa-browser v-model="selectedTaxa" />
 
                             <template #prev>
-                                <v-btn color="primary" variant="tonal" @click="buildTaxonDatabase">Build database</v-btn>
+                                <v-btn 
+                                    color="primary" 
+                                    variant="tonal" 
+                                    text="Build database" 
+                                    @click="buildTaxonDatabase" 
+                                />
                             </template>
 
                             <template #next>
-                                <v-btn color="primary" variant="text" @click="prev">Go back</v-btn>
+                                <v-btn
+                                    color="primary"
+                                    variant="text"
+                                    text="Go back"
+                                    @click="prev"
+                                />
                             </template>
                         </v-stepper-vertical-item>
 
@@ -131,11 +168,21 @@
                             <proteome-browser v-model="selectedProteomes" />
 
                             <template #prev>
-                                <v-btn color="primary" variant="tonal" @click="buildProteomeDatabase">Build database</v-btn>
+                                <v-btn
+                                    color="primary"
+                                    variant="tonal"
+                                    text="Build database"
+                                    @click="buildProteomeDatabase"
+                                />
                             </template>
 
                             <template #next>
-                                <v-btn color="primary" variant="text" @click="prev">Go back</v-btn>
+                                <v-btn
+                                    color="primary"
+                                    variant="text"
+                                    text="Go back"
+                                    @click="prev"
+                                />
                             </template>
                         </v-stepper-vertical-item>
                     </template>
@@ -147,15 +194,9 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
+import TaxaBrowser from "@/components/new/taxon/TaxaBrowser.vue";
 import {NcbiTaxon} from "unipept-web-components";
-import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
-
-enum Filter {
-    None,
-    Manually,
-    ReferenceProteomes
-}
+import ProteomeBrowser from "@/components/new/proteomes/ProteomeBrowser.vue";
 
 const dialogOpen = defineModel<boolean>();
 
@@ -167,14 +208,20 @@ const selectedTaxa = ref<NcbiTaxon[]>([]);
 const selectedProteomes = ref<any[]>([]);
 
 const buildTaxonDatabase = () => {
-    console.log(databaseName.value, selectedTaxa.value);
     dialogOpen.value = false;
 };
 
 const buildProteomeDatabase = () => {
-    console.log(databaseName.value, selectedProteomes.value);
     dialogOpen.value = false;
 };
+</script>
+
+<script lang="ts">
+enum Filter {
+    None,
+    Manually,
+    ReferenceProteomes
+}
 </script>
 
 <style scoped>

@@ -1,5 +1,8 @@
 <template>
-    <v-card flat>
+    <v-card
+        v-if="analysis !== undefined"
+        flat
+    >
         <v-card-title>
             <span class="text-h4">{{ analysis.sample.name }}</span>
         </v-card-title>
@@ -17,46 +20,32 @@
                 <v-col cols="6">
                     <h2 class="pb-2">Analysis settings</h2>
                     <v-checkbox
-                        v-model="equateIl"
+                        v-model="analysis.config.equate"
                         color="primary"
                         label="Equate I and L"
                         density="compact"
                         hide-details
                     />
                     <v-checkbox
-                        v-model="filterDuplicates"
+                        v-model="analysis.config.filter"
                         color="primary"
                         label="Filter duplicate peptides"
                         density="compact"
                         hide-details
                     />
                     <v-checkbox
-                        v-model="missedCleavages"
+                        v-model="analysis.config.missed"
                         color="primary"
                         label="Enable missed cleavages"
                         density="compact"
                         hide-details
                         disabled
                     />
-                    <v-select
-                        v-model="selectedDatabase"
+                    <database-select
+                        v-model="analysis.config.database"
                         class="mt-1"
                         label="Selected database"
-                        :items="['UniProtKB']"
-                        variant="outlined"
-                        density="compact"
-                    >
-                        <template #item="{ props }">
-                            <v-list-item v-bind="props" density="compact" />
-                        </template>
-
-                        <template #append-item>
-                            <v-divider class="my-1" />
-                            <v-list-item class="mb-n2" density="compact" prepend-icon="mdi-database-plus" @click="createDatabaseOpen = true">
-                                Create custom database
-                            </v-list-item>
-                        </template>
-                    </v-select>
+                    />
                     <div class="d-flex flex-column">
                         <v-btn
                             color="primary"
@@ -70,7 +59,7 @@
                 <v-col cols="12">
                     <v-data-table
                         :headers="headers"
-                        :items="peptides"
+                        :items="analysis.result.test"
                         :items-per-page="5"
                         :server-items-length="0"
                         :loading="false"
@@ -92,14 +81,16 @@
             </v-row>
         </v-card-text>
     </v-card>
-
-    <create-custom-database v-model="createDatabaseOpen" />
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
-import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
+import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
+import {Analysis} from "@/components/pages/TestPage.vue";
 
+const analysis = defineModel<Analysis | undefined>();
+</script>
+
+<script lang="ts">
 const headers = [
     {
         title: "Peptide",
@@ -121,86 +112,7 @@ const headers = [
         align: "start",
         value: "rank"
     }
-]
-
-const analysis = ref({
-    sample: {
-        name: "Clover 1",
-        peptides: [
-            "AALTER"
-        ]
-    },
-    config: {
-        equateIl: true,
-        filterDuplicates: true,
-        databaseFilter: "database1"
-    },
-    result: {}
-})
-
-const peptides = ref([
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    },
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    },
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    },
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    },
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    },
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    },
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    },
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    },
-    {
-        peptide: "AALTER",
-        occurrence: 1,
-        lca: "Proteobacteria",
-        rank: "species"
-    }
-])
-
-const equateIl = ref(true);
-const filterDuplicates = ref(true);
-const missedCleavages = ref(true);
-const selectedDatabase = ref("UniProtKB");
-
-const createDatabaseOpen = ref(false);
+];
 </script>
 
 <style scoped>
