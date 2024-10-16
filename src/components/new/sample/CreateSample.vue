@@ -5,7 +5,7 @@
     >
         <v-card>
             <v-card-title class="d-flex align-center">
-                <h2>Create samples</h2>
+                <h2>Manage samples</h2>
                 <v-spacer />
                 <v-btn
                     icon
@@ -21,7 +21,7 @@
             </v-card-subtitle>
 
             <v-card-text>
-                <sample-table v-model="localSamples" />
+                <sample-table v-model="samples" />
 
                 <div class="d-flex justify-end">
                     <v-btn
@@ -45,27 +45,24 @@
 </template>
 
 <script setup lang="ts">
-import SampleTable from "@/components/new/sample/SampleTable.vue";
-import {ref, watch} from "vue";
-import {Analysis} from "@/components/pages/TestPage.vue";
+import SampleTable, {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
+import {ref} from "vue";
 
 const dialogOpen = defineModel<boolean>();
-const samples = defineModel<Analysis[]>('samples')
 
-const localSamples = ref<Analysis[]>([]);
+const emit = defineEmits<{
+    confirm: [samples: SampleTableItem[]]
+}>();
+
+const samples = ref<SampleTableItem[]>([]);
 
 const confirmChanges = () => {
-    dialogOpen.value = false;
-    samples.value = localSamples.value;
+    emit('confirm', samples.value);
+    undoChanges();
 };
 
 const undoChanges = () => {
+    samples.value = [];
     dialogOpen.value = false;
 };
-
-watch(dialogOpen, (value) => {
-    if (value) {
-        localSamples.value = JSON.parse(JSON.stringify(samples.value))
-    }
-});
 </script>

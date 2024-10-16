@@ -72,13 +72,11 @@
 <script setup lang="ts">
 import {computed} from "vue";
 
-interface Props {
+const { type } = defineProps<{
     type?: SampleType
-}
+}>();
 
-const { type } = defineProps<Props>();
-
-const peptides = defineModel<string[]>();
+const peptides = defineModel<string>();
 
 const isPeptides = computed(() => type === SampleType.Peptides);
 const isSample = computed(() => type === SampleType.Sample);

@@ -76,6 +76,7 @@
                 class="bg-grey-darken-3 d-flex"
                 style="flex: 0 0 auto; "
                 height="100px"
+                order="1000"
             >
                 <div style="width: 100%">
                     <div class="d-md-flex justify-space-between">

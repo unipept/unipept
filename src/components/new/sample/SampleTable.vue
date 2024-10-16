@@ -22,7 +22,7 @@
 
         <template #item.name="{ item }">
             <v-text-field
-                v-model="item.sample.name"
+                v-model="item.name"
                 class="name-text-field"
                 density="compact"
                 variant="underlined"
@@ -70,7 +70,7 @@
         </template>
 
         <template #item.count="{ item }">
-            {{ item.sample.peptides.length }}
+            {{ item.rawPeptides.split("\n").map(p => p.trim()).filter(p => p.length > 0).length }}
         </template>
 
         <template #item.action="{ index }">
@@ -87,7 +87,7 @@
             <tr>
                 <td :colspan="columns.length">
                     <create-sample-type
-                        v-model="item.peptides"
+                        v-model="item.peptides_raw"
                         :type="item.type"
                     />
                 </td>
@@ -144,12 +144,11 @@
 </template>
 
 <script setup lang="ts">
-import CreateSampleType, {SampleType} from "@/components/new/sample/CreateSampleType.vue";
+import CreateSampleType from "@/components/new/sample/CreateSampleType.vue";
 import {ref} from "vue";
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
-import {Analysis} from "@/components/pages/TestPage.vue";
 
-const samples = defineModel<Analysis[]>();
+const samples = defineModel<SampleTableItem[]>();
 
 const expanded = ref<number[]>([]);
 
@@ -161,10 +160,8 @@ const addSample = (type: SampleType) => {
     const id = samples.value.reduce((acc, s) => Math.max(acc, s.id), 0) + 1;
     const sample = {
         id: id,
-        sample: {
-            name: "Sample" + id,
-            peptides: []
-        },
+        name: "Sample" + id,
+        rawPeptides: "",
         config: {
             equate: true,
             filter: true,
@@ -174,7 +171,7 @@ const addSample = (type: SampleType) => {
         type: type
     };
     samples.value = [ ...samples.value, sample ];
-    expanded.value = [ ...expanded.value, sample.id ];
+    expanded.value = [ sample.id ];
 };
 
 const removeSample = (index: number) => {
@@ -184,6 +181,8 @@ const removeSample = (index: number) => {
 </script>
 
 <script lang="ts">
+import {SampleType} from "@/components/new/sample/CreateSampleType.vue";
+
 const headers = [
     {
         title: "sample name",
@@ -223,6 +222,18 @@ const headers = [
         sortable: false
     }
 ];
+
+export interface SampleTableItem {
+    name: string;
+    rawPeptides: string;
+    config: {
+        equate: boolean;
+        filter: boolean;
+        missed: boolean;
+        database: string;
+    };
+    type?: SampleType;
+}
 </script>
 
 <style scoped>

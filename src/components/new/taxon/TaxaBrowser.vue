@@ -158,7 +158,7 @@
 <script setup lang="ts">
 import {computed, onMounted, ref} from "vue";
 import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
-import useAsync from "@/composables/useAsync";
+import useAsync from "@/composables/new/useAsync";
 import {NcbiRank, NcbiTaxon} from "unipept-web-components";
 
 const headers = [
