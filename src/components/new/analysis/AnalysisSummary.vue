@@ -9,19 +9,31 @@
         <v-card-text>
             <v-row class="mt-n6">
                 <v-col cols="6">
-                    <h2 class="pb-2">Analysis summary</h2>
+                    <h2 class="pb-2">
+                        Analysis summary
+                    </h2>
 
-                    <h4 class="font-weight-bold">3464 peptides found, 3485 peptides in assay</h4>
-                    <h1 class="text-subtitle-1 mt-n2">xxxx could not be found</h1>
+                    <h4 class="font-weight-bold">
+                        {{ analysis.data.trust.matchedPeptides }} peptides found, {{ analysis.data.trust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides in assay
+                    </h4>
+                    <h1 class="text-subtitle-1 mt-n2">
+                        {{ analysis.data.trust.missedPeptides.length }} peptides ({{ displayPercentage(analysis.data.trust.missedPeptides.length / analysis.data.trust.searchedPeptides) }}) could not be found
+                    </h1>
 
-                    <h4 class="font-weight-bold">Last analysed on October 4 at 14:34</h4>
-                    <h1 class="text-subtitle-1 mt-n2">Analysis is up-to-date, no need to restart the analysis.</h1>
+                    <h4 class="font-weight-bold">
+                        Last analysed on October 4 at 14:34
+                    </h4>
+                    <h1 class="text-subtitle-1 mt-n2">
+                        Analysis is up-to-date, no need to restart the analysis.
+                    </h1>
                 </v-col>
                 <v-col
                     v-if="analysis.config"
                     cols="6"
                 >
-                    <h2 class="pb-2">Analysis settings</h2>
+                    <h2 class="pb-2">
+                        Analysis settings
+                    </h2>
                     <v-checkbox
                         v-model="analysis.dirtyConfig.equate"
                         color="primary"
@@ -64,7 +76,7 @@
                 <v-col cols="12">
                     <v-data-table
                         :headers="headers"
-                        :items="[]"
+                        :items="foundPeptides"
                         :items-per-page="5"
                         :server-items-length="0"
                         :loading="false"
@@ -96,6 +108,16 @@ import {computed} from "vue";
 const analysis = defineModel<SingleAnalysisStore | undefined>();
 
 const dirtyConfig = computed(() => analysis.value?.isConfigDirty());
+const foundPeptides = computed(() => Array.from(analysis.value?.data.peptideCountTable.counts).map(([peptide, count]) => ({
+    peptide: peptide,
+    occurrence: count,
+    lca: "Unknown",
+    rank: "Unknown",
+})));
+
+const displayPercentage = (value: number) => {
+    return `${(value * 100).toFixed(2)}%`;
+};
 
 const update = async () => {
     analysis.value.updateConfig();
@@ -108,12 +130,13 @@ const headers = [
     {
         title: "Peptide",
         align: "start",
-        value: "peptide"
+        value: "peptide",
     },
     {
         title: "Occurrence",
         align: "start",
-        value: "occurrence"
+        value: "occurrence",
+        sortable: true
     },
     {
         title: "Lowest common ancestor",

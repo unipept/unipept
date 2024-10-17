@@ -1,11 +1,7 @@
-import {CountTable, PeptideData} from "unipept-web-components";
+import {PeptideData} from "unipept-web-components";
 import {ShareableMap} from "shared-memory-datastructures";
-
-export interface PeptideTrust {
-    missedPeptides: string[]
-    matchedPeptides: number
-    searchedPeptides: number
-}
+import PeptideTrust from "@/types/PeptideTrust";
+import CountTable from "@/logic/new/CountTable";
 
 export default function usePeptideTrustProcessor() {
     const process = (
@@ -15,9 +11,9 @@ export default function usePeptideTrustProcessor() {
         let matchedPeptides = 0;
         const missedPeptides: string[] = [];
 
-        for (const peptide of countTable.getOntologyIds()) {
+        for (const peptide of countTable.keys()) {
             if (peptideData.has(peptide)) {
-                matchedPeptides += countTable.getCounts(peptide);
+                matchedPeptides += countTable.getOrDefault(peptide);
             } else {
                 missedPeptides.push(peptide);
             }

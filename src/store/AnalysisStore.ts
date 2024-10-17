@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
-import usePeptideProcessor from "@/composables/new/processing/usePeptideProcessor";
+import usePeptideProcessor from "@/composables/new/processing/peptide/usePeptideProcessor";
 import usePept2filtered from "@/composables/new/communication/unipept/usePept2filtered";
-import usePeptideTrustProcessor from "@/composables/new/processing/usePeptideTrustProcessor";
+import usePeptideTrustProcessor from "@/composables/new/processing/peptide/usePeptideTrustProcessor";
 
 const useAnalysis = defineStore('analysis', () => {
     const { process: processPept2Filtered } = usePept2filtered();

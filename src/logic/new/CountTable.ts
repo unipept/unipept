@@ -1,0 +1,17 @@
+export default class CountTable<O extends OntologyCode> extends Map<O, number> {
+    public readonly totalCount: number;
+
+    constructor(counts: Map<O, number>, totalCount?: number) {
+        super(counts);
+        this.totalCount = totalCount ??
+            [...counts.values()].reduce((a, b) => a + b, 0);
+    }
+
+    getOrDefault(key: O, defaultValue = 0): number {
+        return this.get(key) ?? defaultValue;
+    }
+
+    keys(): O[] {
+        return Array.from(super.keys());
+    }
+}

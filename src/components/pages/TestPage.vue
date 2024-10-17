@@ -182,6 +182,7 @@ import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {storeToRefs} from "pinia";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import useFunctionalProcessor from "@/composables/new/processing/functional/useFunctionalProcessor";
 
 const groupStore = useGroupAnalysisStore();
 
