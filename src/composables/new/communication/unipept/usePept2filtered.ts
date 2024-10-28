@@ -1,12 +1,15 @@
 import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData, PeptideDataSerializer} from "unipept-web-components";
 import { parallelLimit } from "async";
+import {ref} from "vue";
 
 export default function usePept2filtered(
     baseUrl = "https://api.unipept.ugent.be",
     batchSize = 100,
     parallelRequests = 5,
 ) {
+    const peptideData = ref<ShareableMap<string, PeptideData>>();
+
     const process = async (
         peptides: string[],
         equate: boolean,
@@ -32,10 +35,12 @@ export default function usePept2filtered(
 
         await parallelLimit(requests, parallelRequests);
 
-        return result;
+        peptideData.value = result;
     }
 
     return {
+        peptideData,
+
         process
     }
 }

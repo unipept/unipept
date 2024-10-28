@@ -126,8 +126,9 @@
                 <v-main min-height="400">
                     <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
                     <analysis-summary
-                        v-else
-                        v-model="selectedAnalysis"
+                        v-else-if="selectedAnalysis && selectedAnalysisFinished"
+                        :analysis="selectedAnalysis"
+                        @update="updateAnalysis"
                     />
                 </v-main>
             </v-layout>
@@ -212,6 +213,12 @@ const addSamples = (group: MultiAnalysisStore, samples: SampleTableItem[]) => {
         const analysisId = group.addAnalysis(sample.name, sample.rawPeptides, sample.config);
         group.analyses[analysisId].analyse();
     }
+}
+
+const updateAnalysis = async () => {
+    console.log("sqdfdsf")
+    selectedAnalysis.value.updateConfig();
+    await selectedAnalysis.value.analyse();
 }
 
 watch(selected, (value) => {

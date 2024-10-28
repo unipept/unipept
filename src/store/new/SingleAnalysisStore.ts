@@ -2,9 +2,11 @@ import {AnalysisConfig, AnalysisStatus} from "@/components/pages/TestPage.vue";
 import {computed, ref} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/new/communication/unipept/usePept2filtered";
-import usePeptideProcessor from "@/composables/new/processing/usePeptideProcessor";
-import usePeptideTrustProcessor from "@/composables/new/processing/usePeptideTrustProcessor";
-import {CountTable} from "unipept-web-components";
+import usePeptideProcessor from "@/composables/new/processing/peptide/usePeptideProcessor";
+import usePeptideTrustProcessor from "@/composables/new/processing/peptide/usePeptideTrustProcessor";
+import useFunctionalProcessor from "@/composables/new/processing/functional/useFunctionalProcessor";
+import useEcOntology from "@/composables/new/communication/useEcOntology";
+import useEcProcessor from "@/composables/new/processing/functional/useEcProcessor";
 
 const useSingleAnalysisStore = (
     _id: string,
@@ -24,10 +26,17 @@ const useSingleAnalysisStore = (
     const config = ref<AnalysisConfig>({ ..._config });
     const dirtyConfig = ref<AnalysisConfig>({ ..._config });
 
-    const { process: processPept2Filtered } = usePept2filtered("http://0.0.0.0:80");
+    const data = ref<any | undefined>(undefined);
 
-    const { processOnWorker: processPeptides } = usePeptideProcessor();
-    const { process: processPeptideTrust } = usePeptideTrustProcessor();
+    // ===============================================================
+    // ======================== PROCESSORS ===========================
+    // ===============================================================
+
+    const { peptideData, process: processPept2Filtered } = usePept2filtered("http://0.0.0.0:80");
+
+    const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
+    const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
+    const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -42,19 +51,22 @@ const useSingleAnalysisStore = (
     const analyse = async () => {
         status.value = AnalysisStatus.Running;
 
-        const peptideCountTable = new CountTable<string>(
-            ...await processPeptides(peptides.value, config.value.equate, config.value.filter)
-        );
+        await processPeptides(peptides.value, config.value.equate, config.value.filter);
 
-        const peptideData = await processPept2Filtered(peptideCountTable.getOntologyIds(), config.value.equate);
+        await processPept2Filtered([...peptidesTable.value.keys()], config.value.equate);
+        processPeptideTrust(peptidesTable.value, peptideData.value);
 
-        console.log(peptideData);
+        console.log(peptideTrust.value);
 
-        const peptideTrust = processPeptideTrust(peptideCountTable, peptideData);
+        await processEc(peptidesTable.value, peptideData.value, 5);
 
-        console.log(peptideTrust);
+        console.log(ecTrust.value);
+        console.log(ecTable.value);
 
         await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // const x = useEcOntology();
+        // console.log(await x.process(Array.from(ecToCount.keys())));
 
         status.value = AnalysisStatus.Finished
     }
@@ -82,6 +94,12 @@ const useSingleAnalysisStore = (
         config,
         dirtyConfig,
         status,
+
+        peptidesTable,
+        peptideTrust,
+        ecTable,
+        ecTrust,
+        ecToPeptides,
 
         analyse,
         updateConfig,
