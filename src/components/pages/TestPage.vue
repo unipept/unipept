@@ -132,6 +132,11 @@
                 </v-main>
             </v-layout>
         </v-card>
+
+        <functional-results
+            v-if="selectedAnalysis && selectedAnalysisFinished"
+            class="mt-5"
+        />
     </v-container>
 </template>
 
@@ -182,6 +187,7 @@ import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {storeToRefs} from "pinia";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import FunctionalResults from "@/components/new/results/FunctionalResults.vue";
 
 const groupStore = useGroupAnalysisStore();
 
