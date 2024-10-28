@@ -137,6 +137,7 @@
         <functional-results
             v-if="selectedAnalysis && selectedAnalysisFinished"
             class="mt-5"
+            :analysis="selectedAnalysis"
         />
     </v-container>
 </template>

@@ -26,8 +26,6 @@ const useSingleAnalysisStore = (
     const config = ref<AnalysisConfig>({ ..._config });
     const dirtyConfig = ref<AnalysisConfig>({ ..._config });
 
-    const data = ref<any | undefined>(undefined);
-
     // ===============================================================
     // ======================== PROCESSORS ===========================
     // ===============================================================
@@ -63,7 +61,7 @@ const useSingleAnalysisStore = (
         console.log(ecTrust.value);
         console.log(ecTable.value);
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        //await new Promise(resolve => setTimeout(resolve, 1000));
 
         // const x = useEcOntology();
         // console.log(await x.process(Array.from(ecToCount.keys())));

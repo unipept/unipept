@@ -60,7 +60,10 @@
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>
-                    2
+                    <functional-ec-results
+                        :analysis="analysis"
+                        :show-percentage="sortPeptidePercentage"
+                    />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>
@@ -75,6 +78,12 @@
 import {ref} from "vue";
 import FunctionalGoResults from "@/components/new/results/go/FunctionalGoResults.vue";
 import SortingPeptidesDialog from "@/components/new/results/SortingPeptidesDialog.vue";
+import FunctionalEcResults from "@/components/new/results/ec/FunctionalEcResults.vue";
+import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+
+const props = defineProps<{
+    analysis: SingleAnalysisStore
+}>();
 
 const currentTab = ref(0);
 const sortPeptidePercentage = ref(false);
