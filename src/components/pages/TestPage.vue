@@ -126,8 +126,9 @@
                 <v-main min-height="400">
                     <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
                     <analysis-summary
-                        v-else
-                        v-model="selectedAnalysis"
+                        v-else-if="selectedAnalysis && selectedAnalysisFinished"
+                        :analysis="selectedAnalysis"
+                        @update="updateAnalysis"
                     />
                 </v-main>
             </v-layout>
@@ -209,8 +210,16 @@ const addSamples = (group: MultiAnalysisStore, samples: SampleTableItem[]) => {
     }
 }
 
+const updateAnalysis = async () => {
+    console.log("sqdfdsf")
+    selectedAnalysis.value.updateConfig();
+    await selectedAnalysis.value.analyse();
+}
+
 watch(selected, (value) => {
+    console.log(value);
     selectedAnalysis.value = value?.[0];
+    console.log(selectedAnalysis.value);
 });
 
 onMounted(() => {

@@ -26,17 +26,21 @@ enum EcNamespace {
 type Regular = "regular";
 
 export default function useEcProcessor() {
-    const { processOnWorker } = useFunctionalProcessor();
+    const countTable = ref<CountTable<string>>();
+    const trust = ref<FunctionalTrust>();
+    const ecToPeptides = ref<Map<string, string[]>>();
+
+    const { process: processFunctional } = useFunctionalProcessor();
 
     const process = async (
-        peptideCounts: Map<string, number>,
+        peptideCounts: CountTable<string>,
         peptideData: ShareableMap<string, PeptideData>,
         percentage = 5
     ) => {
         const buffer = peptideData.getBuffers();
 
-        const processed = await processOnWorker({
-            peptideCounts,
+        const processed = await processFunctional({
+            peptideCounts: new Map(peptideCounts.entries()),
             indexBuffer: buffer[0],
             dataBuffer: buffer[1],
             percentage,
@@ -44,21 +48,19 @@ export default function useEcProcessor() {
             proteinCountProperty: "ec"
         });
 
-        const countTable = new CountTable(processed.sortedCounts, processed.annotatedCount);
-        const trust = {
+        countTable.value = new CountTable(processed.sortedCounts, processed.annotatedCount);
+        trust.value = {
             annotatedItems: processed.annotatedCount,
-            totalItems: countTable.totalCount
+            totalItems: peptideCounts.totalCount
         }
-        const ecToPeptides = processed.itemToPeptides;
-
-        return {
-            countTable,
-            trust,
-            ecToPeptides
-        }
+        ecToPeptides.value = processed.itemToPeptides;
     }
 
     return {
+        countTable,
+        trust,
+        ecToPeptides,
+
         process
     }
 }

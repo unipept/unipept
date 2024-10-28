@@ -1,8 +1,5 @@
 <template>
-    <v-card
-        v-if="analysis !== undefined"
-        flat
-    >
+    <v-card flat>
         <v-card-title>
             <span class="text-h4">{{ analysis.name }}</span>
         </v-card-title>
@@ -14,10 +11,10 @@
                     </h2>
 
                     <h4 class="font-weight-bold">
-                        {{ analysis.data.trust.matchedPeptides }} peptides found, {{ analysis.data.trust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides in assay
+                        {{ analysis.peptideTrust.matchedPeptides }} peptides found, {{ analysis.peptideTrust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides in assay
                     </h4>
                     <h1 class="text-subtitle-1 mt-n2">
-                        {{ analysis.data.trust.missedPeptides.length }} peptides ({{ displayPercentage(analysis.data.trust.missedPeptides.length / analysis.data.trust.searchedPeptides) }}) could not be found
+                        {{ analysis.peptideTrust.missedPeptides.length }} peptides ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found
                     </h1>
 
                     <h4 class="font-weight-bold">
@@ -105,10 +102,16 @@ import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {computed} from "vue";
 
-const analysis = defineModel<SingleAnalysisStore | undefined>();
+const { analysis } = defineProps<{
+    analysis: SingleAnalysisStore
+}>();
 
-const dirtyConfig = computed(() => analysis.value?.isConfigDirty());
-const foundPeptides = computed(() => Array.from(analysis.value?.data.peptideCountTable.counts).map(([peptide, count]) => ({
+const emits = defineEmits<{
+    update: () => void
+}>();
+
+const dirtyConfig = computed(() => analysis.isConfigDirty());
+const foundPeptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => ({
     peptide: peptide,
     occurrence: count,
     lca: "Unknown",
@@ -119,10 +122,7 @@ const displayPercentage = (value: number) => {
     return `${(value * 100).toFixed(2)}%`;
 };
 
-const update = async () => {
-    analysis.value.updateConfig();
-    await analysis.value.analyse();
-};
+const update = () => emits("update");
 </script>
 
 <script lang="ts">

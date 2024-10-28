@@ -6,6 +6,7 @@ import usePeptideProcessor from "@/composables/new/processing/peptide/usePeptide
 import usePeptideTrustProcessor from "@/composables/new/processing/peptide/usePeptideTrustProcessor";
 import useFunctionalProcessor from "@/composables/new/processing/functional/useFunctionalProcessor";
 import useEcOntology from "@/composables/new/communication/useEcOntology";
+import useEcProcessor from "@/composables/new/processing/functional/useEcProcessor";
 
 const useSingleAnalysisStore = (
     _id: string,
@@ -31,11 +32,11 @@ const useSingleAnalysisStore = (
     // ======================== PROCESSORS ===========================
     // ===============================================================
 
-    const { process: processPept2Filtered } = usePept2filtered("http://0.0.0.0:80");
+    const { peptideData, process: processPept2Filtered } = usePept2filtered("http://0.0.0.0:80");
 
-    const { process: processPeptides } = usePeptideProcessor();
-    const { process: processPeptideTrust } = usePeptideTrustProcessor();
-    const { process: processFunctional } = useFunctionalProcessor();
+    const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
+    const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
+    const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -50,42 +51,22 @@ const useSingleAnalysisStore = (
     const analyse = async () => {
         status.value = AnalysisStatus.Running;
 
-        // TODO: peptideCountTable could be a ref from the processor
-        const peptideCountTable = await processPeptides(peptides.value, config.value.equate, config.value.filter);
+        await processPeptides(peptides.value, config.value.equate, config.value.filter);
 
-        console.log(peptideCountTable);
+        await processPept2Filtered([...peptidesTable.value.keys()], config.value.equate);
+        processPeptideTrust(peptidesTable.value, peptideData.value);
 
-        // TODO: peptideData/trust could be a ref from the processor
-        const peptideData = await processPept2Filtered(peptideCountTable.keys(), config.value.equate);
-        const peptideTrust = processPeptideTrust(peptideCountTable, peptideData);
+        console.log(peptideTrust.value);
 
-        console.log(peptideTrust);
+        await processEc(peptidesTable.value, peptideData.value, 5);
 
-        //await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log(ecTrust.value);
+        console.log(ecTable.value);
 
-        const buffers = peptideData.getBuffers();
-        const {
-            sortedCounts: ecToCount,
-            itemToPeptides: ecToPeptides,
-            annotatedCount
-        } = await processFunctional(
-            {
-                peptideCounts: peptideCountTable,
-                indexBuffer: buffers[0],
-                dataBuffer: buffers[1],
-                percentage: 5,
-                termPrefix: "ec",
-                proteinCountProperty: "ec"
-            }
-        );
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-        const x = useEcOntology();
-        console.log(await x.process(Array.from(ecToCount.keys())));
-
-        data.value = {
-            peptideCountTable: peptideCountTable,
-            trust: peptideTrust,
-        };
+        // const x = useEcOntology();
+        // console.log(await x.process(Array.from(ecToCount.keys())));
 
         status.value = AnalysisStatus.Finished
     }
@@ -113,7 +94,12 @@ const useSingleAnalysisStore = (
         config,
         dirtyConfig,
         status,
-        data,
+
+        peptidesTable,
+        peptideTrust,
+        ecTable,
+        ecTrust,
+        ecToPeptides,
 
         analyse,
         updateConfig,

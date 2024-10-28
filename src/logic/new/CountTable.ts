@@ -10,8 +10,4 @@ export default class CountTable<O extends OntologyCode> extends Map<O, number> {
     getOrDefault(key: O, defaultValue = 0): number {
         return this.get(key) ?? defaultValue;
     }
-
-    keys(): O[] {
-        return Array.from(super.keys());
-    }
 }
