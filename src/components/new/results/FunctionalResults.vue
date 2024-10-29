@@ -56,7 +56,10 @@
         <v-card-text>
             <v-tabs-window v-model="currentTab">
                 <v-tabs-window-item>
-                    <functional-go-results :show-percentage="sortPeptidePercentage" />
+                    <functional-go-results
+                        :analysis="analysis"
+                        :show-percentage="sortPeptidePercentage"
+                    />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>
@@ -67,7 +70,10 @@
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>
-                    3
+                    <functional-ipr-results
+                        :analysis="analysis"
+                        :show-percentage="sortPeptidePercentage"
+                    />
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>
@@ -80,8 +86,9 @@ import FunctionalGoResults from "@/components/new/results/go/FunctionalGoResults
 import SortingPeptidesDialog from "@/components/new/results/SortingPeptidesDialog.vue";
 import FunctionalEcResults from "@/components/new/results/ec/FunctionalEcResults.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import FunctionalIprResults from "@/components/new/results/ipr/FunctionalIprResults.vue";
 
-const props = defineProps<{
+defineProps<{
     analysis: SingleAnalysisStore
 }>();
 

@@ -7,6 +7,8 @@ import usePeptideTrustProcessor from "@/composables/new/processing/peptide/usePe
 import useFunctionalProcessor from "@/composables/new/processing/functional/useFunctionalProcessor";
 import useEcOntology from "@/composables/new/communication/useEcOntology";
 import useEcProcessor from "@/composables/new/processing/functional/useEcProcessor";
+import useGoProcessor from "@/composables/new/processing/functional/useGoProcessor";
+import useInterproProcessor from "@/composables/new/processing/functional/useInterproProcessor";
 
 const useSingleAnalysisStore = (
     _id: string,
@@ -35,12 +37,16 @@ const useSingleAnalysisStore = (
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
     const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
     const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
+    const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
+    const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
 
     // ===============================================================
     // ========================= COMPUTED ============================
     // ===============================================================
 
-    const peptides = computed(() => rawPeptides.value.split("\n").map(p => p.trim()).filter(p => p.length > 0));
+    const peptides = computed(() =>
+        rawPeptides.value.split("\n").map(p => p.trim()).filter(p => p.length > 0)
+    );
 
     // ===============================================================
     // ========================== METHODS ============================
@@ -54,12 +60,12 @@ const useSingleAnalysisStore = (
         await processPept2Filtered([...peptidesTable.value.keys()], config.value.equate);
         processPeptideTrust(peptidesTable.value, peptideData.value);
 
-        console.log(peptideTrust.value);
-
         await processEc(peptidesTable.value, peptideData.value, 5);
+        await processGo(peptidesTable.value, peptideData.value, 5);
+        await processInterpro(peptidesTable.value, peptideData.value, 5);
 
-        console.log(ecTrust.value);
-        console.log(ecTable.value);
+        console.log(iprTable.value);
+        console.log(iprTrust.value);
 
         //await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -67,6 +73,10 @@ const useSingleAnalysisStore = (
         // console.log(await x.process(Array.from(ecToCount.keys())));
 
         status.value = AnalysisStatus.Finished
+    }
+
+    const filterPercentage = () => {
+        // TODO: only need to update EcTable, GoTable and IprTable
     }
 
     const updateConfig = () => {
@@ -98,6 +108,12 @@ const useSingleAnalysisStore = (
         ecTable,
         ecTrust,
         ecToPeptides,
+        goTable,
+        goTrust,
+        goToPeptides,
+        iprTable,
+        iprTrust,
+        iprToPeptides,
 
         analyse,
         updateConfig,
