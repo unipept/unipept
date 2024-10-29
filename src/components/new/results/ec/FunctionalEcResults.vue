@@ -39,7 +39,9 @@ import FilterFunctionalResults from "@/components/new/results/FilterFunctionalRe
 import {computed, ref} from "vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import usePercentage from "@/composables/new/usePercentage";
+import useOntologyStore from "@/store/new/OntologyStore";
 
+const { getEcDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
 
 const { analysis } = defineProps<{
@@ -54,7 +56,8 @@ const trust = computed(() => analysis.ecTrust);
 const items = computed(() => Array.from(analysis.ecTable.entries()).map(([key, value]) => {
     return {
         code: key,
-        name: "Unknown",
+        name: getEcDefinition(key)?.name ?? "Unknown",
+        namespace: getEcDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: analysis.ecTrust.totalItems,
     }

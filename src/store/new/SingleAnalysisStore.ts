@@ -9,6 +9,7 @@ import useEcOntology from "@/composables/new/communication/useEcOntology";
 import useEcProcessor from "@/composables/new/processing/functional/useEcProcessor";
 import useGoProcessor from "@/composables/new/processing/functional/useGoProcessor";
 import useInterproProcessor from "@/composables/new/processing/functional/useInterproProcessor";
+import useOntologyStore from "@/store/new/OntologyStore";
 
 const useSingleAnalysisStore = (
     _id: string,
@@ -16,6 +17,8 @@ const useSingleAnalysisStore = (
     _rawPeptides: string,
     _config: AnalysisConfig
 ) => defineStore(`singleSampleStore/${_id}`, () => {
+    const ontologyStore = useOntologyStore();
+
     // ===============================================================
     // ======================== REFERENCES ===========================
     // ===============================================================
@@ -64,8 +67,9 @@ const useSingleAnalysisStore = (
         await processGo(peptidesTable.value, peptideData.value, 5);
         await processInterpro(peptidesTable.value, peptideData.value, 5);
 
-        console.log(iprTable.value);
-        console.log(iprTrust.value);
+        await ontologyStore.updateEcOntology(Array.from(ecTable.value.keys()));
+        await ontologyStore.updateGoOntology(Array.from(goTable.value.keys()));
+        await ontologyStore.updateIprOntology(Array.from(iprTable.value.keys()));
 
         //await new Promise(resolve => setTimeout(resolve, 1000));
 

@@ -52,7 +52,9 @@ import FilterFunctionalResults from "@/components/new/results/FilterFunctionalRe
 import {computed, ref} from "vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import usePercentage from "@/composables/new/usePercentage";
+import useOntologyStore from "@/store/new/OntologyStore";
 
+const { getIprDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
 
 const { analysis } = defineProps<{
@@ -68,8 +70,8 @@ const trust = computed(() => analysis.iprTrust);
 const items = computed(() => Array.from(analysis.iprTable.entries()).map(([key, value]) => {
     return {
         code: key,
-        name: "Unknown",
-        namespace: "Unknown",
+        name: getIprDefinition(key)?.name ?? "Unknown",
+        namespace: getIprDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: analysis.iprTrust.totalItems,
     }

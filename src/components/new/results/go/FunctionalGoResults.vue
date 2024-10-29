@@ -88,7 +88,10 @@ import QuickGoCard from "@/components/new/results/go/QuickGoCard.vue";
 import {GoNamespace} from "unipept-web-components";
 import usePercentage from "@/composables/new/usePercentage";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import useOntologyStore from "@/store/new/OntologyStore";
+import CountTable from "@/logic/new/CountTable";
 
+const { getGoDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
 
 const { analysis } = defineProps<{
@@ -100,30 +103,20 @@ const filterModalOpen = ref<boolean>(false);
 const filter = ref<number>(5);
 
 const trust = computed(() => analysis.goTrust);
-const biologicalProcessItems = computed(() => Array.from(analysis.goTable.entries()).filter((x, i) => i % 3 == 0).map(([key, value]) => {
-    return {
-        code: key,
-        name: "Unknown",
-        count: value,
-        totalCount: analysis.goTrust.totalItems,
-    }
-}));
-const cellularComponentItems = computed(() => Array.from(analysis.goTable.entries()).filter((x, i) => i % 3 == 1).map(([key, value]) => {
-    return {
-        code: key,
-        name: "Unknown",
-        count: value,
-        totalCount: analysis.goTrust.totalItems,
-    }
-}));
-const molecularFunctionItems = computed(() => Array.from(analysis.goTable.entries()).filter((x, i) => i % 3 == 2).map(([key, value]) => {
-    return {
-        code: key,
-        name: "Unknown",
-        count: value,
-        totalCount: analysis.goTrust.totalItems,
-    }
-}));
+const biologicalProcessItems = computed(() => getItems(analysis.goTable).filter(x => x.namespace == GoNamespace.BiologicalProcess));
+const cellularComponentItems = computed(() => getItems(analysis.goTable).filter(x => x.namespace == GoNamespace.CellularComponent));
+const molecularFunctionItems = computed(() => getItems(analysis.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
+
+const getItems = (items: CountTable<string>) => {
+    return Array.from(items.entries())
+        .map(([key, value]) => ({
+            code: key,
+            name: getGoDefinition(key)?.name ?? "Unknown",
+            namespace: getGoDefinition(key)?.namespace ?? "Unknown",
+            count: value,
+            totalCount: analysis.goTrust.totalItems,
+        }));
+}
 
 const updateFilter = (value: number) => {
     filter.value = value;

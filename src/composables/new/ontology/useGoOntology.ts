@@ -1,7 +1,7 @@
 import {ref} from "vue";
 import {convertEcNumberToEcNamespace} from "@/logic/new/ontology/functional/ec/EcNamespace";
 
-export default function useEcOntology(
+export default function useGoOntology(
     baseUrl = "https://api.unipept.ugent.be",
     batchSize = 100
 ) {
@@ -13,20 +13,20 @@ export default function useEcOntology(
         codes = codes.filter(c => !ontology.value.has(c));
 
         for(let i = 0; i < codes.length; i += batchSize) {
-            const response = await fetch(`${baseUrl}/private_api/ecnumbers`, {
+            const response = await fetch(`${baseUrl}/private_api/goterms`, {
                 method: "POST",
                 body: JSON.stringify({
-                    ecnumbers: codes.slice(i, i + batchSize).map(c => c.substring(3))
+                    goterms: codes.slice(i, i + batchSize)
                 }),
                 headers: { "Content-Type": "application/json" }
             }).then(r => r.json());
 
             for (const definition of response) {
                 ontology.value.set(
-                    `EC:${definition.code}`,
+                    definition.code,
                     {
                         name: definition.name,
-                        namespace: convertEcNumberToEcNamespace(definition.code)
+                        namespace: definition.namespace
                     }
                 );
             }
