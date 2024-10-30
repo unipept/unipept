@@ -71,41 +71,9 @@
             </v-row>
             <v-row>
                 <v-col cols="12">
-                    <v-data-table
-                        :headers="headers"
-                        :items="foundPeptides"
-                        :items-per-page="5"
-                        :loading="false"
-                        density="compact"
-                    >
-                        <template #no-data>
-                            <v-alert class="ma-3" density="compact" type="info" variant="tonal" text="No peptides found" />
-                        </template>
-
-                        <template #item.warning="{ item }">
-                            <v-tooltip
-                                v-if="!item.found"
-                                text="This peptide was not found by Unipept"
-                            >
-                                <template #activator="{ props }">
-                                    <v-icon
-                                        v-if="!item.found"
-                                        v-bind="props"
-                                        color="warning"
-                                        size="20"
-                                        icon="mdi-alert-circle-outline"
-                                    />
-                                </template>
-                            </v-tooltip>
-                        </template>
-                    </v-data-table>
+                    <analysis-summary-table :items="peptides" />
                     <div class="d-flex flex-column">
-                        <v-btn
-                            color="primary"
-                            variant="tonal"
-                            text="Export results"
-                            prepend-icon="mdi-download"
-                        />
+                        <analysis-summary-export @download="download" />
                     </div>
                 </v-col>
             </v-row>
@@ -114,9 +82,16 @@
 </template>
 
 <script setup lang="ts">
+import AnalysisSummaryTable from "@/components/new/analysis/AnalysisSummaryTable.vue";
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {computed} from "vue";
+import usePercentage from "@/composables/new/usePercentage";
+import useOntologyStore from "@/store/new/OntologyStore";
+import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
+
+const { getNcbiDefinition } = useOntologyStore();
+const { displayPercentage } = usePercentage();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
@@ -127,48 +102,23 @@ const emits = defineEmits<{
 }>();
 
 const dirtyConfig = computed(() => analysis.isConfigDirty());
-const foundPeptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => ({
-    peptide: peptide,
-    occurrence: count,
-    lca: analysis.peptideToLca.get(peptide) || "N/A",
-    rank: "N/A",
-    found: analysis.peptideToLca.has(peptide)
-})));
+const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => {
+    // TODO: use virtual mapping on the pept2data object to store memory
+    const lca = analysis.peptideToLca.get(peptide);
+    return {
+        peptide: peptide,
+        occurrence: count,
+        lca: getNcbiDefinition(lca)?.name ?? "N/A",
+        rank: getNcbiDefinition(lca)?.rank ?? "N/A",
+        found: analysis.peptideToLca.has(peptide)
+    };
+}));
 
-const displayPercentage = (value: number) => {
-    return `${(value * 100).toFixed(2)}%`;
+const download = (delimiter: string) => {
+    // TODO: use pept2data object for peptide -> info mapping
+    // Alternative: store extra mappings, but this will require more memory that we might not want to spend
+    alert("Download not implemented yet");
 };
 
 const update = () => emits("update");
-</script>
-
-<script lang="ts">
-const headers = [
-    {
-        title: "Peptide",
-        align: "start",
-        key: "peptide",
-    },
-    {
-        title: "Occurrence",
-        align: "start",
-        key: "occurrence",
-    },
-    {
-        title: "Lowest common ancestor",
-        align: "start",
-        key: "lca"
-    },
-    {
-        title: "Rank",
-        align: "start",
-        key: "rank"
-    },
-    {
-        title: "",
-        align: "start",
-        key: "warning",
-        sortable: false
-    }
-];
 </script>

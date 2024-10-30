@@ -68,21 +68,12 @@ const useSingleAnalysisStore = (
         await processEc(peptidesTable.value, peptideData.value, 5);
         await processGo(peptidesTable.value, peptideData.value, 5);
         await processInterpro(peptidesTable.value, peptideData.value, 5);
+        await processLca(peptidesTable.value, peptideData.value);
 
         await ontologyStore.updateEcOntology(Array.from(ecTable.value.keys()));
         await ontologyStore.updateGoOntology(Array.from(goTable.value.keys()));
         await ontologyStore.updateIprOntology(Array.from(iprTable.value.keys()));
-
-        await processLca(peptidesTable.value, peptideData.value);
-
-        console.log(lcaTable.value);
-        console.log(lcaToPeptides.value);
-        console.log(lcaTable.value.totalCount);
-
-        //await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // const x = useEcOntology();
-        // console.log(await x.process(Array.from(ecToCount.keys())));
+        await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value.keys()));
 
         status.value = AnalysisStatus.Finished
     }

@@ -116,7 +116,7 @@
         </template>
     </v-navigation-drawer>
 
-    <v-container>
+    <v-container fluid>
         <v-card>
             <v-card-title class="pa-4 bg-primary text-white">
                 Metaproteomics analysis
