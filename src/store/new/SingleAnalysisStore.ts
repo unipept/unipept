@@ -82,19 +82,8 @@ const useSingleAnalysisStore = (
         // TODO: only need to update EcTable, GoTable and IprTable
     }
 
-    const updateConfig = () => {
-        config.value = { ...dirtyConfig.value };
-    }
-
-    const resetDirtyConfig = () => {
-        dirtyConfig.value = { ...config.value };
-    }
-
-    const isConfigDirty = () => {
-        return config.value.equate !== dirtyConfig.value.equate
-            || config.value.filter !== dirtyConfig.value.filter
-            || config.value.missed !== dirtyConfig.value.missed
-            || config.value.database !== dirtyConfig.value.database;
+    const updateConfig = (newConfig: AnalysisConfig) => {
+        config.value = newConfig;
     }
 
     return {
@@ -122,9 +111,7 @@ const useSingleAnalysisStore = (
         peptideToLca,
 
         analyse,
-        updateConfig,
-        resetDirtyConfig,
-        isConfigDirty,
+        updateConfig
     };
 })();
 

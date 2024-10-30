@@ -216,9 +216,8 @@ const addSamples = (group: MultiAnalysisStore, samples: SampleTableItem[]) => {
     }
 }
 
-const updateAnalysis = async () => {
-    console.log("sqdfdsf")
-    selectedAnalysis.value.updateConfig();
+const updateAnalysis = async (newConfig: AnalysisConfig) => {
+    selectedAnalysis.value.updateConfig(newConfig);
     await selectedAnalysis.value.analyse();
 }
 

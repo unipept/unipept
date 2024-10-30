@@ -24,29 +24,26 @@
                         Analysis is up-to-date, no need to restart the analysis.
                     </h1>
                 </v-col>
-                <v-col
-                    v-if="analysis.config"
-                    cols="6"
-                >
+                <v-col cols="6">
                     <h2 class="pb-2">
                         Analysis settings
                     </h2>
                     <v-checkbox
-                        v-model="analysis.dirtyConfig.equate"
+                        v-model="equate"
                         color="primary"
                         label="Equate I and L"
                         density="compact"
                         hide-details
                     />
                     <v-checkbox
-                        v-model="analysis.dirtyConfig.filter"
+                        v-model="filter"
                         color="primary"
                         label="Filter duplicate peptides"
                         density="compact"
                         hide-details
                     />
                     <v-checkbox
-                        v-model="analysis.dirtyConfig.missed"
+                        v-model="missed"
                         color="primary"
                         label="Enable missed cleavages"
                         density="compact"
@@ -54,7 +51,7 @@
                         disabled
                     />
                     <database-select
-                        v-model="analysis.dirtyConfig.database"
+                        v-model="database"
                         class="mt-1"
                         label="Selected database"
                     />
@@ -85,10 +82,11 @@
 import AnalysisSummaryTable from "@/components/new/analysis/AnalysisSummaryTable.vue";
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import usePercentage from "@/composables/new/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
+import {AnalysisConfig} from "@/components/pages/TestPage.vue";
 
 const { getNcbiDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
@@ -98,10 +96,20 @@ const { analysis } = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    update: () => void
+    update: (newConfig: AnalysisConfig) => void
 }>();
 
-const dirtyConfig = computed(() => analysis.isConfigDirty());
+const equate = ref(analysis.config.equate);
+const filter = ref(analysis.config.filter);
+const missed = ref(analysis.config.missed);
+const database = ref(analysis.config.database);
+
+const dirtyConfig = computed(() =>
+    equate.value !== analysis.config.equate ||
+    filter.value !== analysis.config.filter ||
+    missed.value !== analysis.config.missed ||
+    database.value !== analysis.config.database
+);
 const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => {
     // TODO: use virtual mapping on the pept2data object to store memory
     const lca = analysis.peptideToLca.get(peptide);
@@ -120,5 +128,10 @@ const download = (delimiter: string) => {
     alert("Download not implemented yet");
 };
 
-const update = () => emits("update");
+const update = () => emits("update", {
+    equate: equate.value,
+    filter: filter.value,
+    missed: missed.value,
+    database: database.value
+});
 </script>
