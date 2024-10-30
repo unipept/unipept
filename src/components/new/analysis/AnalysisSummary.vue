@@ -75,12 +75,28 @@
                         :headers="headers"
                         :items="foundPeptides"
                         :items-per-page="5"
-                        :server-items-length="0"
                         :loading="false"
                         density="compact"
                     >
                         <template #no-data>
                             <v-alert class="ma-3" density="compact" type="info" variant="tonal" text="No peptides found" />
+                        </template>
+
+                        <template #item.warning="{ item }">
+                            <v-tooltip
+                                v-if="!item.found"
+                                text="This peptide was not found by Unipept"
+                            >
+                                <template #activator="{ props }">
+                                    <v-icon
+                                        v-if="!item.found"
+                                        v-bind="props"
+                                        color="warning"
+                                        size="20"
+                                        icon="mdi-alert-circle-outline"
+                                    />
+                                </template>
+                            </v-tooltip>
                         </template>
                     </v-data-table>
                     <div class="d-flex flex-column">
@@ -114,8 +130,9 @@ const dirtyConfig = computed(() => analysis.isConfigDirty());
 const foundPeptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => ({
     peptide: peptide,
     occurrence: count,
-    lca: "Unknown",
-    rank: "Unknown",
+    lca: analysis.peptideToLca.get(peptide) || "N/A",
+    rank: "N/A",
+    found: analysis.peptideToLca.has(peptide)
 })));
 
 const displayPercentage = (value: number) => {
@@ -130,23 +147,28 @@ const headers = [
     {
         title: "Peptide",
         align: "start",
-        value: "peptide",
+        key: "peptide",
     },
     {
         title: "Occurrence",
         align: "start",
-        value: "occurrence",
-        sortable: true
+        key: "occurrence",
     },
     {
         title: "Lowest common ancestor",
         align: "start",
-        value: "lca"
+        key: "lca"
     },
     {
         title: "Rank",
         align: "start",
-        value: "rank"
+        key: "rank"
+    },
+    {
+        title: "",
+        align: "start",
+        key: "warning",
+        sortable: false
     }
 ];
 </script>

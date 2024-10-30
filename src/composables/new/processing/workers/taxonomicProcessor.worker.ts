@@ -16,11 +16,12 @@ const process = async ({
     );
     peptideToResponseMap.setBuffers(indexBuffer, dataBuffer);
 
-    const countsPerLca: Map<NcbiId, number> = new Map();
-    const lcaToPeptides: Map<NcbiId, string[]> = new Map();
+    const countsPerLca: Map<number, number> = new Map();
+    const lcaToPeptides: Map<number, string[]> = new Map();
+    const peptideToLca: Map<string, number> = new Map();
+    let annotatedCount = 0;
 
-    for (const peptide of peptideCounts.keys()) {
-        const peptideCount = peptideCounts.getOrDefault(peptide);
+    for (const [peptide, peptideCount] of peptideCounts) {
         const peptideData = peptideToResponseMap.get(peptide);
 
         if (!peptideData) {
@@ -29,16 +30,20 @@ const process = async ({
 
         const lca = peptideData.lca;
         countsPerLca.set(lca, (countsPerLca.get(lca) || 0) + peptideCount);
+        peptideToLca.set(peptide, lca);
 
         if (!lcaToPeptides.has(lca)) {
             lcaToPeptides.set(lca, []);
         }
-
         lcaToPeptides.get(lca).push(peptide);
+
+        annotatedCount += peptideCount;
     }
 
     return {
         countsPerLca,
-        lcaToPeptides
+        lcaToPeptides,
+        peptideToLca,
+        annotatedCount
     };
 };

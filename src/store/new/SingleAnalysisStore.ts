@@ -10,6 +10,7 @@ import useEcProcessor from "@/composables/new/processing/functional/useEcProcess
 import useGoProcessor from "@/composables/new/processing/functional/useGoProcessor";
 import useInterproProcessor from "@/composables/new/processing/functional/useInterproProcessor";
 import useOntologyStore from "@/store/new/OntologyStore";
+import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
 
 const useSingleAnalysisStore = (
     _id: string,
@@ -42,6 +43,7 @@ const useSingleAnalysisStore = (
     const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
     const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
+    const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -70,6 +72,12 @@ const useSingleAnalysisStore = (
         await ontologyStore.updateEcOntology(Array.from(ecTable.value.keys()));
         await ontologyStore.updateGoOntology(Array.from(goTable.value.keys()));
         await ontologyStore.updateIprOntology(Array.from(iprTable.value.keys()));
+
+        await processLca(peptidesTable.value, peptideData.value);
+
+        console.log(lcaTable.value);
+        console.log(lcaToPeptides.value);
+        console.log(lcaTable.value.totalCount);
 
         //await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -118,6 +126,9 @@ const useSingleAnalysisStore = (
         iprTable,
         iprTrust,
         iprToPeptides,
+        lcaTable,
+        lcaToPeptides,
+        peptideToLca,
 
         analyse,
         updateConfig,
