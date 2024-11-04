@@ -47,8 +47,8 @@
 </template>
 
 <script setup lang="ts">
-import IprResultsTable from "@/components/new/results/ipr/IprResultsTable.vue";
-import FilterFunctionalResults from "@/components/new/results/FilterFunctionalResults.vue";
+import IprResultsTable from "@/components/new/results/functional/ipr/IprResultsTable.vue";
+import FilterFunctionalResults from "@/components/new/results/functional/FilterFunctionalResults.vue";
 import {computed, ref} from "vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import usePercentage from "@/composables/new/usePercentage";

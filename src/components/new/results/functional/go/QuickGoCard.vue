@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import {GoResultsTableItem} from "@/components/new/results/go/GoResultsTable.vue";
+import {GoResultsTableItem} from "@/components/new/results/functional/go/GoResultsTable.vue";
 import {GoNamespace} from "unipept-web-components";
 
 const props = defineProps<{

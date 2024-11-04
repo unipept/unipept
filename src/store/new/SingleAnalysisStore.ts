@@ -4,13 +4,12 @@ import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/new/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/new/processing/peptide/usePeptideProcessor";
 import usePeptideTrustProcessor from "@/composables/new/processing/peptide/usePeptideTrustProcessor";
-import useFunctionalProcessor from "@/composables/new/processing/functional/useFunctionalProcessor";
-import useEcOntology from "@/composables/new/communication/useEcOntology";
 import useEcProcessor from "@/composables/new/processing/functional/useEcProcessor";
 import useGoProcessor from "@/composables/new/processing/functional/useGoProcessor";
 import useInterproProcessor from "@/composables/new/processing/functional/useInterproProcessor";
 import useOntologyStore from "@/store/new/OntologyStore";
 import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
+import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
 
 const useSingleAnalysisStore = (
     _id: string,
@@ -43,6 +42,7 @@ const useSingleAnalysisStore = (
     const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
+    const { root: ncbiTree, process: processNcbiTree } = useNcbiTreeProcessor();
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -73,6 +73,10 @@ const useSingleAnalysisStore = (
         await ontologyStore.updateGoOntology(Array.from(goTable.value.keys()));
         await ontologyStore.updateIprOntology(Array.from(iprTable.value.keys()));
         await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value.keys()));
+
+        processNcbiTree(lcaTable.value, lcaToPeptides.value);
+
+        console.log(ncbiTree.value);
 
         status.value = AnalysisStatus.Finished
     }
@@ -107,6 +111,7 @@ const useSingleAnalysisStore = (
         lcaTable,
         lcaToPeptides,
         peptideToLca,
+        ncbiTree,
 
         analyse,
         updateConfig

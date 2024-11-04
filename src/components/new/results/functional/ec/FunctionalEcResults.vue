@@ -34,8 +34,8 @@
 </template>
 
 <script setup lang="ts">
-import EcResultsTable from "@/components/new/results/ec/EcResultsTable.vue";
-import FilterFunctionalResults from "@/components/new/results/FilterFunctionalResults.vue";
+import EcResultsTable from "@/components/new/results/functional/ec/EcResultsTable.vue";
+import FilterFunctionalResults from "@/components/new/results/functional/FilterFunctionalResults.vue";
 import {computed, ref} from "vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import usePercentage from "@/composables/new/usePercentage";

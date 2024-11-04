@@ -82,9 +82,9 @@
 
 <script setup lang="ts">
 import GoResultsTable from "./GoResultsTable.vue";
-import FilterFunctionalResults from "@/components/new/results/FilterFunctionalResults.vue";
+import FilterFunctionalResults from "@/components/new/results/functional/FilterFunctionalResults.vue";
 import {computed, ref} from "vue";
-import QuickGoCard from "@/components/new/results/go/QuickGoCard.vue";
+import QuickGoCard from "@/components/new/results/functional/go/QuickGoCard.vue";
 import {GoNamespace} from "unipept-web-components";
 import usePercentage from "@/composables/new/usePercentage";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";

@@ -82,11 +82,11 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import FunctionalGoResults from "@/components/new/results/go/FunctionalGoResults.vue";
-import SortingPeptidesDialog from "@/components/new/results/SortingPeptidesDialog.vue";
-import FunctionalEcResults from "@/components/new/results/ec/FunctionalEcResults.vue";
+import FunctionalGoResults from "@/components/new/results/functional/go/FunctionalGoResults.vue";
+import SortingPeptidesDialog from "@/components/new/results/functional/SortingPeptidesDialog.vue";
+import FunctionalEcResults from "@/components/new/results/functional/ec/FunctionalEcResults.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import FunctionalIprResults from "@/components/new/results/ipr/FunctionalIprResults.vue";
+import FunctionalIprResults from "@/components/new/results/functional/ipr/FunctionalIprResults.vue";
 
 defineProps<{
     analysis: SingleAnalysisStore

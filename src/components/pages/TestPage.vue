@@ -134,6 +134,12 @@
             </v-layout>
         </v-card>
 
+        <taxonomic-results
+            v-if="selectedAnalysis && selectedAnalysisFinished"
+            class="mt-5"
+            :analysis="selectedAnalysis"
+        />
+
         <functional-results
             v-if="selectedAnalysis && selectedAnalysisFinished"
             class="mt-5"
@@ -189,7 +195,8 @@ import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {storeToRefs} from "pinia";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
-import FunctionalResults from "@/components/new/results/FunctionalResults.vue";
+import FunctionalResults from "@/components/new/results/functional/FunctionalResults.vue";
+import TaxonomicResults from "@/components/new/results/taxonomic/TaxonomicResults.vue";
 
 const groupStore = useGroupAnalysisStore();
 
