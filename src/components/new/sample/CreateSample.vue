@@ -51,7 +51,7 @@ import {ref} from "vue";
 const dialogOpen = defineModel<boolean>();
 
 const emit = defineEmits<{
-    confirm: [samples: SampleTableItem[]]
+    confirm: (samples: SampleTableItem[]) => void
 }>();
 
 const samples = ref<SampleTableItem[]>([]);

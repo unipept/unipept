@@ -87,7 +87,7 @@
             <tr>
                 <td :colspan="columns.length">
                     <create-sample-type
-                        v-model="item.peptides_raw"
+                        v-model="item.rawPeptides"
                         :type="item.type"
                     />
                 </td>

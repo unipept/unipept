@@ -30,7 +30,6 @@ const useSingleAnalysisStore = (
     const name = ref<string>(_name);
     const rawPeptides = ref<string>(_rawPeptides);
     const config = ref<AnalysisConfig>({ ..._config });
-    const dirtyConfig = ref<AnalysisConfig>({ ..._config });
 
     // ===============================================================
     // ======================== PROCESSORS ===========================
@@ -92,7 +91,6 @@ const useSingleAnalysisStore = (
         rawPeptides,
         peptides,
         config,
-        dirtyConfig,
         status,
 
         peptidesTable,
