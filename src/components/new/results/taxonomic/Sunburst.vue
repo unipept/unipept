@@ -104,9 +104,9 @@ const reset = () => {
     visualizationObject.value?.reroot(1, false);
 };
 
-const toggleFullscreen = () => {
+const toggleFullscreen = async () => {
+    await toggle();
     redraw();
-    toggle();
 };
 
 watch(() => props.ncbiRoot, () => {

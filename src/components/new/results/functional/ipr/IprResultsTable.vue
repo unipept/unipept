@@ -8,6 +8,7 @@
         item-value="code"
         density="compact"
         show-expand
+        @update:expanded="singleExpand"
     >
         <template #item.count="{ item }">
             <span>{{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}</span>
@@ -34,10 +35,21 @@
             />
         </template>
 
-        <template #expanded-row="{ columns }">
+        <template #expanded-row="{ columns, item }">
             <tr>
                 <td :colspan="columns.length">
-                    AAAAA
+                    <v-card
+                        height="300"
+                        variant="flat"
+                    >
+                        <treeview
+                            v-if="trees.has(item.code)"
+                            :ncbi-root="trees.get(item.code)"
+                            :link-stroke-color="linkStrokeColor"
+                            :node-stroke-color="highlightColorFunc"
+                            :node-fill-color="highlightColorFunc"
+                        />
+                    </v-card>
                 </td>
             </tr>
         </template>
@@ -45,25 +57,58 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, toRaw, watch} from "vue";
 import usePercentage from "@/composables/new/usePercentage";
+import {NcbiTreeNode} from "unipept-web-components";
+import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import useHighlightedTreeProcessor from "@/composables/new/processing/taxonomic/useHighlightedTreeProcessor";
+import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
 
 const { displayPercentage } = usePercentage();
+const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-defineProps<{
+const { analysis } = defineProps<{
     items: IprResultsTableItem[];
+    analysis: SingleAnalysisStore;
     showPercentage: boolean;
 }>();
 
 const expanded = ref<number[]>([]);
+const trees = new Map<string, NcbiTreeNode>();
 
-const url = (code: string) => {
-    return `https://www.ebi.ac.uk/interpro/search/text/${code.substring(4)}/#table`;
+const calculateHighlightedNcbiTree = async (code: string) => {
+    const highlightedTreeRoot = await processHighlightedTree(
+        toRaw(analysis.ncbiTree),
+        toRaw(analysis.iprToPeptides.get(code)),
+        toRaw(analysis.lcaToPeptides)
+    );
+
+    trees.set(code, highlightedTreeRoot);
+}
+
+const singleExpand = async (value: number[]) => {
+    if (value.length === 0) {
+        expanded.value = [];
+        return;
+    }
+
+    const newValue = value[value.length - 1];
+
+    if (!trees.has(newValue)) {
+        await calculateHighlightedNcbiTree(newValue);
+    }
+
+    expanded.value = [ newValue ];
 }
 
 const downloadItem = (index: number) => {
     console.log("Download item", index);
 }
+
+watch(() => analysis, () => {
+    expanded.value = [];
+    trees.clear();
+});
 </script>
 
 <script lang="ts">
@@ -108,6 +153,14 @@ export interface IprResultsTableItem {
     count: number;
     totalCount: number;
 }
+
+const url = (code: string) => {
+    return `https://www.ebi.ac.uk/interpro/search/text/${code.substring(4)}/#table`;
+}
+
+const highlightColor = "#ffc107";
+const highlightColorFunc = (d: any) => d.extra.included ? highlightColor : "lightgrey";
+const linkStrokeColor = ({ target: d }: any) => highlightColorFunc(d.data);
 </script>
 
 <style scoped>

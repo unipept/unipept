@@ -27,6 +27,9 @@ import {useElementSize, useFullscreen} from "@vueuse/core";
 
 const props = defineProps<{
     ncbiRoot: NcbiTreeNode
+    linkStrokeColor?: (d: any) => string
+    nodeStrokeColor?: (d: any) => string
+    nodeFillColor?: (d: any) => string
 }>();
 
 const controls = useTemplateRef("controls");
@@ -42,9 +45,20 @@ const createTreeview = (fullscreen = false): UnipeptSunburst | undefined => {
     const settings = {
         width: width.value,
         height: height.value,
-        rerootCallback: d => filterId.value = d.id,
         getTooltipText: tooltipContent
     } as TreeviewSettings;
+
+    if (props.linkStrokeColor) {
+        settings.linkStrokeColor = props.linkStrokeColor;
+    }
+
+    if (props.nodeStrokeColor) {
+        settings.nodeStrokeColor = props.nodeStrokeColor;
+    }
+
+    if (props.nodeFillColor) {
+        settings.nodeFillColor = props.nodeFillColor;
+    }
 
     const treeview = new UnipeptTreeview(
         visualization.value,
@@ -76,9 +90,9 @@ const reset = () => {
     visualizationObject.value?.reset();
 };
 
-const toggleFullscreen = () => {
+const toggleFullscreen = async () => {
+    await toggle();
     redraw();
-    toggle();
 };
 
 watch(width, () => {

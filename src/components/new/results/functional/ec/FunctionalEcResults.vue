@@ -22,6 +22,7 @@
         <v-col cols="12">
             <ec-results-table
                 :items="items"
+                :analysis="analysis"
                 :show-percentage="showPercentage"
             />
         </v-col>

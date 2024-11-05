@@ -24,6 +24,7 @@
         <v-col cols="9">
             <go-results-table
                 :items="biologicalProcessItems"
+                :analysis="analysis"
                 :show-percentage="showPercentage"
             />
         </v-col>
@@ -43,6 +44,7 @@
         <v-col cols="9">
             <go-results-table
                 :items="cellularComponentItems"
+                :analysis="analysis"
                 :show-percentage="showPercentage"
             />
         </v-col>
@@ -62,6 +64,7 @@
         <v-col cols="9">
             <go-results-table
                 :items="molecularFunctionItems"
+                :analysis="analysis"
                 :show-percentage="showPercentage"
             />
         </v-col>

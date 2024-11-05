@@ -76,8 +76,6 @@ const useSingleAnalysisStore = (
 
         processNcbiTree(lcaTable.value, lcaToPeptides.value);
 
-        console.log(ncbiTree.value);
-
         status.value = AnalysisStatus.Finished
     }
 
