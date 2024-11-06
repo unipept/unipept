@@ -144,6 +144,7 @@
             v-if="selectedAnalysis && selectedAnalysisFinished"
             class="mt-5"
             :analysis="selectedAnalysis"
+            @update-filter="updateFilter"
         />
     </v-container>
 </template>
@@ -226,6 +227,10 @@ const addSamples = (group: MultiAnalysisStore, samples: SampleTableItem[]) => {
 const updateAnalysis = async (newConfig: AnalysisConfig) => {
     selectedAnalysis.value.updateConfig(newConfig);
     await selectedAnalysis.value.analyse();
+}
+
+const updateFilter = async (value: number) => {
+    await selectedAnalysis.value.updateFilter(value);
 }
 
 watch(selected, (value) => {

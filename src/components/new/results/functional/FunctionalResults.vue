@@ -50,7 +50,21 @@
                     />
                 </v-list>
             </v-menu>
+
+            <v-btn
+                class="align-self-center mr-4"
+                text="Apply filtering"
+                variant="text"
+                prepend-icon="mdi-filter-outline"
+                @click="filterModalOpen = true"
+            />
+
             <sorting-peptides-dialog v-model="sortingPeptidesDialogOpen" />
+
+            <filter-functional-results
+                v-model="filterModalOpen"
+                @confirm="updateFilter"
+            />
         </v-tabs>
 
         <v-card-text>
@@ -87,14 +101,26 @@ import SortingPeptidesDialog from "@/components/new/results/functional/SortingPe
 import FunctionalEcResults from "@/components/new/results/functional/ec/FunctionalEcResults.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import FunctionalIprResults from "@/components/new/results/functional/ipr/FunctionalIprResults.vue";
+import FilterFunctionalResults from "@/components/new/results/functional/FilterFunctionalResults.vue";
 
-defineProps<{
+const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
+}>();
+
+const emits = defineEmits<{
+    updateFilter: (value: number) => void
 }>();
 
 const currentTab = ref(0);
 const sortPeptidePercentage = ref(false);
 const sortingPeptidesDialogOpen = ref(false);
+const filterModalOpen = ref<boolean>(false);
+const filter = ref<number>(analysis.functionalFilter);
+
+const updateFilter = (value: number) => {
+    filter.value = value;
+    emits('updateFilter', value);
+}
 </script>
 
 <style scoped>
