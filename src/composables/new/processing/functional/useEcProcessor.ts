@@ -4,7 +4,6 @@ import {PeptideData} from "unipept-web-components";
 import {ref} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
 import CountTable from "@/logic/new/CountTable";
-import useEcOntology from "@/composables/new/communication/useEcOntology";
 
 enum EcNamespace {
     // EC 1.x.x.x class

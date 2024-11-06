@@ -10,6 +10,21 @@
         show-expand
         @update:expanded="singleExpand"
     >
+        <template #header.action>
+            <v-tooltip text="Download table as CSV">
+                <template #activator="{ props }">
+                    <v-btn
+                        v-bind="props"
+                        color="primary"
+                        density="compact"
+                        variant="text"
+                        icon="mdi-download"
+                        @click="downloadTable"
+                    />
+                </template>
+            </v-tooltip>
+        </template>
+
         <template #item.count="{ item }">
             <span>{{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}</span>
         </template>
@@ -25,14 +40,19 @@
             </a>
         </template>
 
-        <template #item.action="{ index }">
-            <v-btn
-                color="primary"
-                density="compact"
-                variant="text"
-                icon="mdi-download"
-                @click="downloadItem(index)"
-            />
+        <template #item.action="{ item }">
+            <v-tooltip text="Download CSV summary of the filtered functional annotation">
+                <template #activator="{ props }">
+                    <v-btn
+                        v-bind="props"
+                        color="primary"
+                        density="compact"
+                        variant="text"
+                        icon="mdi-download"
+                        @click="downloadItem(item)"
+                    />
+                </template>
+            </v-tooltip>
         </template>
 
         <template #expanded-row="{ columns, item }">
@@ -63,11 +83,15 @@ import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
 import {NcbiTreeNode} from "unipept-web-components";
 import useHighlightedTreeProcessor from "@/composables/new/processing/taxonomic/useHighlightedTreeProcessor";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import useCsvDownload from "@/composables/new/useCsvDownload";
+import useOntologyStore from "@/store/new/OntologyStore";
 
+const { download } = useCsvDownload();
 const { displayPercentage } = usePercentage();
+const { getNcbiDefinition } = useOntologyStore();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { analysis } = defineProps<{
+const { analysis, items } = defineProps<{
     items: EcResultsTableItem[];
     analysis: SingleAnalysisStore;
     showPercentage: boolean;
@@ -101,8 +125,36 @@ const singleExpand = async (value: number[]) => {
     expanded.value = [ newValue ];
 }
 
-const downloadItem = (index: number) => {
-    console.log("Download item", index);
+const downloadItem = (item: EcResultsTableItem) => {
+    const header = ["peptide", "spectral count", "matching proteins", `matching proteins with ${item.code}`, `percentage proteins with ${item.code}`, "lca"];
+    const data = [header].concat(Array.from(analysis.ecToPeptides.get(item.code)).map(peptide => {
+        const peptideData = analysis.peptideToData.get(peptide);
+        const totalProteinCount = peptideData.faCounts.all;
+        const itemProteinCount = peptideData.ec[item.code] ?? 0;
+        return [
+            peptide,
+            analysis.peptidesTable.get(peptide),
+            totalProteinCount,
+            itemProteinCount,
+            displayPercentage(itemProteinCount / totalProteinCount, Infinity),
+            getNcbiDefinition(peptideData.lca)?.name ?? "Unknown"
+        ];
+    }));
+
+    download(data, `${item.code.replace(":", "_")}.csv`);
+}
+
+const downloadTable = () => {
+    const header = ["peptides", "ec number", "name"]
+    const data = [header].concat(items.map(item => {
+        return [
+            item.count,
+            item.code,
+            item.name
+        ];
+    }));
+
+    download(data, "ec_table.csv");
 }
 
 watch(() => analysis, () => {

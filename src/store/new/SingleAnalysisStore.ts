@@ -34,7 +34,7 @@ const useSingleAnalysisStore = (
     // ======================== PROCESSORS ===========================
     // ===============================================================
 
-    const { peptideData, process: processPept2Filtered } = usePept2filtered("http://0.0.0.0:80");
+    const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered("http://0.0.0.0:80");
 
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
     const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
@@ -62,12 +62,12 @@ const useSingleAnalysisStore = (
         await processPeptides(peptides.value, config.value.equate, config.value.filter);
 
         await processPept2Filtered([...peptidesTable.value.keys()], config.value.equate);
-        processPeptideTrust(peptidesTable.value, peptideData.value);
+        processPeptideTrust(peptidesTable.value, peptideToData.value);
 
-        await processEc(peptidesTable.value, peptideData.value, 5);
-        await processGo(peptidesTable.value, peptideData.value, 5);
-        await processInterpro(peptidesTable.value, peptideData.value, 5);
-        await processLca(peptidesTable.value, peptideData.value);
+        await processEc(peptidesTable.value, peptideToData.value, 5);
+        await processGo(peptidesTable.value, peptideToData.value, 5);
+        await processInterpro(peptidesTable.value, peptideToData.value, 5);
+        await processLca(peptidesTable.value, peptideToData.value);
 
         await ontologyStore.updateEcOntology(Array.from(ecTable.value.keys()));
         await ontologyStore.updateGoOntology(Array.from(goTable.value.keys()));
@@ -95,6 +95,7 @@ const useSingleAnalysisStore = (
         config,
         status,
 
+        peptideToData,
         peptidesTable,
         peptideTrust,
         ecTable,
