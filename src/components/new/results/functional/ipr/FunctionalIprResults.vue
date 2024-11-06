@@ -34,7 +34,7 @@
     <v-row>
         <v-col cols="12">
             <ipr-results-table
-                :items="items"
+                :items="filteredItems"
                 :analysis="analysis"
                 :show-percentage="showPercentage"
             />
@@ -77,6 +77,13 @@ const items = computed(() => Array.from(analysis.iprTable.entries()).map(([key, 
         totalCount: analysis.iprTrust.totalItems,
     }
 }));
+const filteredItems = computed(() => {
+    if (selectedNamespace.value === "all") {
+        return items.value;
+    }
+
+    return items.value.filter(x => x.namespace === selectedNamespace.value);
+});
 
 const updateFilter = (value: number) => {
     filter.value = value;

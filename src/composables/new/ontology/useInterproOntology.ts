@@ -26,7 +26,7 @@ export default function useInterproOntology(
                     `IPR:${definition.code}`,
                     {
                         name: definition.name,
-                        namespace: definition.category
+                        namespace: definition.category.toLowerCase().replace("_", " ")
                     }
                 );
             }
