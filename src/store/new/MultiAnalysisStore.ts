@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {AnalysisConfig} from "@/components/pages/TestPage.vue";
-import useSingleAnalysisStore from "@/store/new/SingleAnalysisStore";
+import useSingleAnalysisStore, {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 
 let _singleAnalysisStoreId = 0;
 
@@ -16,30 +16,46 @@ const useMultiAnalysisStore = (
     const id = ref<string>(groupId);
     const name = ref<string>(groupName);
 
-    const open = ref<boolean>(false);
+    const _analyses = ref<Map<string, SingleAnalysisStore>>(new Map());
 
-    const analyses = ref<any[]>([]);
+    // ===============================================================
+    // ========================= COMPUTED ============================
+    // ===============================================================
+
+    const analyses = computed(() => Array.from(_analyses.value.values()));
+    const empty = computed(() => _analyses.value.size === 0);
 
     // ===============================================================
     // ========================== METHODS ============================
     // ===============================================================
 
-    const addAnalysis = (name: string, rawPeptides: string, config: AnalysisConfig) => {
-        analyses.value = [
-            ...analyses.value,
-            useSingleAnalysisStore(_singleAnalysisStoreId++, name, rawPeptides, config)
-        ];
+    const getAnalysis = (name: string): SingleAnalysisStore | undefined => {
+        return _analyses.value.get(name);
+    }
 
-        return analyses.value.length - 1;
+    const addAnalysis = (name: string, rawPeptides: string, config: AnalysisConfig): void => {
+        if (isValidNewAnalysis(name)) {
+            _analyses.value.set(name, useSingleAnalysisStore(_singleAnalysisStoreId++, name, rawPeptides, config));
+        }
+    }
+
+    const removeAnalysis = (name: string) => {
+        _analyses.value.delete(name);
+    }
+
+    const isValidNewAnalysis = (name: string): boolean => {
+        return !_analyses.value.has(name);
     }
 
     return {
         id,
         name,
-        open,
         analyses,
+        empty,
 
-        addAnalysis
+        getAnalysis,
+        addAnalysis,
+        removeAnalysis
     };
 })();
 

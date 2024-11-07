@@ -2,107 +2,14 @@
     <v-navigation-drawer
         permanent
     >
-        <v-list
-            v-model:opened="openedGroups"
-            v-model:selected="selected"
-            class="py-0"
-            color="primary"
-            selectable
-            select-strategy="single-leaf"
-            open-strategy="multiple"
-            active-strategy="single-leaf"
-            mandatory
-        >
-            <v-list-group v-for="group in groups" :key="group.name" :value="group.name">
-                <template #activator="{ props }">
-                    <v-list-item
-                        base-color="grey-darken-3"
-                        color="none"
-                        density="compact"
-                        variant="tonal"
-                    >
-                        <template #title>
-                            <div v-bind="props">
-                                {{ group.name }}
-                            </div>
-                        </template>
-
-                        <template #prepend="{ isOpen }">
-                            <v-icon v-if="isOpen" v-bind="props">mdi-chevron-down</v-icon>
-                            <v-icon v-else v-bind="props">mdi-chevron-right</v-icon>
-                        </template>
-
-                        <template #append>
-                            <v-tooltip location="bottom">
-                                <template #activator="{ props: tProps }">
-                                    <v-btn v-bind="tProps" variant="plain" density="compact" icon="mdi-file-document-plus-outline" @click="group.open = true" />
-                                </template>
-                                <span>Create samples</span>
-                            </v-tooltip>
-                        </template>
-                    </v-list-item>
-                </template>
-
-                <v-list-item
-                    v-if="group.analyses.length === 0"
-                    class="text-primary"
-                    title="Add new sample"
-                    color="primary"
-                    density="compact"
-                    prepend-icon="mdi-file-document-plus-outline"
-                    @click="group.open = true"
-                />
-
-                <v-list-item
-                    v-for="analysis in group.analyses"
-                    v-else
-                    :key="analysis.id"
-                    :value="analysis"
-                    :title="analysis.name"
-                    color="primary"
-                    density="compact"
-                    prepend-icon="mdi-file-document-outline"
-                >
-                    <template #append>
-                        <v-tooltip v-if="analysis.status === AnalysisStatus.Finished" location="bottom">
-                            <template #activator="{ props: tProps }">
-                                <v-btn
-                                    v-bind="tProps"
-                                    class="me-1"
-                                    variant="plain"
-                                    density="compact"
-                                    color="error"
-                                    icon="mdi-delete-outline"
-                                    @click="console.log"
-                                />
-                            </template>
-                            <span>Remove <b>{{ analysis.name }}</b></span>
-                        </v-tooltip>
-
-                        <v-icon
-                            v-if="analysis.status === AnalysisStatus.Pending"
-                            icon="mdi-clock-outline"
-                        />
-                        <v-progress-circular
-                            v-else-if="analysis.status === AnalysisStatus.Running"
-                            color="primary"
-                            size="20"
-                            width="3"
-                            indeterminate
-                        />
-                        <v-icon
-                            v-else
-                            icon="mdi-information-outline"
-                        />
-                    </template>
-                </v-list-item>
-
-                <create-sample
-                    v-model="group.open"
-                    @confirm="s => addSamples(group, s)"
-                />
-            </v-list-group>
-        </v-list>
+        <filesystem
+            :groups="groups"
+            @select="selectAnalysis"
+            @select:clear="clearSelectedAnalysis"
+            @sample:add="addSamples"
+            @sample:remove="removeSample"
+            @group:remove="removeGroup"
+        />
 
         <template #append>
             <div class="d-flex justify-center pa-3">
@@ -118,10 +25,6 @@
 
     <v-container fluid>
         <v-card>
-            <v-card-title class="pa-4 bg-primary text-white">
-                Metaproteomics analysis
-            </v-card-title>
-
             <v-layout>
                 <v-main min-height="400">
                     <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
@@ -190,38 +93,37 @@ export enum AnalysisStatus {
 <script setup lang="ts">
 import {computed, onMounted, ref, watch} from "vue";
 import AnalysisSummary from "@/components/new/analysis/AnalysisSummary.vue";
-import CreateSample from "@/components/new/sample/CreateSample.vue";
 import AnalysisSummaryProgress from "@/components/new/analysis/AnalysisSummaryProgress.vue";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {storeToRefs} from "pinia";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import FunctionalResults from "@/components/new/results/functional/FunctionalResults.vue";
 import TaxonomicResults from "@/components/new/results/taxonomic/TaxonomicResults.vue";
+import Filesystem from "@/components/new/filesystem/Filesystem.vue";
 
 const groupStore = useGroupAnalysisStore();
 
 const { groups } = storeToRefs(groupStore);
 
-const openedGroups = ref(["Clover"]);
-
-const selected = ref<Analysis[]>();
 const selectedAnalysis = ref<Analysis>();
 
 const selectedAnalysisFinished = computed(() => {
     return selectedAnalysis.value.status === AnalysisStatus.Finished;
 });
 
-const createGroup = (name: string) => {
-    groupStore.addGroup(name);
-    openedGroups.value = [ ...openedGroups.value, name ];
+const createGroup = groupStore.addGroup;
+const removeGroup = groupStore.removeGroup;
+
+const addSamples = (groupName: string, samples: SampleTableItem[]) => {
+    for (const sample of samples) {
+        groupStore.getGroup(groupName)?.addAnalysis(sample.name, sample.rawPeptides, sample.config);
+        groupStore.getGroup(groupName)?.getAnalysis(sample.name)?.analyse();
+    }
 }
 
-const addSamples = (group: MultiAnalysisStore, samples: SampleTableItem[]) => {
-    for (const sample of samples) {
-        const analysisId = group.addAnalysis(sample.name, sample.rawPeptides, sample.config);
-        group.analyses[analysisId].analyse();
-    }
+const removeSample = (groupName: string, analysisName: string) => {
+    const group = groupStore.getGroup(groupName);
+    group?.removeAnalysis(analysisName);
 }
 
 const updateAnalysis = async (newConfig: AnalysisConfig) => {
@@ -232,10 +134,15 @@ const updateAnalysis = async (newConfig: AnalysisConfig) => {
 const updateFilter = async (value: number) => {
     await selectedAnalysis.value.updateFilter(value);
 }
+const clearSelectedAnalysis = () => selectedAnalysis.value = undefined;
 
-watch(selected, (value) => {
-    selectedAnalysis.value = value?.[0];
-});
+const selectAnalysis = (groupName: string | undefined, analysisName: string | undefined) => {
+    if (groupName === undefined || analysisName === undefined) {
+        selectedAnalysis.value = undefined;
+        return;
+    }
+    selectedAnalysis.value = groupStore.getGroup(groupName)?.getAnalysis(analysisName);
+}
 
 onMounted(() => {
     const samples = [
@@ -261,8 +168,8 @@ onMounted(() => {
         }
     ];
 
-    const groupId = groupStore.addGroup("Clover");
-    addSamples(groups.value[groupId], samples);
+    createGroup("Clover");
+    addSamples("Clover", samples);
 });
 </script>
 

@@ -1,44 +1,63 @@
 import {defineStore} from "pinia";
-import useMultiAnalysisStore from "@/store/new/MultiAnalysisStore";
+import useMultiAnalysisStore, {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import {computed, ref} from "vue";
 import {AnalysisConfig} from "@/components/pages/TestPage.vue";
 
-let _groupSampleStoreId = 0;
+let __groupsampleStoreId = 0;
 
-const useGroupAnalysisStore = defineStore('groupSampleStore', () => {
+const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
     // ===============================================================
     // ======================== REFERENCES ===========================
     // ===============================================================
 
-    const groups = ref<any[]>([]);
+    // const _groups = ref<any[]>([]);
+
+    const _groups = ref<Map<string, MultiAnalysisStore>>(new Map());
 
     // ===============================================================
     // ========================= COMPUTED ============================
     // ===============================================================
 
+    const groups = computed(() => Array.from(_groups.value.values()));
 
     // ===============================================================
     // ========================== METHODS ============================
     // ===============================================================
 
-    const addGroup = (name: string): number => {
-        groups.value = [
-            ...groups.value,
-            useMultiAnalysisStore(_groupSampleStoreId++, name)
-        ];
+    const getGroup = (name: string): MultiAnalysisStore | undefined => {
+        return _groups.value.get(name);
+    }
 
-        return groups.value.length - 1;
+    const addGroup = (name: string): void => {
+        if (isValidNewGroup(name)) {
+            _groups.value.set(name, useMultiAnalysisStore(__groupsampleStoreId++, name));
+        }
     };
 
-    const addAnalysis = (groupId: number, name: string, peptides: string[], config: AnalysisConfig): [number, number] => {
-        groups.value = [ ...groups.value ];
-        return [ groupId, groups.value[groupId].addAnalysis(name, peptides, config) ];
+    const removeGroup = (name: string): void => {
+        _groups.value.delete(name);
+    }
+
+    const addAnalysis = (groupName: string, analysisName: string, peptides: string[], config: AnalysisConfig): void => {
+        _groups.value.get(groupName)?.addAnalysis(analysisName, peptides, config);
     };
+
+    const removeAnalysis = (groupName: string, analysisName: string): void => {
+        _groups.value.get(groupName)?.removeAnalysis(analysisName);
+    }
+
+    const isValidNewGroup = (name: string): boolean => {
+        return !_groups.value.has(name);
+    }
 
     return {
         groups,
+
+        getGroup,
         addGroup,
-        addAnalysis
+        removeGroup,
+        addAnalysis,
+        removeAnalysis
     };
 });
 
