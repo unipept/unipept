@@ -189,6 +189,7 @@ type NavItem = {
 const navItems: NavItem[] = [
     { name: "Tryptic Peptide Analysis", path: "/tpa", forceReload: true },
     { name: "Metaproteomics Analysis", path: "/mpa", forceReload: true },
+    { name: "Peptonizer", path: "/peptonizer", forceReload: true },
     { name: "API", path: "/apidocs", forceReload: false },
     { name: "CLI", path: "/clidocs", forceReload: false },
     { name: "Metagenomics", path: "/umgap", forceReload: false },

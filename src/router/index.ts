@@ -60,6 +60,14 @@ const routes = [
         }
     },
     {
+        path: "/peptonizer",
+        component: () => import("@/components/pages/features/PeptonizerPage.vue"),
+        meta: {
+            publication: "Holstein et al. (2024) BioRXiv",
+            publicationLink: "doi.org/10.1101/2024.05.20.594958"
+        }
+    },
+    {
         path: "/apidocs",
         component: () => import("@/components/pages/features/APIPage.vue"),
         children: [

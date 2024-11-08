@@ -12,6 +12,7 @@ const baseURL = process.env.CI ? "/unipept" : "/";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    assetsInclude: ['**/*.py', '**/*.whl'],
     base: baseURL,
     plugins: [
         vue({
