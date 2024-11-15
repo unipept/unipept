@@ -24,18 +24,16 @@
     </v-navigation-drawer>
 
     <v-container fluid>
-        <v-card>
-            <v-layout>
-                <v-main min-height="400">
-                    <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
-                    <analysis-summary
-                        v-else-if="selectedAnalysis && selectedAnalysisFinished"
-                        :analysis="selectedAnalysis"
-                        @update="updateAnalysis"
-                    />
-                </v-main>
-            </v-layout>
-        </v-card>
+        <v-layout>
+            <v-main min-height="400">
+                <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
+                <analysis-summary
+                    v-else-if="selectedAnalysis && selectedAnalysisFinished"
+                    :analysis="selectedAnalysis"
+                    @update="updateAnalysis"
+                />
+            </v-main>
+        </v-layout>
 
         <taxonomic-results
             v-if="selectedAnalysis && selectedAnalysisFinished"
@@ -91,7 +89,7 @@ export enum AnalysisStatus {
 </script>
 
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref} from "vue";
 import AnalysisSummary from "@/components/new/analysis/AnalysisSummary.vue";
 import AnalysisSummaryProgress from "@/components/new/analysis/AnalysisSummaryProgress.vue";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";

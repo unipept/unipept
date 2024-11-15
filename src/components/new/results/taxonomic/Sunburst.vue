@@ -47,7 +47,7 @@ const props = withDefaults(defineProps<{
     height?: number
 }>(), {
     width: 800,
-    height: 600
+    height: 500
 });
 
 const filterId = defineModel<number>();
@@ -77,11 +77,11 @@ const createSunburst = (fullscreen = false): UnipeptSunburst | undefined => {
         settings,
     );
 
-    if(fullscreen) {
-        const svgEl = visualization.value?.querySelector("svg");
-        if(svgEl) {
+    const svgEl = visualization.value?.querySelector("svg");
+    if(svgEl) {
+        svgEl.setAttribute("width", "100%");
+        if (fullscreen) {
             svgEl.setAttribute("height", "100%");
-            svgEl.setAttribute("width", "100%");
         }
     }
 
@@ -90,7 +90,7 @@ const createSunburst = (fullscreen = false): UnipeptSunburst | undefined => {
 
 const redraw = () => {
     const savedFilterId = filterId.value;
-    visualizationObject.value = createSunburst(!isFullscreen.value);
+    visualizationObject.value = createSunburst(isFullscreen.value);
     visualizationObject.value?.reroot(savedFilterId, false);
     filterId.value = savedFilterId;
 };

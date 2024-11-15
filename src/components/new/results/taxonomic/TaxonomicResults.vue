@@ -27,11 +27,13 @@
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>
-                    4
+                    <hierarchical-outline :analysis="analysis" />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>
-                    5
+                    <heatmap-wizard
+                        :analysis="analysis"
+                    />
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>
@@ -44,6 +46,8 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import Sunburst from "@/components/new/results/taxonomic/Sunburst.vue";
 import Treemap from "@/components/new/results/taxonomic/Treemap.vue";
 import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
+import HierarchicalOutline from "@/components/new/results/taxonomic/HierarchicalOutline.vue";
+import HeatmapWizard from "@/components/new/results/taxonomic/heatmap/HeatmapWizard.vue";
 
 defineProps<{
     analysis: SingleAnalysisStore

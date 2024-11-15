@@ -76,6 +76,8 @@ const useSingleAnalysisStore = (
         await ontologyStore.updateIprOntology(Array.from(iprTable.value.keys()));
         await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value.keys()));
 
+        console.log(lcaToPeptides.value);
+
         processNcbiTree(lcaTable.value, lcaToPeptides.value);
 
         status.value = AnalysisStatus.Finished
