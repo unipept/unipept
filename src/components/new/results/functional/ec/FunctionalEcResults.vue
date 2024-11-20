@@ -20,6 +20,20 @@
                 />
             </v-col>
         </v-row>
+        <v-row>
+            <v-col cols="12">
+                <v-card
+                    class="pa-0 ma-0"
+                    height="400"
+                    variant="flat"
+                >
+                    <treeview
+                        v-if="root"
+                        :ncbi-root="root"
+                    />
+                </v-card>
+            </v-col>
+        </v-row>
     </div>
     <div v-else>
         <filter-progress text="The EC numbers are currently being filtered." />
@@ -29,15 +43,18 @@
 <script setup lang="ts">
 import EcResultsTable from "@/components/new/results/functional/ec/EcResultsTable.vue";
 import FilterFunctionalResults from "@/components/new/results/functional/FilterFunctionalResults.vue";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import usePercentage from "@/composables/new/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {AnalysisStatus} from "@/components/pages/TestPage.vue";
 import FilterProgress from "@/components/new/results/functional/FilterProgress.vue";
+import useEcTreeProcessor from "@/composables/new/processing/functional/useEcTreeProcessor";
+import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
 
 const { getEcDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
+const { root, process } = useEcTreeProcessor();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore;
@@ -55,6 +72,14 @@ const items = computed(() => Array.from(analysis.ecTable.entries()).map(([key, v
         totalCount: analysis.ecTrust.totalItems,
     }
 }));
+
+watch(() => analysis, () => {
+    process(analysis.ecTable);
+});
+
+onMounted(() => {
+    process(analysis.ecTable);
+});
 </script>
 
 <style scoped>

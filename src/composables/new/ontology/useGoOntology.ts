@@ -1,5 +1,10 @@
 import {ref} from "vue";
-import {convertEcNumberToEcNamespace} from "@/logic/new/ontology/functional/ec/EcNamespace";
+
+export enum GoNamespace {
+    BiologicalProcess = "biological process",
+    CellularComponent = "cellular component",
+    MolecularFunction = "molecular function"
+}
 
 export default function useGoOntology(
     baseUrl = "https://api.unipept.ugent.be",

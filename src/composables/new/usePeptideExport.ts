@@ -1,7 +1,8 @@
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import {GoNamespace, NcbiRank} from "@/components/new/results/taxonomic/heatmap/DataSourceSelect.vue";
 import useOntologyStore from "@/store/new/OntologyStore";
 import usePercentage from "@/composables/new/usePercentage";
+import {GoNamespace} from "@/composables/new/ontology/useGoOntology";
+import {NcbiRank} from "@/composables/new/ontology/useNcbiOntology";
 
 export default function usePeptideExport() {
     const {
