@@ -30,6 +30,8 @@ const useSingleAnalysisStore = (
     const name = ref<string>(_name);
     const rawPeptides = ref<string>(_rawPeptides);
     const config = ref<AnalysisConfig>({ ..._config });
+
+    const taxonomicFilter = ref<number>(1);
     const functionalFilter = ref<number>(5);
 
     // ===============================================================
