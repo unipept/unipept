@@ -87,9 +87,13 @@ import usePercentage from "@/composables/new/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
 import {AnalysisConfig} from "@/components/pages/TestPage.vue";
+import useCsvDownload from "@/composables/new/useCsvDownload";
+import usePeptideExport from "@/composables/new/usePeptideExport";
 
 const { getNcbiDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
+const { generateExport } = usePeptideExport();
+const { download: downloadCsv } = useCsvDownload();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
@@ -111,7 +115,6 @@ const dirtyConfig = computed(() =>
     database.value !== analysis.config.database
 );
 const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => {
-    // TODO: use virtual mapping on the pept2data object to store memory
     const lca = analysis.peptideToLca.get(peptide);
     return {
         peptide: peptide,
@@ -122,10 +125,10 @@ const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([pept
     };
 }));
 
-const download = (delimiter: string) => {
-    // TODO: use pept2data object for peptide -> info mapping
-    // Alternative: store extra mappings, but this will require more memory that we might not want to spend
-    alert("Download not implemented yet");
+const download = (separator: string) => {
+    const extension = separator === "\t" ? "tsv" : "csv";
+    const peptideExport = generateExport(analysis, ',');
+    downloadCsv(peptideExport, `peptides.${extension}`, separator);
 };
 
 const update = () => emits("update", {

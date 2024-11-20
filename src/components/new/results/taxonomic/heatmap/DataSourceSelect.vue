@@ -82,7 +82,7 @@ enum DataSource {
 
 // TODO: these enums do not belong here: Move to composables
 
-enum NcbiRank {
+export enum NcbiRank {
     Superkingdom = "superkingdom",
     Kingdom = "kingdom",
     Subkingdom = "subkingdom",
@@ -112,13 +112,13 @@ enum NcbiRank {
     Forma = "forma"
 }
 
-enum GoNamespace {
-    BiologicalProcess = "Biological process",
-    CellularComponent = "Cellular component",
-    MolecularFunction = "Molecular function"
+export enum GoNamespace {
+    BiologicalProcess = "biological process",
+    CellularComponent = "cellular component",
+    MolecularFunction = "molecular function"
 }
 
-enum EcNamespace {
+export enum EcNamespace {
     // EC 1.x.x.x class
     Oxidoreductases = "oxidoreductases",
     // EC 2.x.x.x class
@@ -135,7 +135,7 @@ enum EcNamespace {
     Translocases = "translocases",
 }
 
-enum InterproNamespace {
+export enum InterproNamespace {
     ActiveSite = "active site",
     BindingSite = "binding site",
     ConservedSite = "conserved site",

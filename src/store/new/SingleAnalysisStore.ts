@@ -71,12 +71,13 @@ const useSingleAnalysisStore = (
         await processInterpro(peptidesTable.value, peptideToData.value, functionalFilter.value);
         await processLca(peptidesTable.value, peptideToData.value);
 
-        await ontologyStore.updateEcOntology(Array.from(ecTable.value.keys()));
-        await ontologyStore.updateGoOntology(Array.from(goTable.value.keys()));
-        await ontologyStore.updateIprOntology(Array.from(iprTable.value.keys()));
+        await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value.keys()));
+        await ontologyStore.updateGoOntology(Array.from(goToPeptides.value.keys()));
+        await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value.keys()));
         await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value.keys()));
 
-        console.log(lcaToPeptides.value);
+        // TODO: remove
+        //await new Promise(resolve => setTimeout(resolve, 10000));
 
         processNcbiTree(lcaTable.value, lcaToPeptides.value);
 
@@ -97,6 +98,7 @@ const useSingleAnalysisStore = (
 
     const updateConfig = (newConfig: AnalysisConfig) => {
         config.value = newConfig;
+        status.value = AnalysisStatus.Pending;
     }
 
     return {
