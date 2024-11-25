@@ -10,6 +10,7 @@
             <v-tab text="Treeview" />
             <v-tab text="Hierarchical outline" />
             <v-tab text="Heatmap" />
+            <v-tab text="Peptonizer" />
         </v-tabs>
 
         <v-card-text class="pa-0">
@@ -35,6 +36,10 @@
                         :analysis="analysis"
                     />
                 </v-tabs-window-item>
+
+                <v-tabs-window-item>
+                    <peptonizer-analysis :peptide-count-table="analysis.peptidesTable!"/>
+                </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>
     </v-card>
@@ -48,6 +53,7 @@ import Treemap from "@/components/new/results/taxonomic/Treemap.vue";
 import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
 import HierarchicalOutline from "@/components/new/results/taxonomic/HierarchicalOutline.vue";
 import HeatmapWizard from "@/components/new/results/taxonomic/heatmap/HeatmapWizard.vue";
+import PeptonizerAnalysis from "@/components/new/results/taxonomic/PeptonizerAnalysis.vue";
 
 defineProps<{
     analysis: SingleAnalysisStore
