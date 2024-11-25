@@ -36,7 +36,7 @@ const useSingleAnalysisStore = (
     // ======================== PROCESSORS ===========================
     // ===============================================================
 
-    const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered("http://0.0.0.0:80");
+    const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered();
 
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
     const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();

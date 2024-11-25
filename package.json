@@ -14,6 +14,7 @@
     "@vueuse/core": "^11.1.0",
     "async": "^3.2.6",
     "marked": "^9.1.4",
+    "peptonizer": "file:./peptonizer-v0.0.11.tgz",
     "pinia": "^2.2.4",
     "roboto-fontface": "*",
     "shared-memory-datastructures": "0.1.9",
