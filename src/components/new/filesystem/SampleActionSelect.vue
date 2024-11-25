@@ -13,20 +13,6 @@
                 density="compact"
             >
                 <v-btn
-                    text="Show sample info"
-                    prepend-icon="mdi-information-outline"
-                    variant="plain"
-                    @click="emits('sample:add')"
-                />
-            </v-list-item>
-
-            <v-divider class="my-1" />
-
-            <v-list-item
-                class="pa-0"
-                density="compact"
-            >
-                <v-btn
                     text="Rename sample"
                     prepend-icon="mdi-pencil-outline"
                     variant="plain"
@@ -51,7 +37,6 @@
 
 <script setup lang="ts">
 const emits = defineEmits<{
-    "sample:info": () => void;
     "sample:edit": () => void;
     "sample:remove": () => void;
 }>();

@@ -25,6 +25,10 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import DataSourceSelectTable from "./DataSourceSelectTable.vue";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {DataSourceTableItem} from "@/components/new/results/taxonomic/heatmap/DataSourceSelectTable.vue";
+import {NcbiRank} from "@/composables/new/ontology/useNcbiOntology";
+import {GoNamespace} from "@/composables/new/ontology/useGoOntology";
+import {EcNamespace} from "@/composables/new/ontology/useEcOntology";
+import {InterproNamespace} from "@/composables/new/ontology/useInterproOntology";
 
 const {
     getNcbiDefinition,
@@ -78,73 +82,6 @@ enum DataSource {
     GO = "Gene Ontology",
     EC = "Enzyme Commission",
     INTERPRO = "Interpro"
-}
-
-// TODO: these enums do not belong here: Move to composables
-
-enum NcbiRank {
-    Superkingdom = "superkingdom",
-    Kingdom = "kingdom",
-    Subkingdom = "subkingdom",
-    Superphylum = "superphylum",
-    Phylum = "phylum",
-    Subphylum = "subphylum",
-    Superclass = "superclass",
-    Class = "class",
-    Subclass = "subclass",
-    Superorder = "superorder",
-    Order = "order",
-    Suborder = "suborder",
-    Infraorder = "infraorder",
-    Superfamily = "superfamily",
-    Family = "family",
-    Subfamily = "subfamily",
-    Tribe = "tribe",
-    Subtribe = "subtribe",
-    Genus = "genus",
-    Subgenus = "subgenus",
-    SpeciesGroup = "species group",
-    SpeciesSubgroup = "species subgroup",
-    Species = "species",
-    Subspecies = "subspecies",
-    Strain = "strain",
-    Varietas = "varietas",
-    Forma = "forma"
-}
-
-enum GoNamespace {
-    BiologicalProcess = "Biological process",
-    CellularComponent = "Cellular component",
-    MolecularFunction = "Molecular function"
-}
-
-enum EcNamespace {
-    // EC 1.x.x.x class
-    Oxidoreductases = "oxidoreductases",
-    // EC 2.x.x.x class
-    Transferases = "transferases",
-    // EC 3.x.x.x class
-    Hydrolases = "hydrolases",
-    // EC 4.x.x.x class
-    Lyases = "lyases",
-    // EC 5.x.x.x class
-    Isomerases = "isomerases",
-    // EC 6.x.x.x class
-    Ligases = "ligases",
-    // EC 7.x.x.x class
-    Translocases = "translocases",
-}
-
-enum InterproNamespace {
-    ActiveSite = "active site",
-    BindingSite = "binding site",
-    ConservedSite = "conserved site",
-    Domain = "domain",
-    Family = "family",
-    HomologousSuperfamily = "homologous superfamily",
-    PTM = "ptm",
-    Repeat = "repeat",
-    Unknown = "unknown"
 }
 
 const dataSources = Object.values(DataSource);

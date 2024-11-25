@@ -17,7 +17,7 @@
                     color="primary"
                     prepend-icon="mdi-plus"
                     text="Create group"
-                    @click="createGroup('New group')"
+                    @click="createGroup(`New group ${newGroupsAddedCounter++}`)"
                 />
             </div>
         </template>
@@ -98,6 +98,8 @@ import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import FunctionalResults from "@/components/new/results/functional/FunctionalResults.vue";
 import TaxonomicResults from "@/components/new/results/taxonomic/TaxonomicResults.vue";
 import Filesystem from "@/components/new/filesystem/Filesystem.vue";
+
+const newGroupsAddedCounter = 0;
 
 const groupStore = useGroupAnalysisStore();
 

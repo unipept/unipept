@@ -14,14 +14,11 @@
                         {{ analysis.peptideTrust.matchedPeptides }} peptides found, {{ analysis.peptideTrust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides in assay
                     </h4>
                     <h1 class="text-subtitle-1 mt-n2">
-                        {{ analysis.peptideTrust.missedPeptides.length }} peptides ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found
-                    </h1>
-
-                    <h4 class="font-weight-bold">
-                        Last analysed on October 4 at 14:34
-                    </h4>
-                    <h1 class="text-subtitle-1 mt-n2">
-                        Analysis is up-to-date, no need to restart the analysis.
+                        <a
+                            @click="showMissingPeptides = true"
+                        >
+                            {{ analysis.peptideTrust.missedPeptides.length }} peptides
+                        </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found
                     </h1>
                 </v-col>
                 <v-col cols="6">
@@ -75,6 +72,11 @@
                 </v-col>
             </v-row>
         </v-card-text>
+
+        <missing-peptides-dialog
+            v-model="showMissingPeptides"
+            :peptides="missedPeptides"
+        />
     </v-card>
 </template>
 
@@ -87,9 +89,14 @@ import usePercentage from "@/composables/new/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
 import {AnalysisConfig} from "@/components/pages/TestPage.vue";
+import useCsvDownload from "@/composables/new/useCsvDownload";
+import usePeptideExport from "@/composables/new/usePeptideExport";
+import MissingPeptidesDialog from "@/components/new/analysis/MissingPeptidesDialog.vue";
 
 const { getNcbiDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
+const { generateExport } = usePeptideExport();
+const { download: downloadCsv } = useCsvDownload();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
@@ -103,6 +110,7 @@ const equate = ref(analysis.config.equate);
 const filter = ref(analysis.config.filter);
 const missed = ref(analysis.config.missed);
 const database = ref(analysis.config.database);
+const showMissingPeptides = ref(false);
 
 const dirtyConfig = computed(() =>
     equate.value !== analysis.config.equate ||
@@ -111,7 +119,6 @@ const dirtyConfig = computed(() =>
     database.value !== analysis.config.database
 );
 const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => {
-    // TODO: use virtual mapping on the pept2data object to store memory
     const lca = analysis.peptideToLca.get(peptide);
     return {
         peptide: peptide,
@@ -121,11 +128,15 @@ const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([pept
         found: analysis.peptideToLca.has(peptide)
     };
 }));
+const missedPeptides = computed(() => {
+    console.log(analysis.peptideTrust.missedPeptides);
+    return analysis.peptideTrust.missedPeptides;
+});
 
-const download = (delimiter: string) => {
-    // TODO: use pept2data object for peptide -> info mapping
-    // Alternative: store extra mappings, but this will require more memory that we might not want to spend
-    alert("Download not implemented yet");
+const download = (separator: string) => {
+    const extension = separator === "\t" ? "tsv" : "csv";
+    const peptideExport = generateExport(analysis, ',');
+    downloadCsv(peptideExport, `peptides.${extension}`, separator);
 };
 
 const update = () => emits("update", {
@@ -135,3 +146,14 @@ const update = () => emits("update", {
     database: database.value
 });
 </script>
+
+<style scoped>
+a {
+    color: #2196f3;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+</style>

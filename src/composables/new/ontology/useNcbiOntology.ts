@@ -1,5 +1,34 @@
 import {ref} from "vue";
-import {convertEcNumberToEcNamespace} from "@/logic/new/ontology/functional/ec/EcNamespace";
+
+export enum NcbiRank {
+    Superkingdom = "superkingdom",
+    Kingdom = "kingdom",
+    Subkingdom = "subkingdom",
+    Superphylum = "superphylum",
+    Phylum = "phylum",
+    Subphylum = "subphylum",
+    Superclass = "superclass",
+    Class = "class",
+    Subclass = "subclass",
+    Superorder = "superorder",
+    Order = "order",
+    Suborder = "suborder",
+    Infraorder = "infraorder",
+    Superfamily = "superfamily",
+    Family = "family",
+    Subfamily = "subfamily",
+    Tribe = "tribe",
+    Subtribe = "subtribe",
+    Genus = "genus",
+    Subgenus = "subgenus",
+    SpeciesGroup = "species group",
+    SpeciesSubgroup = "species subgroup",
+    Species = "species",
+    Subspecies = "subspecies",
+    Strain = "strain",
+    Varietas = "varietas",
+    Forma = "forma"
+}
 
 export default function useNcbiOntology(
     baseUrl = "https://api.unipept.ugent.be",

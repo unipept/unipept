@@ -1,5 +1,16 @@
 import {ref} from "vue";
-import {convertEcNumberToEcNamespace} from "@/logic/new/ontology/functional/ec/EcNamespace";
+
+export enum InterproNamespace {
+    ActiveSite = "active site",
+    BindingSite = "binding site",
+    ConservedSite = "conserved site",
+    Domain = "domain",
+    Family = "family",
+    HomologousSuperfamily = "homologous superfamily",
+    PTM = "ptm",
+    Repeat = "repeat",
+    Unknown = "unknown"
+}
 
 export default function useInterproOntology(
     baseUrl = "https://api.unipept.ugent.be",
