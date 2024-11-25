@@ -2,7 +2,7 @@
     <visualization-controls
         ref="controls"
         caption="Scroll to zoom, drag to pan, click a node to expand, right click a node to set as root"
-        :download="download"
+        :download="() => downloadImageModalOpen = true"
         :reset="reset"
         :fullscreen="toggleFullscreen"
         :hide-download="isFullscreen"
@@ -16,14 +16,21 @@
             />
         </template>
     </visualization-controls>
+
+    <download-image
+        v-model="downloadImageModalOpen"
+        :image="svg"
+        filename="treeview"
+    />
 </template>
 
 <script setup lang="ts">
 import { Treeview as UnipeptTreeview, TreeviewSettings } from 'unipept-visualizations';
-import {onMounted, ref, useTemplateRef, watch} from 'vue';
+import {computed, onMounted, ref, useTemplateRef, watch} from 'vue';
 import {NcbiTreeNode} from "unipept-web-components";
 import VisualizationControls from "@/components/new/results/taxonomic/VisualizationControls.vue";
 import {useElementSize, useFullscreen} from "@vueuse/core";
+import DownloadImage from "@/components/new/image/DownloadImage.vue";
 
 const props = defineProps<{
     ncbiRoot: NcbiTreeNode
@@ -35,6 +42,10 @@ const props = defineProps<{
 const controls = useTemplateRef("controls");
 const visualization = useTemplateRef("visualization");
 const visualizationObject = ref<UnipeptSunburst | undefined>(undefined);
+
+const downloadImageModalOpen = ref(false);
+
+const svg = computed(() => visualizationObject.value?.element.querySelector(":scope > svg"))
 
 const { isFullscreen, toggle } = useFullscreen(controls);
 const { width, height } = useElementSize(controls);
@@ -80,10 +91,6 @@ const createTreeview = (fullscreen = false): UnipeptSunburst | undefined => {
 const redraw = () => {
     visualizationObject.value = createTreeview(!isFullscreen.value);
     visualizationObject.value?.reset();
-};
-
-const download = () => {
-    console.log("Download");
 };
 
 const reset = () => {

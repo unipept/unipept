@@ -13,6 +13,7 @@
     "@vueuse/components": "^11.2.0",
     "@vueuse/core": "^11.1.0",
     "async": "^3.2.6",
+    "html-to-image": "^1.11.11",
     "marked": "^9.1.4",
     "pinia": "^2.2.4",
     "roboto-fontface": "*",
