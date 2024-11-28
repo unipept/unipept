@@ -1,13 +1,16 @@
 import {ref} from "vue";
-import {GridSearchProgressListener, Peptonizer, PeptonizerResult} from "peptonizer";
+import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import CountTable from "@/logic/new/CountTable";
+import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
+
+export const PEPTONIZER_WORKERS = 2;
 
 export default function usePeptonizerProcessor() {
-    const peptonizerResult = ref<PeptonizerResult>();
+    const peptonizerResult = ref<Map<string, number>>();
 
     const process = async (
         peptideTable: CountTable<string>,
-        listener: GridSearchProgressListener
+        listener: PeptonizerProgressListener
     ): Promise<void> => {
         const peptonizer = new Peptonizer();
 
@@ -24,14 +27,22 @@ export default function usePeptonizerProcessor() {
         const betas = [0.6, 0.7, 0.8, 0.9];
         const priors = [0.3, 0.5];
 
-        peptonizerResult.value = await peptonizer.peptonize(
+        const taxaIdToConfidence = await peptonizer.peptonize(
             peptideScores,
             peptideCounts,
             alphas,
             betas,
             priors,
-            listener
+            listener,
+            PEPTONIZER_WORKERS
         );
+
+        // Convert the labels from taxon IDs to taxon names
+        const ncbiOntologyUpdater = useNcbiOntology();
+        await ncbiOntologyUpdater.update([...taxaIdToConfidence.keys().map((label) => Number.parseInt(label as string))], false);
+
+        const ncbiOntology = ncbiOntologyUpdater.ontology;
+        peptonizerResult.value = new Map(taxaIdToConfidence.entries().map(([k, v]) => [ncbiOntology.value.get(Number.parseInt(k))!.name, v]));
     }
 
     return {

@@ -3,7 +3,7 @@ import {defineStore} from "pinia";
 import useSingleAnalysisStore from "@/store/new/SingleAnalysisStore";
 import CountTable from "@/logic/new/CountTable";
 import usePeptonizerProcessor from "@/composables/new/processing/peptonizer/usePeptonizerProcessor";
-import {GridSearchProgressListener} from "peptonizer";
+import {PeptonizerProgressListener} from "peptonizer";
 
 export enum PeptonizerStatus {
     Pending,
@@ -18,10 +18,10 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
 
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
-        listener: GridSearchProgressListener
+        listener: PeptonizerProgressListener
     ) => {
         status.value = PeptonizerStatus.Running;
-        await processPeptonizer(peptideCountTable);
+        await processPeptonizer(peptideCountTable, listener);
         status.value = PeptonizerStatus.Finished;
     }
 

@@ -53,7 +53,7 @@ import Treemap from "@/components/new/results/taxonomic/Treemap.vue";
 import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
 import HierarchicalOutline from "@/components/new/results/taxonomic/HierarchicalOutline.vue";
 import HeatmapWizard from "@/components/new/results/taxonomic/heatmap/HeatmapWizard.vue";
-import PeptonizerAnalysis from "@/components/new/results/taxonomic/PeptonizerAnalysis.vue";
+import PeptonizerAnalysis from "@/components/new/results/taxonomic/peptonizer/PeptonizerAnalysis.vue";
 
 defineProps<{
     analysis: SingleAnalysisStore
