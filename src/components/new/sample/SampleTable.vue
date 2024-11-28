@@ -87,8 +87,9 @@
             <tr>
                 <td :colspan="columns.length">
                     <create-sample-type
-                        v-model="item.rawPeptides"
-                        :type="item.type"
+                        v-model:peptides="item.rawPeptides"
+                        v-model:name="item.name"
+                        v-model:type="item.type"
                     />
                 </td>
             </tr>
@@ -118,16 +119,11 @@
                                 </v-list-item>
                                 <v-list-item
                                     density="compact"
-                                    @click="addSamplePride"
-                                >
-                                    From PRIDE identifier
-                                </v-list-item>
-                                <v-list-item
-                                    density="compact"
                                     @click="addSampleSample"
                                 >
                                     From sample data
                                 </v-list-item>
+                                <v-divider/>
                                 <v-list-item
                                     density="compact"
                                     @click="console.log"
@@ -153,7 +149,6 @@ const samples = defineModel<SampleTableItem[]>();
 const expanded = ref<number[]>([]);
 
 const addSamplePeptides = () => addSample(SampleType.Peptides);
-const addSamplePride = () => addSample(SampleType.Pride);
 const addSampleSample = () => addSample(SampleType.Sample);
 
 const addSample = (type: SampleType) => {

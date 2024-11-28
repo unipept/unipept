@@ -2,6 +2,7 @@
     <v-dialog
         v-model="dialogOpen"
         max-width="80%"
+        height="80%"
     >
         <v-card>
             <v-card-title class="d-flex align-center">
@@ -20,8 +21,10 @@
                 Create one or more assays and modify their search configuration using the settings below.
             </v-card-subtitle>
 
-            <v-card-text>
+            <v-card-text class="d-flex flex-column">
                 <sample-table v-model="samples" />
+
+                <v-spacer />
 
                 <div class="d-flex justify-end">
                     <v-btn

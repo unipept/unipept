@@ -4,7 +4,6 @@
             <v-icon
                 v-bind="props"
                 icon="mdi-dots-horizontal"
-                @click="console.log"
             />
         </template>
         <v-list>

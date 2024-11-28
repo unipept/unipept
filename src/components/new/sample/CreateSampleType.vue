@@ -1,6 +1,9 @@
 <template>
-    <v-row class="py-3">
-        <v-col cols="6">
+    <v-row
+        v-if="isPeptides"
+        class="py-3"
+    >
+        <v-col>
             <v-textarea
                 v-model="peptides"
                 label="Peptides"
@@ -11,82 +14,69 @@
                 no-resize
             />
         </v-col>
+    </v-row>
 
+    <v-row
+        v-else-if="isSampleData"
+        class="py-3"
+    >
         <v-col
-            v-if="isPeptides"
-            cols="6"
+            v-for="sample in samples"
+            class="d-flex flex-column"
+            cols="4"
         >
-            <v-file-input
-                label="File input"
-                variant="outlined"
-                density="compact"
-                hide-details
+            <sample-data
+                :sample="sample"
+                @select="sampleDataSelect"
             />
         </v-col>
+    </v-row>
 
-        <v-col
-            v-else-if="isSample"
-            cols="6"
-        >
-            TODO
-        </v-col>
-
-        <v-col
-            v-else-if="isPride"
-            cols="6"
-        >
-            <h4>Load data from the PRIDE archive</h4>
-            <p>
-                You can easily load data from the PRIDE data repository. Simply enter an
-                assay id (e.g. 8500) in the field below and click the 'Load PRIDE Dataset'
-                button. The corresponding dataset will then be fetched using the PRIDE API
-                and loaded into the search form on the left.
-            </p>
-            <v-text-field
-                label="Assay identifier"
+    <v-row
+        v-else
+        class="py-3"
+    >
+        <v-col cols="12">
+            <v-textarea
+                v-model="peptides"
+                label="Peptides"
                 variant="outlined"
                 density="compact"
                 counter
                 hide-details
                 no-resize
-            >
-                <template #append>
-                    <v-btn
-                        text="Fetch PRIDE dataset"
-                        color="primary"
-                        variant="flat"
-                        prepend-icon="mdi-cloud-download"
-                        @click="addProteome"
-                    />
-                </template>
-            </v-text-field>
+                readonly
+            />
         </v-col>
-
-        <v-col
-            v-else
-            cols="6"
-        />
     </v-row>
 </template>
 
 <script setup lang="ts">
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
+import SampleData from "@/components/new/sample/SampleData.vue";
+import useSampleData, {SampleDataset} from "@/composables/new/communication/unipept/useSampleData";
 
-const { type } = defineProps<{
-    type?: SampleType
-}>();
+const { samples, process } = useSampleData();
 
-const peptides = defineModel<string>();
+const peptides = defineModel<string>("peptides");
+const name = defineModel<string>("name");
+const type = defineModel<SampleType | undefined>("type");
 
-const isPeptides = computed(() => type === SampleType.Peptides);
-const isSample = computed(() => type === SampleType.Sample);
-const isPride = computed(() => type === SampleType.Pride);
+const isPeptides = computed(() => type.value === SampleType.Peptides);
+const isSampleData = computed(() => type.value === SampleType.Sample);
+
+const sampleDataSelect = (sample: SampleDataset) => {
+    peptides.value = sample.data.join('\n');
+    name.value = sample.name;
+    type.value = undefined;
+};
+
+onMounted(process);
 </script>
 
 <script lang="ts">
 export enum SampleType {
     Peptides = 'peptides',
-    Sample = 'sample',
-    Pride = 'pride',
+    Sample = 'sample'
 }
 </script>
