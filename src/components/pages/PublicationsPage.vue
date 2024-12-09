@@ -9,6 +9,27 @@
 
         <publication-card
             class="mt-5"
+            title="Unipept in 2024: Expanding Metaproteomics Analysis with Support for Missed Cleavages, Semi-Tryptic and Non-Tryptic Peptides"
+            :authors='["Tibo Vande Moortele", "Bram Devlaminck", "Simon Van de Vyver", "Tim Van Den Bossche", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere", "Pieter Verschaffelt"]'
+            journal="BioRXiv"
+            year="2024"
+            doi="doi.org/10.1101/2024.09.26.615136"
+            google-scholar="https://scholar.google.com/scholar?hl=nl&as_sdt=0%2C5&q=unipept+in+2024&btnG=&oq=unipe"
+            :image="Publication2023Image"
+        >
+            <template #abstract>
+                Unipept, a pioneering software tool in metaproteomics, has significantly advanced the analysis of complex ecosystems by facilitating both taxonomic and functional insights from environmental samples.
+                From the onset, Unipept’s capabilities focused on tryptic peptides, utilizing the predictability and consistency of trypsin digestion to efficiently construct a protein reference database.
+                However, the evolving landscape of proteomics and emerging fields like immunopeptidomics necessitate a more versatile approach that extends beyond the analysis of tryptic peptides.
+                In this article, we present a significant update to the underlying index structure of Unipept, which is now powered by a Sparse Suffix Array index.
+                This advancement enables the analysis of semi-tryptic peptides, peptides with missed cleavages, and non-tryptic peptides such as those encountered in other research fields such as immunopeptidomics (e.g. MHC- and HLA-peptides).
+                This new index benefits all tools in the Unipept ecosystem such as the web application, desktop tool, API and command line interface.
+                A benchmark study highlights significantly improved performance in handling missed cleavages, preserving the same level of accuracy.
+            </template>
+        </publication-card>
+
+        <publication-card
+            class="mt-5"
             title="Unipept Desktop 2.0: Construction of Targeted Reference Protein Databases for Metaproteogenomics Analyses"
             :authors='["Pieter Verschaffelt", "Alessandro Tanca", "Marcello Abbondio", "Tim Van Den Bossche", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere"]'
             journal="Journal of Proteome Research"
