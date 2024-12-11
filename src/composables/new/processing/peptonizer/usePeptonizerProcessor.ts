@@ -10,6 +10,7 @@ export default function usePeptonizerProcessor() {
 
     const process = async (
         peptideTable: CountTable<string>,
+        peptideIntensities: Map<string, number>,
         listener: PeptonizerProgressListener
     ): Promise<void> => {
         const peptonizer = new Peptonizer();

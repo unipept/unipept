@@ -11,6 +11,8 @@ export enum PeptonizerStatus {
     Finished
 }
 
+export const DEFAULT_PEPTIDE_INTENSITIES: number = 0.7;
+
 const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
     const status = ref<PeptonizerStatus>(PeptonizerStatus.Pending);
 
@@ -18,10 +20,11 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
 
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
+        peptideIntensities: Map<string, number>,
         listener: PeptonizerProgressListener
     ) => {
         status.value = PeptonizerStatus.Running;
-        await processPeptonizer(peptideCountTable, listener);
+        await processPeptonizer(peptideCountTable, peptideIntensities, listener);
         status.value = PeptonizerStatus.Finished;
     }
 

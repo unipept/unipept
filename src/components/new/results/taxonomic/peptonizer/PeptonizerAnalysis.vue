@@ -36,7 +36,8 @@ import {PEPTONIZER_WORKERS} from "@/composables/new/processing/peptonizer/usePep
 import PeptonizerChart from "@/components/new/results/taxonomic/peptonizer/PeptonizerChart.vue";
 
 const props = defineProps<{
-  peptideCountTable: CountTable<string>
+    peptideCountTable: CountTable<string>,
+    peptideIntensities: Map<string, number>
 }>();
 
 export interface PeptonizerProgress {
@@ -113,6 +114,7 @@ const startPeptonizer = async () => {
 
     await peptonizerStore.runPeptonizer(
       props.peptideCountTable,
+      props.peptideIntensities,
       new UIPeptonizerProgressListener()
     );
 

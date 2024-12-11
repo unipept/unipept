@@ -10,13 +10,15 @@ import useInterproProcessor from "@/composables/new/processing/functional/useInt
 import useOntologyStore from "@/store/new/OntologyStore";
 import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
-import usePeptonizerProcessor from "@/composables/new/processing/peptonizer/usePeptonizerProcessor";
+import {DEFAULT_PEPTIDE_INTENSITIES} from "@/store/new/PeptonizerAnalysisStore";
 
 const useSingleAnalysisStore = (
     _id: string,
     _name: string,
     _rawPeptides: string,
-    _config: AnalysisConfig
+    _config: AnalysisConfig,
+    // Intensity values that can be used by the Peptonizer to improve accuracy of the analysis
+    _peptideIntensities?: Map<string, number>
 ) => defineStore(`singleSampleStore/${_id}`, () => {
     const ontologyStore = useOntologyStore();
 
@@ -56,6 +58,18 @@ const useSingleAnalysisStore = (
     const peptides = computed(() =>
         rawPeptides.value.split("\n").map(p => p.trim()).filter(p => p.length > 0)
     );
+
+    // ===============================================================
+    // ========================= LOCAL DATA ==========================
+    // ===============================================================
+
+    if (!_peptideIntensities) {
+        _peptideIntensities = new Map<string, number>();
+        for (const peptide of peptides.value) {
+            _peptideIntensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
+        }
+    }
+    const intensities = ref<Map<string, number>>(_peptideIntensities);
 
     // ===============================================================
     // ========================== METHODS ============================
@@ -110,6 +124,7 @@ const useSingleAnalysisStore = (
         rawPeptides,
         peptides,
         config,
+        intensities,
         functionalFilter,
         status,
         filteringStatus,
