@@ -2,7 +2,7 @@
     <visualization-controls
         ref="controls"
         caption="Click a slice to zoom in and the center node to zoom out"
-        :download="download"
+        :download="() => downloadImageModalOpen = true"
         :reset="reset"
         :fullscreen="toggleFullscreen"
         :hide-download="isFullscreen"
@@ -32,14 +32,21 @@
             />
         </template>
     </visualization-controls>
+
+    <download-image
+        v-model="downloadImageModalOpen"
+        :image="svg"
+        filename="sunburst"
+    />
 </template>
 
 <script setup lang="ts">
 import { Sunburst as UnipeptSunburst, SunburstSettings } from 'unipept-visualizations';
-import {onMounted, ref, useTemplateRef, watch} from 'vue';
+import {computed, onMounted, ref, useTemplateRef, watch} from 'vue';
 import {NcbiTreeNode} from "unipept-web-components";
 import VisualizationControls from "@/components/new/results/taxonomic/VisualizationControls.vue";
 import {useFullscreen} from "@vueuse/core";
+import DownloadImage from "@/components/new/image/DownloadImage.vue";
 
 const props = withDefaults(defineProps<{
     ncbiRoot: NcbiTreeNode
@@ -57,6 +64,9 @@ const visualization = useTemplateRef("visualization");
 const visualizationObject = ref<UnipeptSunburst | undefined>(undefined);
 
 const useFixedColors = ref(false);
+const downloadImageModalOpen = ref(false);
+
+const svg = computed(() => visualizationObject.value?.element.querySelector(":scope > svg"));
 
 const { isFullscreen, toggle } = useFullscreen(controls);
 
@@ -93,10 +103,6 @@ const redraw = () => {
     visualizationObject.value = createSunburst(isFullscreen.value);
     visualizationObject.value?.reroot(savedFilterId, false);
     filterId.value = savedFilterId;
-};
-
-const download = () => {
-    console.log("Download");
 };
 
 const reset = () => {

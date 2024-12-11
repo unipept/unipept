@@ -12,32 +12,34 @@
     >
         <filesystem-group
             v-for="group in groups"
-            :key="group.name"
-            :value="group.name"
+            :key="group.id"
+            :value="group.id"
             :group="group"
-            @sample:add="emits('sample:add', group.name, $event)"
-            @sample:remove="removeSample(group.name, $event)"
-            @group:remove="removeGroup(group.name)"
+            @sample:add="addSample"
+            @sample:update="updateSample"
+            @sample:remove="removeSample"
+            @group:update="updateGroup"
+            @group:remove="removeGroup"
         />
     </v-list>
 </template>
 
 <script setup lang="ts">
 import FilesystemGroup from "@/components/new/filesystem/FilesystemGroup.vue";
-import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
-import {computed, ref, watch} from "vue";
+import {ref, watch} from "vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 
 const { groups } = defineProps<{
     groups: MultiAnalysisStore[];
 }>();
 
 const emits = defineEmits<{
-    "sample:add": (groupName: string, samples: SampleTableItem[]) => void;
-    "sample:remove": (groupName: string, analysisName: string) => void;
-    "sample:edit": (name: string, newName: string) => void;
-    "group:edit": () => void;
-    "group:remove": (groupName: string) => void;
+    "sample:add": (groupId: string, sample: SampleTableItem) => void;
+    "sample:update": (groupId: string, analysisId: string, updatedSample: SampleTableItem) => void;
+    "sample:remove": (groupId: string, sampleName: string) => void;
+    "group:update": (groupId: string, updatedName: string) => void;
+    "group:remove": (groupId: string) => void;
     "select": (groupName: string, analysisName: string) => void;
     "select:clear": () => void;
 }>();
@@ -45,41 +47,42 @@ const emits = defineEmits<{
 const expanded = ref<string[]>([]);
 const selected = ref<string[]>([]);
 
-const selectedNames = computed(() => {
-    if (selected.value.length === 0) {
-        return undefined;
-    }
-
-    const [ groupId, analysisId ] = selected.value[0].split(':');
-    const group = groups.find(group => group.id.toString() === groupId);
-    const analysis = group?.analyses.find(analysis => analysis.id.toString() === analysisId);
-    return [ group?.name, analysis?.name ];
-});
-
-const removeGroup = (groupName: string) => {
-    if (selected.value.length === 1 && selectedNames.value[0] === groupName) {
-        selected.value = [];
-        emits('select:clear');
-    }
-    emits('group:remove', groupName);
+const addSample = (groupId: string, sample: SampleTableItem) => {
+    emits('sample:add', groupId, sample);
 };
 
-const removeSample = (groupName: string, analysisName: string) => {
-    if (selected.value.length === 1 && selectedNames.value[0] === groupName && selectedNames.value[1] === analysisName) {
+const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
+    emits('sample:update', groupId, analysisId, updatedSample);
+};
+
+const removeSample = (groupId: string, analysisId: string) => {
+    if (analysisId === selected.value?.[0].split(':')[1]) {
         selected.value = [];
         emits('select:clear');
     }
-    emits('sample:remove', groupName, analysisName);
+    emits('sample:remove', groupId, analysisId);
+};
+
+const updateGroup = (groupId: string, updatedName: string) => {
+    emits('group:update', groupId, updatedName);
+};
+
+const removeGroup = (groupId: string) => {
+    if (groupId === selected.value?.[0].split(':')[0]) {
+        selected.value = [];
+        emits('select:clear');
+    }
+    emits('group:remove', groupId);
 };
 
 watch(selected, (value) => {
     if (value.length === 1) {
-        emits('select', ...selectedNames.value);
+        emits('select', ...value[0].split(':'));
     }
 });
 
 watch(() => groups, () => {
-    expanded.value = groups.map(group => group.name);
+    expanded.value = groups.map(group => group.id);
 });
 </script>
 

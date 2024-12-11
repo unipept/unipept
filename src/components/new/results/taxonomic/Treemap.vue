@@ -2,7 +2,7 @@
     <visualization-controls
         ref="controls"
         caption="Click a square to zoom in and right click to zoom out"
-        :download="download"
+        :download="() => downloadImageModalOpen = true"
         :reset="reset"
         :fullscreen="toggleFullscreen"
         :hide-download="isFullscreen"
@@ -16,14 +16,21 @@
             />
         </template>
     </visualization-controls>
+
+    <download-image
+        v-model="downloadImageModalOpen"
+        :image="div"
+        filename="treemap"
+    />
 </template>
 
 <script setup lang="ts">
 import { Treemap as UnipeptTreemap, TreemapSettings } from 'unipept-visualizations';
-import {onMounted, ref, useTemplateRef, watch} from 'vue';
+import {computed, onMounted, ref, useTemplateRef, watch} from 'vue';
 import {NcbiTreeNode} from "unipept-web-components";
 import VisualizationControls from "@/components/new/results/taxonomic/VisualizationControls.vue";
 import {useElementSize, useFullscreen} from "@vueuse/core";
+import DownloadImage from "@/components/new/image/DownloadImage.vue";
 
 const props = defineProps<{
     ncbiRoot: NcbiTreeNode
@@ -33,12 +40,15 @@ const filterId = defineModel<number>();
 
 const controls = useTemplateRef("controls");
 const visualization = useTemplateRef("visualization");
-const visualizationObject = ref<UnipeptSunburst | undefined>(undefined);
+const visualizationObject = ref<UnipeptTreemap | undefined>(undefined);
+
+const downloadImageModalOpen = ref(false);
+const div = computed(() => visualizationObject.value?.element);
 
 const { isFullscreen, toggle } = useFullscreen(controls);
 const { width, height } = useElementSize(controls);
 
-const createTreemap = (fullscreen = false): UnipeptSunburst | undefined => {
+const createTreemap = (fullscreen = false): UnipeptTreemap | undefined => {
     visualization.value.innerHTML = "";
 
     if(!props.ncbiRoot) return;
@@ -72,10 +82,6 @@ const redraw = () => {
     visualizationObject.value = createTreemap(!isFullscreen.value);
     visualizationObject.value?.reroot(savedFilterId, false);
     filterId.value = savedFilterId;
-};
-
-const download = () => {
-    console.log("Download");
 };
 
 const reset = () => {

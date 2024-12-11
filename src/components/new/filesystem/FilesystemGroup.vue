@@ -19,30 +19,18 @@
                 </template>
 
                 <template #append>
-                    <group-action-select
-                        @sample:add="addAnalysisDialogOpen = true"
-                        @group:edit="console.log('group:edit')"
-                        @group:remove="removeGroupDialogOpen = true"
+                    <v-icon
+                        color="grey-darken-3"
+                        icon="mdi-pencil"
+                        size="small"
+                        @click="manageSamplesDialogOpen = true"
                     />
                 </template>
             </v-list-item>
         </template>
 
         <v-list-item
-            v-if="group.empty"
-            class="text-primary"
-            title="Add new sample"
-            color="primary"
-            density="compact"
-            prepend-icon="mdi-file-document-plus-outline"
-            :value="`button-${group.name}`"
-            :active="false"
-            @click="addAnalysisDialogOpen = true"
-        />
-
-        <v-list-item
             v-for="analysis in group.analyses"
-            v-else
             :key="analysis.id"
             :value="`${group.id}:${analysis.id}`"
             :title="analysis.name"
@@ -63,38 +51,38 @@
                     width="3"
                     indeterminate
                 />
-
-                <sample-action-select
-                    v-else
-                    @sample:add="addAnalysisDialogOpen = true"
-                    @sample:edit="console.log('sample:edit')"
-                    @sample:remove="emits('sample:remove', analysis.name)"
-                />
             </template>
         </v-list-item>
 
-        <create-sample
-            v-model="addAnalysisDialogOpen"
-            @confirm="samples => emits('sample:add', samples)"
+        <v-list-item
+            class="text-primary"
+            title="Add new sample"
+            color="primary"
+            density="compact"
+            prepend-icon="mdi-file-document-plus-outline"
+            :value="`button-${group.id}`"
+            :active="false"
+            @click="manageSamplesDialogOpen = true"
         />
 
-        <remove-group-dialog
-            v-model="removeGroupDialogOpen"
+        <manage-sample-group
+            v-model="manageSamplesDialogOpen"
             :group="group"
-            @confirm="emits('group:remove')"
+            @sample:add="addSample"
+            @sample:update="updateSample"
+            @sample:remove="removeSample"
+            @group:update="updateGroup"
+            @group:remove="removeGroup"
         />
     </v-list-group>
 </template>
 
 <script setup lang="ts">
-import SampleActionSelect from "@/components/new/filesystem/SampleActionSelect.vue";
-import RemoveGroupDialog from "@/components/new/filesystem/RemoveGroupDialog.vue";
-import CreateSample from "@/components/new/sample/CreateSample.vue";
-import GroupActionSelect from "@/components/new/filesystem/GroupActionSelect.vue";
+import ManageSampleGroup from "@/components/new/sample/ManageSampleGroup.vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import {ref} from "vue";
-import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {AnalysisStatus} from "@/components/pages/TestPage.vue";
+import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 
 defineProps<{
     group: MultiAnalysisStore;
@@ -102,15 +90,34 @@ defineProps<{
 }>();
 
 const emits = defineEmits<{
-    "sample:add": (samples: SampleTableItem[]) => void;
-    "sample:remove": (name: string) => void;
-    "sample:edit": (name: string, newName: string) => void;
-    "group:edit": () => void;
-    "group:remove": () => void;
+    "sample:add": (groupId: string, sample: SampleTableItem) => void;
+    "sample:update": (groupId: string, analysisId: string, updatedSample: SampleTableItem) => void;
+    "sample:remove": (groupId: string, sampleName: string) => void;
+    "group:update": (groupId: string, updatedName: string) => void;
+    "group:remove": (groupId: string) => void;
 }>();
 
-const addAnalysisDialogOpen = ref(false);
-const removeGroupDialogOpen = ref(false);
+const manageSamplesDialogOpen = ref(false);
+
+const addSample = (groupId: string, sample: SampleTableItem) => {
+    emits('sample:add', groupId, sample);
+};
+
+const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
+    emits('sample:update', groupId, analysisId, updatedSample);
+};
+
+const removeSample = (groupId: string, sampleName: string) => {
+    emits('sample:remove', groupId, sampleName);
+};
+
+const updateGroup = (groupId: string, updatedName: string) => {
+    emits('group:update', groupId, updatedName);
+};
+
+const removeGroup = (groupId: string) => {
+    emits('group:remove', groupId);
+};
 </script>
 
 <style scoped>

@@ -2,8 +2,7 @@ import {defineStore} from "pinia";
 import {computed, ref} from "vue";
 import {AnalysisConfig} from "@/components/pages/TestPage.vue";
 import useSingleAnalysisStore, {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-
-let _singleAnalysisStoreId = 0;
+import {v4 as uuidv4} from "uuid";
 
 const useMultiAnalysisStore = (
     groupId: string,
@@ -29,22 +28,22 @@ const useMultiAnalysisStore = (
     // ========================== METHODS ============================
     // ===============================================================
 
-    const getAnalysis = (name: string): SingleAnalysisStore | undefined => {
-        return _analyses.value.get(name);
+    const getAnalysis = (id: string): SingleAnalysisStore | undefined => {
+        return _analyses.value.get(id);
     }
 
-    const addAnalysis = (name: string, rawPeptides: string, config: AnalysisConfig): void => {
-        if (isValidNewAnalysis(name)) {
-            _analyses.value.set(name, useSingleAnalysisStore(_singleAnalysisStoreId++, name, rawPeptides, config));
-        }
+    const addAnalysis = (name: string, rawPeptides: string, config: AnalysisConfig): string => {
+        const analysisId = uuidv4();
+        _analyses.value.set(analysisId, useSingleAnalysisStore(analysisId, name, rawPeptides, config));
+        return analysisId;
     }
 
-    const removeAnalysis = (name: string) => {
-        _analyses.value.delete(name);
+    const removeAnalysis = (id: string) => {
+        _analyses.value.delete(id);
     }
 
-    const isValidNewAnalysis = (name: string): boolean => {
-        return !_analyses.value.has(name);
+    const updateName = (newName: string) => {
+        name.value = newName;
     }
 
     return {
@@ -55,7 +54,8 @@ const useMultiAnalysisStore = (
 
         getAnalysis,
         addAnalysis,
-        removeAnalysis
+        removeAnalysis,
+        updateName
     };
 })();
 

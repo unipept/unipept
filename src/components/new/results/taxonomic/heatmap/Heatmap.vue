@@ -2,7 +2,7 @@
     <visualization-controls
         ref="controls"
         caption="Click a slice to zoom in and the center node to zoom out"
-        :download="download"
+        :download="() => downloadImageModalOpen = true"
         :rotate="rotate"
         :fullscreen="toggleFullscreen"
         :hide-download="isFullscreen"
@@ -16,13 +16,20 @@
             />
         </template>
     </visualization-controls>
+
+    <download-image
+        v-model="downloadImageModalOpen"
+        :image="svg"
+        filename="heatmap"
+    />
 </template>
 
 <script setup lang="ts">
 import { Heatmap as UnipeptHeatmap, HeatmapSettings } from 'unipept-visualizations';
-import {onMounted, ref, useTemplateRef, watch} from 'vue';
+import {computed, onMounted, ref, useTemplateRef, watch} from 'vue';
 import VisualizationControls from "@/components/new/results/taxonomic/VisualizationControls.vue";
 import {useElementSize, useFullscreen} from "@vueuse/core";
+import DownloadImage from "@/components/new/image/DownloadImage.vue";
 
 const props = defineProps<{
     data: number[][]
@@ -33,7 +40,14 @@ const props = defineProps<{
 const controls = useTemplateRef("controls");
 const visualization = useTemplateRef("visualization");
 const visualizationObject = ref<UnipeptHeatmap | undefined>(undefined);
+
 const rotated = ref(false);
+const downloadImageModalOpen = ref(false);
+
+const svg = computed(() => {
+    const svgString = visualizationObject.value?.toSVG();
+    return new DOMParser().parseFromString(svgString, "image/svg+xml").documentElement as SVGElement;
+});
 
 const { isFullscreen, toggle } = useFullscreen(controls);
 const { width, height } = useElementSize(controls);
