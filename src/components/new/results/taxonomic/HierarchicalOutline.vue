@@ -65,6 +65,15 @@
                                     density="compact"
                                     hide-default-header
                                 >
+                                    <template #item.name="{ item }">
+                                        <div
+                                            class="cursor-pointer"
+                                            @click="openPeptideAnalysis(item.name)"
+                                        >
+                                            <span>{{ item.name }}</span>
+                                        </div>
+                                    </template>
+
                                     <template #item.action="{ item }">
                                         <v-icon
                                             size="small"
@@ -77,11 +86,11 @@
                                         <v-btn
                                             class="mt-3"
                                             color="primary"
-                                            variant="tonal"
+                                            variant="text"
+                                            text="Copy to clipboard"
+                                            prepend-icon="mdi-content-copy"
                                             @click="copyToClipboard(selfPeptides.map(p => p.name))"
-                                        >
-                                            Copy to clipboard
-                                        </v-btn>
+                                        />
                                     </template>
                                 </v-data-table-virtual>
                             </v-col>
@@ -97,6 +106,15 @@
                                     density="compact"
                                     hide-default-header
                                 >
+                                    <template #item.name="{ item }">
+                                        <div
+                                            class="cursor-pointer"
+                                            @click="openPeptideAnalysis(item.name)"
+                                        >
+                                            <span>{{ item.name }}</span>
+                                        </div>
+                                    </template>
+
                                     <template #item.action="{ item }">
                                         <v-icon
                                             size="small"
@@ -109,11 +127,11 @@
                                         <v-btn
                                             class="mt-3"
                                             color="primary"
-                                            variant="tonal"
+                                            variant="text"
+                                            text="Copy to clipboard"
+                                            prepend-icon="mdi-content-copy"
                                             @click="copyToClipboard(subPeptides.map(p => p.name))"
-                                        >
-                                            Copy to clipboard
-                                        </v-btn>
+                                        />
                                     </template>
                                 </v-data-table-virtual>
                             </v-col>
