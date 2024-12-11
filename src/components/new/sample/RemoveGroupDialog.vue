@@ -9,12 +9,7 @@
                 icon="mdi-alert"
                 variant="tonal"
             >
-                <b>Are you sure you want to remove the group? Removing this group will also remove all samples associated with it:</b>
-                <ul class="mt-1">
-                    <li v-for="sample in group.analyses" :key="sample.id">
-                        {{ sample.name }}
-                    </li>
-                </ul>
+                Are you sure you want to remove the group <b>{{ group.name }}</b>? This action is irreversible. All samples and analyses will be lost.
                 <div class="d-flex justify-end">
                     <v-btn
                         class="me-3"
@@ -26,7 +21,7 @@
 
                     <v-btn
                         color="error"
-                        @click="emits('confirm')"
+                        @click="confirm"
                     >
                         Remove
                     </v-btn>
@@ -39,15 +34,20 @@
 <script setup lang="ts">
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 
-const dialogOpen = defineModel({ default: false });
+const dialogOpen = defineModel<boolean>();
 
-const props = defineProps<{
+defineProps<{
     group: MultiAnalysisStore;
 }>();
 
 const emits = defineEmits<{
     "confirm": () => void;
 }>();
+
+const confirm = () => {
+    dialogOpen.value = false;
+    emits('confirm');
+};
 </script>
 
 <style scoped>

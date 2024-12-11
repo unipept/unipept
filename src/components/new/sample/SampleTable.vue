@@ -8,7 +8,6 @@
         :loading="false"
         density="compact"
         hide-default-footer
-        show-expand
     >
         <template #no-data>
             <v-alert
@@ -20,6 +19,26 @@
             />
         </template>
 
+        <template #header.missed>
+            <v-tooltip width="30%">
+                <template #activator="{ props: tooltip }">
+                    <span>Advanced missed cleavages</span>
+                    <v-icon
+                        v-bind="tooltip"
+                        class="ms-1"
+                        color="primary"
+                        icon="mdi-information"
+                        size="small"
+                    />
+                </template>
+                <span>
+                    Missed cleavage handling is now always enabled. Because of a change in Unipept's underlying search
+                    engine, enabling missed cleavage handling no longer results in a performance penalty. As a result,
+                    this configuration option will be removed in a future release.
+                </span>
+            </v-tooltip>
+        </template>
+
         <template #item.name="{ item }">
             <v-text-field
                 v-model="item.name"
@@ -28,8 +47,9 @@
                 variant="underlined"
                 :rules="[
                     v => !!v || 'Provide a valid name for your database',
+                    _ => isUnique(item) || 'Name must be unique'
                 ]"
-                hide-details
+                hide-details="auto"
             />
         </template>
 
@@ -70,7 +90,16 @@
         </template>
 
         <template #item.count="{ item }">
-            {{ item.rawPeptides.split("\n").map(p => p.trim()).filter(p => p.length > 0).length }}
+            <v-tooltip text="Show the list of peptides">
+                <template #activator="{ props }">
+                    <a
+                        v-bind="props"
+                        @click="() => expandItem(item)"
+                    >
+                        {{ item.rawPeptides.split("\n").map(p => p.trim()).filter(p => p.length > 0).length }}
+                    </a>
+                </template>
+            </v-tooltip>
         </template>
 
         <template #item.action="{ index }">
@@ -86,10 +115,16 @@
         <template #expanded-row="{ columns, item }">
             <tr>
                 <td :colspan="columns.length">
-                    <create-sample-type
-                        v-model:peptides="item.rawPeptides"
-                        v-model:name="item.name"
-                        v-model:type="item.type"
+                    <v-textarea
+                        :model-value="item.rawPeptides"
+                        class="my-3 cursor-default"
+                        label="Peptides"
+                        variant="outlined"
+                        density="compact"
+                        counter
+                        hide-details
+                        no-resize
+                        readonly
                     />
                 </td>
             </tr>
@@ -98,41 +133,22 @@
         <template #body.append>
             <tr>
                 <td colspan="7">
-                    <div class="d-flex justify-center pa-1">
-                        <v-menu>
-                            <template #activator="{ props }">
-                                <v-btn
-                                    v-bind="props"
-                                    text="Add new sample"
-                                    color="primary"
-                                    variant="text"
-                                    prepend-icon="mdi-plus"
-                                    append-icon="mdi-chevron-down"
-                                />
-                            </template>
-                            <v-list>
-                                <v-list-item
-                                    density="compact"
-                                    @click="addSamplePeptides"
-                                >
-                                    From peptide list
-                                </v-list-item>
-                                <v-list-item
-                                    density="compact"
-                                    @click="addSampleSample"
-                                >
-                                    From sample data
-                                </v-list-item>
-                                <v-divider/>
-                                <v-list-item
-                                    density="compact"
-                                    @click="console.log"
-                                >
-                                    Bulk import from file(s)
-                                </v-list-item>
-                            </v-list>
-                        </v-menu>
+                    <div
+                        v-if="!addingSample"
+                        class="d-flex justify-center pa-1"
+                    >
+                        <add-sample-selector
+                            @sample-peptides="openAddSample"
+                            @sample-files="console.log"
+                        />
                     </div>
+                    <add-sample-card
+                        v-else
+                        class="my-6"
+                        :is-unique="isUnique"
+                        @confirm="addSample"
+                        @cancel="addingSample = false"
+                    />
                 </td>
             </tr>
         </template>
@@ -140,33 +156,32 @@
 </template>
 
 <script setup lang="ts">
-import CreateSampleType from "@/components/new/sample/CreateSampleType.vue";
 import {ref} from "vue";
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
+import AddSampleSelector from "@/components/new/sample/AddSampleSelector.vue";
+import AddSampleCard from "@/components/new/sample/AddSampleCard.vue";
 
 const samples = defineModel<SampleTableItem[]>();
 
-const expanded = ref<number[]>([]);
+const expanded = ref<string[]>([]);
+const addingSample = ref(false);
 
-const addSamplePeptides = () => addSample(SampleType.Peptides);
-const addSampleSample = () => addSample(SampleType.Sample);
+const isUnique = (item: SampleTableItem) => {
+    return samples.value.filter(s => s.id !== item?.id && s.name === item.name).length === 0
+};
 
-const addSample = (type: SampleType) => {
-    const id = samples.value.reduce((acc, s) => Math.max(acc, s.id), 0) + 1;
-    const sample = {
-        id: id,
-        name: "Sample" + id,
-        rawPeptides: "",
-        config: {
-            equate: true,
-            filter: true,
-            missed: true,
-            database: "UniProtKB"
-        },
-        type: type
-    };
+const expandItem = (item: SampleTableItem) => {
+    expanded.value = expanded.value.includes(item.id) ? [] : [ item.id ];
+};
+
+const openAddSample = () => {
+    addingSample.value = true;
+    expanded.value = [];
+};
+
+const addSample = (sample: SampleTableItem) => {
     samples.value = [ ...samples.value, sample ];
-    expanded.value = [ sample.id ];
+    addingSample.value = false;
 };
 
 const removeSample = (index: number) => {
@@ -176,11 +191,9 @@ const removeSample = (index: number) => {
 </script>
 
 <script lang="ts">
-import {SampleType} from "@/components/new/sample/CreateSampleType.vue";
-
 const headers = [
     {
-        title: "sample name",
+        title: "Sample name",
         align: "start",
         value: "name",
     },
@@ -205,7 +218,7 @@ const headers = [
         value: "database",
     },
     {
-        title: "peptides",
+        title: "Peptides",
         align: "start",
         value: "count",
     },
@@ -219,6 +232,7 @@ const headers = [
 ];
 
 export interface SampleTableItem {
+    id: string;
     name: string;
     rawPeptides: string;
     config: {
@@ -227,12 +241,21 @@ export interface SampleTableItem {
         missed: boolean;
         database: string;
     };
-    type?: SampleType;
 }
 </script>
 
 <style scoped>
 .name-text-field:deep(input) {
     padding-top: 0;
+}
+
+a {
+    color: #2196f3;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+    cursor: pointer;
 }
 </style>

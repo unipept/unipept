@@ -6,8 +6,11 @@
             :groups="groups"
             @select="selectAnalysis"
             @select:clear="clearSelectedAnalysis"
-            @sample:add="addSamples"
+
+            @sample:add="addSample"
+            @sample:update="updateSample"
             @sample:remove="removeSample"
+            @group:update="updateGroup"
             @group:remove="removeGroup"
         />
 
@@ -30,7 +33,7 @@
                 <analysis-summary
                     v-else-if="selectedAnalysis && selectedAnalysisFinished"
                     :analysis="selectedAnalysis"
-                    @update="updateAnalysis"
+                    @update="console.log"
                 />
             </v-main>
         </v-layout>
@@ -94,10 +97,10 @@ import AnalysisSummary from "@/components/new/analysis/AnalysisSummary.vue";
 import AnalysisSummaryProgress from "@/components/new/analysis/AnalysisSummaryProgress.vue";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {storeToRefs} from "pinia";
-import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import FunctionalResults from "@/components/new/results/functional/FunctionalResults.vue";
 import TaxonomicResults from "@/components/new/results/taxonomic/TaxonomicResults.vue";
 import Filesystem from "@/components/new/filesystem/Filesystem.vue";
+import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 
 const newGroupsAddedCounter = 0;
 
@@ -111,24 +114,28 @@ const selectedAnalysisFinished = computed(() => {
     return selectedAnalysis.value.status === AnalysisStatus.Finished;
 });
 
+const addSample = (groupId: string, sample: SampleTableItem) => {
+    const analysisId = groupStore.getGroup(groupId)?.addAnalysis(sample.name, sample.rawPeptides, sample.config);
+    groupStore.getGroup(groupId)?.getAnalysis(analysisId)?.analyse();
+}
+
+const removeSample = (groupId: string, analysisId: string) => {
+    groupStore.getGroup(groupId)?.removeAnalysis(analysisId);
+}
+
+const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
+    const analysis = groupStore.getGroup(groupId)?.getAnalysis(analysisId);
+    analysis?.updateName(updatedSample.name);
+    analysis?.updateConfig(updatedSample.config);
+    analysis?.analyse();
+}
+
 const createGroup = groupStore.addGroup;
+
 const removeGroup = groupStore.removeGroup;
 
-const addSamples = (groupName: string, samples: SampleTableItem[]) => {
-    for (const sample of samples) {
-        groupStore.getGroup(groupName)?.addAnalysis(sample.name, sample.rawPeptides, sample.config);
-        groupStore.getGroup(groupName)?.getAnalysis(sample.name)?.analyse();
-    }
-}
-
-const removeSample = (groupName: string, analysisName: string) => {
-    const group = groupStore.getGroup(groupName);
-    group?.removeAnalysis(analysisName);
-}
-
-const updateAnalysis = async (newConfig: AnalysisConfig) => {
-    selectedAnalysis.value.updateConfig(newConfig);
-    await selectedAnalysis.value.analyse();
+const updateGroup = (groupId: string, updatedName: string) => {
+    groupStore.getGroup(groupId)?.updateName(updatedName);
 }
 
 const updateFilter = async (value: number) => {
@@ -136,12 +143,8 @@ const updateFilter = async (value: number) => {
 }
 const clearSelectedAnalysis = () => selectedAnalysis.value = undefined;
 
-const selectAnalysis = (groupName: string | undefined, analysisName: string | undefined) => {
-    if (groupName === undefined || analysisName === undefined) {
-        selectedAnalysis.value = undefined;
-        return;
-    }
-    selectedAnalysis.value = groupStore.getGroup(groupName)?.getAnalysis(analysisName);
+const selectAnalysis = (groupId: string | undefined, analysisId: string | undefined) => {
+    selectedAnalysis.value = groupId && analysisId ? groupStore.getGroup(groupId)?.getAnalysis(analysisId) : undefined;
 }
 
 onMounted(() => {
@@ -168,8 +171,10 @@ onMounted(() => {
         }
     ];
 
-    createGroup("Clover");
-    addSamples("Clover", samples);
+    const groupId = createGroup("Clover");
+    for (const sample of samples) {
+        addSample(groupId, sample);
+    }
 });
 </script>
 

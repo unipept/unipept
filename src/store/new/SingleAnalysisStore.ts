@@ -98,8 +98,12 @@ const useSingleAnalysisStore = (
         filteringStatus.value = AnalysisStatus.Finished;
     }
 
+    const updateName = (newName: string) => {
+        name.value = newName;
+    }
+
     const updateConfig = (newConfig: AnalysisConfig) => {
-        config.value = newConfig;
+        config.value = { ...newConfig };
         status.value = AnalysisStatus.Pending;
     }
 
@@ -131,6 +135,7 @@ const useSingleAnalysisStore = (
         ncbiTree,
 
         analyse,
+        updateName,
         updateConfig,
         updateFilter
     };
