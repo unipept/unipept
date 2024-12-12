@@ -88,8 +88,8 @@ defineProps<{
 }>();
 
 const emits = defineEmits<{
-    confirm: (sample: SampleTableItem) => void;
-    cancel: () => void;
+    (e: 'confirm', sample: SampleTableItem): void;
+    (e: 'cancel'): void;
 }>();
 
 const sample = ref<SampleTableItem>({

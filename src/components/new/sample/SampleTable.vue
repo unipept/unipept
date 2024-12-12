@@ -153,7 +153,6 @@ import {ref} from "vue";
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
 import AddSampleSelector from "@/components/new/sample/AddSampleSelector.vue";
 import AddSampleCard from "@/components/new/sample/AddSampleCard.vue";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import SampleContentTable from "@/components/new/sample/SampleContentTable.vue";
 
 const samples = defineModel<SampleTableItem[]>();
