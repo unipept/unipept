@@ -18,7 +18,7 @@ const useSingleAnalysisStore = (
     _rawPeptides: string,
     _config: AnalysisConfig,
     // Intensity values that can be used by the Peptonizer to improve accuracy of the analysis
-    _peptideIntensities?: Map<string, number>
+    _peptideIntensities: Map<string, number>
 ) => defineStore(`singleSampleStore/${_id}`, () => {
     const ontologyStore = useOntologyStore();
 
@@ -33,6 +33,7 @@ const useSingleAnalysisStore = (
     const name = ref<string>(_name);
     const rawPeptides = ref<string>(_rawPeptides);
     const config = ref<AnalysisConfig>({ ..._config });
+    const intensities = ref<Map<string, number>>(_peptideIntensities);
 
     const taxonomicFilter = ref<number>(1);
     const functionalFilter = ref<number>(5);
@@ -58,18 +59,6 @@ const useSingleAnalysisStore = (
     const peptides = computed(() =>
         rawPeptides.value.split("\n").map(p => p.trim()).filter(p => p.length > 0)
     );
-
-    // ===============================================================
-    // ========================= LOCAL DATA ==========================
-    // ===============================================================
-
-    if (!_peptideIntensities) {
-        _peptideIntensities = new Map<string, number>();
-        for (const peptide of peptides.value) {
-            _peptideIntensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
-        }
-    }
-    const intensities = ref<Map<string, number>>(_peptideIntensities);
 
     // ===============================================================
     // ========================== METHODS ============================

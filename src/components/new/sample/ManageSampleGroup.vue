@@ -153,7 +153,8 @@ const cloneOriginalSamples = (originalSamples: SingleAnalysisStore[]): SampleTab
         id: sample.id,
         name: sample.name,
         rawPeptides: sample.rawPeptides,
-        config: { ...sample.config }
+        config: { ...sample.config },
+        intensities: sample.intensities
     }));
 };
 

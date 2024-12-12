@@ -81,6 +81,7 @@ import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
 import {ref} from "vue";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {v4 as uuidv4} from "uuid";
+import {DEFAULT_PEPTIDE_INTENSITIES} from "@/store/new/PeptonizerAnalysisStore";
 
 defineProps<{
     isUnique: (item: SampleTableItem) => boolean;
@@ -100,10 +101,14 @@ const sample = ref<SampleTableItem>({
         filter: true,
         missed: true,
         database: "UniProtKB"
-    }
+    },
+    intensities: new Map<string, number>()
 });
 
 const addSample = () => {
+    for (const seq of sample.value.rawPeptides.split(/\r?\n/)) {
+        sample.value.intensities.set(seq, DEFAULT_PEPTIDE_INTENSITIES);
+    }
     emits('confirm', sample.value);
 };
 </script>
