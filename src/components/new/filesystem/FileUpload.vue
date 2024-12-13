@@ -66,18 +66,11 @@ const processFile = () => {
     }
 };
 
-const onFileSelect = (file: File | null) => {
-    if (file) {
-        emitFile(file);
+const onFileSelect = () => {
+    if (selectedFile.value) {
+        emit("update:modelValue", selectedFile.value);
     }
 };
-
-
-// Emit function to update the parent component's v-model
-const emitFile = (file: File) => {
-    emit("update:modelValue", file);
-};
-
 </script>
 
 <style scoped>

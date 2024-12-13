@@ -8,6 +8,7 @@
         :loading="false"
         density="compact"
         hide-default-footer
+        class="sample-table"
     >
         <template #no-data>
             <v-alert
@@ -241,7 +242,7 @@ export interface SampleTableItem {
 }
 </script>
 
-<style scoped>
+<style>
 .name-text-field:deep(input) {
     padding-top: 0;
 }
@@ -254,5 +255,9 @@ a {
 a:hover {
     text-decoration: none;
     cursor: pointer;
+}
+
+.sample-table table {
+    table-layout: fixed;
 }
 </style>
