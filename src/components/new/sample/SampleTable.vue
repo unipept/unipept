@@ -130,17 +130,20 @@
                         v-if="!addingSample"
                         class="d-flex justify-center pa-1"
                     >
-                        <add-sample-selector
-                            @sample-peptides="openAddSample"
-                            @sample-files="console.log"
+                        <v-btn
+                            @click="openAddSample"
+                            text="Add new sample"
+                            color="primary"
+                            variant="text"
+                            prepend-icon="mdi-plus"
                         />
                     </div>
-                    <add-sample-card
+                    <add-sample-stepper
                         v-else
                         class="my-6"
-                        :is-unique="isUnique"
-                        @confirm="addSample"
                         @cancel="addingSample = false"
+                        @confirm="addSample"
+                        :is-unique="isUnique"
                     />
                 </td>
             </tr>
@@ -151,9 +154,8 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
-import AddSampleSelector from "@/components/new/sample/AddSampleSelector.vue";
-import AddSampleCard from "@/components/new/sample/AddSampleCard.vue";
 import SampleContentTable from "@/components/new/sample/SampleContentTable.vue";
+import AddSampleStepper from "@/components/new/sample/AddSampleStepper.vue";
 
 const samples = defineModel<SampleTableItem[]>();
 

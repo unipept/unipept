@@ -7,7 +7,6 @@
                 color="primary"
                 variant="text"
                 prepend-icon="mdi-plus"
-                append-icon="mdi-chevron-down"
             />
         </template>
         <v-list>
