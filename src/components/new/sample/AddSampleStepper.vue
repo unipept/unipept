@@ -6,7 +6,7 @@
         <v-card-title class="text-h5 font-weight-regular justify-space-between">
             <span>{{ currentStep }}. {{ currentStepTitle }}</span>
         </v-card-title>
-        <v-card-text>
+        <v-card-text style="padding-top: 0 !important;">
             <v-window v-model="currentStep">
                 <!-- Step 1: Select input data source type -->
                 <v-window-item :value="1">
@@ -116,7 +116,12 @@
 
                 <!-- Step 3b: Process uploaded file and ask user to select which columns need to be imported -->
                 <v-window-item :value="3" v-if="sampleCreationType === 2">
-                    <column-file-import :sample="sample" :column-file="intensitiesFile!" class="mb-4" />
+                    <column-file-import
+                        :sample="sample"
+                        :column-file="intensitiesFile!"
+                        v-model="validFileImport"
+                        class="mb-4"
+                    />
 
                     <v-divider></v-divider>
 
@@ -131,6 +136,8 @@
                         <v-btn
                             color="primary"
                             variant="flat"
+                            :disabled="!validFileImport"
+                            @click="addSampleFromCSV"
                         >
                             Add sample
                         </v-btn>
@@ -169,6 +176,8 @@ defineProps<{
 const currentStep: Ref<number> = ref<number>(1);
 const sampleCreationType: Ref<number> = ref<number>(1);
 
+const validFileImport: Ref<boolean> = ref<boolean>(false);
+
 const sample = ref<SampleTableItem>({
     id: uuidv4(),
     name: "",
@@ -199,6 +208,10 @@ const addSampleFromList = () => {
     }
     emits('confirm', sample.value);
 };
+
+const addSampleFromCSV = () => {
+    emits('confirm', sample.value);
+}
 
 const intensitiesFile = ref<File | null>(null);
 

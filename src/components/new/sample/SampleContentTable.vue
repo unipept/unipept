@@ -36,4 +36,8 @@ table {
 th:not(:last-child), td:not(:last-child) {
     border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
+
+.first-header {
+    width: 100px;
+}
 </style>
