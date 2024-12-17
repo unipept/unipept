@@ -56,7 +56,7 @@ const updateSample = (groupId: string, analysisId: string, updatedSample: Sample
 };
 
 const removeSample = (groupId: string, analysisId: string) => {
-    if (analysisId === selected.value?.[0].split(':')[1]) {
+    if (analysisId === selected.value?.[0]?.split(':')[1]) {
         selected.value = [];
         emits('select:clear');
     }
@@ -68,7 +68,7 @@ const updateGroup = (groupId: string, updatedName: string) => {
 };
 
 const removeGroup = (groupId: string) => {
-    if (groupId === selected.value?.[0].split(':')[0]) {
+    if (groupId === selected.value?.[0]?.split(':')[0]) {
         selected.value = [];
         emits('select:clear');
     }

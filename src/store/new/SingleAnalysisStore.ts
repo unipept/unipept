@@ -1,4 +1,3 @@
-import {AnalysisConfig, AnalysisStatus} from "@/components/pages/TestPage.vue";
 import {computed, ref} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/new/communication/unipept/usePept2filtered";
@@ -10,6 +9,19 @@ import useInterproProcessor from "@/composables/new/processing/functional/useInt
 import useOntologyStore from "@/store/new/OntologyStore";
 import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
+
+export enum AnalysisStatus {
+    Pending,
+    Running,
+    Finished
+}
+
+export interface AnalysisConfig {
+    equate: boolean;
+    filter: boolean;
+    missed: boolean;
+    database: string;
+}
 
 const useSingleAnalysisStore = (
     _id: string,

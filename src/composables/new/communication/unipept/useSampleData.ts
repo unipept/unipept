@@ -25,6 +25,8 @@ export default function useSampleData(
             headers: { "Content-Type": "application/json" }
         }).then(r => r.json());
 
+        console.log(response);
+
         samples.value = response.sample_data;
     }
 

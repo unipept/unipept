@@ -10,6 +10,15 @@
             <v-alert class="ma-3" density="compact" type="info" variant="tonal" text="No peptides found" />
         </template>
 
+        <template #item.peptide="{ item }">
+            <a
+                class="cursor-pointer"
+                @click="openPeptideAnalysis(item.peptide)"
+            >
+                {{ item.peptide }}
+            </a>
+        </template>
+
         <template #item.warning="{ item }">
             <v-tooltip
                 v-if="!item.found"
@@ -72,8 +81,23 @@ export interface AnalysisSummaryTableItem {
     rank: string;
     found: boolean;
 }
+
+const openPeptideAnalysis = (peptide: string) => {
+    // TODO: change this. Hardcoded link to website for testing purposes
+    const a = document.createElement('a');
+    a.href = `https://unipept.ugent.be/tpa/${peptide}?equate=${true}`;
+    a.target = '_blank';
+    a.click();
+}
 </script>
 
 <style scoped>
+a {
+    color: #2196f3;
+    text-decoration: none;
+}
 
+a:hover {
+    text-decoration: none;
+}
 </style>

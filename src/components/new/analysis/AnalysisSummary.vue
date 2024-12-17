@@ -1,18 +1,18 @@
 <template>
     <v-card flat>
         <v-card-title>
-            <span class="text-h4">{{ analysis.name }}</span>
+            <span class="text-h4">{{ analysis.name }} ({{ groupName }})</span>
         </v-card-title>
         <v-card-text>
             <v-row class="mt-n6">
-                <v-col cols="6">
+                <v-col cols="8">
                     <h2 class="pb-2">
                         Analysis summary
                     </h2>
 
-                    <h4 class="font-weight-bold">
+                    <h3 class="font-weight-bold">
                         {{ analysis.peptideTrust.matchedPeptides }} peptides found, {{ analysis.peptideTrust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides in assay
-                    </h4>
+                    </h3>
                     <h1 class="text-subtitle-1 mt-n2">
                         <a
                             @click="showMissingPeptides = true"
@@ -21,16 +21,14 @@
                         </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found
                     </h1>
                 </v-col>
-                <v-col cols="6">
-                    <h2 class="pb-2">
-                        Analysis settings
-                    </h2>
+                <v-col cols="4">
                     <v-checkbox
                         v-model="equate"
                         color="primary"
                         label="Equate I and L"
                         density="compact"
                         hide-details
+                        readonly
                     />
                     <v-checkbox
                         v-model="filter"
@@ -38,6 +36,7 @@
                         label="Filter duplicate peptides"
                         density="compact"
                         hide-details
+                        readonly
                     />
                     <v-checkbox
                         v-model="missed"
@@ -46,29 +45,25 @@
                         density="compact"
                         hide-details
                         disabled
+
                     />
                     <database-select
                         v-model="database"
                         class="mt-1"
                         label="Selected database"
                     />
-                    <div class="d-flex flex-column">
-                        <v-btn
-                            color="primary"
-                            variant="tonal"
-                            text="Update"
-                            :disabled="!dirtyConfig"
-                            @click="update"
-                        />
-                    </div>
                 </v-col>
             </v-row>
             <v-row>
                 <v-col cols="12">
-                    <analysis-summary-table :items="peptides" />
-                    <div class="d-flex flex-column">
+                    <div class="d-flex">
+                        <h2 class="pb-2">
+                            Peptide matches
+                        </h2>
+                        <v-spacer />
                         <analysis-summary-export @download="download" />
                     </div>
+                    <analysis-summary-table :items="peptides" />
                 </v-col>
             </v-row>
         </v-card-text>
@@ -100,10 +95,7 @@ const { download: downloadCsv } = useCsvDownload();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
-}>();
-
-const emits = defineEmits<{
-    update: (newConfig: AnalysisConfig) => void
+    groupName: string
 }>();
 
 const equate = ref(analysis.config.equate);
@@ -112,12 +104,6 @@ const missed = ref(analysis.config.missed);
 const database = ref(analysis.config.database);
 const showMissingPeptides = ref(false);
 
-const dirtyConfig = computed(() =>
-    equate.value !== analysis.config.equate ||
-    filter.value !== analysis.config.filter ||
-    missed.value !== analysis.config.missed ||
-    database.value !== analysis.config.database
-);
 const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => {
     const lca = analysis.peptideToLca.get(peptide);
     return {
@@ -129,7 +115,6 @@ const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([pept
     };
 }));
 const missedPeptides = computed(() => {
-    console.log(analysis.peptideTrust.missedPeptides);
     return analysis.peptideTrust.missedPeptides;
 });
 
@@ -138,13 +123,6 @@ const download = (separator: string) => {
     const peptideExport = generateExport(analysis, ',');
     downloadCsv(peptideExport, `peptides.${extension}`, separator);
 };
-
-const update = () => emits("update", {
-    equate: equate.value,
-    filter: filter.value,
-    missed: missed.value,
-    database: database.value
-});
 </script>
 
 <style scoped>

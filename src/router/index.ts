@@ -178,6 +178,14 @@ const routes = [
         }
     },
     {
+        path: "/test-home",
+        component: () => import("@/components/pages/TestHomePage.vue"),
+        meta: {
+            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
+            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+        }
+    },
+    {
         path: "/test",
         component: () => import("@/components/pages/TestPage.vue"),
         meta: {

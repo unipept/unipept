@@ -17,6 +17,11 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
 
     const groups = computed(() => Array.from(_groups.value.values()));
 
+    const empty = computed(() => groups.value
+        .values()
+        .every(group => group.empty)
+    )
+
     // ===============================================================
     // ========================== METHODS ============================
     // ===============================================================
@@ -45,6 +50,7 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
 
     return {
         groups,
+        empty,
 
         getGroup,
         addGroup,
