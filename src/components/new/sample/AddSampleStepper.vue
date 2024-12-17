@@ -4,7 +4,8 @@
         elevation="3"
     >
         <v-card-title class="text-h5 font-weight-regular justify-space-between">
-            <span>{{ currentStep }}. {{ currentStepTitle }}</span>
+            <h2>Create sample</h2>
+            <h3>Step {{ currentStep }}. {{ currentStepTitle }}</h3>
         </v-card-title>
         <v-card-text style="padding-top: 0 !important;">
             <v-window v-model="currentStep">
