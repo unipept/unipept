@@ -16,6 +16,11 @@ import * as labsComponents from 'vuetify/labs/components'
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
     theme: {
+        variations: {
+            colors: ['primary'],
+            lighten: 5,
+            darken: 5
+        },
         themes: {
             light: {
                 colors: {

@@ -40,11 +40,9 @@
 import QuickAnalysisCard from "@/components/new/analysis/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/new/analysis/DemoAnalysisCard.vue";
 import useSampleData from "@/composables/new/communication/unipept/useSampleData";
-import {onMounted} from "vue";
 import {AnalysisConfig} from "@/store/new/SingleAnalysisStore";
 import {useRouter} from "vue-router";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
-
 const router = useRouter();
 const { samples, process } = useSampleData();
 const groupStore = useGroupAnalysisStore();
@@ -53,7 +51,7 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     groupStore.clear();
     const groupId = groupStore.addGroup("Quick analysis");
     groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
-    await router.push({ name: "testResults" });
+    await router.push({name: "testResults"});
     await startAnalysis();
 }
 
@@ -84,10 +82,6 @@ const startAnalysis = async () => {
         }
     }
 }
-
-onMounted(() => {
-    process();
-});
 </script>
 
 <style scoped>

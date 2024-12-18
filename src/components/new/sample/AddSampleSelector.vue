@@ -7,7 +7,6 @@
                 color="primary"
                 variant="text"
                 prepend-icon="mdi-plus"
-                append-icon="mdi-chevron-down"
             />
         </template>
         <v-list>
@@ -30,8 +29,8 @@
 
 <script setup lang="ts">
 const emits = defineEmits<{
-    samplePeptides: () => void;
-    sampleFiles: () => void;
+    (e: 'samplePeptides'): void;
+    (e: 'sampleFiles'): void;
 }>();
 </script>
 

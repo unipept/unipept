@@ -21,9 +21,9 @@ export default function useInterproOntology(
     const update = async (
         codes: string[]
     ) => {
-        codes = codes.filter(c => !ontology.value.has(c));
+        codes = Array.from(new Set(codes.filter(c => !ontology.value.has(c))));
 
-        for(let i = 0; i < codes.length; i += batchSize) {
+        for (let i = 0; i < codes.length; i += batchSize) {
             const response = await fetch(`${baseUrl}/private_api/interpros`, {
                 method: "POST",
                 body: JSON.stringify({

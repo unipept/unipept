@@ -9,6 +9,7 @@ import useInterproProcessor from "@/composables/new/processing/functional/useInt
 import useOntologyStore from "@/store/new/OntologyStore";
 import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
+import {DEFAULT_PEPTIDE_INTENSITIES} from "@/store/new/PeptonizerAnalysisStore";
 
 export enum AnalysisStatus {
     Pending,
@@ -27,7 +28,9 @@ const useSingleAnalysisStore = (
     _id: string,
     _name: string,
     _rawPeptides: string,
-    _config: AnalysisConfig
+    _config: AnalysisConfig,
+    // Intensity values that can be used by the Peptonizer to improve accuracy of the analysis
+    _peptideIntensities: Map<string, number>
 ) => defineStore(`singleSampleStore/${_id}`, () => {
     const ontologyStore = useOntologyStore();
 
@@ -42,6 +45,7 @@ const useSingleAnalysisStore = (
     const name = ref<string>(_name);
     const rawPeptides = ref<string>(_rawPeptides);
     const config = ref<AnalysisConfig>({ ..._config });
+    const intensities = ref<Map<string, number>>(_peptideIntensities);
 
     const taxonomicFilter = ref<number>(1);
     const functionalFilter = ref<number>(5);
@@ -75,25 +79,25 @@ const useSingleAnalysisStore = (
     const analyse = async () => {
         status.value = AnalysisStatus.Running;
 
-        await processPeptides(peptides.value, config.value.equate, config.value.filter);
+        await processPeptides(peptides.value!, config.value.equate, config.value.filter);
 
-        await processPept2Filtered([...peptidesTable.value.keys()], config.value.equate);
-        processPeptideTrust(peptidesTable.value, peptideToData.value);
+        await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate);
+        processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
 
-        await processEc(peptidesTable.value, peptideToData.value, functionalFilter.value);
-        await processGo(peptidesTable.value, peptideToData.value, functionalFilter.value);
-        await processInterpro(peptidesTable.value, peptideToData.value, functionalFilter.value);
-        await processLca(peptidesTable.value, peptideToData.value);
+        await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
+        await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
+        await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
+        await processLca(peptidesTable.value!, peptideToData.value!);
 
-        await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value.keys()));
-        await ontologyStore.updateGoOntology(Array.from(goToPeptides.value.keys()));
-        await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value.keys()));
-        await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value.keys()));
+        await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
+        await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
+        await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
+        await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.keys()));
 
         // TODO: remove
         //await new Promise(resolve => setTimeout(resolve, 10000));
 
-        processNcbiTree(lcaTable.value, lcaToPeptides.value);
+        processNcbiTree(lcaTable.value!, lcaToPeptides.value!);
 
         status.value = AnalysisStatus.Finished
     }
@@ -103,9 +107,9 @@ const useSingleAnalysisStore = (
 
         functionalFilter.value = newFilter;
 
-        await processEc(peptidesTable.value, peptideToData.value, newFilter);
-        await processGo(peptidesTable.value, peptideToData.value, newFilter);
-        await processInterpro(peptidesTable.value, peptideToData.value, newFilter);
+        await processEc(peptidesTable.value!, peptideToData.value!, newFilter);
+        await processGo(peptidesTable.value!, peptideToData.value!, newFilter);
+        await processInterpro(peptidesTable.value!, peptideToData.value!, newFilter);
 
         filteringStatus.value = AnalysisStatus.Finished;
     }
@@ -125,6 +129,7 @@ const useSingleAnalysisStore = (
         rawPeptides,
         peptides,
         config,
+        intensities,
         functionalFilter,
         status,
         filteringStatus,

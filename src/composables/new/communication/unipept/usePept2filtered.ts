@@ -5,7 +5,7 @@ import {ref} from "vue";
 
 export default function usePept2filtered(
     baseUrl = "https://api.unipept.ugent.be",
-    batchSize = 100,
+    batchSize = 400,
     parallelRequests = 5,
 ) {
     const peptideData = ref<ShareableMap<string, PeptideData>>();
@@ -23,7 +23,7 @@ export default function usePept2filtered(
             requests.push(async () => {
                 const response = await fetch(`${baseUrl}/mpa/pept2data`, {
                     method: "POST",
-                    body: JSON.stringify({ peptides, equate_il: equate }),
+                    body: JSON.stringify({ peptides: peptides.slice(i, i + batchSize), equate_il: equate }),
                     headers: { "Content-Type": "application/json" }
                 }).then(r => r.json());
 

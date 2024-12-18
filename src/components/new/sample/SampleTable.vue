@@ -8,6 +8,7 @@
         :loading="false"
         density="compact"
         hide-default-footer
+        class="sample-table"
     >
         <template #no-data>
             <v-alert
@@ -115,39 +116,9 @@
         <template #expanded-row="{ columns, item }">
             <tr>
                 <td :colspan="columns.length">
-                    <v-textarea
-                        :model-value="item.rawPeptides"
-                        class="my-3 cursor-default"
-                        label="Peptides"
-                        variant="outlined"
-                        density="compact"
-                        counter
-                        hide-details
-                        no-resize
-                        readonly
-                    />
-                </td>
-            </tr>
-        </template>
-
-        <template #body.append>
-            <tr>
-                <td colspan="7">
-                    <div
-                        v-if="!addingSample"
-                        class="d-flex justify-center pa-1"
-                    >
-                        <add-sample-selector
-                            @sample-peptides="openAddSample"
-                            @sample-files="console.log"
-                        />
-                    </div>
-                    <add-sample-card
-                        v-else
-                        class="my-6"
-                        :is-unique="isUnique"
-                        @confirm="addSample"
-                        @cancel="addingSample = false"
+                    <sample-content-table
+                        class="my-2"
+                        :sample="item"
                     />
                 </td>
             </tr>
@@ -158,8 +129,8 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
-import AddSampleSelector from "@/components/new/sample/AddSampleSelector.vue";
-import AddSampleCard from "@/components/new/sample/AddSampleCard.vue";
+import SampleContentTable from "@/components/new/sample/SampleContentTable.vue";
+import AddSampleStepper from "@/components/new/sample/AddSampleStepper.vue";
 
 const samples = defineModel<SampleTableItem[]>();
 
@@ -167,7 +138,7 @@ const expanded = ref<string[]>([]);
 const addingSample = ref(false);
 
 const isUnique = (item: SampleTableItem) => {
-    return samples.value.filter(s => s.id !== item?.id && s.name === item.name).length === 0
+    return samples.value!.filter(s => s.id !== item?.id && s.name === item.name).length === 0
 };
 
 const expandItem = (item: SampleTableItem) => {
@@ -180,13 +151,13 @@ const openAddSample = () => {
 };
 
 const addSample = (sample: SampleTableItem) => {
-    samples.value = [ ...samples.value, sample ];
+    samples.value = [ ...samples.value!, sample ];
     addingSample.value = false;
 };
 
 const removeSample = (index: number) => {
-    samples.value.splice(index, 1);
-    samples.value = [ ...samples.value ];
+    samples.value!.splice(index, 1);
+    samples.value = [ ...samples.value! ];
 }
 </script>
 
@@ -241,10 +212,11 @@ export interface SampleTableItem {
         missed: boolean;
         database: string;
     };
+    intensities: Map<string, number>;
 }
 </script>
 
-<style scoped>
+<style>
 .name-text-field:deep(input) {
     padding-top: 0;
 }
@@ -257,5 +229,9 @@ a {
 a:hover {
     text-decoration: none;
     cursor: pointer;
+}
+
+.sample-table table {
+    table-layout: fixed;
 }
 </style>

@@ -14,7 +14,7 @@ export default function usePeptideProcessor() {
 
     const { post } = useAsyncWebWorker(() => new PeptideProcessorWebWorker());
 
-    const process = async (peptides: [], equate: boolean, filter: boolean) => {
+    const process = async (peptides: string[], equate: boolean, filter: boolean) => {
         const { peptideCounts, totalPeptideCount } = await post({
             peptides, equate, filter
         });
