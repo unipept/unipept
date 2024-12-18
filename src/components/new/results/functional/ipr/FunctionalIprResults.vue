@@ -48,7 +48,7 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import usePercentage from "@/composables/new/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import FilterProgress from "@/components/new/results/functional/FilterProgress.vue";
-import {AnalysisStatus} from "@/components/pages/TestPage.vue";
+import {AnalysisStatus} from "@/store/new/SingleAnalysisStore";
 
 const { getIprDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();

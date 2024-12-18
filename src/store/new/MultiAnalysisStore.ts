@@ -42,6 +42,10 @@ const useMultiAnalysisStore = (
         _analyses.value.delete(id);
     }
 
+    const clear = () => {
+        _analyses.value.clear();
+    }
+
     const updateName = (newName: string) => {
         name.value = newName;
     }
@@ -55,6 +59,7 @@ const useMultiAnalysisStore = (
         getAnalysis,
         addAnalysis,
         removeAnalysis,
+        clear,
         updateName
     };
 })();

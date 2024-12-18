@@ -87,7 +87,7 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import useOntologyStore from "@/store/new/OntologyStore";
 import CountTable from "@/logic/new/CountTable";
 import FilterProgress from "@/components/new/results/functional/FilterProgress.vue";
-import {AnalysisStatus} from "@/components/pages/TestPage.vue";
+import {AnalysisStatus} from "@/store/new/SingleAnalysisStore";
 
 const { getGoDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();

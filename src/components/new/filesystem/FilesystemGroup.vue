@@ -81,8 +81,8 @@
 import ManageSampleGroup from "@/components/new/sample/ManageSampleGroup.vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import {ref} from "vue";
-import {AnalysisStatus} from "@/components/pages/TestPage.vue";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
+import {AnalysisStatus} from "@/store/new/SingleAnalysisStore";
 
 defineProps<{
     group: MultiAnalysisStore;

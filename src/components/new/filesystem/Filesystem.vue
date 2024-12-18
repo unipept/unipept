@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import FilesystemGroup from "@/components/new/filesystem/FilesystemGroup.vue";
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 
@@ -82,6 +82,10 @@ watch(selected, (value) => {
 });
 
 watch(() => groups, () => {
+    expanded.value = groups.map(group => group.id);
+});
+
+onMounted(() => {
     expanded.value = groups.map(group => group.id);
 });
 </script>

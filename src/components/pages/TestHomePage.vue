@@ -1,49 +1,84 @@
 <template>
-    <v-container>
-        <empty-project />
-<!--        <v-row>-->
-<!--            <v-col cols="6">-->
-<!--                <quick-analysis-card />-->
-<!--                <v-card-->
-<!--                    class="mt-5"-->
-<!--                    elevation="2"-->
-<!--                >-->
-<!--                    <v-card-title>-->
-<!--                        <h2>Advanced analysis</h2>-->
-<!--                    </v-card-title>-->
-<!--                    <v-card-text>-->
-<!--                        <p>-->
-<!--                            Create a new project and analyze multiple samples or groups.-->
-<!--                        </p>-->
-<!--                        <v-btn-->
-<!--                            class="mt-3"-->
-<!--                            color="grey-lighten-3"-->
-<!--                            text="Create new project"-->
-<!--                        />-->
-<!--                    </v-card-text>-->
-<!--                </v-card>-->
-<!--            </v-col>-->
-
-<!--            <v-col cols="6">-->
-<!--                <demo-analysis-card :samples="samples" />-->
-<!--            </v-col>-->
-<!--        </v-row>-->
-    </v-container>
+    <project
+        :project="groupStore"
+        @sample:add="addSample"
+        @sample:update="updateSample"
+        @sample:remove="removeSample"
+        @group:add="createGroup"
+        @group:update="updateGroup"
+        @group:remove="removeGroup"
+    />
 </template>
 
 <script setup lang="ts">
-import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
-import QuickAnalysisCard from "@/components/new/analysis/QuickAnalysisCard.vue";
-import DemoAnalysisCard from "@/components/new/analysis/DemoAnalysisCard.vue";
-import useSampleData from "@/composables/new/communication/unipept/useSampleData";
 import {onMounted} from "vue";
-import EmptyProject from "@/components/new/project/EmptyProject.vue";
+import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
+import Project from "@/components/new/project/Project.vue";
 
-const { samples, process } = useSampleData();
+const groupStore = useGroupAnalysisStore();
 
-onMounted(() => {
-    process();
-});
+const addSample = (groupId: string, sample: SampleTableItem) => {
+    const analysisId = groupStore.getGroup(groupId)?.addAnalysis(sample.name, sample.rawPeptides, sample.config);
+    groupStore.getGroup(groupId)?.getAnalysis(analysisId)?.analyse();
+}
+
+const removeSample = (groupId: string, analysisId: string) => {
+    groupStore.getGroup(groupId)?.removeAnalysis(analysisId);
+}
+
+const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
+    const analysis = groupStore.getGroup(groupId)?.getAnalysis(analysisId);
+    analysis?.updateName(updatedSample.name);
+    analysis?.updateConfig(updatedSample.config);
+    analysis?.analyse();
+}
+
+const createGroup = groupStore.addGroup;
+
+const removeGroup = groupStore.removeGroup;
+
+const updateGroup = (groupId: string, updatedName: string) => {
+    groupStore.getGroup(groupId)?.updateName(updatedName);
+}
+</script>
+
+<script lang="ts">
+export interface AnalysisGroup {
+    name: string;
+    analysis: Analysis[];
+    open: boolean;
+}
+
+export interface Analysis {
+    id: number;
+    sample: Sample;
+    config: AnalysisConfig;
+    result: AnalysisResult;
+}
+
+export interface Sample {
+    name: string;
+    rawPeptides: string;
+}
+
+export interface AnalysisConfig {
+    equate: boolean;
+    filter: boolean;
+    missed: boolean;
+    database: string;
+}
+
+export interface AnalysisResult {
+    status: AnalysisStatus;
+    config: AnalysisConfig;
+}
+
+export enum AnalysisStatus {
+    Pending,
+    Running,
+    Finished
+}
 </script>
 
 <style scoped>

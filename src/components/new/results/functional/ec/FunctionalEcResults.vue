@@ -47,7 +47,7 @@ import {computed, onMounted, ref, watch} from "vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import usePercentage from "@/composables/new/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
-import {AnalysisStatus} from "@/components/pages/TestPage.vue";
+import {AnalysisStatus} from "@/store/new/SingleAnalysisStore";
 import FilterProgress from "@/components/new/results/functional/FilterProgress.vue";
 import useEcTreeProcessor from "@/composables/new/processing/functional/useEcTreeProcessor";
 import Treeview from "@/components/new/results/taxonomic/Treeview.vue";

@@ -193,6 +193,15 @@ const routes = [
             publicationLink: "doi:10.1021/acs.jproteome.8b00716"
         }
     },
+    {
+        path: "/test/results",
+        name: "testResults",
+        component: () => import("@/components/pages/TestHomePage.vue"),
+        meta: {
+            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
+            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+        }
+    },
 ]
 
 const router = createRouter({

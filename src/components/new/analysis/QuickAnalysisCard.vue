@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
 import {ref} from "vue";
-import {AnalysisConfig} from "@/components/pages/TestPage.vue";
+import {AnalysisConfig} from "@/store/new/SingleAnalysisStore";
 
 const emits = defineEmits<{
     analyze: (rawPeptides: string, config: AnalysisConfig) => void

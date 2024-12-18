@@ -1,5 +1,6 @@
 import {NcbiTreeNode} from "unipept-web-components";
 import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
+import HighlightTreeProcessorWebWorker from "../workers/highlightedTreeProcessor.worker.ts?worker&inline";
 
 export interface HighlightedTreeProcessorData {
     tree: any;
@@ -8,7 +9,7 @@ export interface HighlightedTreeProcessorData {
 }
 
 export default function useHighlightedTreeProcessor() {
-    const { post } = useAsyncWebWorker('./src/composables/new/processing/workers/highlightedTreeProcessor.worker.ts');
+    const { post } = useAsyncWebWorker(new HighlightTreeProcessorWebWorker());
 
     const process = async (tree: NcbiTreeNode, peptides: string[], taxaToPeptides: Map<number, string[]>) => {
         return post({

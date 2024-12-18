@@ -11,17 +11,17 @@
             </p>
 
             <v-card
-                v-for="(sample, i) in samples"
-                :key="i"
+                v-for="item in samples"
+                :key="item.id"
                 class="mt-3"
             >
                 <v-card-text>
                     <div
                         class="d-flex flex-column"
                     >
-                        <span><b>Environment:</b> {{ sample.environment }}</span>
+                        <span><b>Environment:</b> {{ item.environment }}</span>
                         <span>
-                            <b>Reference:</b> {{ sample.reference }}
+                            <b>Reference:</b> {{ item.reference }}
                             <v-icon
                                 color="primary"
                                 size="small"
@@ -35,7 +35,7 @@
                         class="mt-1"
                         text="Analyze"
                         variant="tonal"
-                        @click="() => emits('select', sample)"
+                        @click="() => emits('select', item)"
                     />
                 </v-card-text>
             </v-card>

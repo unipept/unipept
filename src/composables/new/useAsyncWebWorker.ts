@@ -1,23 +1,18 @@
-import {useWebWorker} from "@vueuse/core";
-
-export default function useAsyncWebWorker(workerPath: string) {
+export default function useAsyncWebWorker(worker: Worker) {
+    console.log(worker);
     const post = async (data: object) => {
-        const { post, worker, terminate } = useWebWorker(workerPath, {
-            type: 'module'
-        });
-
         return await new Promise((resolve, reject) => {
-            worker.value.onmessage = (event) => {
-                terminate();
+            worker.onmessage = (event) => {
+                worker.terminate();
                 resolve(event.data);
             };
 
-            worker.value.onerror = (error) => {
-                terminate();
+            worker.onerror = (error) => {
+                worker.terminate();
                 reject(error.message);
             };
 
-            post(data);
+            worker.postMessage(data);
         });
     };
 

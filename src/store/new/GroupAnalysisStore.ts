@@ -48,6 +48,11 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         _groups.value.get(groupId)?.removeAnalysis(analysisName);
     };
 
+    const clear = () => {
+        _groups.value.forEach(group => group.clear());
+        _groups.value.clear();
+    }
+
     return {
         groups,
         empty,
@@ -56,7 +61,8 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         addGroup,
         removeGroup,
         addAnalysis,
-        removeAnalysis
+        removeAnalysis,
+        clear
     };
 });
 

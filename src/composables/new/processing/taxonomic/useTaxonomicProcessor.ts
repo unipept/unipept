@@ -1,10 +1,9 @@
 import CountTable from "@/logic/new/CountTable";
 import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
 import {ref} from "vue";
-import FunctionalTrust from "@/types/FunctionalTrust";
-import useFunctionalProcessor from "@/composables/new/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData} from "unipept-web-components";
+import TaxonomicProcessorWebWorker from "../workers/taxonomicProcessor.worker.ts?worker&inline";
 
 export interface TaxonomicProcessorData {
     peptideCounts: Map<string, number>;
@@ -17,7 +16,7 @@ export default function useTaxonomicProcessor() {
     const lcaToPeptides = ref<Map<number, string[]>>();
     const peptideToLca = ref<Map<string, number>>();
 
-    const { post } = useAsyncWebWorker('./src/composables/new/processing/workers/taxonomicProcessor.worker.ts');
+    const { post } = useAsyncWebWorker(new TaxonomicProcessorWebWorker());
 
     const process = async (
         peptideCounts: CountTable<string>,

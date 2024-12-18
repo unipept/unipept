@@ -1,7 +1,7 @@
-import {useWebWorker} from "@vueuse/core";
 import CountTable from "@/logic/new/CountTable";
 import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
 import {ref} from "vue";
+import PeptideProcessorWebWorker from "../workers/peptideProcessor.worker.ts?worker&inline";
 
 export interface PeptideProcessorData {
     peptides: string[];
@@ -12,7 +12,7 @@ export interface PeptideProcessorData {
 export default function usePeptideProcessor() {
     const countTable = ref<CountTable<string>>();
 
-    const { post } = useAsyncWebWorker('./src/composables/new/processing/workers/PeptideProcessor.worker.ts');
+    const { post } = useAsyncWebWorker(new PeptideProcessorWebWorker());
 
     const process = async (peptides: [], equate: boolean, filter: boolean) => {
         const { peptideCounts, totalPeptideCount } = await post({
