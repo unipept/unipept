@@ -1,9 +1,6 @@
 <template>
     <div>
         <highcharts :options="chartOptions"/>
-        <div class="d-flex justify-center">
-            <v-btn color="primary" prepend-icon="mdi-download">Export as CSV</v-btn>
-        </div>
     </div>
 </template>
 

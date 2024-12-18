@@ -129,7 +129,6 @@ const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([pept
     };
 }));
 const missedPeptides = computed(() => {
-    console.log(analysis.peptideTrust.missedPeptides);
     return analysis.peptideTrust.missedPeptides;
 });
 

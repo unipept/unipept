@@ -3,14 +3,14 @@
         <v-row>
             <v-col cols="12">
                 <div class="mb-4">
-                    <v-alert
-                        title="Taxa selected for filtering"
-                        text="Only UniProtKB-records that are associated with a selected organism or one of its children will be retained in the resulting database."
-                        type="info"
-                        variant="tonal"
-                    />
+<!--                    <v-alert-->
+<!--                        title="Taxa selected for filtering"-->
+<!--                        text="Only UniProtKB-records that are associated with a selected organism or one of its children will be retained in the resulting database."-->
+<!--                        type="info"-->
+<!--                        variant="tonal"-->
+<!--                    />-->
 
-                    <div class="my-5">
+                    <div>
                         <v-container>
                             <v-row>
                                 <div style="width: 100%;">

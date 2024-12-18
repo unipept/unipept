@@ -1,52 +1,8 @@
 <template>
-    <h2>Peptonizer is running, please wait...</h2>
-
-    <div>
-        <h3 class="d-flex align-center">
-            <v-progress-circular
-                v-if="progress.get(0)!.length === 0"
-                size="15"
-                indeterminate="disable-shrink"
-                class="mr-2"
-                color="primary"
-                width="3"
-            />
-            <v-icon
-                v-else
-                size="15"
-                class="mr-2"
-                color="green"
-            >
-                mdi-check-bold
-            </v-icon>
-            Generating factor graph
-        </h3>
-    </div>
-    <div v-for="(task, idx) of progressTasks">
-        <h3 class="d-flex align-center">
-            <v-icon
-                v-if="task.finished"
-                size="15"
-                class="mr-2"
-                color="green"
-            >
-                mdi-check-bold
-            </v-icon>
-            <v-progress-circular
-                v-else
-                size="15"
-                indeterminate="disable-shrink"
-                class="mr-2"
-                color="primary"
-                width="3"
-            />
-            Tuning parameters α = {{ task.graphParameters.alpha }}, β = {{ task.graphParameters.beta }}, γ = {{ task.graphParameters.prior }} ({{ idx + 1 }} / {{ totalTasks }})
-        </h3>
-        <div v-if="!task.finished">
-            <div>Task scheduled on worker {{ task.workerId }}</div>
-            <div>Processing graph {{ task.currentGraph }} out of {{ task.totalGraphs }}, iteration {{ task.currentIteration }} / {{ task.totalIterations }}</div>
-            <div>Best residual so far: {{ task.currentResidual }} (tolerance: {{ task.minimumResidual }})</div>
-        </div>
+    <div class="d-flex flex-column align-center">
+        <h2 class="mb-4">Peptonizer is running, please wait...</h2>
+        <v-progress-linear class="mx-8" :model-value="progressValue" color="primary" />
+        <div class="mt-1">{{ progressValue.toFixed(2) }}%</div>
     </div>
 </template>
 
@@ -72,6 +28,22 @@ const progressTasks = computed(() => {
     }
 
     return [...mergedTasks, ...lastTasks];
+});
+
+const progressValue = computed(() => {
+    if (props.totalTasks === 0) {
+        return -1;
+    }
+
+    let finished = 0;
+    for (const [_workerId, workerTasks] of props.progress.entries()) {
+        for (const task of workerTasks) {
+            if (task.finished) {
+                finished++;
+            }
+        }
+    }
+    return (finished / props.totalTasks) * 100;
 });
 
 </script>
