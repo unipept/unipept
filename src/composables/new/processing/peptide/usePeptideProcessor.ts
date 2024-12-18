@@ -12,7 +12,7 @@ export interface PeptideProcessorData {
 export default function usePeptideProcessor() {
     const countTable = ref<CountTable<string>>();
 
-    const { post } = useAsyncWebWorker(new PeptideProcessorWebWorker());
+    const { post } = useAsyncWebWorker(() => new PeptideProcessorWebWorker());
 
     const process = async (peptides: [], equate: boolean, filter: boolean) => {
         const { peptideCounts, totalPeptideCount } = await post({

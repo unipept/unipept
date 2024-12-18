@@ -11,7 +11,7 @@ export interface FunctionalProcessorData {
 }
 
 export default function useFunctionalProcessor() {
-    const { post } = useAsyncWebWorker(new FunctionalProcessorWebWorker());
+    const { post } = useAsyncWebWorker(() => new FunctionalProcessorWebWorker());
 
     const process = post
 

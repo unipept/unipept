@@ -54,6 +54,7 @@
             <v-btn
                 color="primary"
                 text="Analyze"
+                :disabled="rawPeptides.length === 0"
                 @click="analyze"
             />
         </v-card-text>

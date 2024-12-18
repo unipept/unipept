@@ -16,7 +16,7 @@ export default function useTaxonomicProcessor() {
     const lcaToPeptides = ref<Map<number, string[]>>();
     const peptideToLca = ref<Map<string, number>>();
 
-    const { post } = useAsyncWebWorker(new TaxonomicProcessorWebWorker());
+    const { post } = useAsyncWebWorker(() => new TaxonomicProcessorWebWorker());
 
     const process = async (
         peptideCounts: CountTable<string>,
