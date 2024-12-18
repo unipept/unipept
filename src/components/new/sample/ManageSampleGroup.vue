@@ -4,7 +4,15 @@
         max-width="85%"
         :persistent="!isValid"
     >
-        <v-card>
+        <v-card v-if="addingSample">
+            <add-sample-stepper
+                :is-unique="isUnique"
+                @cancel="addingSample = false"
+                @confirm="addSamples"
+            />
+        </v-card>
+
+        <v-card v-else min-height="500px">
             <v-card-title class="d-flex align-center">
                 <h2>Manage group</h2>
                 <v-spacer />
@@ -19,7 +27,7 @@
             <v-card-text class="d-flex flex-column">
                 <v-text-field
                     v-model="groupName"
-                    class="name-text-field"
+                    class="name-text-field flex-grow-0"
                     color="primary"
                     density="compact"
                     variant="outlined"
@@ -34,6 +42,19 @@
                     v-model="samples"
                     class="mt-3"
                 />
+
+                <div
+                    v-if="!addingSample"
+                    class="d-flex justify-center pa-1"
+                >
+                    <v-btn
+                        @click="addingSample = true"
+                        text="Add new sample"
+                        color="primary"
+                        variant="text"
+                        prepend-icon="mdi-plus"
+                    />
+                </div>
 
                 <v-spacer />
 
@@ -70,6 +91,7 @@ import SampleTable from "@/components/new/sample/SampleTable.vue";
 import {computed, ref, watch} from "vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import RemoveGroupDialog from "@/components/new/sample/RemoveGroupDialog.vue";
+import AddSampleStepper from "@/components/new/sample/AddSampleStepper.vue";
 
 const dialogOpen = defineModel<boolean>();
 
@@ -89,11 +111,17 @@ const samples = ref<SampleTableItem[]>(cloneOriginalSamples(group.analyses));
 const groupName = ref<string>(group.name);
 const removeGroupDialogOpen = ref(false);
 
+const addingSample = ref(false);
+
 const isValid = computed(() => {
     const noneEmpty = samples.value.every(s => s.name && s.rawPeptides);
     const allUnique = samples.value.every(s => samples.value.filter(s2 => s2.name === s.name).length === 1);
     return noneEmpty && allUnique;
 });
+
+const isUnique = (item: SampleTableItem) => {
+    return samples.value!.filter(s => s.id !== item?.id && s.name === item.name).length === 0
+};
 
 const confirmChanges = () => {
     // Remove samples that are not in the new list
@@ -131,6 +159,11 @@ const undoChanges = () => {
 const removeGroup = () => {
     emit('group:remove', group.id);
     dialogOpen.value = false;
+};
+
+const addSamples = (newSamples: SampleTableItem[]) => {
+    samples.value = [...samples.value!, ...newSamples ];
+    addingSample.value = false;
 };
 
 watch(dialogOpen, () => {

@@ -123,32 +123,6 @@
                 </td>
             </tr>
         </template>
-
-        <template #body.append>
-            <tr>
-                <td colspan="7">
-                    <div
-                        v-if="!addingSample"
-                        class="d-flex justify-center pa-1"
-                    >
-                        <v-btn
-                            @click="openAddSample"
-                            text="Add new sample"
-                            color="primary"
-                            variant="text"
-                            prepend-icon="mdi-plus"
-                        />
-                    </div>
-                    <add-sample-stepper
-                        v-else
-                        class="my-6"
-                        @cancel="addingSample = false"
-                        @confirm="addSample"
-                        :is-unique="isUnique"
-                    />
-                </td>
-            </tr>
-        </template>
     </v-data-table>
 </template>
 

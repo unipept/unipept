@@ -9,19 +9,21 @@
             @click="triggerFileInput"
         >
             <v-icon size="48" color="primary">mdi-cloud-upload</v-icon>
-            <p v-if="!selectedFile">Drag and drop your file here, or <strong>click to browse</strong></p>
-            <p v-else>{{ selectedFile.name }}</p>
+            <p v-if="!selectedFiles">Drag and drop your files here, or <strong>click to browse</strong></p>
+            <p v-else-if="Array.isArray(selectedFiles)">{{ selectedFiles.map(file => file.name).join(", ") }}</p>
+            <p v-else>{{ selectedFiles.name }}</p>
             <small>Supported formats: CSV, TSV</small>
         </div>
 
         <!-- Hidden File Input -->
         <v-file-input
             ref="fileInput"
-            v-model="selectedFile"
+            v-model="selectedFiles"
             @change="onFileSelect"
             style="display: none;"
             label="Hidden File Input"
             accept=".csv, .tsv, .txt, text/csv, text/tab-separated-values, text/plain"
+            :multiple="multiple"
         />
     </div>
 </template>
@@ -29,14 +31,15 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from "vue";
 
-defineProps<{
-    modelValue: File | null, // v-model value
-}>();
+const props = withDefaults(defineProps<{
+    modelValue: File | File[] | null, // v-model value
+    multiple?: boolean
+}>(), { multiple: false });
 
 const emit = defineEmits(["update:modelValue"]); // Emits v-model updates
 
 const isDragging = ref(false); // Tracks if the drag-over event is active
-const selectedFile = ref<File | null>(null); // Tracks the selected file
+const selectedFiles = ref<File | File[] | null>(null); // Tracks the selected file
 
 const onDragOver = () => {
     isDragging.value = true;
@@ -49,7 +52,7 @@ const onDragLeave = () => {
 const onDrop = (event: DragEvent) => {
     isDragging.value = false;
     if (event.dataTransfer?.files.length) {
-        selectedFile.value = event.dataTransfer.files[0];
+        selectedFiles.value = event.dataTransfer.files[0];
     }
 };
 
@@ -60,15 +63,9 @@ const triggerFileInput = () => {
     }
 };
 
-const processFile = () => {
-    if (selectedFile.value) {
-        console.log(`Processing file: ${selectedFile.value.name}`);
-    }
-};
-
 const onFileSelect = () => {
-    if (selectedFile.value) {
-        emit("update:modelValue", selectedFile.value);
+    if (selectedFiles.value) {
+        emit("update:modelValue", selectedFiles.value);
     }
 };
 </script>
