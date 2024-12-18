@@ -40,7 +40,7 @@ const chartOptions = computed<Options>(() => {
         xAxis: {
             categories: labels.slice(0, 20),
             title: {
-                text: 'Peptide IDs'
+                text: 'Taxon'
             }
         },
         yAxis: {
