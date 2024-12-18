@@ -207,7 +207,7 @@ onBeforeMount(async () => {
     uniprotVersion.value = await unipeptCommunicator.uniprotVersion();
 });
 
-let navigationKey = ref<number>(1);
+const navigationKey = ref<number>(1);
 const navigateToPage = async function(navItem: NavItem) {
     await router.push(navItem.path);
 

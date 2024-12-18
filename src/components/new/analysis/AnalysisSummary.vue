@@ -23,7 +23,7 @@
                 </v-col>
                 <v-col cols="4">
                     <v-checkbox
-                        v-model="equate"
+                        :model-value="analysis.config.equate"
                         color="primary"
                         label="Equate I and L"
                         density="compact"
@@ -31,7 +31,7 @@
                         readonly
                     />
                     <v-checkbox
-                        v-model="filter"
+                        :model-value="analysis.config.filter"
                         color="primary"
                         label="Filter duplicate peptides"
                         density="compact"
@@ -39,7 +39,7 @@
                         readonly
                     />
                     <v-checkbox
-                        v-model="missed"
+                        :model-value="analysis.config.missed"
                         color="primary"
                         label="Enable missed cleavages"
                         density="compact"
@@ -48,7 +48,7 @@
 
                     />
                     <database-select
-                        v-model="database"
+                        :model-value="analysis.config.database"
                         class="mt-1"
                         label="Selected database"
                     />
@@ -83,7 +83,6 @@ import {computed, ref} from "vue";
 import usePercentage from "@/composables/new/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
-import {AnalysisConfig} from "@/components/pages/TestPage.vue";
 import useCsvDownload from "@/composables/new/useCsvDownload";
 import usePeptideExport from "@/composables/new/usePeptideExport";
 import MissingPeptidesDialog from "@/components/new/analysis/MissingPeptidesDialog.vue";
@@ -98,10 +97,6 @@ const { analysis } = defineProps<{
     groupName: string
 }>();
 
-const equate = ref(analysis.config.equate);
-const filter = ref(analysis.config.filter);
-const missed = ref(analysis.config.missed);
-const database = ref(analysis.config.database);
 const showMissingPeptides = ref(false);
 
 const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => {
