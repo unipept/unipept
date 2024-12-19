@@ -1,4 +1,4 @@
-import {ref, shallowRef} from "vue";
+import {shallowRef} from "vue";
 import {NcbiTreeNode} from "unipept-web-components";
 import CountTable from "@/logic/new/CountTable";
 import useOntologyStore from "@/store/new/OntologyStore";
@@ -14,11 +14,7 @@ export default function useNcbiTreeProcessor() {
         id = 1,
         name = "Organism"
     ) => {
-        const startTime = new Date().getTime();
-
-        console.log("Processing NCBI tree...");
-        console.log(taxaCountTable);
-        root.value = new NcbiTreeNode(id, name);
+        const tree = new NcbiTreeNode(id, name);
 
         for (const taxonId of taxaCountTable.keys()) {
             const taxonDefinition = getNcbiDefinition(taxonId);
@@ -27,7 +23,7 @@ export default function useNcbiTreeProcessor() {
                 continue;
             }
 
-            let currentNode = root.value;
+            let currentNode = tree;
             for (const lineageId of taxonDefinition.lineage) {
                 // TODO check out what we should do with negative id's here?
                 if (lineageId !== null && lineageId !== -1 && getNcbiDefinition(lineageId)) {
@@ -46,14 +42,8 @@ export default function useNcbiTreeProcessor() {
             currentNode.selfCount = taxaCountTable.getOrDefault(taxonId);
         }
 
-        const startCountsTime = new Date().getTime();
-        root.value.getCounts();
-
-        const endTime = new Date().getTime();
-        console.log(`Computing counts took ${(endTime - startCountsTime) / 1000}s`);
-        console.log(`Computing tree took ${(endTime - startTime) / 1000}s`);
-
-        console.log(JSON.stringify(root.value));
+        tree.getCounts();
+        root.value = tree;
     }
 
     return {

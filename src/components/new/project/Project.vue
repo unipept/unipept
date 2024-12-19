@@ -20,7 +20,7 @@
                     color="primary"
                     prepend-icon="mdi-plus"
                     text="Create group"
-                    @click="addGroup(`New group ${newGroupsAddedCounter++}`)"
+                    @click="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${findFirstAvailableGroupNumber()}`)"
                 />
             </div>
         </template>
@@ -77,6 +77,8 @@ const emits = defineEmits<{
     'group:remove': (groupId: string) => void;
 }>();
 
+const DEFAULT_NEW_GROUP_NAME: string = "Group";
+
 const selectedGroupName = ref<string>();
 const selectedAnalysis = ref<SingleAnalysisStore>();
 
@@ -119,6 +121,18 @@ const clearSelectedAnalysis = () => selectedAnalysis.value = undefined;
 const selectAnalysis = (groupId: string | undefined, analysisId: string | undefined) => {
     selectedAnalysis.value = groupId && analysisId ? project.getGroup(groupId)?.getAnalysis(analysisId) : undefined;
     selectedGroupName.value = project.getGroup(groupId)?.name;
+}
+
+/**
+ * Find all groups that have the name
+ */
+const findFirstAvailableGroupNumber = () => {
+    const existingGroupNames: string[] = groups.value.map(g => g.name);
+    let counter = 1;
+    while (existingGroupNames.includes(`${DEFAULT_NEW_GROUP_NAME} ${counter}`)) {
+        counter += 1;
+    }
+    return counter;
 }
 </script>
 
