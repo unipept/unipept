@@ -138,7 +138,7 @@ const tooltipContent = (d: any): string => {
 };
 </script>
 
-<style scoped>
+<style>
 .visualization-container {
     display: flex;
     flex-direction: row-reverse;
@@ -148,6 +148,10 @@ const tooltipContent = (d: any): string => {
     display: flex;
     flex-direction: row-reverse;
     width: 100% !important;
+}
+
+.unipept-tooltip a {
+    color: white;
 }
 
 .sunburst:deep(.sunburst-breadcrumbs) {
