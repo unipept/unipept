@@ -1,4 +1,4 @@
-import {computed, ref} from "vue";
+import {computed, ref, shallowRef} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/new/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/new/processing/peptide/usePeptideProcessor";
@@ -98,6 +98,7 @@ const useSingleAnalysisStore = (
         //await new Promise(resolve => setTimeout(resolve, 10000));
 
         processNcbiTree(lcaTable.value!, lcaToPeptides.value!);
+        console.log(ncbiTree);
 
         status.value = AnalysisStatus.Finished
     }

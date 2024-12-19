@@ -69,7 +69,7 @@
                         :items="taxa"
                         :items-per-page="5"
                         :server-items-length="0"
-                        :loading="false"
+                        :loading="loading"
                         density="compact"
                     >
                         <template #footer.prepend>
@@ -159,7 +159,8 @@
 import {computed, onMounted, ref} from "vue";
 import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
 import useAsync from "@/composables/new/useAsync";
-import {NcbiRank, NcbiTaxon} from "unipept-web-components";
+import {NcbiRank, NcbiResponseCommunicator, NcbiTaxon} from "unipept-web-components";
+import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
 
 const headers = [
     {
@@ -226,6 +227,8 @@ const selectedItems = defineModel<NcbiTaxon[]>({ default: [] });
 
 const { isExecuting, performIfLast } = useAsync<number>();
 
+const loading = ref<boolean>(false);
+
 const taxa = ref<NcbiTaxon[]>([
     new NcbiTaxon(2, "Bacteria", "superkingdom", []),
     new NcbiTaxon(6, "Azorhizobium", "genus", []),
@@ -274,6 +277,10 @@ const computeUniprotRecordsCount = () => {
 };
 
 onMounted(() => {
+    // Retrieve first taxon items
+    const ncbiCommunicator = new NcbiResponseCommunicator();
+
+    // Compute amount of proteins associated with these taxa
     computeUniprotRecordsCount();
 });
 </script>
