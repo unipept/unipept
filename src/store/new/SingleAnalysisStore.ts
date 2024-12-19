@@ -98,7 +98,6 @@ const useSingleAnalysisStore = (
         //await new Promise(resolve => setTimeout(resolve, 10000));
 
         processNcbiTree(lcaTable.value!, lcaToPeptides.value!);
-        console.log(ncbiTree);
 
         status.value = AnalysisStatus.Finished
     }

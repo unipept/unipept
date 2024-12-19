@@ -1,4 +1,10 @@
 <template>
+    <div
+        v-if="!groups || groups.length === 0"
+        class="mt-4 d-flex justify-center"
+    >
+        No samples added yet...
+    </div>
     <v-list
         v-model:opened="expanded"
         v-model:selected="selected"

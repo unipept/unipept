@@ -17,8 +17,8 @@
                             Create a new project and analyze multiple samples or groups.
                         </p>
                         <v-btn
-                            class="mt-3"
-                            color="grey-lighten-3"
+                            class="my-3 float-right"
+                            variant="tonal"
                             text="Create new project"
                             @click="advancedAnalyze"
                         />
@@ -27,8 +27,15 @@
             </v-col>
 
             <v-col cols="6">
+                <div
+                    v-if="loadingSampleData"
+                    class="d-flex justify-center"
+                >
+                    <v-progress-circular indeterminate />
+                </div>
                 <demo-analysis-card
-                    :samples="samples"
+                    v-else
+                    :samples="sampleDataStore.samples"
                     @select="demoAnalyze"
                 />
             </v-col>
@@ -39,13 +46,17 @@
 <script setup lang="ts">
 import QuickAnalysisCard from "@/components/new/analysis/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/new/analysis/DemoAnalysisCard.vue";
-import useSampleData from "@/composables/new/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/new/SingleAnalysisStore";
 import {useRouter} from "vue-router";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import {onMounted, Ref, ref} from "vue"
+import useSampleDataStore from "@/store/new/SampleDataStore";
+
 const router = useRouter();
-const { samples, process } = useSampleData();
 const groupStore = useGroupAnalysisStore();
+const sampleDataStore = useSampleDataStore();
+
+const loadingSampleData: Ref<boolean> = ref(true);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     groupStore.clear();
@@ -82,6 +93,12 @@ const startAnalysis = async () => {
         }
     }
 }
+
+onMounted(async () => {
+    loadingSampleData.value = true;
+    await sampleDataStore.loadSampleData();
+    loadingSampleData.value = false;
+})
 </script>
 
 <style scoped>

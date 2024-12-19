@@ -32,7 +32,7 @@
                         </span>
                     </div>
                     <v-btn
-                        class="mt-1"
+                        class="mt-1 float-right mb-3"
                         text="Analyze"
                         variant="tonal"
                         @click="() => emits('select', item)"

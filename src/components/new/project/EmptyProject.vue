@@ -6,7 +6,7 @@
 
         <v-card-text>
             <p>
-                You are currently watching an empty project. If this is the first time you're using this application,
+                You are currently looking at an empty project. If this is the first time you're using this application,
                 you can use the following steps as a guide to get started.
             </p>
 
@@ -42,7 +42,7 @@
                         <v-card-text>
                             <p>
                                 After you've created a group, you can add samples to it. Samples are the actual data that you
-                                want to analyze. You can add samples by clicking the <v-icon size="small">mdi-pencil</v-icon> icon
+                                want to analyze. You can add samples by clicking the pencil icon (<v-icon size="x-small" style="position: relative; bottom: 1px;">mdi-pencil</v-icon>)
                                 next to your group in the left sidebar.
                             </p>
                         </v-card-text>
