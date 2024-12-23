@@ -69,7 +69,7 @@
                     </div>
                     <div class="v-col-md-6">
                         <div class="d-flex align-center pb-1">
-                            <h4>Intensities column</h4>
+                            <h4>Score column</h4>
                             <v-icon size="extra-small" class="mx-1" color="orange">mdi-rhombus</v-icon>
                             <span class="font-italic">(Optional)</span>
                         </div>

@@ -25,10 +25,10 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import DataSourceSelectTable from "./DataSourceSelectTable.vue";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {DataSourceTableItem} from "@/components/new/results/taxonomic/heatmap/DataSourceSelectTable.vue";
-import {NcbiRank} from "@/composables/new/ontology/useNcbiOntology";
 import {GoNamespace} from "@/composables/new/ontology/useGoOntology";
 import {EcNamespace} from "@/composables/new/ontology/useEcOntology";
 import {InterproNamespace} from "@/composables/new/ontology/useInterproOntology";
+import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 
 const {
     getNcbiDefinition,

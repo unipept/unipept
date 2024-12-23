@@ -64,17 +64,19 @@
                 </div>
 
                 <div>
-                    <v-data-table
+                    <v-data-table-server
                         :headers="headers"
                         :items="taxa"
+                        :items-length="taxaLength"
                         :items-per-page="5"
-                        :server-items-length="0"
-                        :loading="loading"
+                        :loading="taxaLoading"
+                        :search="filterValue"
+                        @update:options="loadTaxa"
                         density="compact"
                     >
                         <template #footer.prepend>
                             <v-text-field
-                                v-model="search"
+                                v-model="filterValue"
                                 class="mr-6"
                                 color="primary"
                                 prepend-inner-icon="mdi-magnify"
@@ -108,7 +110,7 @@
                                 Add
                             </v-btn>
                         </template>
-                    </v-data-table>
+                    </v-data-table-server>
                 </div>
 
                 <div class="text-caption mb-2">
@@ -156,10 +158,12 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
 import useAsync from "@/composables/new/useAsync";
-import {NcbiRank, NcbiResponseCommunicator, NcbiTaxon} from "unipept-web-components";
+import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
+import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
+import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/new/Constants";
 import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
 
 const headers = [
@@ -167,19 +171,22 @@ const headers = [
         title: "NCBI ID",
         align: "start",
         value: "id",
-        width: "15%"
+        width: "15%",
+        sortable: true
     },
     {
         title: "Name",
         align: "start",
         value: "name",
-        width: "45%"
+        width: "45%",
+        sortable: true
     },
     {
         title: "Rank Name",
         align: "start",
         value: "rank",
-        width: "38%"
+        width: "38%",
+        sortable: true
     },
     {
         title: "",
@@ -223,25 +230,10 @@ const rankColors: string[] = [
     "deep-orange-darken-4"
 ];
 
-const selectedItems = defineModel<NcbiTaxon[]>({ default: [] });
 
-const { isExecuting, performIfLast } = useAsync<number>();
-
-const loading = ref<boolean>(false);
-
-const taxa = ref<NcbiTaxon[]>([
-    new NcbiTaxon(2, "Bacteria", "superkingdom", []),
-    new NcbiTaxon(6, "Azorhizobium", "genus", []),
-    new NcbiTaxon(7, "Azorhizobium caulinodans", "species", []),
-]);
-const search = ref("");
-
+// Values that define UI behaviour of the component
 const searchHintsToggled = ref(false);
-
-const uniprotRecordCount = ref(0);
-const formattedUniprotRecordsCount = computed(() =>
-    uniprotRecordCount.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-);
+const selectedItems = defineModel<NcbiTaxon[]>({ default: [] });
 
 const selectItem = (item: NcbiTaxon) => {
     const idx = selectedItems.value.findIndex(element => element.id === item.id);
@@ -251,19 +243,74 @@ const selectItem = (item: NcbiTaxon) => {
         selectedItems.value.splice(idx, 1);
     }
     selectedItems.value = [ ...selectedItems.value ];
-    computeUniprotRecordsCount();
 }
 
 const clearSelection = () => selectedItems.value = [];
 
-const itemSelected = (item: NcbiTaxon) => selectedItems.value.some(i => i.id === item.id)
-
-const clearSearch = () => search.value = "";
+const itemSelected = (item: NcbiTaxon) => selectedItems.value.some(i => i.id === item.id);
 
 const getRankColor = (rank: string): string => {
     const idx = Object.values(NcbiRank).findIndex(r => r === rank);
     return rankColors[idx % rankColors.length];
 }
+
+
+// Logic for loading taxa and showing them in the browser table
+interface LoadItemsParams {
+    page: number;
+    itemsPerPage: number;
+    sortBy: { key: string, order: "asc" | "desc" }[];
+}
+
+const taxaLoading = ref<boolean>(true);
+const taxa = ref<NcbiTaxon[]>([]);
+const taxaLength = ref<number>(0);
+
+// value that's used to filter the names of taxa by
+const filterValue = ref("");
+
+const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
+const { ontology: ncbiOntology, update: updateNcbiOntology } = useNcbiOntology();
+
+const loadTaxa = async function({ page, itemsPerPage, sortBy }: LoadItemsParams) {
+    taxaLoading.value = true;
+    // How many taxa satisfy the given requirements?
+    taxaLength.value = await ncbiCommunicator.getNcbiCount(filterValue.value);
+
+    // Retrieve the IDs of the taxa that are present in the given range.
+    let sortByColumn: "id" | "name" | "rank" | undefined = undefined;
+    let sortDesc: boolean = false;
+    if (sortBy && sortBy.length > 0) {
+        sortByColumn = sortBy[0].key.toLowerCase() as ("id" | "name" | "rank" | undefined);
+        sortDesc = sortBy[0].order === "desc";
+    }
+    const taxaIdsInRange = await ncbiCommunicator.getNcbiRange(
+        (page - 1) * itemsPerPage,
+        page * itemsPerPage,
+        filterValue.value,
+        sortByColumn,
+        sortDesc
+    );
+
+    // Update the NCBI ontology such that the name (and other properties) of these taxa are actually available.
+    await updateNcbiOntology(taxaIdsInRange, false);
+    // Finally, show all these selected taxa in the data table
+    taxa.value = [];
+    for (const selectedTaxon of taxaIdsInRange) {
+        taxa.value.push(ncbiOntology.value.get(selectedTaxon)!);
+    }
+    taxaLoading.value = false;
+}
+
+const clearSearch = () => filterValue.value = "";
+
+// Logic responsible for computing the amount of UniProt proteins associated with the selected taxa
+const { isExecuting, performIfLast } = useAsync<number>();
+
+const uniprotRecordCount = ref(0);
+const formattedUniprotRecordsCount = computed(() =>
+    uniprotRecordCount.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+);
 
 const computeUniprotRecordsCount = () => {
     performIfLast(
@@ -276,13 +323,9 @@ const computeUniprotRecordsCount = () => {
     );
 };
 
-onMounted(() => {
-    // Retrieve first taxon items
-    const ncbiCommunicator = new NcbiResponseCommunicator();
-
-    // Compute amount of proteins associated with these taxa
+watch(selectedItems, () => {
     computeUniprotRecordsCount();
-});
+})
 </script>
 
 <style scoped>

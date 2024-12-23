@@ -1,6 +1,6 @@
 <template>
     <v-card-text>
-        <div class="d-flex align-center">
+        <div class="d-flex align-center mb-5">
             <div class="mr-4">
                 <h2>Peptonizer 2000</h2>
                 <h3>Bringing confidence to metaproteomics!</h3>
@@ -15,8 +15,6 @@
             </div>
             <img src="@/assets/logo/peptonizer_logo_simple.png" style="max-width: 175px;">
         </div>
-
-        <v-divider class="mb-4 mt-2"></v-divider>
 
         <v-window v-model="peptonizerStep">
             <v-window-item :value="1">
@@ -124,8 +122,8 @@ import { PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} f
 import PeptonizerProgress from "@/components/new/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import {PEPTONIZER_WORKERS} from "@/composables/new/processing/peptonizer/usePeptonizerProcessor";
 import PeptonizerChart from "@/components/new/results/taxonomic/peptonizer/PeptonizerChart.vue";
-import {NcbiRank, NcbiTaxon} from "unipept-web-components";
 import TaxaBrowser from "@/components/new/taxon/TaxaBrowser.vue";
+import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 
 const props = defineProps<{
     peptideCountTable: CountTable<string>,

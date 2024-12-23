@@ -2,7 +2,7 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import useOntologyStore from "@/store/new/OntologyStore";
 import usePercentage from "@/composables/new/usePercentage";
 import {GoNamespace} from "@/composables/new/ontology/useGoOntology";
-import {NcbiRank} from "@/composables/new/ontology/useNcbiOntology";
+import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 
 export default function usePeptideExport() {
     const {
