@@ -31,6 +31,18 @@
                         </span>
                         <ul class="pl-6">
                             <li>
+                                Unipept in 2024: Vande Moortele et al. (2024)
+                                <RLink to="https://doi.org/10.1101/2024.09.26.615136">
+                                    doi.org/10.1101/2024.09.26.615136
+                                </RLink>
+                            </li>
+                            <li>
+                              Unipept Desktop 2.0: Verschaffelt et al. (2023)
+                              <RLink to="https://doi.org/10.1021/acs.jproteome.3c00091">
+                                  doi.org/10.1021/acs.jproteome.3c00091
+                              </RLink>
+                            </li>
+                            <li>
                                 Unipept Desktop: Verschaffelt et al. (2021)
                                 <RLink to="https://doi.org/10.1021/acs.jproteome.0c00855">
                                     doi.org/10.1021/acs.jproteome.0c00855
@@ -162,9 +174,11 @@ import ugentLogoImage from "@/assets/about/ugent-logo.png";
 const members = [
     { name: "Bart Mesuere", title: "Project lead", imgUrl: "https://avatars.githubusercontent.com/u/481872?v=4" },
     { name: "Pieter Verschaffelt", title: "PostDoc", imgUrl: "https://avatars.githubusercontent.com/u/9608686?v=4" },
+    { name: "Tim Van Den Bossche", title: "PostDoc", imgUrl: "" },
     { name: "Tibo Vande Moortele", title: "PhD student", imgUrl: "https://avatars.githubusercontent.com/u/34175340?v=4" },
-    { name: "Stijn De Clercq", title: "Master student 2023 - 2024", imgUrl: "" },
-    { name: "Bram Devlaminck", title: "Master student 2023 - 2024", imgUrl: "" },
+    { name: "Simon Van de Vyver", title: "PhD student", imgUrl: "" },
+    { name: "Tanja Holstein", title: "PhD student", imgUrl: "" },
+    { name: "Jasper Janin", title: "Master student 2024 - 2025", imgUrl: "" },
     { name: "Peter Dawyndt", title: "P.I.", imgUrl: "https://avatars.githubusercontent.com/u/5736113?v=4" },
     { name: "Lennart Martens", title: "P.I.", imgUrl: "" }
 ];
@@ -178,6 +192,8 @@ const former_members = [
     { name: "Kevin Velghe", title: "Master's student 2015-2016", imgUrl: "" },
     { name: "Aranka Steyaert", title: "Master's student 2016-2017", imgUrl: "" },
     { name: "Niels De Graef", title: "Master's student 2016-2018", imgUrl: "https://avatars.githubusercontent.com/u/1382976?v=4" },
+    { name: "Stijn De Clercq", title: "Master student 2023 - 2024", imgUrl: "" },
+    { name: "Bram Devlaminck", title: "Master student 2023 - 2024", imgUrl: "" },
     { name: "Peter Vandamme", title: "Advisor", imgUrl: "" },
     { name: "Bart Devreese", title: "Advisor", imgUrl: "" },
 ];

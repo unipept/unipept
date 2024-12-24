@@ -2,8 +2,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const tpaMeta = {
-    publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
-    publicationLink: "doi:10.1021/acs.jproteome.8b00716",
+    publication: "Vande Moortele et al. (2024) BioRXiv",
+    publicationLink: "doi.org/10.1101/2024.09.26.615136",
 };
 
 const apidocsMeta = {
@@ -27,8 +27,8 @@ const newsMeta = {
 };
 
 const desktopMeta = {
-    publication: "Verschaffelt et al. (2021) Journal of Proteome Research",
-    publicationLink: "doi.org/10.1021/acs.jproteome.0c00855"
+    publication: "Verschaffelt et al. (2023) Journal of Proteome Research",
+    publicationLink: "doi.org/10.1021/acs.jproteome.3c00091"
 }
 
 const routes = [
@@ -36,8 +36,8 @@ const routes = [
         path: "/",
         component: () => import("@/components/pages/HomePage.vue"),
         meta: {
-            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
-            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+            publication: "Vande Moortele et al. (2024) BioRXiv",
+            publicationLink: "doi.org/10.1101/2024.09.26.615136"
         }
     },
     {
@@ -55,8 +55,8 @@ const routes = [
         path: "/mpa",
         component: () => import("@/components/pages/features/MetaproteomeAnalysisPage.vue"),
         meta: {
-            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
-            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
+            publication: "Vande Moortele et al. (2024) BioRXiv",
+            publicationLink: "doi.org/10.1101/2024.09.26.615136"
         }
     },
     {
