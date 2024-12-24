@@ -58,7 +58,15 @@
 
                 <v-spacer />
 
-                <div class="d-flex justify-end">
+                <div class="d-flex">
+                    <v-btn
+                        class="mr-1"
+                        color="error"
+                        variant="tonal"
+                        text="Remove group"
+                        prepend-icon="mdi-delete-outline"
+                        @click="removeGroupDialogOpen = true"
+                    />
                     <v-btn
                         color="error"
                         variant="text"
@@ -66,15 +74,18 @@
                         prepend-icon="mdi-undo"
                         @click="undoChanges"
                     />
+
+                    <v-spacer></v-spacer>
+
                     <v-btn
-                        class="ms-2"
-                        color="error"
+                        color="primary"
+                        text="Done"
                         variant="tonal"
-                        text="Remove group"
-                        prepend-icon="mdi-delete-outline"
-                        @click="removeGroupDialogOpen = true"
+                        :disabled="!isValid"
+                        @click="confirmChanges"
                     />
                 </div>
+
 
                 <remove-group-dialog
                     v-model="removeGroupDialogOpen"
@@ -162,6 +173,7 @@ const removeGroup = () => {
 };
 
 const addSamples = (newSamples: SampleTableItem[]) => {
+    console.log(newSamples);
     samples.value = [...samples.value!, ...newSamples ];
     addingSample.value = false;
 };

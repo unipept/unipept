@@ -11,29 +11,33 @@ export default function usePeptonizerProcessor() {
     const process = async (
         peptideTable: CountTable<string>,
         peptideIntensities: Map<string, number>,
+        rank: string,
+        taxaInGraph: number,
         listener: PeptonizerProgressListener
     ): Promise<void> => {
         const peptonizer = new Peptonizer();
-
-        // Temporarily set the scores of all the peptides to 0.7
-        const peptideScores = new Map<string, number>();
-        const peptideCounts = new Map<string, number>();
-
-        for (const [peptide, count] of peptideTable.entries()) {
-            peptideScores.set(peptide, 0.7);
-            peptideCounts.set(peptide, count);
-        }
 
         const alphas = [0.8, 0.9, 0.99];
         const betas = [0.6, 0.7, 0.8, 0.9];
         const priors = [0.3, 0.5];
 
+        console.log("Peptide table");
+        console.log(peptideTable);
+
+        console.log("Peptide intensities");
+        console.log(peptideIntensities);
+
+        console.log(`Rank: ${rank}`);
+        console.log(`Taxa in graph: ${taxaInGraph}`);
+
         const taxaIdToConfidence = await peptonizer.peptonize(
-            peptideScores,
-            peptideCounts,
+            peptideIntensities,
+            new Map<string, number>(Array.from(peptideTable.entries())),
             alphas,
             betas,
             priors,
+            rank,
+            taxaInGraph,
             listener,
             PEPTONIZER_WORKERS
         );

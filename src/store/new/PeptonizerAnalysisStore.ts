@@ -4,6 +4,7 @@ import useSingleAnalysisStore from "@/store/new/SingleAnalysisStore";
 import CountTable from "@/logic/new/CountTable";
 import usePeptonizerProcessor from "@/composables/new/processing/peptonizer/usePeptonizerProcessor";
 import {PeptonizerProgressListener} from "peptonizer";
+import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 
 export enum PeptonizerStatus {
     Pending,
@@ -21,10 +22,20 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
         peptideIntensities: Map<string, number>,
-        listener: PeptonizerProgressListener
+        rank: NcbiRank,
+        taxaInGraph: number,
+        listener: PeptonizerProgressListener,
+        equateIl: boolean
     ) => {
         status.value = PeptonizerStatus.Running;
-        await processPeptonizer(peptideCountTable, peptideIntensities, listener);
+
+        // If the equate I / L option is enabled, we need to update the intensities as well
+        if (equateIl) {
+            // TODO: we need to think about this equation of I and L for the peptonizer again...
+            peptideIntensities = new Map<string, number>(Array.from(peptideIntensities.entries()).map(([k, v]) => [k.replace(/I/g, "L"), v]))
+        }
+
+        await processPeptonizer(peptideCountTable, peptideIntensities, rank, taxaInGraph, listener);
         status.value = PeptonizerStatus.Finished;
     }
 

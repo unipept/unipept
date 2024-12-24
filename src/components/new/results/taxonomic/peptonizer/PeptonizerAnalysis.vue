@@ -54,7 +54,7 @@
                                 considered as potential candidates during taxonomic inference.
                             </p>
                             <v-card>
-                                <taxa-browser :selected-items="selectedTaxa"/>
+                                <taxa-browser :selected-items="selectedTaxa" />
                             </v-card>
                         </v-col>
                     </v-row>
@@ -127,7 +127,8 @@ import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 
 const props = defineProps<{
     peptideCountTable: CountTable<string>,
-    peptideIntensities: Map<string, number>
+    peptideIntensities: Map<string, number>,
+    equateIl: boolean
 }>();
 
 export interface PeptonizerProgress {
@@ -150,7 +151,7 @@ const peptonizerWorkers: Ref<number> = ref(PEPTONIZER_WORKERS);
 
 const peptonizerStep: Ref<number> = ref(1);
 
-const taxaInGraph: Ref<number> = ref(100);
+const taxaInGraph: Ref<number> = ref(25);
 
 const peptonizerRankOptions: Ref<string[]> = ref(
     Object.values(NcbiRank)
@@ -215,10 +216,16 @@ const startPeptonizer = async () => {
         progress.value.set(idx, []);
     }
 
+    console.log(props.peptideCountTable);
+    console.log(props.peptideIntensities);
+
     await peptonizerStore.runPeptonizer(
-      props.peptideCountTable,
-      props.peptideIntensities,
-      new UIPeptonizerProgressListener()
+        props.peptideCountTable,
+        props.peptideIntensities,
+        peptonizerRank.value as NcbiRank,
+        taxaInGraph.value,
+        new UIPeptonizerProgressListener(),
+        props.equateIl
     );
 
     // Progress to final results when analysis is finished

@@ -18,6 +18,8 @@
                 <v-progress-circular
                     indeterminate
                     color="primary"
+                    :size="50"
+                    :width="10"
                 />
             </div>
 
@@ -234,13 +236,6 @@ watch(() => multiAnalysisStore.activeAssayStatus, () => {
 </script>
 
 <style scoped>
-.loading-container {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, 0);
-}
-
 .dark-label .v-label {
     color: black !important;
     opacity: 0.87 !important;

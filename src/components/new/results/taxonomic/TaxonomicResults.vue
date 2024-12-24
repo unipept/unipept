@@ -38,7 +38,11 @@
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>
-                    <peptonizer-analysis :peptide-count-table="analysis.peptidesTable!"/>
+                    <peptonizer-analysis
+                        :peptide-count-table="analysis.peptidesTable!"
+                        :peptide-intensities="analysis.intensities!"
+                        :equate-il="analysis.config.equate"
+                    />
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>

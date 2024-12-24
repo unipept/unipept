@@ -19,7 +19,12 @@ import Project from "@/components/new/project/Project.vue";
 const groupStore = useGroupAnalysisStore();
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
-    const analysisId = groupStore.getGroup(groupId)?.addAnalysis(sample.name, sample.rawPeptides, sample.config);
+    const analysisId = groupStore.getGroup(groupId)?.addAnalysis(
+        sample.name,
+        sample.rawPeptides,
+        sample.config,
+        sample.intensities
+    );
     groupStore.getGroup(groupId)?.getAnalysis(analysisId)?.analyse();
 }
 

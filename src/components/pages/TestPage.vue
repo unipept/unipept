@@ -29,9 +29,10 @@
             <v-col cols="6">
                 <div
                     v-if="loadingSampleData"
-                    class="d-flex justify-center"
+                    class="d-flex flex-column align-center"
                 >
-                    <v-progress-circular indeterminate />
+                    <v-progress-circular indeterminate color="primary" />
+                    <div class="mt-4">Loading sample data...</div>
                 </div>
                 <demo-analysis-card
                     v-else
@@ -51,6 +52,8 @@ import {useRouter} from "vue-router";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
+import {DEFAULT_PEPTIDE_INTENSITIES} from "@/store/new/PeptonizerAnalysisStore";
+import {SampleData} from "@/composables/new/communication/unipept/useSampleData";
 
 const router = useRouter();
 const groupStore = useGroupAnalysisStore();
@@ -61,7 +64,11 @@ const loadingSampleData: Ref<boolean> = ref(true);
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     groupStore.clear();
     const groupId = groupStore.addGroup("Quick analysis");
-    groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
+    const intensities = new Map<string, number>();
+    for (const peptide of rawPeptides.split(/\r?\n/)) {
+        intensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
+    }
+    groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config, intensities);
     await router.push({name: "testResults"});
     await startAnalysis();
 }
@@ -71,16 +78,20 @@ const advancedAnalyze = () => {
     router.push({ name: "testResults" });
 }
 
-const demoAnalyze = async (sample) => {
+const demoAnalyze = async (sample: SampleData) => {
     groupStore.clear();
     const groupId = groupStore.addGroup(sample.environment);
     for (const dataset of sample.datasets) {
+        const intensities = new Map<string, number>();
+        for (const peptide of dataset.data) {
+            intensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
+        }
         groupStore.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), {
             equate: true,
             filter: true,
             missed: true,
             database: "UniProtKB"
-        });
+        }, intensities);
     }
     await router.push({ name: "testResults" });
     await startAnalysis();

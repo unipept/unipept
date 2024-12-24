@@ -25,7 +25,7 @@
                             <v-icon
                                 color="primary"
                                 size="small"
-                                @click="openReference"
+                                @click="openReference(item)"
                             >
                                 mdi-link-variant
                             </v-icon>
@@ -54,7 +54,7 @@ const emits = defineEmits<{
     "select": (sample: SampleData) => void;
 }>();
 
-const openReference = () => window.open(sample.url, '_blank');
+const openReference = (sample: SampleData) => window.open(sample.url, '_blank');
 </script>
 
 <style scoped>

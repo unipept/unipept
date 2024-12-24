@@ -53,9 +53,9 @@
                             </v-row>
                             <v-row>
                                 <div class="mt-1">
-                                    <span v-if="isExecuting">Computing database size...</span>
+                                    <span v-if="isExecuting">Computing protein count...</span>
                                     <span v-else>
-                                        Resulting database will contain <b>{{ formattedUniprotRecordsCount }}</b> UniProtKB records.
+                                        <b>{{ formattedUniprotRecordsCount }}</b> UniProtKB records are associated with this filter settings.
                                     </span>
                                 </div>
                             </v-row>
@@ -325,7 +325,11 @@ const computeUniprotRecordsCount = () => {
 
 watch(selectedItems, () => {
     computeUniprotRecordsCount();
-})
+});
+
+onMounted(() => {
+    computeUniprotRecordsCount();
+});
 </script>
 
 <style scoped>

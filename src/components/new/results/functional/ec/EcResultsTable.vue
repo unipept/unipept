@@ -33,10 +33,10 @@
             <a
                 :href="url(item.code)"
                 target="_blank"
-                class="font-regular"
+                class="font-regular d-flex align-center"
             >
                 {{ item.code }}
-                <v-icon size="x-small">mdi-open-in-new</v-icon>
+                <v-icon size="x-small" class="ml-1">mdi-open-in-new</v-icon>
             </a>
         </template>
 
