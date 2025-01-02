@@ -231,7 +231,6 @@
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {computed, Ref, ref} from "vue";
 import AddSampleCard from "@/components/new/sample/AddSampleCard.vue";
-import {DEFAULT_PEPTIDE_INTENSITIES} from "@/store/new/PeptonizerAnalysisStore";
 import {v4 as uuidv4} from "uuid";
 import FileUpload from "@/components/new/filesystem/FileUpload.vue";
 import ColumnFileImport from "@/components/new/sample/ColumnFileImport.vue";
@@ -298,10 +297,6 @@ const navigateToBulkUpload = () => {
 }
 
 const addSampleFromList = () => {
-    // No intensities are provided if a user only pastes a lists of peptides, so we set them to the default value
-    for (const seq of sample.value.rawPeptides.split(/\r?\n/)) {
-        sample.value.intensities.set(seq, DEFAULT_PEPTIDE_INTENSITIES);
-    }
     emits('confirm', [sample.value]);
 };
 
@@ -326,11 +321,6 @@ const uploadFilesInBulk = async function() {
         const peptides = await fileParser.parseFile(file);
         const sampleName = file.name;
 
-        const intensities = new Map<string, number>();
-        for (const seq of peptides.split(/\r?\n/)) {
-            intensities.set(seq, DEFAULT_PEPTIDE_INTENSITIES);
-        }
-
         const sample: SampleTableItem = {
             id: uuidv4(),
             name: sampleName,
@@ -341,7 +331,7 @@ const uploadFilesInBulk = async function() {
                 missed: true,
                 database: "UniProtKB"
             },
-            intensities
+            intensities: undefined
         }
 
         newSamples.push(sample);

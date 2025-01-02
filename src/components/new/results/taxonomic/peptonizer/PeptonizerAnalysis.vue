@@ -128,7 +128,7 @@ import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExpo
 
 const props = defineProps<{
     peptideCountTable: CountTable<string>,
-    peptideIntensities: Map<string, number>,
+    peptideIntensities: Map<string, number> | undefined,
     equateIl: boolean
 }>();
 

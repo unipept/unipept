@@ -9,7 +9,6 @@ import useInterproProcessor from "@/composables/new/processing/functional/useInt
 import useOntologyStore from "@/store/new/OntologyStore";
 import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
-import {DEFAULT_PEPTIDE_INTENSITIES} from "@/store/new/PeptonizerAnalysisStore";
 
 export enum AnalysisStatus {
     Pending,
@@ -30,7 +29,7 @@ const useSingleAnalysisStore = (
     _rawPeptides: string,
     _config: AnalysisConfig,
     // Intensity values that can be used by the Peptonizer to improve accuracy of the analysis
-    _peptideIntensities: Map<string, number>
+    _peptideIntensities?: Map<string, number>
 ) => defineStore(`singleSampleStore/${_id}`, () => {
     const ontologyStore = useOntologyStore();
 
@@ -45,7 +44,7 @@ const useSingleAnalysisStore = (
     const name = ref<string>(_name);
     const rawPeptides = ref<string>(_rawPeptides);
     const config = ref<AnalysisConfig>({ ..._config });
-    const intensities = ref<Map<string, number>>(_peptideIntensities);
+    const intensities = ref<Map<string, number> | undefined>(_peptideIntensities);
 
     const taxonomicFilter = ref<number>(1);
     const functionalFilter = ref<number>(5);

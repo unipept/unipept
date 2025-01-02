@@ -36,7 +36,7 @@
             :title="analysis.name"
             color="primary"
             density="compact"
-            prepend-icon="mdi-file-document-outline"
+            prepend-icon="custom:file-lightning-outline"
         >
             <template #append>
                 <v-icon

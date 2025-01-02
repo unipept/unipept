@@ -141,7 +141,6 @@
 import {computed, onMounted, ref, Ref, toRef, watch} from "vue";
 import { SampleTableItem } from "@/components/new/sample/SampleTable.vue";
 import useFileParser from "@/composables/new/useFileParser";
-import {DEFAULT_PEPTIDE_INTENSITIES} from "@/store/new/PeptonizerAnalysisStore";
 
 interface DelimiterType {
     character: string,
@@ -332,9 +331,7 @@ const parseContent = async function() {
         );
     } else {
         // The user did not select any intensities, thus we use the default value
-        props.sample.intensities = new Map<string, number>(
-            rows.value.slice(rowStart.value).map((row) => [row[selectedSeqColIdx], DEFAULT_PEPTIDE_INTENSITIES])
-        );
+        props.sample.intensities = undefined;
     }
 
     loading.value = false;

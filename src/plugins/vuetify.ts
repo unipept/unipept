@@ -9,9 +9,12 @@ import "@mdi/font/css/materialdesignicons.css";
 import "@/styles/main.scss";
 
 // Composables
-import { createVuetify } from "vuetify"
+import {createVuetify, IconProps} from "vuetify"
 import * as components from 'vuetify/components'
 import * as labsComponents from 'vuetify/labs/components'
+
+// Icons
+import { aliases, custom } from './custom_icons'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -38,6 +41,13 @@ export default createVuetify({
         VDialog: {
             maxWidth: 1000
         }
+    },
+    icons: {
+        defaultSet: 'mdi',
+        sets: {
+            custom
+        },
+        aliases
     },
     components: {
         ...components,

@@ -212,7 +212,7 @@ export interface SampleTableItem {
         missed: boolean;
         database: string;
     };
-    intensities: Map<string, number>;
+    intensities: Map<string, number> | undefined;
 }
 </script>
 

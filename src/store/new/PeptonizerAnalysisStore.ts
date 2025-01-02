@@ -21,13 +21,18 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
 
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
-        peptideIntensities: Map<string, number>,
+        peptideIntensities?: Map<string, number>,
         rank: NcbiRank,
         taxaInGraph: number,
         listener: PeptonizerProgressListener,
         equateIl: boolean
     ) => {
         status.value = PeptonizerStatus.Running;
+
+        // If no intensities are provided, we set them to the default value
+        if (!peptideIntensities) {
+            peptideIntensities = new Map<string, number>(Array.from(peptideCountTable.keys()).map((peptide: string) => [peptide, DEFAULT_PEPTIDE_INTENSITIES]));
+        }
 
         // If the equate I / L option is enabled, we need to update the intensities as well
         if (equateIl) {

@@ -35,7 +35,7 @@ const useMultiAnalysisStore = (
     const addAnalysis = (
         name: string, rawPeptides: string,
         config: AnalysisConfig,
-        intensities: Map<string, number>
+        intensities?: Map<string, number>
     ): string => {
         const analysisId = uuidv4();
         _analyses.value.set(analysisId, useSingleAnalysisStore(analysisId, name, rawPeptides, config, intensities));

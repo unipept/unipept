@@ -52,7 +52,6 @@ import {useRouter} from "vue-router";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
-import {DEFAULT_PEPTIDE_INTENSITIES} from "@/store/new/PeptonizerAnalysisStore";
 import {SampleData} from "@/composables/new/communication/unipept/useSampleData";
 
 const router = useRouter();
@@ -64,11 +63,7 @@ const loadingSampleData: Ref<boolean> = ref(true);
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     groupStore.clear();
     const groupId = groupStore.addGroup("Quick analysis");
-    const intensities = new Map<string, number>();
-    for (const peptide of rawPeptides.split(/\r?\n/)) {
-        intensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
-    }
-    groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config, intensities);
+    groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     await router.push({name: "testResults"});
     await startAnalysis();
 }
@@ -82,16 +77,12 @@ const demoAnalyze = async (sample: SampleData) => {
     groupStore.clear();
     const groupId = groupStore.addGroup(sample.environment);
     for (const dataset of sample.datasets) {
-        const intensities = new Map<string, number>();
-        for (const peptide of dataset.data) {
-            intensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
-        }
         groupStore.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), {
             equate: true,
             filter: true,
             missed: true,
             database: "UniProtKB"
-        }, intensities);
+        });
     }
     await router.push({ name: "testResults" });
     await startAnalysis();
