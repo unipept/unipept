@@ -99,18 +99,18 @@ const { analysis } = defineProps<{
 
 const showMissingPeptides = ref(false);
 
-const peptides = computed(() => [...analysis.peptidesTable.entries()].map(([peptide, count]) => {
-    const lca = analysis.peptideToLca.get(peptide);
+const peptides = computed(() => [...analysis.peptidesTable!.entries()].map(([peptide, count]) => {
+    const lca = analysis.peptideToLca!.get(peptide)!;
     return {
         peptide: peptide,
         occurrence: count,
         lca: getNcbiDefinition(lca)?.name ?? "N/A",
         rank: getNcbiDefinition(lca)?.rank ?? "N/A",
-        found: analysis.peptideToLca.has(peptide)
+        found: analysis.peptideToLca!.has(peptide)
     };
 }));
 const missedPeptides = computed(() => {
-    return analysis.peptideTrust.missedPeptides;
+    return analysis.peptideTrust!.missedPeptides;
 });
 
 const download = (separator: string) => {

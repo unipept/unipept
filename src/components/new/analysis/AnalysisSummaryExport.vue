@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 const emits = defineEmits<{
-    download: (delimiter: string) => void
+    (e: 'download', delimiter: string): void
 }>();
 
 const downloadSemicolonSeparated = () => emits("download", ";");

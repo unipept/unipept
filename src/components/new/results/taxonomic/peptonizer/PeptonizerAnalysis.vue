@@ -105,14 +105,7 @@
                         Restart
                     </v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn
-                        color="primary"
-                        variant="tonal"
-                        prepend-icon="mdi-download"
-                        @click="exportCsv"
-                    >
-                        Export as CSV
-                    </v-btn>
+                    <analysis-summary-export @download="exportCsv"/>
                 </v-card-actions>
             </v-window-item>
         </v-window>
@@ -131,6 +124,7 @@ import TaxaBrowser from "@/components/new/taxon/TaxaBrowser.vue";
 import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 import usePeptonizerExport from "@/composables/new/usePeptonizerExport";
 import useCsvDownload from "@/composables/new/useCsvDownload";
+import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
 
 const props = defineProps<{
     peptideCountTable: CountTable<string>,
@@ -239,9 +233,10 @@ const startPeptonizer = async () => {
     peptonizerStep.value = 3;
 }
 
-const exportCsv = async () => {
+const exportCsv = async (delimiter: string) => {
+    const extension = delimiter === "\t" ? "tsv" : "csv";
     const peptideExport = generatePeptonizerExport(peptonizerStore.taxonIdToConfidence!);
-    downloadCsv(peptideExport, `peptonizer.csv`, ",");
+    downloadCsv(peptideExport, `peptonizer.${extension}`, delimiter);
 }
 </script>
 
