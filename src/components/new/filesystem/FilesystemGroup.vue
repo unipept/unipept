@@ -36,7 +36,7 @@
             :title="analysis.name"
             color="primary"
             density="compact"
-            prepend-icon="custom:file-lightning-outline"
+            prepend-icon="unipept:file-lightning-outline"
         >
             <template #append>
                 <v-icon

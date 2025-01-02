@@ -7,14 +7,15 @@
 // Styles
 import "@mdi/font/css/materialdesignicons.css";
 import "@/styles/main.scss";
+import "@/styles/unipept-icons.css";
 
 // Composables
-import {createVuetify, IconProps} from "vuetify"
+import {createVuetify} from "vuetify"
 import * as components from 'vuetify/components'
 import * as labsComponents from 'vuetify/labs/components'
 
 // Icons
-import { aliases, custom } from './custom_icons'
+import { unipeptIconsAliases, unipeptIcons } from './unipept-icons'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -45,9 +46,9 @@ export default createVuetify({
     icons: {
         defaultSet: 'mdi',
         sets: {
-            custom
+            unipept: unipeptIcons
         },
-        aliases
+        unipeptIconsAliases
     },
     components: {
         ...components,
