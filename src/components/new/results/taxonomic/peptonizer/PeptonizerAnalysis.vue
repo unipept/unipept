@@ -105,7 +105,12 @@
                         Restart
                     </v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" variant="tonal" prepend-icon="mdi-download">
+                    <v-btn
+                        color="primary"
+                        variant="tonal"
+                        prepend-icon="mdi-download"
+                        @click="exportCsv"
+                    >
                         Export as CSV
                     </v-btn>
                 </v-card-actions>
@@ -124,6 +129,8 @@ import {PEPTONIZER_WORKERS} from "@/composables/new/processing/peptonizer/usePep
 import PeptonizerChart from "@/components/new/results/taxonomic/peptonizer/PeptonizerChart.vue";
 import TaxaBrowser from "@/components/new/taxon/TaxaBrowser.vue";
 import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
+import usePeptonizerExport from "@/composables/new/usePeptonizerExport";
+import useCsvDownload from "@/composables/new/useCsvDownload";
 
 const props = defineProps<{
     peptideCountTable: CountTable<string>,
@@ -142,6 +149,9 @@ export interface PeptonizerProgress {
     graphParameters: PeptonizerParameterSet,
     workerId: number
 }
+
+const {generateExport: generatePeptonizerExport}  = usePeptonizerExport();
+const {download: downloadCsv} = useCsvDownload();
 
 const peptonizerStore = usePeptonizerStore();
 // Maps worker ID onto the tasks that are being executed by the Peptonizer
@@ -216,9 +226,6 @@ const startPeptonizer = async () => {
         progress.value.set(idx, []);
     }
 
-    console.log(props.peptideCountTable);
-    console.log(props.peptideIntensities);
-
     await peptonizerStore.runPeptonizer(
         props.peptideCountTable,
         props.peptideIntensities,
@@ -230,6 +237,11 @@ const startPeptonizer = async () => {
 
     // Progress to final results when analysis is finished
     peptonizerStep.value = 3;
+}
+
+const exportCsv = async () => {
+    const peptideExport = generatePeptonizerExport(peptonizerStore.taxonIdToConfidence!);
+    downloadCsv(peptideExport, `peptonizer.csv`, ",");
 }
 </script>
 

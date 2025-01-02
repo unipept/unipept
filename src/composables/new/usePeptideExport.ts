@@ -18,14 +18,15 @@ export default function usePeptideExport() {
         analysis: SingleAnalysisStore,
         separator = ";"
     ): string[][] => {
+        // Make sure that the separator is not part of any of the values themselves
         const sanitizeRegex = new RegExp(`${separator}`, "g");
 
         const result: string[][] = [ generateHeader() ];
 
-        for (const [peptide, peptideCount] of analysis.peptidesTable) {
+        for (const [peptide, peptideCount] of analysis.peptidesTable!) {
             const row = [ peptide ];
 
-            const pept2dataResponse = analysis.peptideToData.get(peptide);
+            const pept2dataResponse = analysis.peptideToData!.get(peptide);
             if (!pept2dataResponse) {
                 for (let i = 0; i < generateHeader().length - 1; i++) {
                     row.push("");
@@ -44,7 +45,7 @@ export default function usePeptideExport() {
                 // Process the EC numbers
                 const ecCodes = [];
                 const ecDefinitions = [];
-                const totalEcCounts = Object.values(pept2dataResponse.ec).reduce((a, b) => a + b, 0);
+                const totalEcCounts = Object.values<number>(pept2dataResponse.ec).reduce((acc, current) => acc + current, 0);
                 for (const [code, count] of sortAnnotations(Object.entries(pept2dataResponse.ec))) {
                     const percentage = displayPercentage(count / totalEcCounts, 1).replace(".0%", "%");
                     ecCodes.push(`${code.substring(3)} (${percentage})`);
@@ -59,9 +60,9 @@ export default function usePeptideExport() {
                 // Process the GO terms
                 const goCodes = [];
                 const goDefinitions = [];
-                const totalGoCounts = Object.values(pept2dataResponse.go).reduce((a, b) => a + b, 0);
+                const totalGoCounts = Object.values<number>(pept2dataResponse.go).reduce((acc, current) => acc + current, 0);
                 for (const ns of Object.values(GoNamespace)) {
-                    const goCodesInNamespace = Object.entries(pept2dataResponse.go).filter(([go, count]) =>
+                    const goCodesInNamespace = Object.entries<number>(pept2dataResponse.go).filter(([go, count]) =>
                         getGoDefinition(go)?.namespace === ns
                     );
 
@@ -82,7 +83,7 @@ export default function usePeptideExport() {
                 // Process the InterPro entries
                 const iprCodes = [];
                 const iprDefinitions = [];
-                const totalIprCounts = Object.values(pept2dataResponse.ipr).reduce((a, b) => a + b, 0);
+                const totalIprCounts = Object.values<number>(pept2dataResponse.ipr).reduce((acc: number, current: number) => acc + current, 0);
                 for (const [code, count] of sortAnnotations(Object.entries(pept2dataResponse.ipr))) {
                     const percentage = displayPercentage(count / totalIprCounts, 1).replace(".0%", "%");
                     iprCodes.push(`${code.substring(4)} (${percentage})`);
@@ -118,10 +119,10 @@ export default function usePeptideExport() {
     };
 
     const sortAnnotations = (
-        annotations: [string, number]
+        annotations: [string, number][]
     ): [string, number][] => {
         return annotations
-            .sort((a, b) => {
+            .sort((a: [string, number], b: [string, number]) => {
                 if (b[1] === a[1]) {
                     return a[0] < b[0] ? -1 : 1;
                 }

@@ -7,6 +7,7 @@ export const PEPTONIZER_WORKERS = 2;
 
 export default function usePeptonizerProcessor() {
     const peptonizerResult = ref<Map<string, number>>();
+    const taxonIdToConfidence = ref<Map<number, number>>();
 
     const process = async (
         peptideTable: CountTable<string>,
@@ -21,16 +22,7 @@ export default function usePeptonizerProcessor() {
         const betas = [0.6, 0.7, 0.8, 0.9];
         const priors = [0.3, 0.5];
 
-        console.log("Peptide table");
-        console.log(peptideTable);
-
-        console.log("Peptide intensities");
-        console.log(peptideIntensities);
-
-        console.log(`Rank: ${rank}`);
-        console.log(`Taxa in graph: ${taxaInGraph}`);
-
-        const taxaIdToConfidence = await peptonizer.peptonize(
+        taxonIdToConfidence.value = new Map<number, number>((await peptonizer.peptonize(
             peptideIntensities,
             new Map<string, number>(Array.from(peptideTable.entries())),
             alphas,
@@ -40,18 +32,19 @@ export default function usePeptonizerProcessor() {
             taxaInGraph,
             listener,
             PEPTONIZER_WORKERS
-        );
+        )).entries().map(([k, v]) => [Number.parseInt(k), v]));
 
         // Convert the labels from taxon IDs to taxon names
         const ncbiOntologyUpdater = useNcbiOntology();
-        await ncbiOntologyUpdater.update([...taxaIdToConfidence.keys().map((label) => Number.parseInt(label as string))], false);
+        await ncbiOntologyUpdater.update(Array.from(taxonIdToConfidence.value.keys()), false);
 
         const ncbiOntology = ncbiOntologyUpdater.ontology;
-        peptonizerResult.value = new Map(taxaIdToConfidence.entries().map(([k, v]) => [ncbiOntology.value.get(Number.parseInt(k))!.name, v]));
+        peptonizerResult.value = new Map(Array.from(taxonIdToConfidence.value.entries()).map(([k, v]) => [ncbiOntology.value.get(k)!.name, v]));
     }
 
     return {
         peptonizerResult,
+        taxonIdToConfidence,
         process
     }
 }

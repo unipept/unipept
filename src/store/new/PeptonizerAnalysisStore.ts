@@ -17,7 +17,7 @@ export const DEFAULT_PEPTIDE_INTENSITIES: number = 0.7;
 const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
     const status = ref<PeptonizerStatus>(PeptonizerStatus.Pending);
 
-    const { peptonizerResult, process: processPeptonizer } = usePeptonizerProcessor();
+    const { peptonizerResult, taxonIdToConfidence, process: processPeptonizer } = usePeptonizerProcessor();
 
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
@@ -42,6 +42,7 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
     return {
         status,
         peptonizerResult,
+        taxonIdToConfidence,
         runPeptonizer
     }
 })();
