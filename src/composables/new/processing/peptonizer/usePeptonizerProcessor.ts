@@ -8,6 +8,7 @@ export const PEPTONIZER_WORKERS = 2;
 export default function usePeptonizerProcessor() {
     const peptonizerResult = ref<Map<string, number>>();
     const taxonIdToConfidence = ref<Map<number, number>>();
+    let peptonizer: Peptonizer | undefined = undefined;
 
     const process = async (
         peptideTable: CountTable<string>,
@@ -16,13 +17,13 @@ export default function usePeptonizerProcessor() {
         taxaInGraph: number,
         listener: PeptonizerProgressListener
     ): Promise<void> => {
-        const peptonizer = new Peptonizer();
+        peptonizer = new Peptonizer();
 
         const alphas = [0.8, 0.9, 0.99];
         const betas = [0.6, 0.7, 0.8, 0.9];
         const priors = [0.3, 0.5];
 
-        taxonIdToConfidence.value = new Map<number, number>((await peptonizer.peptonize(
+        const peptonizerData = await peptonizer.peptonize(
             peptideIntensities,
             new Map<string, number>(Array.from(peptideTable.entries())),
             alphas,
@@ -32,7 +33,14 @@ export default function usePeptonizerProcessor() {
             taxaInGraph,
             listener,
             PEPTONIZER_WORKERS
-        )).entries().map(([k, v]) => [Number.parseInt(k), v]));
+        );
+
+        // No data is returned by the peptonizer if it's execution has been cancelled by the user
+        if (!peptonizerData) {
+            return;
+        }
+
+        taxonIdToConfidence.value = new Map<number, number>(peptonizerData.entries().map(([k, v]) => [Number.parseInt(k), v]));
 
         // Convert the labels from taxon IDs to taxon names
         const ncbiOntologyUpdater = useNcbiOntology();
@@ -45,6 +53,7 @@ export default function usePeptonizerProcessor() {
     return {
         peptonizerResult,
         taxonIdToConfidence,
+        peptonizer,
         process
     }
 }

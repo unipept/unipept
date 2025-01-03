@@ -80,9 +80,11 @@
 
                 <v-card-actions>
                     <v-btn
-                        @click="peptonizerStep--"
+                        @click="cancelPeptonizer"
                         color="red"
                         variant="tonal"
+                        :loading="isCancelling"
+                        prepend-icon="mdi-stop-circle-outline"
                     >
                         Cancel
                     </v-btn>
@@ -91,7 +93,7 @@
 
             <v-window-item :value="3">
                 <!-- Show final Peptonizer results to the user -->
-                <peptonizer-chart :peptonizer-result="peptonizerStore.peptonizerResult!" />
+                <peptonizer-chart :peptonizer-result="peptonizerStore.taxaNamesToConfidence!" />
 
                 <v-divider></v-divider>
 
@@ -173,6 +175,10 @@ class UIPeptonizerProgressListener implements PeptonizerProgressListener {
         // Nothing to do...
     }
 
+    peptonizerCancelled() {
+        console.log("Peptonizer has been cancelled...");
+    }
+
     taskStarted(parameterSet: PeptonizerParameterSet, workerId: number) {
         progress.value.get(workerId)!.push(
             {
@@ -229,14 +235,25 @@ const startPeptonizer = async () => {
         props.equateIl
     );
 
-    // Progress to final results when analysis is finished
-    peptonizerStep.value = 3;
+    if (peptonizerStore.taxaNamesToConfidence) {
+        // Progress to final results when analysis is finished
+        peptonizerStep.value = 3;
+    }
+}
+
+const isCancelling: Ref<boolean> = ref(false);
+
+const cancelPeptonizer = async () => {
+    isCancelling.value = true;
+    await peptonizerStore.cancelPeptonizer();
+    peptonizerStep.value = 1;
+    isCancelling.value = false;
 }
 
 const exportCsv = async (delimiter: string) => {
     const extension = delimiter === "\t" ? "tsv" : "csv";
-    const peptideExport = generatePeptonizerExport(peptonizerStore.taxonIdToConfidence!);
-    downloadCsv(peptideExport, `peptonizer.${extension}`, delimiter);
+    const peptideExport = generatePeptonizerExport(peptonizerStore.taxaIdsToConfidence!);
+    await downloadCsv(peptideExport, `peptonizer.${extension}`, delimiter);
 }
 </script>
 

@@ -36,7 +36,7 @@
             :title="analysis.name"
             color="primary"
             density="compact"
-            prepend-icon="unipept:file-lightning-outline"
+            :prepend-icon="analysis.intensities ? 'unipept:file-lightning-outline' : 'mdi-file-document-outline'"
         >
             <template #append>
                 <v-icon
