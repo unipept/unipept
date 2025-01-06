@@ -119,8 +119,8 @@
 
 <script setup lang="ts">
 import CountTable from "@/logic/new/CountTable";
-import {DEFAULT_PEPTONIZER_WORKERS, PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisStore";
-import {onMounted, Ref, ref, watch} from "vue";
+import {PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisStore";
+import {Ref, ref, watch} from "vue";
 import { PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import PeptonizerProgress from "@/components/new/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/new/results/taxonomic/peptonizer/PeptonizerChart.vue";
@@ -129,6 +129,7 @@ import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 import usePeptonizerExport from "@/composables/new/usePeptonizerExport";
 import useCsvDownload from "@/composables/new/useCsvDownload";
 import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
+import {DEFAULT_PEPTONIZER_WORKERS} from "@/logic/processors/peptonizer/PeptonizerProcessor";
 
 const props = defineProps<{
     peptideCountTable: CountTable<string>,
@@ -153,7 +154,7 @@ const {generateExport: generatePeptonizerExport}  = usePeptonizerExport();
 const {download: downloadCsv} = useCsvDownload();
 
 // Maps worker ID onto the tasks that are being executed by the Peptonizer
-const progress: Ref<Map<number, PeptonizerProgress[]>> = ref<Map<number, PeptonizerProgress[]>>(new Map())
+const progress: Ref<Map<number, PeptonizerProgress[]>> = ref<Map<number, PeptonizerProgress[]>>(new Map());
 const parameterTuningTasks: Ref<number> = ref(1);
 const peptonizerWorkers: Ref<number> = ref(DEFAULT_PEPTONIZER_WORKERS);
 

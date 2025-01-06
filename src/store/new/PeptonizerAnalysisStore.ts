@@ -3,8 +3,9 @@ import {defineStore} from "pinia";
 import useSingleAnalysisStore from "@/store/new/SingleAnalysisStore";
 import CountTable from "@/logic/new/CountTable";
 import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
-import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
+import {Peptonizer, PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
+import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcessor";
 
 export enum PeptonizerStatus {
     Pending,
@@ -12,15 +13,71 @@ export enum PeptonizerStatus {
     Finished
 }
 
-export const DEFAULT_PEPTIDE_INTENSITIES: number = 0.7;
-export const DEFAULT_PEPTONIZER_WORKERS: number = 2;
+// class UIPeptonizerProgressListener implements PeptonizerProgressListener {
+//     constructor() {
+//
+//     }
+//
+//     peptonizerStarted(totalTasks: number, _taskSpecifications: PeptonizerParameterSet[]) {
+//         parameterTuningTasks.value = totalTasks
+//     }
+//
+//     peptonizerFinished() {
+//         // Nothing to do...
+//     }
+//
+//     peptonizerCancelled() {
+//         console.log("Peptonizer has been cancelled...");
+//     }
+//
+//     taskStarted(parameterSet: PeptonizerParameterSet, workerId: number) {
+//         progress.value.get(workerId)!.push(
+//             {
+//                 currentGraph: 0,
+//                 totalGraphs: 0,
+//                 currentIteration: 0,
+//                 totalIterations: 0,
+//                 currentResidual: 0,
+//                 minimumResidual: 0,
+//                 finished: false,
+//                 graphParameters: parameterSet,
+//                 workerId
+//             }
+//         );
+//     }
+//
+//     taskFinished(_parameterSet: PeptonizerParameterSet, workerId: number) {
+//         const progressObj = progress.value.get(workerId)!.at(-1)!;
+//         progressObj.finished = true;
+//     }
+//
+//     graphsUpdated(currentGraph: number, totalGraphs: number, workerId: number): void {
+//         const progressObj = progress.value.get(workerId)!.at(-1)!;
+//         progressObj.currentGraph = currentGraph;
+//         progressObj.totalGraphs = totalGraphs;
+//     }
+//
+//     maxResidualUpdated(maxResidual: number, tolerance: number, workerId: number): void {
+//         const progressObj = progress.value.get(workerId)!.at(-1)!;
+//         progressObj.currentResidual = maxResidual;
+//         progressObj.minimumResidual = tolerance;
+//     }
+//
+//     iterationsUpdated(currentIteration: number, totalIterations: number, workerId: number): void {
+//         const progressObj = progress.value.get(workerId)!.at(-1)!;
+//         progressObj.currentIteration = currentIteration;
+//         progressObj.totalIterations = totalIterations;
+//     }
+// }
 
 const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${sampleId}`, () => {
     const status = ref<PeptonizerStatus>(PeptonizerStatus.Pending);
     const taxaIdsToConfidence = ref<Map<number, number> | undefined>();
     const taxaNamesToConfidence = ref<Map<string, number> | undefined>();
 
-    let peptonizer: Peptonizer | undefined;
+
+
+    let peptonizerProcessor: PeptonizerProcessor | undefined;
 
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
@@ -36,34 +93,14 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         taxaIdsToConfidence.value = undefined;
         taxaNamesToConfidence.value = undefined;
 
-        // If no intensities are provided, we set them to the default value
-        if (!peptideIntensities) {
-            peptideIntensities = new Map<string, number>(Array.from(peptideCountTable.keys()).map((peptide: string) => [peptide, DEFAULT_PEPTIDE_INTENSITIES]));
-        }
-
-        // If the equate I / L option is enabled, we need to update the intensities as well
-        if (equateIl) {
-            // TODO: we need to think about this equation of I and L for the peptonizer again...
-            peptideIntensities = new Map<string, number>(Array.from(peptideIntensities.entries()).map(([k, v]) => [k.replace(/I/g, "L"), v]))
-        }
-
-        // These are the parameters over which the Peptonizer will run a grid search and look for the optimal result
-        const alphas = [0.8, 0.9, 0.99];
-        const betas = [0.6, 0.7, 0.8, 0.9];
-        const priors = [0.3, 0.5];
-
-        peptonizer = new Peptonizer();
-
-        const peptonizerData = await peptonizer.peptonize(
-            peptideIntensities,
-            new Map<string, number>(Array.from(peptideCountTable.entries())),
-            alphas,
-            betas,
-            priors,
+        peptonizerProcessor = new PeptonizerProcessor();
+        const peptonizerData = await peptonizerProcessor.runPeptonizer(
+            peptideCountTable,
             rank,
             taxaInGraph,
             listener,
-            DEFAULT_PEPTONIZER_WORKERS
+            equateIl,
+            peptideIntensities
         );
 
         // No data is returned by the peptonizer if it's execution has been cancelled by the user
@@ -85,8 +122,8 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
     }
 
     const cancelPeptonizer = () => {
-        if (peptonizer) {
-            peptonizer.cancel();
+        if (peptonizerProcessor) {
+            peptonizerProcessor.cancelPeptonizer();
         }
         status.value = PeptonizerStatus.Pending;
     }

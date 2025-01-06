@@ -1,8 +1,13 @@
 <template>
     <div class="d-flex flex-column align-center">
         <h2 class="mb-4">Peptonizer is running, please wait...</h2>
-        <v-progress-linear class="mx-8" :model-value="progressValue" color="primary" />
-        <div class="mt-1">{{ progressValue.toFixed(2) }}%</div>
+        <v-progress-linear class="mx-8" :indeterminate="progressValue === 0" :model-value="progressValue" color="primary" />
+        <div class="mt-1" v-if="progressValue === 0">
+            Initializing peptonizer
+        </div>
+        <div class="mt-1" v-else>
+            {{ progressValue.toFixed(2) }}%
+        </div>
     </div>
 </template>
 

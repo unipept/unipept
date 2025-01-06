@@ -16,15 +16,15 @@
         <v-card-text class="pa-0">
             <v-tabs-window v-model="currentTab">
                 <v-tabs-window-item class="fixed-height">
-                    <sunburst :ncbi-root="analysis.ncbiTree" />
+                    <sunburst :ncbi-root="analysis.ncbiTree!" />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item class="fixed-height">
-                    <treemap :ncbi-root="analysis.ncbiTree" />
+                    <treemap :ncbi-root="analysis.ncbiTree!" />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item class="fixed-height">
-                    <treeview :ncbi-root="analysis.ncbiTree" />
+                    <treeview :ncbi-root="analysis.ncbiTree!" />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>
