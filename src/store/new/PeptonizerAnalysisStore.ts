@@ -1,4 +1,4 @@
-import {ref} from "vue";
+import {ref, Ref} from "vue";
 import {defineStore} from "pinia";
 import useSingleAnalysisStore from "@/store/new/SingleAnalysisStore";
 import CountTable from "@/logic/new/CountTable";
@@ -13,69 +13,58 @@ export enum PeptonizerStatus {
     Finished
 }
 
-// class UIPeptonizerProgressListener implements PeptonizerProgressListener {
-//     constructor() {
-//
-//     }
-//
-//     peptonizerStarted(totalTasks: number, _taskSpecifications: PeptonizerParameterSet[]) {
-//         parameterTuningTasks.value = totalTasks
-//     }
-//
-//     peptonizerFinished() {
-//         // Nothing to do...
-//     }
-//
-//     peptonizerCancelled() {
-//         console.log("Peptonizer has been cancelled...");
-//     }
-//
-//     taskStarted(parameterSet: PeptonizerParameterSet, workerId: number) {
-//         progress.value.get(workerId)!.push(
-//             {
-//                 currentGraph: 0,
-//                 totalGraphs: 0,
-//                 currentIteration: 0,
-//                 totalIterations: 0,
-//                 currentResidual: 0,
-//                 minimumResidual: 0,
-//                 finished: false,
-//                 graphParameters: parameterSet,
-//                 workerId
-//             }
-//         );
-//     }
-//
-//     taskFinished(_parameterSet: PeptonizerParameterSet, workerId: number) {
-//         const progressObj = progress.value.get(workerId)!.at(-1)!;
-//         progressObj.finished = true;
-//     }
-//
-//     graphsUpdated(currentGraph: number, totalGraphs: number, workerId: number): void {
-//         const progressObj = progress.value.get(workerId)!.at(-1)!;
-//         progressObj.currentGraph = currentGraph;
-//         progressObj.totalGraphs = totalGraphs;
-//     }
-//
-//     maxResidualUpdated(maxResidual: number, tolerance: number, workerId: number): void {
-//         const progressObj = progress.value.get(workerId)!.at(-1)!;
-//         progressObj.currentResidual = maxResidual;
-//         progressObj.minimumResidual = tolerance;
-//     }
-//
-//     iterationsUpdated(currentIteration: number, totalIterations: number, workerId: number): void {
-//         const progressObj = progress.value.get(workerId)!.at(-1)!;
-//         progressObj.currentIteration = currentIteration;
-//         progressObj.totalIterations = totalIterations;
-//     }
-// }
+class UnipeptPeptonizerProgressListener implements PeptonizerProgressListener {
+    private totalTasks: number = 0;
+    private tasksFinished: number = 0;
+
+    constructor(
+        private currentProgress: Ref<number>,
+        private started: Ref<boolean>,
+        private initializationFinished: Ref<boolean>,
+        private finished: Ref<boolean>
+    ) {
+        this.currentProgress.value = 0;
+        this.started.value = false;
+        this.initializationFinished.value = false;
+        this.finished.value = false;
+    }
+
+    peptonizerStarted(totalTasks: number, _taskSpecifications: PeptonizerParameterSet[]): void {
+        this.started.value = true;
+        this.totalTasks = totalTasks;
+    }
+
+    peptonizerFinished(): void {
+        this.finished.value = true;
+    }
+
+    peptonizerCancelled() {}
+
+    taskStarted(_parameterSet: PeptonizerParameterSet, _workerId: number) {
+        this.initializationFinished.value = true;
+    }
+
+    taskFinished(_parameterSet: PeptonizerParameterSet, _workerId: number) {
+        this.tasksFinished++;
+        this.currentProgress.value = 100 * (this.tasksFinished / this.totalTasks);
+    }
+
+    graphsUpdated(_currentGraph: number, _totalGraphs: number, _workerId: number): void {}
+
+    maxResidualUpdated(_maxResidual: number, _tolerance: number, _workerId: number): void {}
+
+    iterationsUpdated(_currentIteration: number, _totalIterations: number, _workerId: number): void {}
+}
 
 const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${sampleId}`, () => {
     const status = ref<PeptonizerStatus>(PeptonizerStatus.Pending);
     const taxaIdsToConfidence = ref<Map<number, number> | undefined>();
     const taxaNamesToConfidence = ref<Map<string, number> | undefined>();
 
-
+    const currentProgress = ref<number>(0);
+    const peptonizerStarted = ref<boolean>(false);
+    const peptonizerInitalizationFinished = ref<boolean>(false);
+    const peptonizerFinished = ref<boolean>(false);
 
     let peptonizerProcessor: PeptonizerProcessor | undefined;
 
@@ -83,7 +72,6 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         peptideCountTable: CountTable<string>,
         rank: NcbiRank,
         taxaInGraph: number,
-        listener: PeptonizerProgressListener,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
     ) => {
@@ -92,6 +80,13 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         // Reset to initial values
         taxaIdsToConfidence.value = undefined;
         taxaNamesToConfidence.value = undefined;
+
+        const listener = new UnipeptPeptonizerProgressListener(
+            currentProgress,
+            peptonizerStarted,
+            peptonizerInitalizationFinished,
+            peptonizerFinished
+        );
 
         peptonizerProcessor = new PeptonizerProcessor();
         const peptonizerData = await peptonizerProcessor.runPeptonizer(
@@ -129,9 +124,15 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
     }
 
     return {
-        status,
         taxaNamesToConfidence,
         taxaIdsToConfidence,
+
+        status,
+        currentProgress,
+        peptonizerStarted,
+        peptonizerInitalizationFinished,
+        peptonizerFinished,
+
         runPeptonizer,
         cancelPeptonizer
     }

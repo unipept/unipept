@@ -53,13 +53,13 @@
                                 filter below. Only the selected taxa, along with all their descendant taxa, will be
                                 considered as potential candidates during taxonomic inference.
                             </p>
-                            <v-card>
+                            <v-card elevation="0">
                                 <taxa-browser :selected-items="selectedTaxa" />
                             </v-card>
                         </v-col>
                     </v-row>
                 </div>
-                <v-divider class="mt-3 mb-1"></v-divider>
+                <v-divider class="mb-1"></v-divider>
                 <v-card-actions class="pb-0">
                     <v-spacer></v-spacer>
                     <v-btn
@@ -74,7 +74,12 @@
 
             <v-window-item :value="2">
                 <!-- Show progress of the current Peptonizer analysis -->
-                <peptonizer-progress :workers="peptonizerWorkers" :progress="progress" :total-tasks="parameterTuningTasks" />
+                <peptonizer-progress
+                    :progress="peptonizerStore.currentProgress"
+                    :peptonizer-started="peptonizerStore.peptonizerStarted"
+                    :peptonizer-initialization-finished="peptonizerStore.peptonizerInitalizationFinished"
+                    :peptonizer-finished="peptonizerStore.peptonizerFinished"
+                />
 
                 <v-divider class="mt-2 mb-1"></v-divider>
 
@@ -121,7 +126,6 @@
 import CountTable from "@/logic/new/CountTable";
 import {PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisStore";
 import {Ref, ref, watch} from "vue";
-import { PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import PeptonizerProgress from "@/components/new/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/new/results/taxonomic/peptonizer/PeptonizerChart.vue";
 import TaxaBrowser from "@/components/new/taxon/TaxaBrowser.vue";
@@ -129,7 +133,6 @@ import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 import usePeptonizerExport from "@/composables/new/usePeptonizerExport";
 import useCsvDownload from "@/composables/new/useCsvDownload";
 import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
-import {DEFAULT_PEPTONIZER_WORKERS} from "@/logic/processors/peptonizer/PeptonizerProcessor";
 
 const props = defineProps<{
     peptideCountTable: CountTable<string>,
@@ -138,25 +141,9 @@ const props = defineProps<{
     peptonizerStore: PeptonizerStore
 }>();
 
-export interface PeptonizerProgress {
-    currentGraph: number,
-    totalGraphs: number,
-    currentIteration: number,
-    totalIterations: number,
-    currentResidual: number,
-    minimumResidual: number,
-    finished: boolean,
-    graphParameters: PeptonizerParameterSet,
-    workerId: number
-}
-
 const {generateExport: generatePeptonizerExport}  = usePeptonizerExport();
 const {download: downloadCsv} = useCsvDownload();
 
-// Maps worker ID onto the tasks that are being executed by the Peptonizer
-const progress: Ref<Map<number, PeptonizerProgress[]>> = ref<Map<number, PeptonizerProgress[]>>(new Map());
-const parameterTuningTasks: Ref<number> = ref(1);
-const peptonizerWorkers: Ref<number> = ref(DEFAULT_PEPTONIZER_WORKERS);
 
 const peptonizerStep: Ref<number> = ref(1);
 
@@ -169,71 +156,13 @@ const peptonizerRank: Ref<string> = ref("species");
 
 const selectedTaxa: Ref<NcbiTaxon[]> = ref([]);
 
-class UIPeptonizerProgressListener implements PeptonizerProgressListener {
-    peptonizerStarted(totalTasks: number, _taskSpecifications: PeptonizerParameterSet[]) {
-        parameterTuningTasks.value = totalTasks
-    }
-
-    peptonizerFinished() {
-        // Nothing to do...
-    }
-
-    peptonizerCancelled() {
-        console.log("Peptonizer has been cancelled...");
-    }
-
-    taskStarted(parameterSet: PeptonizerParameterSet, workerId: number) {
-        progress.value.get(workerId)!.push(
-            {
-                currentGraph: 0,
-                totalGraphs: 0,
-                currentIteration: 0,
-                totalIterations: 0,
-                currentResidual: 0,
-                minimumResidual: 0,
-                finished: false,
-                graphParameters: parameterSet,
-                workerId
-            }
-        );
-    }
-
-    taskFinished(_parameterSet: PeptonizerParameterSet, workerId: number) {
-        const progressObj = progress.value.get(workerId)!.at(-1)!;
-        progressObj.finished = true;
-    }
-
-    graphsUpdated(currentGraph: number, totalGraphs: number, workerId: number): void {
-        const progressObj = progress.value.get(workerId)!.at(-1)!;
-        progressObj.currentGraph = currentGraph;
-        progressObj.totalGraphs = totalGraphs;
-    }
-
-    maxResidualUpdated(maxResidual: number, tolerance: number, workerId: number): void {
-        const progressObj = progress.value.get(workerId)!.at(-1)!;
-        progressObj.currentResidual = maxResidual;
-        progressObj.minimumResidual = tolerance;
-    }
-
-    iterationsUpdated(currentIteration: number, totalIterations: number, workerId: number): void {
-        const progressObj = progress.value.get(workerId)!.at(-1)!;
-        progressObj.currentIteration = currentIteration;
-        progressObj.totalIterations = totalIterations;
-    }
-}
-
 const startPeptonizer = async () => {
     peptonizerStep.value = 2;
-
-    for (let idx = 0; idx < DEFAULT_PEPTONIZER_WORKERS; idx++) {
-        progress.value.set(idx, []);
-    }
 
     await props.peptonizerStore.runPeptonizer(
         props.peptideCountTable,
         peptonizerRank.value as NcbiRank,
         taxaInGraph.value,
-        new UIPeptonizerProgressListener(),
         props.equateIl,
         props.peptideIntensities,
     );
