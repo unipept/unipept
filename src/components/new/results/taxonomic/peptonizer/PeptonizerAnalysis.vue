@@ -93,7 +93,10 @@
 
             <v-window-item :value="3">
                 <!-- Show final Peptonizer results to the user -->
-                <peptonizer-chart :peptonizer-result="peptonizerStore.taxaNamesToConfidence!" />
+                <peptonizer-chart
+                    v-if="peptonizerStore.taxaNamesToConfidence"
+                    :peptonizer-result="peptonizerStore.taxaNamesToConfidence!"
+                />
 
                 <v-divider></v-divider>
 
@@ -116,11 +119,10 @@
 
 <script setup lang="ts">
 import CountTable from "@/logic/new/CountTable";
-import usePeptonizerStore from "@/store/new/PeptonizerAnalysisStore";
-import {Ref, ref} from "vue";
+import {DEFAULT_PEPTONIZER_WORKERS, PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisStore";
+import {onMounted, Ref, ref, watch} from "vue";
 import { PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import PeptonizerProgress from "@/components/new/results/taxonomic/peptonizer/PeptonizerProgress.vue";
-import {PEPTONIZER_WORKERS} from "@/composables/new/processing/peptonizer/usePeptonizerProcessor";
 import PeptonizerChart from "@/components/new/results/taxonomic/peptonizer/PeptonizerChart.vue";
 import TaxaBrowser from "@/components/new/taxon/TaxaBrowser.vue";
 import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
@@ -131,7 +133,8 @@ import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExpo
 const props = defineProps<{
     peptideCountTable: CountTable<string>,
     peptideIntensities: Map<string, number> | undefined,
-    equateIl: boolean
+    equateIl: boolean,
+    peptonizerStore: PeptonizerStore
 }>();
 
 export interface PeptonizerProgress {
@@ -149,11 +152,10 @@ export interface PeptonizerProgress {
 const {generateExport: generatePeptonizerExport}  = usePeptonizerExport();
 const {download: downloadCsv} = useCsvDownload();
 
-const peptonizerStore = usePeptonizerStore();
 // Maps worker ID onto the tasks that are being executed by the Peptonizer
 const progress: Ref<Map<number, PeptonizerProgress[]>> = ref<Map<number, PeptonizerProgress[]>>(new Map())
 const parameterTuningTasks: Ref<number> = ref(1);
-const peptonizerWorkers: Ref<number> = ref(PEPTONIZER_WORKERS);
+const peptonizerWorkers: Ref<number> = ref(DEFAULT_PEPTONIZER_WORKERS);
 
 const peptonizerStep: Ref<number> = ref(1);
 
@@ -222,20 +224,20 @@ class UIPeptonizerProgressListener implements PeptonizerProgressListener {
 const startPeptonizer = async () => {
     peptonizerStep.value = 2;
 
-    for (let idx = 0; idx < PEPTONIZER_WORKERS; idx++) {
+    for (let idx = 0; idx < DEFAULT_PEPTONIZER_WORKERS; idx++) {
         progress.value.set(idx, []);
     }
 
-    await peptonizerStore.runPeptonizer(
+    await props.peptonizerStore.runPeptonizer(
         props.peptideCountTable,
-        props.peptideIntensities,
         peptonizerRank.value as NcbiRank,
         taxaInGraph.value,
         new UIPeptonizerProgressListener(),
-        props.equateIl
+        props.equateIl,
+        props.peptideIntensities,
     );
 
-    if (peptonizerStore.taxaNamesToConfidence) {
+    if (props.peptonizerStore.taxaNamesToConfidence) {
         // Progress to final results when analysis is finished
         peptonizerStep.value = 3;
     }
@@ -243,18 +245,29 @@ const startPeptonizer = async () => {
 
 const isCancelling: Ref<boolean> = ref(false);
 
-const cancelPeptonizer = async () => {
+const cancelPeptonizer = () => {
     isCancelling.value = true;
-    await peptonizerStore.cancelPeptonizer();
+    props.peptonizerStore.cancelPeptonizer();
     peptonizerStep.value = 1;
     isCancelling.value = false;
 }
 
 const exportCsv = async (delimiter: string) => {
     const extension = delimiter === "\t" ? "tsv" : "csv";
-    const peptideExport = generatePeptonizerExport(peptonizerStore.taxaIdsToConfidence!);
+    const peptideExport = generatePeptonizerExport(props.peptonizerStore.taxaIdsToConfidence!);
     await downloadCsv(peptideExport, `peptonizer.${extension}`, delimiter);
 }
+
+watch(() => props.peptonizerStore, () => {
+    const peptonizerStatus = props.peptonizerStore.status;
+    if (peptonizerStatus === PeptonizerStatus.Pending) {
+        peptonizerStep.value = 1;
+    } else if (peptonizerStatus === PeptonizerStatus.Running) {
+        peptonizerStep.value = 2;
+    } else {
+        peptonizerStep.value = 3;
+    }
+});
 </script>
 
 <style scoped>

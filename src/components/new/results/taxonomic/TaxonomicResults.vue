@@ -42,6 +42,7 @@
                         :peptide-count-table="analysis.peptidesTable!"
                         :peptide-intensities="analysis.intensities!"
                         :equate-il="analysis.config.equate"
+                        :peptonizer-store="analysis.peptonizerStore"
                     />
                 </v-tabs-window-item>
             </v-tabs-window>

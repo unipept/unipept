@@ -2,9 +2,6 @@ import {ref} from "vue";
 import {defineStore} from "pinia";
 import useSingleAnalysisStore from "@/store/new/SingleAnalysisStore";
 import CountTable from "@/logic/new/CountTable";
-import usePeptonizerProcessor, {
-    PEPTONIZER_WORKERS
-} from "@/composables/new/processing/peptonizer/usePeptonizerProcessor";
 import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
@@ -16,8 +13,9 @@ export enum PeptonizerStatus {
 }
 
 export const DEFAULT_PEPTIDE_INTENSITIES: number = 0.7;
+export const DEFAULT_PEPTONIZER_WORKERS: number = 2;
 
-const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
+const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${sampleId}`, () => {
     const status = ref<PeptonizerStatus>(PeptonizerStatus.Pending);
     const taxaIdsToConfidence = ref<Map<number, number> | undefined>();
     const taxaNamesToConfidence = ref<Map<string, number> | undefined>();
@@ -26,11 +24,11 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
 
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
-        peptideIntensities?: Map<string, number>,
         rank: NcbiRank,
         taxaInGraph: number,
         listener: PeptonizerProgressListener,
-        equateIl: boolean
+        equateIl: boolean,
+        peptideIntensities?: Map<string, number>,
     ) => {
         status.value = PeptonizerStatus.Running;
 
@@ -65,7 +63,7 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
             rank,
             taxaInGraph,
             listener,
-            PEPTONIZER_WORKERS
+            DEFAULT_PEPTONIZER_WORKERS
         );
 
         // No data is returned by the peptonizer if it's execution has been cancelled by the user
@@ -86,9 +84,9 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
         status.value = PeptonizerStatus.Finished;
     }
 
-    const cancelPeptonizer = async () => {
+    const cancelPeptonizer = () => {
         if (peptonizer) {
-            await peptonizer.cancel();
+            peptonizer.cancel();
         }
         status.value = PeptonizerStatus.Pending;
     }
@@ -102,6 +100,6 @@ const usePeptonizerStore = () => defineStore(`peptonizerStore`, () => {
     }
 })();
 
-export type PeptonizerStore = ReturnType<typeof useSingleAnalysisStore>;
+export type PeptonizerStore = ReturnType<typeof usePeptonizerStore>;
 
 export default usePeptonizerStore;

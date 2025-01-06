@@ -9,6 +9,7 @@ import useInterproProcessor from "@/composables/new/processing/functional/useInt
 import useOntologyStore from "@/store/new/OntologyStore";
 import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
+import usePeptonizerStore from "@/store/new/PeptonizerAnalysisStore";
 
 export enum AnalysisStatus {
     Pending,
@@ -62,6 +63,7 @@ const useSingleAnalysisStore = (
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
     const { root: ncbiTree, process: processNcbiTree } = useNcbiTreeProcessor();
+    const peptonizerStore = usePeptonizerStore(_id);
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -149,6 +151,8 @@ const useSingleAnalysisStore = (
         lcaToPeptides,
         peptideToLca,
         ncbiTree,
+
+        peptonizerStore,
 
         analyse,
         updateName,
