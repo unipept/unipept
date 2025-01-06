@@ -32,7 +32,7 @@
         <v-empty-state
             v-else-if="!selectedAnalysis"
             title="No sample selected"
-            text="Please select a sample from the sidebar on the left to see its analysis details"
+            text="Please select a sample from the sidebar on the left to see its details"
             icon="mdi-flask-outline"
         ></v-empty-state>
 
@@ -41,7 +41,7 @@
             <div v-if="selectedAnalysis && selectedAnalysisFinished">
                 <analysis-summary
                     :analysis="selectedAnalysis"
-                    :group-name="selectedGroupName"
+                    :group-name="selectedGroupName!"
                 />
 
                 <taxonomic-results
