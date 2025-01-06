@@ -9,6 +9,26 @@
 
         <publication-card
             class="mt-5"
+            title="Biodiversity Analysis of Metaproteomics Samples with Unipept: A Comprehensive Tutorial"
+            :authors='["Tim Van Den Bossche",  "Pieter Verschaffelt", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere",]'
+            journal="Protein Bioinformatics"
+            year="2024"
+            doi="doi.org/10.1007/978-1-0716-4007-4_11"
+            google-scholar="https://scholar.google.com/scholar?cluster=6092631055419369067&hl=nl&as_sdt=0,5"
+            :image="Publication2024Image"
+        >
+            <template #abstract>
+                Metaproteomics has become a crucial omics technology for studying microbiomes.
+                In this area, the Unipept ecosystem, accessible at https://unipept.ugent.be, has emerged as a valuable resource for analyzing metaproteomic data.
+                It offers in-depth insights into both taxonomic distributions and functional characteristics of complex ecosystems.
+                This tutorial explains essential concepts like Lowest Common Ancestor (LCA) determination and the handling of peptides with missed cleavages.
+                It also provides a detailed, step-by-step guide on using the Unipept Web application and Unipept Desktop for thorough metaproteomics analyses.
+                By integrating theoretical principles with practical methodologies, this tutorial empowers researchers with the essential knowledge and tools needed to fully utilize metaproteomics in their microbiome studies.
+            </template>
+        </publication-card>
+
+        <publication-card
+            class="mt-5"
             title="Unipept in 2024: Expanding Metaproteomics Analysis with Support for Missed Cleavages, Semi-Tryptic and Non-Tryptic Peptides"
             :authors='["Tibo Vande Moortele", "Bram Devlaminck", "Simon Van de Vyver", "Tim Van Den Bossche", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere", "Pieter Verschaffelt"]'
             journal="BioRXiv"
@@ -243,6 +263,7 @@
 import PublicationCard from '../cards/PublicationCard.vue';
 import Initialism from '../highlights/Initialism.vue';
 import RLink from '../highlights/ResourceLink.vue';
+import Publication2024Image from '@/assets/publications-2024.jpg';
 import Publication2023Image from '@/assets/publications-2023.jpg';
 import Publication2021Image from '@/assets/publications-2021.jpg';
 import Publication2020Image from '@/assets/publications-2020.jpg';
