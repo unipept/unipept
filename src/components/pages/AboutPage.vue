@@ -170,14 +170,16 @@ import HeaderBodyCard from '../cards/HeaderBodyCard.vue';
 import MemberCard from '../cards/MemberCard.vue';
 import elixirLogoImage from "@/assets/about/elixir-logo.svg";
 import ugentLogoImage from "@/assets/about/ugent-logo.png";
+import timProfilePicture from "@/assets/profiles/tim_van_den_bossche.png?url"
+import tanjaProfilePicture from "@/assets/profiles/tanja_holstein.png?url"
 
 const members = [
     { name: "Bart Mesuere", title: "Project lead", imgUrl: "https://avatars.githubusercontent.com/u/481872?v=4" },
     { name: "Pieter Verschaffelt", title: "PostDoc", imgUrl: "https://avatars.githubusercontent.com/u/9608686?v=4" },
-    { name: "Tim Van Den Bossche", title: "PostDoc", imgUrl: "" },
+    { name: "Tim Van Den Bossche", title: "PostDoc", imgUrl: timProfilePicture },
     { name: "Tibo Vande Moortele", title: "PhD student", imgUrl: "https://avatars.githubusercontent.com/u/34175340?v=4" },
     { name: "Simon Van de Vyver", title: "PhD student", imgUrl: "" },
-    { name: "Tanja Holstein", title: "PhD student", imgUrl: "" },
+    { name: "Tanja Holstein", title: "PhD student", imgUrl: tanjaProfilePicture },
     { name: "Jasper Janin", title: "Master student 2024 - 2025", imgUrl: "" },
     { name: "Peter Dawyndt", title: "P.I.", imgUrl: "https://avatars.githubusercontent.com/u/5736113?v=4" },
     { name: "Lennart Martens", title: "P.I.", imgUrl: "" }

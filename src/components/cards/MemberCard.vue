@@ -7,7 +7,7 @@
             >
                 <template #prepend>
                     <v-avatar
-                        size="36px"
+                        size="72px"
                         color="primary"
                     >
                         <v-img
@@ -15,10 +15,12 @@
                             alt="Avatar"
                             :src="imgUrl"
                             :cover="false"
+
                         />
                         <span
                             v-else
                             class="font-weight-bold mb-0 text-white"
+                            style="font-size: 24px;"
                         >
                             {{ initials }}
                         </span>
@@ -26,7 +28,7 @@
                 </template>
 
                 <v-list-item-title>
-                    <span class="font-weight-bold">
+                    <span class="font-weight-bold" style="font-size: 18px;">
                         {{ name }}
                     </span>
                 </v-list-item-title>

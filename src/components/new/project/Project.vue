@@ -27,7 +27,14 @@
     </v-navigation-drawer>
 
     <v-container fluid>
-        <empty-project v-if="project.empty" />
+        <new-project v-if="project.empty" />
+
+        <v-empty-state
+            v-else-if="!selectedAnalysis"
+            title="No sample selected"
+            text="Please select a sample from the sidebar on the left to see its analysis details"
+            icon="mdi-flask-outline"
+        ></v-empty-state>
 
         <div v-else>
             <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
@@ -62,7 +69,7 @@ import {computed, ref} from "vue";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {AnalysisStatus, SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
-import EmptyProject from "@/components/new/project/EmptyProject.vue";
+import NewProject from "@/components/new/project/NewProject.vue";
 
 const { project } = defineProps<{
     project: GroupAnalysisStore;
