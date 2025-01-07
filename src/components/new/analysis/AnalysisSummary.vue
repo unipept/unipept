@@ -11,14 +11,14 @@
                     </h2>
 
                     <h3 class="font-weight-bold">
-                        {{ analysis.peptideTrust.matchedPeptides }} peptides found, {{ analysis.peptideTrust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides in assay
+                        This sample contains {{ analysis.peptideTrust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides, of which we matched {{ analysis.peptideTrust.matchedPeptides }} peptides.
                     </h3>
-                    <h1 class="text-subtitle-1 mt-n2">
+                    <h1 class="text-subtitle-1">
                         <a
                             @click="showMissingPeptides = true"
                         >
                             {{ analysis.peptideTrust.missedPeptides.length }} peptides
-                        </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found
+                        </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found.
                     </h1>
                 </v-col>
                 <v-col cols="4">
