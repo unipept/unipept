@@ -7,7 +7,7 @@
             dark
         >
             <v-tab>
-                Search for a single tryptic peptide
+                Search for a single peptide
             </v-tab>
         </v-tabs>
 
@@ -20,7 +20,7 @@
                 <v-row>
                     <v-col>
                         <p class="mb-0">
-                            Search for a single tryptic peptide (e.g. <ResourceLink to="/tpa/MDGTEYIIVK?equate=true" router>MDGTEYIIVK</ResourceLink>) by entering the sequence below.
+                            Search for a single peptide (e.g. <ResourceLink to="/spa/MDGTEYIIVK?equate=true" router>MDGTEYIIVK</ResourceLink>) by entering the sequence below.
                             Note that your input should only consist of <b>5</b> to <b>50</b> amino acids.
                             Lowercase letters are allowed, but will be converted to their uppercase equivalent.
                         </p>
@@ -104,7 +104,7 @@ const router = useRouter();
 const analysePeptide = async function() {
     if (form.value && await form.value.validate()) {
         router.push({
-            name: 'tpaResult',
+            name: 'spaResult',
             params: {
                 sequence: sequence.value.toUpperCase()
             },

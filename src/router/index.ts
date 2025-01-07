@@ -1,7 +1,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
 
-const tpaMeta = {
+const spaMeta = {
     publication: "Vande Moortele et al. (2024) BioRXiv",
     publicationLink: "doi.org/10.1101/2024.09.26.615136",
 };
@@ -46,15 +46,17 @@ const routes = [
         }
     },
     {
-        path: "/tpa",
-        component: () => import("@/components/pages/features/TrypticPeptideAnalysisPage.vue"),
-        meta: tpaMeta
+        path: "/spa",
+        alias: "/tpa",
+        component: () => import("@/components/pages/features/SinglePeptideAnalysisPage.vue"),
+        meta: spaMeta
     },
     {
-        path: "/tpa/:sequence",
-        name: "tpaResult",
-        component: () => import("@/components/pages/features/TrypticPeptideAnalysisResultPage.vue"),
-        meta: tpaMeta
+        path: "/spa/:sequence",
+        alias: "/tpa/:sequence",
+        name: "spaResult",
+        component: () => import("@/components/pages/features/SinglePeptideAnalysisResultPage.vue"),
+        meta: spaMeta
     },
     {
         path: "/mpa",

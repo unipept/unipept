@@ -5,11 +5,11 @@
             lg="8"
             offset-lg="2"
         >
-            <tryptic-peptide-analysis-search-card />
+            <single-peptide-analysis-search-card />
         </v-col>
     </v-container>
 </template>
 
 <script setup lang="ts">
-import TrypticPeptideAnalysisSearchCard from '@/components/cards/analysis/single/TrypticPeptideAnalysisSearchCard.vue';
+import SinglePeptideAnalysisSearchCard from '@/components/cards/analysis/single/SinglePeptideAnalysisSearchCard.vue';
 </script>

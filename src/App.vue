@@ -135,7 +135,7 @@
                     </div>
                     <div class="d-md-flex justify-space-between">
                         <div class="text-center text-grey mt-3 mt-md-0">
-                            © 2023 Universiteit Gent
+                            © 2025 Universiteit Gent
                         </div>
                         <div class="text-center mt-3 mt-md-0">
                             <router-link
@@ -188,7 +188,7 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-    { name: "Tryptic Peptide Analysis", path: "/tpa", forceReload: false },
+    { name: "Single Peptide Analysis", path: "/spa", forceReload: false },
     { name: "Metaproteomics Analysis", path: "/mpa", forceReload: false },
     { name: "API", path: "/apidocs", forceReload: false },
     { name: "CLI", path: "/clidocs", forceReload: false },
