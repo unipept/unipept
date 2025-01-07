@@ -27,7 +27,8 @@
                             <v-btn
                                 class="mt-3"
                                 color="primary"
-                                text="Create group"
+                                text="Add group"
+                                @click="addGroup(DEFAULT_NEW_GROUP_NAME)"
                             />
                         </v-card-text>
                     </v-card>
@@ -70,7 +71,15 @@
 </template>
 
 <script setup lang="ts">
+import {DEFAULT_NEW_GROUP_NAME} from "@/store/new/GroupAnalysisStore";
 
+const emits = defineEmits<{
+    'group:add': (name: string) => void;
+}>();
+
+const addGroup = (name: string) => {
+    emits('group:add', name);
+}
 </script>
 
 <style scoped>

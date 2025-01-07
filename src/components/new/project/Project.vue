@@ -19,15 +19,18 @@
                 <v-btn
                     color="primary"
                     prepend-icon="mdi-plus"
-                    text="Create group"
-                    @click="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${findFirstAvailableGroupNumber()}`)"
+                    text="Add group"
+                    @click="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
                 />
             </div>
         </template>
     </v-navigation-drawer>
 
     <v-container fluid>
-        <new-project v-if="project.empty" />
+        <new-project
+            v-if="project.empty"
+            @group:add="addGroup"
+        />
 
         <v-empty-state
             v-else-if="!selectedAnalysis"
@@ -86,7 +89,7 @@ import TaxonomicResults from "@/components/new/results/taxonomic/TaxonomicResult
 import {computed, ref, watch} from "vue";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {AnalysisStatus, SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import {GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
+import {DEFAULT_NEW_GROUP_NAME, GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
 import NewProject from "@/components/new/project/NewProject.vue";
 
 const { project } = defineProps<{
@@ -101,8 +104,6 @@ const emits = defineEmits<{
     'group:update': (groupId: string, updatedName: string) => void;
     'group:remove': (groupId: string) => void;
 }>();
-
-const DEFAULT_NEW_GROUP_NAME: string = "Group";
 
 const selectedGroupName = ref<string>();
 const selectedAnalysis = ref<SingleAnalysisStore>();
@@ -150,18 +151,6 @@ const clearSelectedAnalysis = () => selectedAnalysis.value = undefined;
 const selectAnalysis = (groupId: string | undefined, analysisId: string | undefined) => {
     selectedAnalysis.value = groupId && analysisId ? project.getGroup(groupId)?.getAnalysis(analysisId) : undefined;
     selectedGroupName.value = project.getGroup(groupId)?.name;
-}
-
-/**
- * Find all groups that have the name
- */
-const findFirstAvailableGroupNumber = () => {
-    const existingGroupNames: string[] = groups.value.map(g => g.name);
-    let counter = 1;
-    while (existingGroupNames.includes(`${DEFAULT_NEW_GROUP_NAME} ${counter}`)) {
-        counter += 1;
-    }
-    return counter;
 }
 </script>
 

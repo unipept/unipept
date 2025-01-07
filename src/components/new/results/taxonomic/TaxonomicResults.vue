@@ -10,7 +10,19 @@
             <v-tab text="Treeview" />
             <v-tab text="Hierarchical outline" />
             <v-tab text="Heatmap" />
-            <v-tab text="Peptonizer" />
+            <v-tab>
+                Peptonizer
+                <v-tooltip>
+                    <template #activator="{ props: tooltip }">
+                        <v-icon v-bind="tooltip" class="ml-2" color="yellow">
+                            mdi-creation-outline
+                        </v-icon>
+                    </template>
+                    <span>
+                        New since Unipept 6.1.0!
+                    </span>
+                </v-tooltip>
+            </v-tab>
         </v-tabs>
 
         <v-card-text class="pa-0">

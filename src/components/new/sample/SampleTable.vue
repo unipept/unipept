@@ -27,7 +27,6 @@
                     <v-icon
                         v-bind="tooltip"
                         class="ms-1"
-                        color="primary"
                         icon="mdi-information"
                         size="small"
                     />
@@ -91,16 +90,19 @@
 <!--        </template>-->
 
         <template #item.count="{ item }">
-            <v-tooltip text="Show the list of peptides">
-                <template #activator="{ props }">
-                    <a
-                        v-bind="props"
-                        @click="() => expandItem(item)"
-                    >
-                        {{ item.rawPeptides.split("\n").map(p => p.trim()).filter(p => p.length > 0).length }}
-                    </a>
-                </template>
-            </v-tooltip>
+            <div class="d-flex align-center">
+                <v-tooltip text="Show all peptides and scores">
+                    <template #activator="{ props }">
+                        <v-icon
+                            v-bind="props"
+                            @click="() => expandItem(item)"
+                        >
+                            {{ expanded.includes(item.id) ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
+                        </v-icon>
+                    </template>
+                </v-tooltip>
+                <span>{{ item.rawPeptides.split("\n").map(p => p.trim()).filter(p => p.length > 0).length }}</span>
+            </div>
         </template>
 
         <template #item.action="{ index }">
@@ -130,7 +132,6 @@
 import {ref} from "vue";
 import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
 import SampleContentTable from "@/components/new/sample/SampleContentTable.vue";
-import AddSampleStepper from "@/components/new/sample/AddSampleStepper.vue";
 
 const samples = defineModel<SampleTableItem[]>();
 
@@ -189,7 +190,7 @@ const headers = [
     //     value: "database",
     // },
     {
-        title: "Peptides",
+        title: "# Peptides",
         align: "start",
         value: "count",
     },

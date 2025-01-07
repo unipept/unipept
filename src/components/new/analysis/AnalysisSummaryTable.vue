@@ -85,7 +85,7 @@ export interface AnalysisSummaryTableItem {
 const openPeptideAnalysis = (peptide: string) => {
     // TODO: change this. Hardcoded link to website for testing purposes
     const a = document.createElement('a');
-    a.href = `https://unipept.ugent.be/tpa/${peptide}?equate=${true}`;
+    a.href = `https://unipept.ugent.be/spa/${peptide}?equate=${true}`;
     a.target = '_blank';
     a.click();
 }

@@ -4,6 +4,8 @@ import {computed, ref} from "vue";
 import {AnalysisConfig} from "@/components/pages/TestPage.vue";
 import {v4 as uuidv4} from "uuid";
 
+export const DEFAULT_NEW_GROUP_NAME: string = "Group";
+
 const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
     // ===============================================================
     // ======================== REFERENCES ===========================
@@ -53,6 +55,18 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         _groups.value.clear();
     }
 
+    /**
+     * Returns a number for the default group naming, such that the new default group's name is unique.
+     */
+    const findFirstAvailableGroupNumber = () => {
+        const existingGroupNames: string[] = _groups.value.map(g => g.name);
+        let counter = 1;
+        while (existingGroupNames.includes(`${DEFAULT_NEW_GROUP_NAME} ${counter}`)) {
+            counter += 1;
+        }
+        return counter;
+    }
+
     return {
         groups,
         empty,
@@ -62,7 +76,8 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         removeGroup,
         addAnalysis,
         removeAnalysis,
-        clear
+        clear,
+        findFirstAvailableGroupNumber
     };
 });
 

@@ -1,6 +1,6 @@
 {
   "name": "unipept",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "scripts": {
     "dev": "vite",
     "check": "vue-tsc --noEmit",
@@ -9,7 +9,7 @@
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@mdi/font": "7.0.96",
+    "@mdi/font": "^7.4.47",
     "@types/uuid": "^9.0.2",
     "@vueuse/components": "^11.2.0",
     "@vueuse/core": "^11.1.0",
@@ -18,7 +18,7 @@
     "highcharts-vue": "^2.0.1",
     "html-to-image": "^1.11.11",
     "marked": "^9.1.4",
-    "peptonizer": "file:./peptonizer-v0.0.22.tgz",
+    "peptonizer": "file:./peptonizer-v0.0.23.tgz",
     "pinia": "^2.2.4",
     "roboto-fontface": "*",
     "shared-memory-datastructures": "0.1.9",
