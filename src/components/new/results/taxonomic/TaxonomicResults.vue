@@ -11,12 +11,14 @@
             <v-tab text="Hierarchical outline" />
             <v-tab text="Heatmap" />
             <v-tab>
-                Peptonizer
                 <v-tooltip>
                     <template #activator="{ props: tooltip }">
-                        <v-icon v-bind="tooltip" class="ml-2" color="yellow">
-                            mdi-creation-outline
-                        </v-icon>
+                        <span v-bind="tooltip">
+                            Peptonizer
+                            <v-icon v-bind="tooltip" class="ml-2" color="yellow">
+                                mdi-creation-outline
+                            </v-icon>
+                        </span>
                     </template>
                     <span>
                         New since Unipept 6.1.0!

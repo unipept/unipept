@@ -1,24 +1,24 @@
 <template>
     <v-card-text>
-        <div class="d-flex align-center mb-5">
-            <div class="mr-4">
-                <h2>Peptonizer 2000</h2>
-                <h3>Bringing confidence to metaproteomics!</h3>
-                <p class="mb-0">
-                    Leveraging peptide sequences and their corresponding scores,
-                    the Peptonizer2000 uses advanced graphical modeling to deliver high-resolution, species-level
-                    (or even strain-level) identifications. Unlike traditional approaches that rely solely on peptide-taxon
-                    counts, this tool incorporates probabilistic inference to assess the likelihood of each taxon being
-                    present in the analyzed ecosystem. Follow the steps in the wizard down below to try the
-                    Peptonizer2000 right now!
-                </p>
-                <span class="text-subtitle-2 mt-0">Holstein et al. (2024) BioRXiv <a href="https://doi.org/10.1101/2024.05.20.594958" target="_blank">doi.org/10.1101/2024.05.20.594958</a></span>
-            </div>
-            <img src="@/assets/logo/peptonizer_logo_simple.png" style="max-width: 175px;">
-        </div>
 
         <v-window v-model="peptonizerStep">
             <v-window-item :value="1">
+                <div class="d-flex align-center mb-5">
+                    <div class="mr-4">
+                        <h2>Peptonizer 2000</h2>
+                        <h3>Bringing confidence to metaproteomics!</h3>
+                        <p class="mb-0">
+                            Leveraging peptide sequences and their corresponding scores,
+                            the Peptonizer2000 uses advanced graphical modeling to deliver high-resolution, species-level
+                            (or even strain-level) identifications. Unlike traditional approaches that rely solely on peptide-taxon
+                            counts, this tool incorporates probabilistic inference to assess the likelihood of each taxon being
+                            present in the analyzed ecosystem. Follow the steps in the wizard down below to try the
+                            Peptonizer2000 right now!
+                        </p>
+                        <span class="text-subtitle-2 mt-0">Holstein et al. (2024) BioRXiv <a href="https://doi.org/10.1101/2024.05.20.594958" target="_blank">doi.org/10.1101/2024.05.20.594958</a></span>
+                    </div>
+                    <img src="@/assets/logo/peptonizer_logo_simple.png" style="max-width: 175px;">
+                </div>
                 <div>
                     <v-row>
                         <v-col :cols="12" class="pb-0">
@@ -76,6 +76,7 @@
             <v-window-item :value="2">
                 <!-- Show progress of the current Peptonizer analysis -->
                 <peptonizer-progress
+                    class="mt-2 mb-4"
                     :progress="peptonizerStore.currentProgress"
                     :peptonizer-started="peptonizerStore.peptonizerStarted"
                     :peptonizer-initialization-finished="peptonizerStore.peptonizerInitalizationFinished"
