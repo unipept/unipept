@@ -27,7 +27,7 @@
                             <v-btn
                                 class="mt-3"
                                 color="primary"
-                                text="Create group"
+                                text="Add group"
                                 @click="addGroup(DEFAULT_NEW_GROUP_NAME)"
                             />
                         </v-card-text>

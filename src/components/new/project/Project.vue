@@ -19,7 +19,7 @@
                 <v-btn
                     color="primary"
                     prepend-icon="mdi-plus"
-                    text="Create group"
+                    text="Add group"
                     @click="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
                 />
             </div>
