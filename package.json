@@ -9,7 +9,7 @@
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@mdi/font": "7.0.96",
+    "@mdi/font": "^7.4.47",
     "@types/uuid": "^9.0.2",
     "@vueuse/components": "^11.2.0",
     "@vueuse/core": "^11.1.0",

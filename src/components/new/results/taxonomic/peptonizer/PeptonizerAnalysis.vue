@@ -4,7 +4,7 @@
             <div class="mr-4">
                 <h2>Peptonizer 2000</h2>
                 <h3>Bringing confidence to metaproteomics!</h3>
-                <p>
+                <p class="mb-0">
                     Leveraging peptide sequences and their corresponding scores,
                     the Peptonizer2000 uses advanced graphical modeling to deliver high-resolution, species-level
                     (or even strain-level) identifications. Unlike traditional approaches that rely solely on peptide-taxon
@@ -12,6 +12,7 @@
                     present in the analyzed ecosystem. Follow the steps in the wizard down below to try the
                     Peptonizer2000 right now!
                 </p>
+                <span class="text-subtitle-2 mt-0">Holstein et al. (2024) BioRXiv <a href="https://doi.org/10.1101/2024.05.20.594958" target="_blank">doi.org/10.1101/2024.05.20.594958</a></span>
             </div>
             <img src="@/assets/logo/peptonizer_logo_simple.png" style="max-width: 175px;">
         </div>
