@@ -188,14 +188,12 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-    { name: "Tryptic Peptide Analysis", path: "/tpa", forceReload: true },
-    { name: "Metaproteomics Analysis", path: "/mpa", forceReload: true },
+    { name: "Tryptic Peptide Analysis", path: "/tpa", forceReload: false },
+    { name: "Metaproteomics Analysis", path: "/mpa", forceReload: false },
     { name: "API", path: "/apidocs", forceReload: false },
     { name: "CLI", path: "/clidocs", forceReload: false },
     { name: "Metagenomics", path: "/umgap", forceReload: false },
     { name: "Unipept Desktop", path: "/desktop", forceReload: false },
-    { name: "Test", path: "/test", forceReload: false },
-    { name: "TestHome", path: "/test-home", forceReload: false },
 ];
 
 QueueManager.initializeQueue(configStore.taskQueueSize);

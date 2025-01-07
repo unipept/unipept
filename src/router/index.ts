@@ -6,6 +6,11 @@ const tpaMeta = {
     publicationLink: "doi.org/10.1101/2024.09.26.615136",
 };
 
+const mpaMeta = {
+    publication: "Vande Moortele et al. (2024) BioRXiv",
+    publicationLink: "doi.org/10.1101/2024.09.26.615136",
+};
+
 const apidocsMeta = {
     publication: "Mesuere et al. (2016) Bioinformatics",
     publicationLink: "doi:10.1093/bioinformatics/btw039"
@@ -54,10 +59,13 @@ const routes = [
     {
         path: "/mpa",
         component: () => import("@/components/pages/features/MetaproteomeAnalysisPage.vue"),
-        meta: {
-            publication: "Vande Moortele et al. (2024) BioRXiv",
-            publicationLink: "doi.org/10.1101/2024.09.26.615136"
-        }
+        meta: mpaMeta
+    },
+    {
+        path: "/mpa/results",
+        name: "mpaResults",
+        component:  () => import("@/components/pages/features/MetaproteomeResultsPage.vue"),
+        meta: mpaMeta
     },
     {
         path: "/apidocs",
@@ -176,32 +184,7 @@ const routes = [
             publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
             publicationLink: "doi:10.1021/acs.jproteome.8b00716"
         }
-    },
-    {
-        path: "/test-home",
-        component: () => import("@/components/pages/TestHomePage.vue"),
-        meta: {
-            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
-            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
-        }
-    },
-    {
-        path: "/test",
-        component: () => import("@/components/pages/TestPage.vue"),
-        meta: {
-            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
-            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
-        }
-    },
-    {
-        path: "/test/results",
-        name: "testResults",
-        component: () => import("@/components/pages/TestHomePage.vue"),
-        meta: {
-            publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
-            publicationLink: "doi:10.1021/acs.jproteome.8b00716"
-        }
-    },
+    }
 ]
 
 const router = createRouter({

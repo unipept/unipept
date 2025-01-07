@@ -3,7 +3,7 @@ import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
 import {ref} from "vue";
 import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData} from "unipept-web-components";
-import TaxonomicProcessorWebWorker from "../workers/taxonomicProcessor.worker.ts?worker&inline";
+import TaxonomicProcessorWebWorker from "../workers/taxonomicProcessor.worker.ts?worker";
 
 export interface TaxonomicProcessorData {
     peptideCounts: Map<string, number>;

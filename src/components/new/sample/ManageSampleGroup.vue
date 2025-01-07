@@ -173,7 +173,6 @@ const removeGroup = () => {
 };
 
 const addSamples = (newSamples: SampleTableItem[]) => {
-    console.log(newSamples);
     samples.value = [...samples.value!, ...newSamples ];
     addingSample.value = false;
 };

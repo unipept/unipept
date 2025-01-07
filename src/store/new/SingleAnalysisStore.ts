@@ -85,10 +85,11 @@ const useSingleAnalysisStore = (
         await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate);
         processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
 
+        await processLca(peptidesTable.value!, peptideToData.value!);
         await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
         await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
         await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
-        await processLca(peptidesTable.value!, peptideToData.value!);
+
 
         await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
         await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));

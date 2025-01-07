@@ -1,5 +1,5 @@
 import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
-import FunctionalProcessorWebWorker from "../workers/functionalProcessor.worker.ts?worker&inline";
+import FunctionalProcessorWebWorker from "../workers/functionalProcessor.worker.ts?worker";
 
 export interface FunctionalProcessorData {
     peptideCounts: Map<string, number>;
@@ -11,7 +11,7 @@ export interface FunctionalProcessorData {
 }
 
 export default function useFunctionalProcessor() {
-    const { post } = useAsyncWebWorker(() => new FunctionalProcessorWebWorker());
+    const {post} = useAsyncWebWorker(() => new FunctionalProcessorWebWorker());
 
     const process = post
 
