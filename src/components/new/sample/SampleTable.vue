@@ -27,7 +27,6 @@
                     <v-icon
                         v-bind="tooltip"
                         class="ms-1"
-                        color="primary"
                         icon="mdi-information"
                         size="small"
                     />

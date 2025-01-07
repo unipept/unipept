@@ -38,15 +38,31 @@
                         hide-details
                         readonly
                     />
-                    <v-checkbox
-                        :model-value="analysis.config.missed"
-                        color="primary"
-                        label="Enable missed cleavages"
-                        density="compact"
-                        hide-details
-                        disabled
-
-                    />
+                    <div class="d-flex align-center">
+                        <v-checkbox
+                            :model-value="analysis.config.missed"
+                            color="primary"
+                            density="compact"
+                            hide-details
+                            label="Advanced missed cleavages"
+                            disabled
+                        />
+                        <v-tooltip width="30%">
+                            <template #activator="{ props: tooltip }">
+                                <v-icon
+                                    v-bind="tooltip"
+                                    class="ms-1"
+                                    icon="mdi-information"
+                                    size="small"
+                                />
+                            </template>
+                            <span>
+                                Missed cleavage handling is now always enabled. Because of a change in Unipept's underlying search
+                                engine, enabling missed cleavage handling no longer results in a performance penalty. As a result,
+                                this configuration option will be removed in a future release.
+                            </span>
+                        </v-tooltip>
+                    </div>
 <!--                    <database-select-->
 <!--                        :model-value="analysis.config.database"-->
 <!--                        class="mt-1"-->
