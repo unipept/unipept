@@ -46,11 +46,11 @@
                 disabled
 
             />
-            <database-select
-                v-model="config.database"
-                class="mt-1"
-                label="Selected database"
-            />
+<!--            <database-select-->
+<!--                v-model="config.database"-->
+<!--                class="mt-1"-->
+<!--                label="Selected database"-->
+<!--            />-->
             <v-btn
                 color="primary"
                 variant="tonal"

@@ -45,12 +45,12 @@
                 hide-details
                 disabled
             />
-            <database-select
-                v-model="sample.config.database"
-                class="mt-1"
-                label="Selected database"
-                hide-details
-            />
+<!--            <database-select-->
+<!--                v-model="sample.config.database"-->
+<!--                class="mt-1"-->
+<!--                label="Selected database"-->
+<!--                hide-details-->
+<!--            />-->
         </div>
     </div>
 </template>

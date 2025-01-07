@@ -82,13 +82,13 @@
             />
         </template>
 
-        <template #item.database="{ item }">
-            <database-select
-                v-model="item.config.database"
-                variant="underlined"
-                hide-details
-            />
-        </template>
+<!--        <template #item.database="{ item }">-->
+<!--            <database-select-->
+<!--                v-model="item.config.database"-->
+<!--                variant="underlined"-->
+<!--                hide-details-->
+<!--            />-->
+<!--        </template>-->
 
         <template #item.count="{ item }">
             <v-tooltip text="Show the list of peptides">
@@ -183,11 +183,11 @@ const headers = [
         align: "start",
         value: "missed",
     },
-    {
-        title: "Database",
-        align: "start",
-        value: "database",
-    },
+    // {
+    //     title: "Database",
+    //     align: "start",
+    //     value: "database",
+    // },
     {
         title: "Peptides",
         align: "start",
