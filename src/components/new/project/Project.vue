@@ -42,24 +42,29 @@
         <div v-else>
             <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
             <div v-if="selectedAnalysis && selectedAnalysisFinished">
-                <v-alert
+                <div
                     v-if="selectedAnalysisFiltered"
-                    variant="tonal"
-                    type="info"
+                    class="position-sticky bg-white py-5 mt-n5 mx-n2"
+                    style="width: inherit; z-index: 1000; top: 110px"
                 >
-                    <div class="d-flex justify-space-between align-center">
-                        <span>
-                            <b>Filtered results:</b> these results are limited to the all peptides specific
-                            to <b>{{ selectedAnalysis.filteredOrganism.name }} ({{ selectedAnalysis.filteredOrganism.extra.rank }})</b>
-                        </span>
-                        <v-btn
-                            text="Reset filter"
-                            variant="outlined"
-                            size="small"
-                            @click="resetTaxonomicFilter"
-                        />
-                    </div>
-                </v-alert>
+                    <v-alert
+                        variant="tonal"
+                        type="info"
+                    >
+                        <div class="d-flex justify-space-between align-center" style="width: inherit">
+                            <span>
+                                <b>Filtered results:</b> these results are limited to the all peptides specific
+                                to <b>{{ selectedAnalysis.filteredOrganism.name }} ({{ selectedAnalysis.filteredOrganism.extra.rank }})</b>
+                            </span>
+                            <v-btn
+                                text="Reset filter"
+                                variant="outlined"
+                                size="small"
+                                @click="resetTaxonomicFilter"
+                            />
+                        </div>
+                    </v-alert>
+                </div>
 
                 <analysis-summary
                     :analysis="selectedAnalysis"
