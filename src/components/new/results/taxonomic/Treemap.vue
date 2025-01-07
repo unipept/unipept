@@ -103,6 +103,10 @@ watch(width, () => {
     redraw();
 });
 
+watch(filterId, () => {
+    visualizationObject.value?.reroot(filterId.value, false);
+});
+
 onMounted(() => {
     redraw();
 });

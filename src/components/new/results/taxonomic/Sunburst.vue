@@ -124,6 +124,10 @@ watch(useFixedColors, () => {
     redraw();
 });
 
+watch(filterId, () => {
+    visualizationObject.value?.reroot(filterId.value, false);
+});
+
 onMounted(() => {
     redraw();
 });
@@ -138,7 +142,7 @@ const tooltipContent = (d: any): string => {
 };
 </script>
 
-<style>
+<style scoped>
 .visualization-container {
     display: flex;
     flex-direction: row-reverse;

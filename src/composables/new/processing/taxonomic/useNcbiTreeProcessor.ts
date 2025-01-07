@@ -7,6 +7,7 @@ export default function useNcbiTreeProcessor() {
     const { getNcbiDefinition } = useOntologyStore();
 
     const root = shallowRef<NcbiTreeNode>();
+    const nodes = shallowRef(new Map<number, NcbiTreeNode>());
 
     const process = (
         taxaCountTable: CountTable<number>,
@@ -14,6 +15,8 @@ export default function useNcbiTreeProcessor() {
         id = 1,
         name = "Organism"
     ) => {
+        const newNodes = new Map<number, NcbiTreeNode>();
+
         const tree = new NcbiTreeNode(id, name);
 
         for (const taxonId of taxaCountTable.keys()) {
@@ -34,6 +37,7 @@ export default function useNcbiTreeProcessor() {
                         };
                         newNode = new NcbiTreeNode(lineageId, definition.name, definition.rank);
                         currentNode.addChild(newNode);
+                        newNodes.set(lineageId, newNode);
                     }
                     currentNode = newNode;
                 }
@@ -44,10 +48,13 @@ export default function useNcbiTreeProcessor() {
 
         tree.getCounts();
         root.value = tree;
+        newNodes.set(id, tree);
+        nodes.value = newNodes;
     }
 
     return {
         root,
+        nodes,
         process
     }
 }

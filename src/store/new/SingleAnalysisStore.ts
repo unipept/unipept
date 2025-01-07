@@ -57,12 +57,13 @@ const useSingleAnalysisStore = (
     const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered();
 
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
+    const { countTable: filteredPeptidesTable, process: processFilteredPeptides } = usePeptideProcessor();
     const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
     const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
     const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
-    const { root: ncbiTree, process: processNcbiTree } = useNcbiTreeProcessor();
+    const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
     const peptonizerStore = usePeptonizerStore(_id);
 
     // ===============================================================
@@ -72,6 +73,8 @@ const useSingleAnalysisStore = (
     const peptides = computed(() =>
         rawPeptides.value.split("\n").map(p => p.trim()).filter(p => p.length > 0)
     );
+
+    const filteredOrganism = computed(() => ncbiTreeNodes.value.get(taxonomicFilter.value));
 
     // ===============================================================
     // ========================== METHODS ============================
@@ -104,14 +107,51 @@ const useSingleAnalysisStore = (
         status.value = AnalysisStatus.Finished
     }
 
-    const updateFilter = async (newFilter: number) => {
+    const updateFunctionalFilter = async (newFilter: number) => {
         filteringStatus.value = AnalysisStatus.Running;
 
         functionalFilter.value = newFilter;
 
-        await processEc(peptidesTable.value!, peptideToData.value!, newFilter);
-        await processGo(peptidesTable.value!, peptideToData.value!, newFilter);
-        await processInterpro(peptidesTable.value!, peptideToData.value!, newFilter);
+        const table = filteredPeptidesTable.value || peptidesTable.value;
+        await processEc(table!, peptideToData.value!, functionalFilter.value!);
+        await processGo(table!, peptideToData.value!, functionalFilter.value!);
+        await processInterpro(table!, peptideToData.value!, functionalFilter.value!);
+
+        filteringStatus.value = AnalysisStatus.Finished;
+    }
+
+    const updateTaxonomicFilter = async (newFilter: number) => {
+        filteringStatus.value = AnalysisStatus.Running;
+
+        const getOwnAndChildrenSequences = async (
+            taxonId: number
+        ): Promise<string[]> => {
+            const sequences: string[] = [];
+            const nodes = [ ncbiTreeNodes.value.get(taxonId)! ];
+
+            while (nodes.length > 0) {
+                const node = nodes.pop();
+                if (node && lcaToPeptides.value.has(node.id)) {
+                    sequences.push(...lcaToPeptides.value.get(node?.id)!);
+                }
+
+                if (node?.children) {
+                    nodes.push(...node.children);
+                }
+            }
+
+            return sequences;
+        }
+
+        taxonomicFilter.value = newFilter;
+
+        const filteredPeptides = await getOwnAndChildrenSequences(taxonomicFilter.value!);
+
+        await processFilteredPeptides(filteredPeptides, config.value.equate, config.value.filter);
+
+        await processEc(filteredPeptidesTable.value!, peptideToData.value!, functionalFilter.value!);
+        await processGo(filteredPeptidesTable.value!, peptideToData.value!, functionalFilter.value!);
+        await processInterpro(filteredPeptidesTable.value!, peptideToData.value!, functionalFilter.value!);
 
         filteringStatus.value = AnalysisStatus.Finished;
     }
@@ -132,6 +172,8 @@ const useSingleAnalysisStore = (
         peptides,
         config,
         intensities,
+        taxonomicFilter,
+        filteredOrganism,
         functionalFilter,
         status,
         filteringStatus,
@@ -158,7 +200,8 @@ const useSingleAnalysisStore = (
         analyse,
         updateName,
         updateConfig,
-        updateFilter
+        updateFunctionalFilter,
+        updateTaxonomicFilter
     };
 })();
 

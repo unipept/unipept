@@ -107,10 +107,6 @@ const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
 }>();
 
-const emits = defineEmits<{
-    updateFilter: (value: number) => void
-}>();
-
 const currentTab = ref(0);
 const sortPeptidePercentage = ref(false);
 const sortingPeptidesDialogOpen = ref(false);
@@ -119,7 +115,7 @@ const filter = ref<number>(analysis.functionalFilter);
 
 const updateFilter = (value: number) => {
     filter.value = value;
-    emits('updateFilter', value);
+    analysis.updateFunctionalFilter(value);
 }
 </script>
 

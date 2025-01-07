@@ -39,6 +39,25 @@
         <div v-else>
             <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
             <div v-if="selectedAnalysis && selectedAnalysisFinished">
+                <v-alert
+                    v-if="selectedAnalysisFiltered"
+                    variant="tonal"
+                    type="info"
+                >
+                    <div class="d-flex justify-space-between align-center">
+                        <span>
+                            <b>Filtered results:</b> these results are limited to the all peptides specific
+                            to <b>{{ selectedAnalysis.filteredOrganism.name }} ({{ selectedAnalysis.filteredOrganism.extra.rank }})</b>
+                        </span>
+                        <v-btn
+                            text="Reset filter"
+                            variant="outlined"
+                            size="small"
+                            @click="resetTaxonomicFilter"
+                        />
+                    </div>
+                </v-alert>
+
                 <analysis-summary
                     :analysis="selectedAnalysis"
                     :group-name="selectedGroupName!"
@@ -52,7 +71,6 @@
                 <functional-results
                     class="mt-5"
                     :analysis="selectedAnalysis"
-                    @update-filter="updateFunctionalFilter"
                 />
             </div>
         </div>
@@ -65,7 +83,7 @@ import Filesystem from "@/components/new/filesystem/Filesystem.vue";
 import FunctionalResults from "@/components/new/results/functional/FunctionalResults.vue";
 import AnalysisSummary from "@/components/new/analysis/AnalysisSummary.vue";
 import TaxonomicResults from "@/components/new/results/taxonomic/TaxonomicResults.vue";
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {AnalysisStatus, SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
@@ -95,6 +113,10 @@ const selectedAnalysisFinished = computed(() => {
     return selectedAnalysis.value.status === AnalysisStatus.Finished;
 });
 
+const selectedAnalysisFiltered = computed(() => {
+    return selectedAnalysis.value.taxonomicFilter !== 1;
+});
+
 const addSample = (groupId: string, sample: SampleTableItem) => {
     emits('sample:add', groupId, sample);
 }
@@ -119,8 +141,8 @@ const removeGroup = (groupId: string) => {
     emits('group:remove', groupId);
 }
 
-const updateFunctionalFilter = async (value: number) => {
-    await selectedAnalysis.value?.updateFilter(value);
+const resetTaxonomicFilter = () => {
+    selectedAnalysis.value?.updateTaxonomicFilter(1);
 }
 
 const clearSelectedAnalysis = () => selectedAnalysis.value = undefined;
