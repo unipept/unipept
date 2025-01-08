@@ -12,7 +12,7 @@
         </div>
         <div class="mt-1 d-flex flex-column align-center" v-else-if="peptonizerInitializationFinished">
             <span>{{ progress.toFixed(2) }}%</span>
-            <span>Approximately {{ convertDurationToString(Math.round(eta / 1000)) }} remaining</span>
+            <span v-if="progress > 0">Approximately {{ convertDurationToString(Math.round(eta / 1000)) }} remaining</span>
         </div>
         <div class="mt-1" v-else>
             Initializing peptonizer...

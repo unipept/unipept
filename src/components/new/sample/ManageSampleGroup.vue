@@ -72,7 +72,7 @@
                         variant="text"
                         text="Undo changes"
                         prepend-icon="mdi-undo"
-                        @click="undoChanges"
+                        @click="undoChangesDialogOpen = true"
                     />
 
                     <v-spacer></v-spacer>
@@ -86,11 +86,15 @@
                     />
                 </div>
 
-
                 <remove-group-dialog
                     v-model="removeGroupDialogOpen"
                     :group="group"
                     @confirm="removeGroup"
+                />
+
+                <undo-changes-dialog
+                    v-model="undoChangesDialogOpen"
+                    @confirm="undoChanges"
                 />
             </v-card-text>
         </v-card>
@@ -103,6 +107,7 @@ import {computed, ref, watch} from "vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import RemoveGroupDialog from "@/components/new/sample/RemoveGroupDialog.vue";
 import AddSampleStepper from "@/components/new/sample/AddSampleStepper.vue";
+import UndoChangesDialog from "@/components/new/sample/UndoChangesDialog.vue";
 
 const dialogOpen = defineModel<boolean>();
 
@@ -121,6 +126,7 @@ const emit = defineEmits<{
 const samples = ref<SampleTableItem[]>(cloneOriginalSamples(group.analyses));
 const groupName = ref<string>(group.name);
 const removeGroupDialogOpen = ref(false);
+const undoChangesDialogOpen = ref(false);
 
 const addingSample = ref(false);
 
