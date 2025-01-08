@@ -102,6 +102,7 @@
                 <!-- Show final Peptonizer results to the user -->
                 <peptonizer-chart
                     v-if="peptonizerStore.taxaNamesToConfidence"
+                    :uses-default-scores="usesDefaultScores"
                     :peptonizer-result="peptonizerStore.taxaNamesToConfidence!"
                 />
 
@@ -137,6 +138,7 @@ import useCsvDownload from "@/composables/new/useCsvDownload";
 import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExport.vue";
 
 const props = defineProps<{
+    usesDefaultScores: boolean,
     peptideCountTable: CountTable<string>,
     peptideIntensities: Map<string, number> | undefined,
     equateIl: boolean,

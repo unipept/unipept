@@ -53,7 +53,7 @@
 
             <v-btn
                 class="align-self-center mr-4"
-                text="Apply filtering"
+                text="Set threshold"
                 variant="text"
                 prepend-icon="mdi-filter-outline"
                 @click="filterModalOpen = true"

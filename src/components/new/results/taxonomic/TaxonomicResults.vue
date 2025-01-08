@@ -59,6 +59,7 @@
 
                 <v-tabs-window-item>
                     <peptonizer-analysis
+                        :uses-default-scores="analysis.intensities === undefined"
                         :peptide-count-table="analysis.peptidesTable!"
                         :peptide-intensities="analysis.intensities!"
                         :equate-il="analysis.config.equate"

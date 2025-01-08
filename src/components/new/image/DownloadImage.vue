@@ -4,6 +4,15 @@
         width="80%"
     >
         <v-card>
+            <v-card-title class="d-flex align-center">
+                <h2>Export image</h2>
+                <v-spacer />
+                <v-btn
+                    icon="mdi-close"
+                    variant="plain"
+                    @click="closeDialog"
+                />
+            </v-card-title>
             <v-card-text>
                 <div class="d-flex justify-center">
                     <v-card
@@ -46,16 +55,15 @@
                     <span v-if="selectedFormat === Format.PNG.valueOf()">
                         The resulting image will have a resolution of <b>{{ resolution.width }} x {{ resolution.height }}</b> pixels.
                     </span>
-
-                    <v-btn
-                        class="mt-5"
-                        color="primary"
-                        variant="tonal"
-                        text="Download"
-                        prepend-icon="mdi-download"
-                        @click="download"
-                    />
                 </div>
+                <v-btn
+                    class="mt-5 float-right"
+                    color="primary"
+                    variant="tonal"
+                    text="Download"
+                    prepend-icon="mdi-download"
+                    @click="download"
+                />
             </v-card-text>
         </v-card>
     </v-dialog>
@@ -113,6 +121,10 @@ const download = async () => {
     }
     dialogOpen.value = false;
 };
+
+const closeDialog = async () => {
+    dialogOpen.value = false;
+}
 
 watch(dialogOpen, async (value) => {
     // Update the image when opening the dialog

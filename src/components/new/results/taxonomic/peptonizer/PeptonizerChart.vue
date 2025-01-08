@@ -1,5 +1,16 @@
 <template>
     <div>
+        <v-alert v-if="usesDefaultScores" variant="tonal" type="warning">
+            No peptide scores provided.
+            Peptonizer 2000 has used default values instead.
+            This may impact the accuracy of your analysis results.
+            For optimal performance, please provide scores from your search engine.
+        </v-alert>
+        <v-alert v-else variant="tonal" type="success">
+            Custom peptide scores provided.
+            Peptonizer 2000 will use these scores for analysis, which typically improves result accuracy.
+            Ensure the scores are correctly derived from your search engine for optimal performance.
+        </v-alert>
         <highcharts :options="chartOptions" style="min-height: 500px;"/>
     </div>
 </template>
@@ -11,6 +22,7 @@ import { computed } from "vue";
 import { Options } from "highcharts";
 
 const props = defineProps<{
+    usesDefaultScores: boolean,
     peptonizerResult: PeptonizerResult
 }>();
 

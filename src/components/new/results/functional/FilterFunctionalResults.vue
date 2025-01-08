@@ -65,7 +65,7 @@
                     variant="elevated"
                     @click="confirmChanges"
                 >
-                    Apply filter
+                    Set threshold
                 </v-btn>
             </v-card-text>
         </v-card>
