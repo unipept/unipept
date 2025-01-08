@@ -116,41 +116,6 @@
                 <div class="text-caption mb-2">
                     <span>Hint:</span>
                     enter a keyword to search for taxa. You can search by name, NCBI identifier or rank.
-                    <v-tooltip location="bottom" open-delay="500">
-                        <template #activator="{ props }">
-                            <a class="text-primary cursor-pointer" v-bind="props" @click="searchHintsToggled = !searchHintsToggled">
-                                Advanced search capabilities
-                            </a>
-                        </template>
-                        <span>Click to toggle search hints.</span>
-                    </v-tooltip>
-                    are available.
-                </div>
-
-                <div v-if="searchHintsToggled" class="text-caption">
-                    Some examples of what you can do:
-                    <ul>
-                        <li class="text-caption">
-                            Look for all taxa with a specific rank:
-                            <span class="inline-code">rank_name:(species)</span>
-                        </li>
-                        <li class="text-caption">
-                            Look for all taxa whose name contains the words "severe" and "acute":
-                            <span class="inline-code">name:(severe acute)</span>
-                        </li>
-                        <li class="text-caption">
-                            Look for all taxa that are assigned the "species" rank and whose name contains "bacteria":
-                            <span class="inline-code">rank_name:(species) AND name:(bacteria)</span>
-                        </li>
-                        <li class="text-caption">
-                            Look for all taxa whose ID starts with "1234" or whose name contains "1234":
-                            <span class="inline-code">id:(^1234*) OR name:(1234)</span>
-                        </li>
-                        <li class="text-caption">
-                            Look for all "Escherichia Coli" by using it's abbreviation:
-                            <span class="inline-code">e* coli</span>
-                        </li>
-                    </ul>
                 </div>
             </v-col>
         </v-row>
@@ -232,7 +197,6 @@ const rankColors: string[] = [
 
 
 // Values that define UI behaviour of the component
-const searchHintsToggled = ref(false);
 const selectedItems = defineModel<NcbiTaxon[]>({ default: [] });
 
 const selectItem = (item: NcbiTaxon) => {

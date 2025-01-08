@@ -140,6 +140,7 @@ import AnalysisSummaryExport from "@/components/new/analysis/AnalysisSummaryExpo
 
 const props = defineProps<{
     usesDefaultScores: boolean,
+    sampleName: string,
     peptideCountTable: CountTable<string>,
     peptideIntensities: Map<string, number> | undefined,
     equateIl: boolean,
@@ -190,7 +191,7 @@ const cancelPeptonizer = () => {
 const exportCsv = async (delimiter: string) => {
     const extension = delimiter === "\t" ? "tsv" : "csv";
     const peptideExport = generatePeptonizerExport(props.peptonizerStore.taxaIdsToConfidence!);
-    await downloadCsv(peptideExport, `peptonizer.${extension}`, delimiter);
+    await downloadCsv(peptideExport, `unipept_${props.sampleName.replaceAll(" ", "_")}_peptonizer.${extension}`, delimiter);
 }
 
 watch(() => props.peptonizerStore, () => {

@@ -64,7 +64,7 @@ const downloadCsv = (name: string, separator = ',', functionalSeparator = ';') =
             separator,
             functionalSeparator
         );
-        downloadString(csvString, `${props.assayStatus.assay.name}_mpa.csv`);
+        downloadString(csvString, `unipept_${props.assayStatus.assay.name}_mpa_results.csv`);
 
         new AnalyticsCommunicator().logDownloadMpa(name);
 

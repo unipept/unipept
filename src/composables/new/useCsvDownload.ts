@@ -10,9 +10,13 @@ export default function useCsvDownload() {
     const download = async (data: string[][], filename: string, separator = ";") => {
         content.value = createCsvString(data, separator);
 
-        await saveAs({
-            suggestedName: filename
-        }).catch(() => {});
+        try {
+            await saveAs({
+                suggestedName: filename
+            });
+        } catch (e) {
+            // ignore error (otherwise a useless error is printed to the console)
+        }
     }
 
     const createCsvString = (data: string[][], separator = ";") => {

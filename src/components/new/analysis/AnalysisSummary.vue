@@ -132,7 +132,7 @@ const missedPeptides = computed(() => {
 const download = (separator: string) => {
     const extension = separator === "\t" ? "tsv" : "csv";
     const peptideExport = generateExport(analysis, ',');
-    downloadCsv(peptideExport, `peptides.${extension}`, separator);
+    downloadCsv(peptideExport, `unipept_${analysis.name.replaceAll(" ", "_")}_mpa.${extension}`, separator);
 };
 </script>
 

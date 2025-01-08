@@ -141,7 +141,7 @@ const downloadItem = (item: GoResultsTableItem) => {
         ];
     }));
 
-    download(data, `${item.code.replace(":", "_")}.csv`);
+    download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_${item.code.replace(":", "_")}.csv`);
 }
 
 const downloadTable = () => {
@@ -154,7 +154,7 @@ const downloadTable = () => {
         ];
     }));
 
-    download(data, "go_table.csv");
+    download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_go_table.csv`);
 }
 
 watch(() => analysis, () => {
