@@ -16,14 +16,17 @@ export enum PeptonizerStatus {
 class UnipeptPeptonizerProgressListener implements PeptonizerProgressListener {
     private totalTasks: number = 0;
     private tasksFinished: number = 0;
+    private startEpoch: number = 0;
 
     constructor(
         private currentProgress: Ref<number>,
+        private etaSeconds: Ref<number>,
         private started: Ref<boolean>,
         private initializationFinished: Ref<boolean>,
         private finished: Ref<boolean>
     ) {
         this.currentProgress.value = 0;
+        this.etaSeconds.value = 0;
         this.started.value = false;
         this.initializationFinished.value = false;
         this.finished.value = false;
@@ -41,12 +44,26 @@ class UnipeptPeptonizerProgressListener implements PeptonizerProgressListener {
     peptonizerCancelled() {}
 
     taskStarted(_parameterSet: PeptonizerParameterSet, _workerId: number) {
-        this.initializationFinished.value = true;
+        if (!this.initializationFinished.value) {
+            this.startEpoch = new Date().getTime();
+            this.initializationFinished.value = true;
+        }
     }
 
     taskFinished(_parameterSet: PeptonizerParameterSet, _workerId: number) {
         this.tasksFinished++;
         this.currentProgress.value = 100 * (this.tasksFinished / this.totalTasks);
+
+        // Avoid division by zero
+        if (this.currentProgress.value <= 0) {
+            this.etaSeconds.value = 0;
+            return
+        }
+
+        const currentEpoch = new Date().getTime();
+        const timeSinceStart = currentEpoch - this.startEpoch;
+
+        this.etaSeconds.value = (timeSinceStart / this.currentProgress.value) * (100 - this.currentProgress.value);
     }
 
     graphsUpdated(_currentGraph: number, _totalGraphs: number, _workerId: number): void {}
@@ -62,6 +79,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
     const taxaNamesToConfidence = ref<Map<string, number> | undefined>();
 
     const currentProgress = ref<number>(0);
+    const etaSeconds = ref<number>(0);
     const peptonizerStarted = ref<boolean>(false);
     const peptonizerInitalizationFinished = ref<boolean>(false);
     const peptonizerFinished = ref<boolean>(false);
@@ -83,6 +101,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
 
         const listener = new UnipeptPeptonizerProgressListener(
             currentProgress,
+            etaSeconds,
             peptonizerStarted,
             peptonizerInitalizationFinished,
             peptonizerFinished
@@ -129,6 +148,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
 
         status,
         currentProgress,
+        etaSeconds,
         peptonizerStarted,
         peptonizerInitalizationFinished,
         peptonizerFinished,

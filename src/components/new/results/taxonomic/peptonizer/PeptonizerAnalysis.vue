@@ -78,6 +78,7 @@
                 <peptonizer-progress
                     class="mt-2 mb-4"
                     :progress="peptonizerStore.currentProgress"
+                    :eta="peptonizerStore.etaSeconds"
                     :peptonizer-started="peptonizerStore.peptonizerStarted"
                     :peptonizer-initialization-finished="peptonizerStore.peptonizerInitalizationFinished"
                     :peptonizer-finished="peptonizerStore.peptonizerFinished"

@@ -10,8 +10,9 @@
         <div class="mt-1" v-if="!peptonizerStarted">
             Waiting for Peptonizer to become available or finish a previous task...
         </div>
-        <div class="mt-1" v-else-if="peptonizerInitializationFinished">
-            {{ progress.toFixed(2) }}%
+        <div class="mt-1 d-flex flex-column align-center" v-else-if="peptonizerInitializationFinished">
+            <span>{{ progress.toFixed(2) }}%</span>
+            <span>Approximately {{ convertDurationToString(Math.round(eta / 1000)) }} remaining</span>
         </div>
         <div class="mt-1" v-else>
             Initializing peptonizer...
@@ -20,12 +21,19 @@
 </template>
 
 <script setup lang="ts">
+import useTimeFormatter from "@/composables/new/useTimeFormatter";
+
 defineProps<{
     progress: number,
+    eta: number,
     peptonizerStarted: boolean,
     peptonizerInitializationFinished: boolean,
     peptonizerFinished: boolean
 }>();
+
+const {
+    convertDurationToString
+} = useTimeFormatter();
 </script>
 
 <style scoped>
