@@ -6,7 +6,7 @@
             </v-icon>
             Peptonizer is running, please wait...
         </h2>
-        <v-progress-linear class="mx-8" :indeterminate="!peptonizerInitializationFinished" :model-value="progress" color="primary" />
+        <v-progress-linear height="8" class="mx-8" rounded :indeterminate="!peptonizerInitializationFinished" :model-value="progress" color="primary" striped />
         <div class="mt-1" v-if="!peptonizerStarted">
             Waiting for Peptonizer to become available or finish a previous task...
         </div>

@@ -1,16 +1,27 @@
 <template>
     <div>
-        <v-alert v-if="usesDefaultScores" variant="tonal" type="warning">
+        <div class="mr-4">
+            <h2>Peptonizer Results</h2>
+            <div>
+                These are the top 20 taxa at the {{ rank }} level.
+                The confidence score indicates the estimated probability that the taxon was present in the sample.
+                See the publication by <a href="https://doi.org/10.1101/2024.05.20.594958" target="_blank">Holstein et al. (2024) BioRXiv</a> for more information.
+            </div>
+        </div>
+
+        <v-alert v-if="usesDefaultScores" variant="tonal" type="info" class="my-2">
             No peptide scores provided.
             Peptonizer 2000 has used default values instead.
             This may impact the accuracy of your analysis results.
-            For optimal performance, please provide scores from your search engine.
+            For optimal performance, please provide scores from your search engine using the
+            <a @click="" class="alert-link">sample management dialog</a>.
         </v-alert>
-        <v-alert v-else variant="tonal" type="success">
+        <v-alert v-else variant="tonal" type="success" class="my-2">
             Custom peptide scores provided.
             Peptonizer 2000 will use these scores for analysis, which typically improves result accuracy.
             Ensure the scores are correctly derived from your search engine for optimal performance.
         </v-alert>
+
         <highcharts :options="chartOptions" style="min-height: 500px;"/>
     </div>
 </template>
@@ -22,6 +33,7 @@ import { computed } from "vue";
 import { Options } from "highcharts";
 
 const props = defineProps<{
+    rank: string,
     usesDefaultScores: boolean,
     peptonizerResult: PeptonizerResult
 }>();
@@ -46,8 +58,9 @@ const chartOptions = computed<Options>(() => {
         chart: {
             type: 'bar'
         },
+        // title: false,
         title: {
-            text: 'Peptonizer Confidence Scores'
+            text: 'Confidence Scores'
         },
         xAxis: {
             categories: labels.slice(0, 20),

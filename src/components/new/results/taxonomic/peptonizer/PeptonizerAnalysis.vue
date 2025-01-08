@@ -103,6 +103,7 @@
                 <!-- Show final Peptonizer results to the user -->
                 <peptonizer-chart
                     v-if="peptonizerStore.taxaNamesToConfidence"
+                    :rank="peptonizerRank"
                     :uses-default-scores="usesDefaultScores"
                     :peptonizer-result="peptonizerStore.taxaNamesToConfidence!"
                 />
@@ -112,11 +113,10 @@
                 <v-card-actions>
                     <v-btn
                         @click="peptonizerStep = 1"
-                        color="red"
                         variant="tonal"
                         prepend-icon="mdi-restart"
                     >
-                        Restart
+                        New analysis
                     </v-btn>
                     <v-spacer></v-spacer>
                     <analysis-summary-export @download="exportCsv"/>
