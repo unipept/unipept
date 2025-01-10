@@ -16,6 +16,7 @@ export default function useCsvDownload() {
             });
         } catch (e) {
             // ignore error (otherwise a useless error is printed to the console)
+            console.error(e);
         }
     }
 

@@ -27,6 +27,11 @@
     </v-navigation-drawer>
 
     <v-container fluid>
+        <v-alert v-if="isSafari" type="warning" class="mb-4">
+            <span class="font-weight-bold">Notice:</span> Unipept is currently investigating some issues with exporting results when using the Safari browser.
+            You can switch to another browser such as Chrome or Firefox to fully enjoy Unipept in the mean time.
+        </v-alert>
+
         <new-project
             v-if="project.empty"
             @group:add="addGroup"
@@ -91,7 +96,7 @@ import Filesystem from "@/components/new/filesystem/Filesystem.vue";
 import FunctionalResults from "@/components/new/results/functional/FunctionalResults.vue";
 import AnalysisSummary from "@/components/new/analysis/AnalysisSummary.vue";
 import TaxonomicResults from "@/components/new/results/taxonomic/TaxonomicResults.vue";
-import {computed, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
 import {AnalysisStatus, SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {DEFAULT_NEW_GROUP_NAME, GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
@@ -157,6 +162,22 @@ const selectAnalysis = (groupId: string | undefined, analysisId: string | undefi
     selectedAnalysis.value = groupId && analysisId ? project.getGroup(groupId)?.getAnalysis(analysisId) : undefined;
     selectedGroupName.value = project.getGroup(groupId)?.name;
 }
+
+const isSafari = ref(false);
+
+function detectSafari(): boolean {
+    const userAgent = navigator.userAgent.toLowerCase();
+    return (
+        userAgent.includes("safari") &&
+        !userAgent.includes("chrome") &&
+        !userAgent.includes("chromium")
+    );
+}
+
+onMounted(() => {
+    isSafari.value = detectSafari();
+});
+
 </script>
 
 <style scoped>

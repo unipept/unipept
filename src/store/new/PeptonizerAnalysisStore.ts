@@ -123,7 +123,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
             return;
         }
 
-        taxaIdsToConfidence.value = new Map<number, number>(peptonizerData.entries().map(([k, v]) => [Number.parseInt(k), v]));
+        taxaIdsToConfidence.value = new Map<number, number>(Array.from(peptonizerData.entries()).map(([k, v]) => [Number.parseInt(k), v]));
 
         // Convert the labels from taxon IDs to taxon names
         const ncbiOntologyUpdater = useNcbiOntology();

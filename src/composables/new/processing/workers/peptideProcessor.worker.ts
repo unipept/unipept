@@ -17,7 +17,7 @@ const process = async ({
         peptideCounts.set(peptide, filter ? 1 : count + 1);
     }
 
-    const totalPeptideCount = peptideCounts.values().reduce((a, b) => a + b, 0);
+    const totalPeptideCount = Array.from(peptideCounts.values()).reduce((a, b) => a + b, 0);
 
     return {
         peptideCounts,
