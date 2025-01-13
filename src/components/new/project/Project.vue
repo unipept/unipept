@@ -34,7 +34,7 @@
 
         <new-project
             v-if="project.empty"
-            @group:add="addGroup"
+            @group:add="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
         />
 
         <v-empty-state
