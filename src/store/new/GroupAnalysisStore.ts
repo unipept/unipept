@@ -56,7 +56,7 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
      * Returns a number for the default group naming, such that the new default group's name is unique.
      */
     const findFirstAvailableGroupNumber = () => {
-        const existingGroupNames: string[] = _groups.value.map(g => g.name);
+        const existingGroupNames: string[] = [..._groups.value.values()].map(g => g.name);
         let counter = 1;
         while (existingGroupNames.includes(`${DEFAULT_NEW_GROUP_NAME} ${counter}`)) {
             counter += 1;
