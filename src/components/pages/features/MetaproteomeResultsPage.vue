@@ -49,6 +49,9 @@ const updateGroup = (groupId: string, updatedName: string) => {
 </script>
 
 <script lang="ts">
+import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+
 export interface AnalysisGroup {
     name: string;
     analysis: Analysis[];
@@ -67,22 +70,9 @@ export interface Sample {
     rawPeptides: string;
 }
 
-export interface AnalysisConfig {
-    equate: boolean;
-    filter: boolean;
-    missed: boolean;
-    database: string;
-}
-
 export interface AnalysisResult {
     status: AnalysisStatus;
     config: AnalysisConfig;
-}
-
-export enum AnalysisStatus {
-    Pending,
-    Running,
-    Finished
 }
 </script>
 

@@ -34,7 +34,7 @@
 <!--                <lineage-tree :assay="assay" />-->
             </v-window-item>
             <v-window-item value="lineage-table">
-<!--                <lineage-table :assay="assay" />-->
+                <lineage-table :assay="assay" />
             </v-window-item>
             <v-window-item value="go-terms">
                 <!-- @vue-ignore -->
@@ -69,6 +69,7 @@
 import { ref, watch } from "vue";
 import MatchedProteinsTable from "@/components/tables/MatchedProteinsTable.vue";
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
+import LineageTable from "@/components/tables/LineageTable.vue";
 // import LineageTree from "../trees/LineageTree.vue";
 // import GoSummaryCard from "../cards/GoSummaryCard.vue";
 // import EcSummaryCard from "../cards/EcSummaryCard.vue";

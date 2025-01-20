@@ -1,6 +1,6 @@
 export type NcbiId = number;
 
-export default class NcbiTaxon {
+export class NcbiTaxon {
     constructor(
         public readonly id: NcbiId,
         public readonly name: string,

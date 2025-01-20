@@ -274,10 +274,6 @@ const computeItems = async () => {
         const ecTerms = p.ecNumbers.map((term: string) => ontologyStore.getEcDefinition(`EC:${term}`)).filter(e => e);
         const iprTerms = p.interproEntries.map((term: string) => ontologyStore.getIprDefinition(`IPR:${term}`)).filter(e => e);
 
-        console.log(goTerms);
-        console.log(ecTerms);
-        console.log(iprTerms);
-
         return {
             uniprotAccessionId: p.uniprotAccessionId,
             name: p.name,
