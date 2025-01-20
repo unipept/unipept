@@ -119,8 +119,8 @@ const useSingleAnalysisStore = (
 
             while (nodes.length > 0) {
                 const node = nodes.pop();
-                if (node && lcaToPeptides.value.has(node.id)) {
-                    sequences.push(...lcaToPeptides.value.get(node?.id)!);
+                if (node && lcaToPeptides.value!.has(node.id)) {
+                    sequences.push(...lcaToPeptides.value!.get(node?.id)!);
                 }
 
                 if (node?.children) {

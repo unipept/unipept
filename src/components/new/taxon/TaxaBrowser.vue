@@ -131,7 +131,8 @@ import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/Nc
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/new/Constants";
 import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
 
-const headers = [
+// TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
+const headers: any = [
     {
         title: "NCBI ID",
         align: "start",

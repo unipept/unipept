@@ -229,7 +229,8 @@ export interface Props {
 
 const props = defineProps<Props>();
 
-const headers = ref([
+// TODO: remove any type whenever Vuetify exposes type of DataTableHeader...
+const headers: any = ref([
     {
         title: "UniProt ID",
         align: "start",
@@ -296,7 +297,7 @@ const peptideData: ComputedRef<PeptideData | undefined> = computed(() => {
 });
 
 const filter = ref<string>("");
-const expanded = ref<MatchedProtein[]>([]);
+const expanded = ref<string[]>([]);
 
 // Implemented by Vuetify (see docs), but not exposed in their library
 export interface InternalItem<T = any> {
