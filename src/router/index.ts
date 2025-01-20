@@ -2,13 +2,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const spaMeta = {
-    publication: "Vande Moortele et al. (2024) BioRXiv",
-    publicationLink: "doi.org/10.1101/2024.09.26.615136",
+    publication: "Vande Moortele et al. (2025) Journal of Proteome Research",
+    publicationLink: "doi.org/10.1021/acs.jproteome.4c00848",
 };
 
 const mpaMeta = {
-    publication: "Vande Moortele et al. (2024) BioRXiv",
-    publicationLink: "doi.org/10.1101/2024.09.26.615136",
+    publication: "Vande Moortele et al. (2025) Journal of Proteome Research",
+    publicationLink: "doi.org/10.1021/acs.jproteome.4c00848",
 };
 
 const apidocsMeta = {
