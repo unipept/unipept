@@ -1,4 +1,5 @@
 import {ref} from "vue";
+import FunctionalDefinition from "@/logic/new/ontology/functional/FunctionalDefinition";
 
 export enum InterproNamespace {
     ActiveSite = "active site",
@@ -16,7 +17,7 @@ export default function useInterproOntology(
     baseUrl = "https://api.unipept.ugent.be",
     batchSize = 100
 ) {
-    const ontology = ref<Map<string, { name: string, namespace: string }>>(new Map());
+    const ontology = ref<Map<string, FunctionalDefinition>>(new Map());
 
     const update = async (
         codes: string[]
@@ -36,6 +37,7 @@ export default function useInterproOntology(
                 ontology.value.set(
                     `IPR:${definition.code}`,
                     {
+                        code: `IPR:${definition.code}`,
                         name: definition.name,
                         namespace: definition.category.toLowerCase().replace("_", " ")
                     }

@@ -1,4 +1,5 @@
 import {ref} from "vue";
+import FunctionalDefinition from "@/logic/new/ontology/functional/FunctionalDefinition";
 
 export enum GoNamespace {
     BiologicalProcess = "biological process",
@@ -10,7 +11,7 @@ export default function useGoOntology(
     baseUrl = "https://api.unipept.ugent.be",
     batchSize = 100
 ) {
-    const ontology = ref<Map<string, { name: string, namespace: string }>>(new Map());
+    const ontology = ref<Map<string, FunctionalDefinition>>(new Map());
 
     const update = async (
         codes: string[]
@@ -30,6 +31,7 @@ export default function useGoOntology(
                 ontology.value.set(
                     definition.code,
                     {
+                        code: definition.code,
                         name: definition.name,
                         namespace: definition.namespace
                     }

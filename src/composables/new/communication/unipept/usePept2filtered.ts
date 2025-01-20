@@ -2,9 +2,10 @@ import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData, PeptideDataSerializer} from "unipept-web-components";
 import { parallelLimit } from "async";
 import {ref} from "vue";
+import {DEFAULT_API_BASE_URL} from "@/logic/new/Constants";
 
 export default function usePept2filtered(
-    baseUrl = "https://api.unipept.ugent.be",
+    baseUrl = DEFAULT_API_BASE_URL,
     batchSize = 400,
     parallelRequests = 5,
 ) {

@@ -1,5 +1,4 @@
 import FunctionalNamespace from "@/logic/new/ontology/functional/FunctionalNamespace";
-import Definition from "@/logic/new/ontology/Definition";
 
 export default class FunctionalDefinition {
     constructor(

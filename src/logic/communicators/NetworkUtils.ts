@@ -17,4 +17,14 @@ export default class NetworkUtils {
         });
         return response.json();
     }
+
+    /**
+     * This method should be used when a specific URL should be opened in a new browser window. The method automatically
+     * decides whether Electron or a default redirection should take place.
+     *
+     * @param url The full url to which navigation should take place.
+     */
+    public static openInBrowser(url: string): void {
+        window.open(url);
+    }
 }

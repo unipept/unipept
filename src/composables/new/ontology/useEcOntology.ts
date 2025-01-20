@@ -1,5 +1,6 @@
 import {ref} from "vue";
 import {convertEcNumberToEcNamespace} from "@/logic/new/ontology/functional/ec/EcNamespace";
+import FunctionalDefinition from "@/logic/new/ontology/functional/FunctionalDefinition";
 
 export enum EcNamespace {
     // EC 1.x.x.x class
@@ -22,7 +23,7 @@ export default function useEcOntology(
     baseUrl = "https://api.unipept.ugent.be",
     batchSize = 100
 ) {
-    const ontology = ref<Map<string, { name: string, namespace: string }>>(new Map());
+    const ontology = ref<Map<string, FunctionalDefinition>>(new Map());
 
     const update = async (
         codes: string[]
@@ -42,6 +43,7 @@ export default function useEcOntology(
                 ontology.value.set(
                     `EC:${definition.code}`,
                     {
+                        code: `EC:${definition.code}`,
                         name: definition.name,
                         namespace: ecToNamespace(definition.code)
                     }

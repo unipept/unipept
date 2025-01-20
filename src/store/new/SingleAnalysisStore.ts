@@ -10,19 +10,9 @@ import useOntologyStore from "@/store/new/OntologyStore";
 import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
 import usePeptonizerStore from "@/store/new/PeptonizerAnalysisStore";
+import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 
-export enum AnalysisStatus {
-    Pending,
-    Running,
-    Finished
-}
-
-export interface AnalysisConfig {
-    equate: boolean;
-    filter: boolean;
-    missed: boolean;
-    database: string;
-}
 
 const useSingleAnalysisStore = (
     _id: string,
@@ -99,8 +89,6 @@ const useSingleAnalysisStore = (
         await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
         await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.keys()));
 
-        // TODO: remove
-        //await new Promise(resolve => setTimeout(resolve, 10000));
 
         processNcbiTree(lcaTable.value!, lcaToPeptides.value!);
 

@@ -1,8 +1,8 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
-import {AnalysisConfig} from "@/components/pages/TestPage.vue";
 import useSingleAnalysisStore, {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {v4 as uuidv4} from "uuid";
+import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 
 const useMultiAnalysisStore = (
     groupId: string,
