@@ -31,7 +31,10 @@
                 <matched-proteins-table :assay="assay" />
             </v-window-item>
             <v-window-item value="lineage-tree">
-<!--                <lineage-tree :assay="assay" />-->
+                <v-card-text>
+                    This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains the tryptic peptide.
+                </v-card-text>
+                <treeview :ncbi-root="assay.ncbiTree!"/>
             </v-window-item>
             <v-window-item value="lineage-table">
                 <lineage-table :assay="assay" />
@@ -70,11 +73,8 @@ import { ref, watch } from "vue";
 import MatchedProteinsTable from "@/components/tables/MatchedProteinsTable.vue";
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
 import LineageTable from "@/components/tables/LineageTable.vue";
-// import LineageTree from "../trees/LineageTree.vue";
-// import GoSummaryCard from "../cards/GoSummaryCard.vue";
-// import EcSummaryCard from "../cards/EcSummaryCard.vue";
-// import InterproSummaryCard from "../cards/InterproSummaryCard.vue";
-// import LineageTable from "@/components/tables/LineageTable.vue";
+import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
+
 
 export interface Props {
     assay: PeptideAnalysisStore

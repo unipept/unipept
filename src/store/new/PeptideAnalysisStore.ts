@@ -10,6 +10,7 @@ import useInterproProcessor from "@/composables/new/processing/functional/useInt
 import usePept2filtered from "@/composables/new/communication/unipept/usePept2filtered";
 import CountTable from "@/logic/new/CountTable";
 import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
+import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
 
 const usePeptideAnalysisStore = (
     _id: string,
@@ -39,6 +40,8 @@ const usePeptideAnalysisStore = (
     const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
 
+    const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
+
     const analyse = async () => {
         status.value = AnalysisStatus.Running;
 
@@ -54,19 +57,23 @@ const usePeptideAnalysisStore = (
 
         // Add all organism IDs for which we need detailed information from the NCBI ontology
         const lcaSet: Set<number> = new Set();
+        const lcaProteinMap: Map<number, number> = new Map();
         lcaSet.add(lca.value);
         for (const protein of proteins.value) {
             lcaSet.add(protein.organism);
+            lcaProteinMap.set(protein.organism, (lcaProteinMap.get(protein.organism) || 0) + 1);
         }
         for (const ncbiId of commonLineage.value) {
             lcaSet.add(ncbiId);
         }
-
+        const lcaProteinCountTable = new CountTable(lcaProteinMap);
 
         await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
         await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
         await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
         await ontologyStore.updateNcbiOntology([...lcaSet]);
+
+        processNcbiTree(lcaProteinCountTable);
 
         status.value = AnalysisStatus.Finished;
     }
@@ -80,6 +87,7 @@ const usePeptideAnalysisStore = (
         peptideToData,
         proteins,
         lca,
+        ncbiTree,
         commonLineage,
         ecTable,
         ecTrust,

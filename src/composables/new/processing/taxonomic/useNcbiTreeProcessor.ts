@@ -11,7 +11,6 @@ export default function useNcbiTreeProcessor() {
 
     const process = (
         taxaCountTable: CountTable<number>,
-        taxaToPeptides: Map<number, string[]>,
         id = 1,
         name = "Organism"
     ) => {

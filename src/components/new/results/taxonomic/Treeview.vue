@@ -41,7 +41,7 @@ const props = defineProps<{
 
 const controls = useTemplateRef("controls");
 const visualization = useTemplateRef("visualization");
-const visualizationObject = ref<UnipeptSunburst | undefined>(undefined);
+const visualizationObject = ref<UnipeptTreeview | undefined>(undefined);
 
 const downloadImageModalOpen = ref(false);
 
@@ -50,7 +50,7 @@ const svg = computed(() => visualizationObject.value?.element.querySelector(":sc
 const { isFullscreen, toggle } = useFullscreen(controls);
 const { width, height } = useElementSize(controls);
 
-const createTreeview = (fullscreen = false): UnipeptSunburst | undefined => {
+const createTreeview = (fullscreen = false): UnipeptTreeview | undefined => {
     if(!props.ncbiRoot) return;
 
     const settings = {

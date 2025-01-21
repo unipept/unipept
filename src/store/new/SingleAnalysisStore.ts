@@ -90,7 +90,7 @@ const useSingleAnalysisStore = (
         await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.keys()));
 
 
-        processNcbiTree(lcaTable.value!, lcaToPeptides.value!);
+        processNcbiTree(lcaTable.value!);
 
         status.value = AnalysisStatus.Finished
     }
