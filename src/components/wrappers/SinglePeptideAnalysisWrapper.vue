@@ -2,17 +2,16 @@
     <div
         v-if="analysisStore.status === AnalysisStatus.Finished"
     >
-<!--        <single-peptide-summary-->
-<!--            class="my-5"-->
-<!--            :assay="analysisStore"-->
-<!--            :toggle-fullcreen="toggle"-->
-<!--            go-link-->
-<!--            ec-link-->
-<!--            interpro-link-->
-<!--            @go-link-clicked="() => onGoClicked()"-->
-<!--            @ec-link-clicked="() => onEcClicked()"-->
-<!--            @interpro-link-clicked="() => onInterproClicked()"-->
-<!--        />-->
+        <single-peptide-summary
+            class="mb-4"
+            :assay="analysisStore"
+            go-link
+            ec-link
+            interpro-link
+            @go-link-clicked="() => onGoClicked()"
+            @ec-link-clicked="() => onEcClicked()"
+            @interpro-link-clicked="() => onInterproClicked()"
+        />
         <single-peptide-analysis-results-card
             id="Analysis"
             :assay="analysisStore"
@@ -29,6 +28,7 @@ import usePeptideAnalysisStore from "@/store/new/PeptideAnalysisStore";
 import {v4 as uuidv4} from "uuid";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import SinglePeptideAnalysisResultsCard from "@/components/cards/analysis/single/SinglePeptideAnalysisResultsCard.vue";
+import SinglePeptideSummary from "@/components/new/results/SinglePeptideSummary.vue";
 
 export interface Props {
     peptide: string
@@ -47,8 +47,6 @@ const analysisStore = usePeptideAnalysisStore(
         database: ""
     }
 );
-
-const { toggle } = useFullscreen();
 
 const currentTab = ref<string>("matched-proteins");
 
