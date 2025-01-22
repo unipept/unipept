@@ -5,6 +5,8 @@ import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
 export const DEFAULT_PEPTONIZER_WORKERS = 2;
 
+export const DEFAULT_TAXA_IN_GRAPH = 25;
+
 // These are the parameters over which the Peptonizer will run a grid search and look for the optimal result
 export const DEFAULT_PEPTONIZER_ALPHAS: number[] = [0.8, 0.9, 0.99];
 export const DEFAULT_PEPTONIZER_BETAS: number[] = [0.6, 0.7, 0.8, 0.9];
@@ -23,7 +25,7 @@ export default class PeptonizerProcessor {
     public async runPeptonizer(
         peptideCountTable: CountTable<string>,
         rank: NcbiRank,
-        taxaInGraph: number,
+        taxonQuery: number[],
         listener: PeptonizerProgressListener,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
@@ -49,7 +51,8 @@ export default class PeptonizerProcessor {
             DEFAULT_PEPTONIZER_BETAS,
             DEFAULT_PEPTONIZER_PRIORS,
             rank,
-            taxaInGraph,
+            taxonQuery.length > 0 ? taxonQuery : [1],
+            DEFAULT_TAXA_IN_GRAPH,
             listener,
             DEFAULT_PEPTONIZER_WORKERS
         );

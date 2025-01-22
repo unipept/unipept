@@ -1,8 +1,7 @@
 import {ref, Ref} from "vue";
 import {defineStore} from "pinia";
-import useSingleAnalysisStore from "@/store/new/SingleAnalysisStore";
 import CountTable from "@/logic/new/CountTable";
-import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
+import {NcbiRank, NcbiTaxon} from "@/logic/new/ontology/taxonomic/Ncbi";
 import {Peptonizer, PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
 import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcessor";
@@ -91,7 +90,6 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
         rank: NcbiRank,
-        taxaInGraph: number,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
     ) => {
@@ -113,7 +111,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         const peptonizerData = await peptonizerProcessor.runPeptonizer(
             peptideCountTable,
             rank,
-            taxaInGraph,
+            selectedTaxa.value.length > 0 ? selectedTaxa.value.map((x: NcbiTaxon) => x.id) : [1],
             listener,
             equateIl,
             peptideIntensities

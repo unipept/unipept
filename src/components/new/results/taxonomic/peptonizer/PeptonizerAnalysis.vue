@@ -41,16 +41,6 @@
                                 persistent-hint
                             />
                         </v-col>
-                        <v-col :cols="6">
-                            <v-number-input
-                                v-model="taxaInGraph"
-                                :step="5"
-                                :min="10"
-                                :max="150"
-                                hint="Pick the amount of taxa that should be retained in the graph while running the Peptonizer. The higher the amount of taxa, the longer the analysis will usually take."
-                                persistent-hint
-                            />
-                        </v-col>
                     </v-row>
                     <v-row>
                         <v-col
@@ -167,8 +157,6 @@ const {download: downloadCsv} = useCsvDownload();
 
 const peptonizerStep: Ref<number> = ref(1);
 
-const taxaInGraph: Ref<number> = ref(25);
-
 const peptonizerRankOptions: Ref<string[]> = ref(
     Object.values(NcbiRank)
 );
@@ -180,7 +168,6 @@ const startPeptonizer = async () => {
     await props.peptonizerStore.runPeptonizer(
         props.peptideCountTable,
         peptonizerRank.value as NcbiRank,
-        taxaInGraph.value,
         props.equateIl,
         props.peptideIntensities,
     );
