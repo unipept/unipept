@@ -27,7 +27,10 @@
                     This chart shows the relationship between the <b>{{ topN.length }}</b> most occurring GO terms:
                     {{ topNSentence }}.
                     <br>
-                    <a :href="quickGoChartUrl" target="_blank">
+                    <a
+                        :href="quickGoChartUrl"
+                        target="_blank"
+                    >
                         <img
                             style="max-width: 80%; max-height: 600px; position: relative; left: 50%; transform: translateX(-50%); margin-top: 32px; margin-bottom: 32px;"
                             :src="quickGoChartUrl"

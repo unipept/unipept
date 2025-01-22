@@ -15,7 +15,9 @@
 
         <p class="mt-3">
             If you use this API, please cite Mesuere et al. (2016) Bioinformatics
-            <resource-link to="https://academic.oup.com/bioinformatics/article/32/11/1746/1742840?login=false">doi:10.1093/bioinformatics/btw039</resource-link>
+            <resource-link to="https://academic.oup.com/bioinformatics/article/32/11/1746/1742840?login=false">
+                doi:10.1093/bioinformatics/btw039
+            </resource-link>
         </p>
 
         <header-body-card

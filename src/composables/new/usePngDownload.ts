@@ -41,15 +41,27 @@ export default function usePngDownload() {
         ctx.scale(scalingFactor, scalingFactor);
         ctx.drawImage(img, 0, 0, originalWidth, originalHeight);
 
-        // Convert canvas to a PNG blob
-        content.value = await new Promise((resolve) => {
+        const pngBlob = await new Promise((resolve) => {
             canvas.toBlob((blob) => resolve(blob), 'image/png');
         });
 
-        // Save the file
-        await saveAs({
-            suggestedName: filename
-        }).catch(() => {});
+        if (isSupported.value) {
+            // Convert canvas to a PNG blob
+            content.value = pngBlob;
+
+            await saveAs({
+                suggestedName: filename
+            }).catch(() => {});
+        } else {
+            console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
+
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(pngBlob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
         // Clean up URL
         URL.revokeObjectURL(url);

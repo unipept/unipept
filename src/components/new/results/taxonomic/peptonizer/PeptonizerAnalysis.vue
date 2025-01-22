@@ -1,6 +1,5 @@
 <template>
     <v-card-text>
-
         <v-window v-model="peptonizerStep">
             <v-window-item :value="1">
                 <div class="d-flex align-center mb-5">
@@ -15,19 +14,28 @@
                             present in the analyzed ecosystem. Follow the steps in the wizard down below to try the
                             Peptonizer2000 right now!
                         </p>
-                        <span class="text-subtitle-2 mt-0">Holstein et al. (2024) BioRXiv <a href="https://doi.org/10.1101/2024.05.20.594958" target="_blank">doi.org/10.1101/2024.05.20.594958</a></span>
+                        <span class="text-subtitle-2 mt-0">Holstein et al. (2024) BioRXiv <a
+                            href="https://doi.org/10.1101/2024.05.20.594958"
+                            target="_blank"
+                        >doi.org/10.1101/2024.05.20.594958</a></span>
                     </div>
-                    <img src="@/assets/logo/peptonizer_logo_simple.png" style="max-width: 175px;">
+                    <img
+                        src="@/assets/logo/peptonizer_logo_simple.png"
+                        style="max-width: 175px;"
+                    >
                 </div>
                 <div>
                     <v-row>
-                        <v-col :cols="12" class="pb-0">
+                        <v-col
+                            :cols="12"
+                            class="pb-0"
+                        >
                             <h4>General settings</h4>
                         </v-col>
                         <v-col :cols="6">
                             <v-select
-                                label="Taxonomic rank"
                                 v-model="peptonizerRank"
+                                label="Taxonomic rank"
                                 :items="peptonizerRankOptions"
                                 hint="Choose the taxonomic rank at which the Peptonizer2000 will perform inference."
                                 persistent-hint
@@ -45,10 +53,16 @@
                         </v-col>
                     </v-row>
                     <v-row>
-                        <v-col :cols="12" class="pb-1">
+                        <v-col
+                            :cols="12"
+                            class="pb-1"
+                        >
                             <h4>Filter settings</h4>
                         </v-col>
-                        <v-col :cols="12" class="pt-0">
+                        <v-col
+                            :cols="12"
+                            class="pt-0"
+                        >
                             <p>
                                 You can restrict the Peptonizer's analysis to specific taxa by selecting them in the
                                 filter below. Only the selected taxa, along with all their descendant taxa, will be
@@ -60,13 +74,13 @@
                         </v-col>
                     </v-row>
                 </div>
-                <v-divider class="mb-1"></v-divider>
+                <v-divider class="mb-1" />
                 <v-card-actions class="pb-0">
-                    <v-spacer></v-spacer>
+                    <v-spacer />
                     <v-btn
-                        @click="startPeptonizer"
                         color="primary"
                         variant="tonal"
+                        @click="startPeptonizer"
                     >
                         ↯ Start to peptonize!
                     </v-btn>
@@ -84,15 +98,15 @@
                     :peptonizer-finished="peptonizerStore.peptonizerFinished"
                 />
 
-                <v-divider class="mt-2 mb-1"></v-divider>
+                <v-divider class="mt-2 mb-1" />
 
                 <v-card-actions>
                     <v-btn
-                        @click="cancelPeptonizer"
                         color="red"
                         variant="tonal"
                         :loading="isCancelling"
                         prepend-icon="mdi-stop-circle-outline"
+                        @click="cancelPeptonizer"
                     >
                         Cancel
                     </v-btn>
@@ -108,18 +122,18 @@
                     :peptonizer-result="peptonizerStore.taxaNamesToConfidence!"
                 />
 
-                <v-divider></v-divider>
+                <v-divider />
 
                 <v-card-actions>
                     <v-btn
-                        @click="peptonizerStep = 1"
                         variant="tonal"
                         prepend-icon="mdi-restart"
+                        @click="peptonizerStep = 1"
                     >
                         New analysis
                     </v-btn>
-                    <v-spacer></v-spacer>
-                    <analysis-summary-export @download="exportCsv"/>
+                    <v-spacer />
+                    <analysis-summary-export @download="exportCsv" />
                 </v-card-actions>
             </v-window-item>
         </v-window>

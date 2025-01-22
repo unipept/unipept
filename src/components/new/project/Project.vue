@@ -27,11 +27,6 @@
     </v-navigation-drawer>
 
     <v-container fluid>
-        <v-alert v-if="isSafari" type="warning" class="mb-4">
-            <span class="font-weight-bold">Notice:</span> Unipept is currently investigating some issues with exporting results when using the Safari browser.
-            You can switch to another browser such as Chrome or Firefox to fully enjoy Unipept in the mean time.
-        </v-alert>
-
         <new-project
             v-if="project.empty"
             @group:add="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
@@ -42,7 +37,7 @@
             title="No sample selected"
             text="Please select a sample from the sidebar on the left to see its details"
             icon="mdi-flask-outline"
-        ></v-empty-state>
+        />
 
         <div v-else>
             <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
@@ -56,7 +51,10 @@
                         variant="tonal"
                         type="info"
                     >
-                        <div class="d-flex justify-space-between align-center" style="width: inherit">
+                        <div
+                            class="d-flex justify-space-between align-center"
+                            style="width: inherit"
+                        >
                             <span>
                                 <b>Filtered results:</b> these results are limited to the all peptides specific
                                 to <b>{{ selectedAnalysis.filteredOrganism.name }} ({{ selectedAnalysis.filteredOrganism.extra.rank }})</b>

@@ -61,7 +61,12 @@
         >
             <p>
                 The <inline-code>uniprot</inline-code> command outputs the UniProt entry for each of the input accession numbers. By default, only the protein sequences are
-                returned. By using the <r-link to="#options" router>--format parameter</r-link>, this can be changed to fasta, txt, xml, rdf or gff. All output is
+                returned. By using the <r-link
+                    to="#options"
+                    router
+                >
+                    --format parameter
+                </r-link>, this can be changed to fasta, txt, xml, rdf or gff. All output is
                 written to <i>standard output</i>.
             </p>
         </header-body-card>

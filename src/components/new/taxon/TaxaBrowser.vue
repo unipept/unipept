@@ -3,25 +3,32 @@
         <v-row>
             <v-col cols="12">
                 <div class="mb-4">
-<!--                    <v-alert-->
-<!--                        title="Taxa selected for filtering"-->
-<!--                        text="Only UniProtKB-records that are associated with a selected organism or one of its children will be retained in the resulting database."-->
-<!--                        type="info"-->
-<!--                        variant="tonal"-->
-<!--                    />-->
+                    <!--                    <v-alert-->
+                    <!--                        title="Taxa selected for filtering"-->
+                    <!--                        text="Only UniProtKB-records that are associated with a selected organism or one of its children will be retained in the resulting database."-->
+                    <!--                        type="info"-->
+                    <!--                        variant="tonal"-->
+                    <!--                    />-->
 
                     <div>
                         <v-container>
                             <v-row>
                                 <div style="width: 100%;">
                                     <div class="d-flex align-center">
-                                        <div v-if="selectedItems.length === 0" style="text-align: center; width: 100%;">
+                                        <div
+                                            v-if="selectedItems.length === 0"
+                                            style="text-align: center; width: 100%;"
+                                        >
                                             <div>No taxa selected yet. No filtering will be applied.</div>
                                             <div class="text-caption">
                                                 Use the table and search bar below to find taxa that can be used for filtering.
                                             </div>
                                         </div>
-                                        <v-chip-group v-else column class="flex-grow-1">
+                                        <v-chip-group
+                                            v-else
+                                            column
+                                            class="flex-grow-1"
+                                        >
                                             <v-chip
                                                 v-for="taxon in selectedItems"
                                                 :key="taxon.id"
@@ -33,7 +40,11 @@
                                                 {{ taxon.name }}
                                             </v-chip>
                                         </v-chip-group>
-                                        <v-tooltip v-if="selectedItems.length > 0" location="bottom" open-delay="500">
+                                        <v-tooltip
+                                            v-if="selectedItems.length > 0"
+                                            location="bottom"
+                                            open-delay="500"
+                                        >
                                             <template #activator="{ props }">
                                                 <v-btn
                                                     v-bind="props"
@@ -48,7 +59,7 @@
                                             <span>Clear selection</span>
                                         </v-tooltip>
                                     </div>
-                                    <v-divider></v-divider>
+                                    <v-divider />
                                 </div>
                             </v-row>
                             <v-row>
@@ -71,8 +82,8 @@
                         :items-per-page="5"
                         :loading="taxaLoading"
                         :search="filterValue"
-                        @update:options="loadTaxa"
                         density="compact"
+                        @update:options="loadTaxa"
                     >
                         <template #footer.prepend>
                             <v-text-field
@@ -244,7 +255,7 @@ const loadTaxa = async function({ page, itemsPerPage, sortBy }: LoadItemsParams)
 
     // Retrieve the IDs of the taxa that are present in the given range.
     let sortByColumn: "id" | "name" | "rank" | undefined = undefined;
-    let sortDesc: boolean = false;
+    let sortDesc = false;
     if (sortBy && sortBy.length > 0) {
         sortByColumn = sortBy[0].key.toLowerCase() as ("id" | "name" | "rank" | undefined);
         sortDesc = sortBy[0].order === "desc";

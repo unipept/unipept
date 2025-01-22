@@ -27,10 +27,10 @@
         <template #item.count="{ item }">
             <div
                 :style="{
-                        padding: '12px',
-                        background: 'linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ' +
-                            (item.count / item.totalCount) * 100 + '%, rgba(255,255,255,0) ' + (item.count / item.totalCount) * 100 + '%)',
-                    }"
+                    padding: '12px',
+                    background: 'linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ' +
+                        (item.count / item.totalCount) * 100 + '%, rgba(255,255,255,0) ' + (item.count / item.totalCount) * 100 + '%)',
+                }"
             >
                 {{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}
             </div>
@@ -43,11 +43,17 @@
                 class="font-regular d-flex align-center"
             >
                 {{ item.code }}
-                <v-icon size="x-small" class="ml-1">mdi-open-in-new</v-icon>
+                <v-icon
+                    size="x-small"
+                    class="ml-1"
+                >mdi-open-in-new</v-icon>
             </a>
         </template>
 
-        <template #item.action="{ item }" v-if="showDownloadItem">
+        <template
+            v-if="showDownloadItem"
+            #item.action="{ item }"
+        >
             <v-tooltip text="Download CSV summary of the filtered functional annotation">
                 <template #activator="{ props }">
                     <v-btn

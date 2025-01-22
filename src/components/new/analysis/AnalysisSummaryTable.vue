@@ -7,7 +7,13 @@
         density="compact"
     >
         <template #no-data>
-            <v-alert class="ma-3" density="compact" type="info" variant="tonal" text="No peptides found" />
+            <v-alert
+                class="ma-3"
+                density="compact"
+                type="info"
+                variant="tonal"
+                text="No peptides found"
+            />
         </template>
 
         <template #item.peptide="{ item }">

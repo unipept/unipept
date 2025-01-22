@@ -9,7 +9,10 @@
                     Welcome
                 </div>
                 Unipept is an open source web application developed at
-                <a href="https://www.ugent.be/en" target="_blank">Ghent University</a> that is designed for
+                <a
+                    href="https://www.ugent.be/en"
+                    target="_blank"
+                >Ghent University</a> that is designed for
                 metaproteomics data analysis with a focus on
                 <span class="font-weight-bold">interactive datavisualizations</span>.
                 Unipept is powered by an index containing all UniProt entries, a tweaked version of the NCBI taxonomy

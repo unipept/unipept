@@ -20,7 +20,12 @@
         >
             <p>
                 The taxa2tree method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/taxa2tree</inline-code>.
-                <r-link to="#parameters" router>Parameters</r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
+                <r-link
+                    to="#parameters"
+                    router
+                >
+                    Parameters
+                </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
                 The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
             </p>
 
@@ -30,7 +35,12 @@
             <p>
                 <inline-code>input[]</inline-code> is a required parameter that takes at least one taxon identifier.
                 Unipept will compute and return the taxonomic tree for the given taxa.
-                To pass multiple taxon identifiers, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link to="#example" router>example</r-link>).
+                To pass multiple taxon identifiers, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
+                    to="#example"
+                    router
+                >
+                    example
+                </r-link>).
             </p>
 
             <static-alert title="Input size">
@@ -48,7 +58,12 @@
                 <inline-code>link</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, Unipept will return an <initialism>URL</initialism> that points to a GitHub gist in which the visualization code for this sample is stored.
-                See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
+                See the <r-link
+                    to="#response"
+                    router
+                >
+                    response
+                </r-link> section for an overview of the information fields returned.
             </p>
         </header-body-card>
 
@@ -66,15 +81,18 @@
                 <li><inline-code>id</inline-code>: the <initialism>NCBI</initialism> taxon id of the node</li>
                 <li><inline-code>name</inline-code>: the name of the node</li>
                 <li><inline-code>rank</inline-code>: the taxonomic rank of the node</li>
-                <li><inline-code>data</inline-code>: extra information associated with this node.
+                <li>
+                    <inline-code>data</inline-code>: extra information associated with this node.
                     <ul>
-                        <li><inline-code>count</inline-code>:
+                        <li>
+                            <inline-code>count</inline-code>:
                             how many of the given taxa are directly or indirectly associated with this node? (e.g. correspond to the node itself or one of it's children)
                         </li>
                         <li><inline-code>self_count</inline-code>: how many of the given taxa are directly associated with this node?</li>
                     </ul>
                 </li>
-                <li><inline-code>children</inline-code>:
+                <li>
+                    <inline-code>children</inline-code>:
                     a list of nodes that are the children of this node in the <initialism>NCBI</initialism>-taxonomy. These have the same structure as the root
                     <initialism>JSON</initialism>-object.
                 </li>
@@ -145,10 +163,14 @@
             <v-table>
                 <thead>
                     <tr>
-                        <th class="text-left">Name</th>
-                        <th class="text-left">Description</th>
+                        <th class="text-left">
+                            Name
+                        </th>
+                        <th class="text-left">
+                            Description
+                        </th>
                     </tr>
-                    </thead>
+                </thead>
                 <tbody>
                     <tr>
                         <td>
@@ -160,7 +182,12 @@
                             List of taxon identifiers and associated counts to calculate the taxonomic tree for. Should be a <initialism>JSON</initialism>-object
                             with taxon id's as keys and counts as values.
                             <br>
-                            <div class="mt-3" style="font-size: 85%;">Value: Object</div>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Object
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -172,7 +199,12 @@
                         <td class="py-3">
                             Return an URL that points to a GitHub gist in which the visualization code for this sample is stored if <inline-code>true</inline-code>.
                             <br>
-                            <div class="mt-3" style="font-size: 85%;">Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)</div>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -192,7 +224,13 @@
             :response="response1"
         >
             <template #description>
-                This example calculates and retrieves the taxonomic tree of <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>), <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</r-link>) and <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</r-link>).
+                This example calculates and retrieves the taxonomic tree of <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
+                    817
+                </r-link>), <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">
+                    329854
+                </r-link>) and <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">
+                    1099853
+                </r-link>).
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2tree -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
@@ -208,7 +246,13 @@
             :response="response1"
         >
             <template #description>
-                This example calculates and retrieves the taxonomic tree of <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>), <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</r-link>) and <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</r-link>).
+                This example calculates and retrieves the taxonomic tree of <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
+                    817
+                </r-link>), <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">
+                    329854
+                </r-link>) and <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">
+                    1099853
+                </r-link>).
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2tree --data '{"counts": {"817": 3, "329854": 5, "1099853": 7}}'
@@ -224,7 +268,13 @@
             :response="response2"
         >
             <template #description>
-                This example calculates and retrieves the taxonomic tree of <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>), <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</r-link>), <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">1099853</r-link>) and returns a GitHub gist link.
+                This example calculates and retrieves the taxonomic tree of <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
+                    817
+                </r-link>), <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">
+                    329854
+                </r-link>), <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">
+                    1099853
+                </r-link>) and returns a GitHub gist link.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2tree -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'link=true'

@@ -5,7 +5,7 @@ import {ref, Ref} from "vue";
  * requests can be made simultaneously, but only the last result should actually be used.
  */
 export default class AsyncHelper<T> {
-    private asyncCount: number = 0;
+    private asyncCount = 0;
     private executing: Ref<boolean> = ref(false);
 
     /**

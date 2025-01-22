@@ -8,15 +8,27 @@ export default function useCsvDownload() {
     } = useFileSystemAccess();
 
     const download = async (data: string[][], filename: string, separator = ";") => {
-        content.value = createCsvString(data, separator);
+        if (isSupported.value) {
+            content.value = createCsvString(data, separator);
 
-        try {
-            await saveAs({
-                suggestedName: filename
-            });
-        } catch (e) {
-            // ignore error (otherwise a useless error is printed to the console)
-            console.error(e);
+            try {
+                await saveAs({
+                    suggestedName: filename
+                });
+            } catch (e) {
+                // ignore error (otherwise a useless error is printed to the console)
+                console.error(e);
+            }
+        } else {
+            console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
+
+            const blob = new Blob([createCsvString(data, separator)], { type: "text/csv" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     }
 

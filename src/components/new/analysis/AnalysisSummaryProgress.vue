@@ -6,7 +6,9 @@
             width="5"
             indeterminate
         />
-        <div class="mt-4">Processing sample. Please wait...</div>
+        <div class="mt-4">
+            Processing sample. Please wait...
+        </div>
     </div>
 </template>
 

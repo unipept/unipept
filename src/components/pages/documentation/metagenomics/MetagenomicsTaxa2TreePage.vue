@@ -11,7 +11,12 @@
 
         <p>
             The <inline-code>umgap taxa2tree</inline-code> command, similar to the <inline-code>unipept taxa2tree</inline-code> command, takes one or more taxon
-            IDs as input and returns a visualized taxonomic tree of these taxa using the <RLink to="/apidocs/taxa2tree" router>Unipept API server</RLink>.
+            IDs as input and returns a visualized taxonomic tree of these taxa using the <RLink
+                to="/apidocs/taxa2tree"
+                router
+            >
+                Unipept API server
+            </RLink>.
         </p>
 
         <header-body-card
@@ -33,7 +38,9 @@
                 <br>1099853
                 <br><sentinel>$</sentinel> <b>umgap taxa2tree &lt; input.txt > output.html</b>
                 <br><sentinel>$</sentinel> <b>umgap taxa2tree --url &lt; input.txt</b>
-                <br><RLink to="https://bl.ocks.org/a686a37e1dcd43dd4ec7d467487bd6a1">https://bl.ocks.org/a686a37e1dcd43dd4ec7d467487bd6a1</RLink>
+                <br><RLink to="https://bl.ocks.org/a686a37e1dcd43dd4ec7d467487bd6a1">
+                    https://bl.ocks.org/a686a37e1dcd43dd4ec7d467487bd6a1
+                </RLink>
             </boxed>
 
             <parameter-table

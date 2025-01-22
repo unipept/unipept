@@ -10,7 +10,7 @@
         <publication-card
             class="mt-5"
             title="Biodiversity Analysis of Metaproteomics Samples with Unipept: A Comprehensive Tutorial"
-            :authors='["Tim Van Den Bossche",  "Pieter Verschaffelt", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere",]'
+            :authors="[&quot;Tim Van Den Bossche&quot;, &quot;Pieter Verschaffelt&quot;, &quot;Tibo Vande Moortele&quot;, &quot;Peter Dawyndt&quot;, &quot;Lennart Martens&quot;, &quot;Bart Mesuere&quot;,]"
             journal="Protein Bioinformatics"
             year="2024"
             doi="doi.org/10.1007/978-1-0716-4007-4_11"
@@ -30,7 +30,7 @@
         <publication-card
             class="mt-5"
             title="Unipept in 2024: Expanding Metaproteomics Analysis with Support for Missed Cleavages, Semi-Tryptic and Non-Tryptic Peptides"
-            :authors='["Tibo Vande Moortele", "Bram Devlaminck", "Simon Van de Vyver", "Tim Van Den Bossche", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere", "Pieter Verschaffelt"]'
+            :authors="[&quot;Tibo Vande Moortele&quot;, &quot;Bram Devlaminck&quot;, &quot;Simon Van de Vyver&quot;, &quot;Tim Van Den Bossche&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;, &quot;Bart Mesuere&quot;, &quot;Pieter Verschaffelt&quot;]"
             journal="BioRXiv"
             year="2024"
             doi="doi.org/10.1101/2024.09.26.615136"
@@ -51,7 +51,7 @@
         <publication-card
             class="mt-5"
             title="Unipept Desktop 2.0: Construction of Targeted Reference Protein Databases for Metaproteogenomics Analyses"
-            :authors='["Pieter Verschaffelt", "Alessandro Tanca", "Marcello Abbondio", "Tim Van Den Bossche", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere"]'
+            :authors="[&quot;Pieter Verschaffelt&quot;, &quot;Alessandro Tanca&quot;, &quot;Marcello Abbondio&quot;, &quot;Tim Van Den Bossche&quot;, &quot;Tibo Vande Moortele&quot;, &quot;Peter Dawyndt&quot;, &quot;Lennart Martens&quot;, &quot;Bart Mesuere&quot;]"
             journal="Journal of Proteome Research"
             year="2023"
             doi="doi.org/10.1021/acs.jproteome.3c00091"
@@ -75,7 +75,7 @@
         <publication-card
             class="mt-5"
             title="Unipept Desktop: a faster, more powerful metaproteomics results analysis tool"
-            :authors='["Pieter Verschaffelt", "Tim Van Den Bossche", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere"]'
+            :authors="[&quot;Pieter Verschaffelt&quot;, &quot;Tim Van Den Bossche&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;, &quot;Bart Mesuere&quot;]"
             journal="Journal of Proteome Research"
             year="2021"
             doi="doi.org/10.1021/acs.jproteome.0c00855"
@@ -98,7 +98,7 @@
         <publication-card
             class="mt-5"
             title="Unipept CLI 2.0: adding support for visualizations and functional annotations"
-            :authors='["Pieter Verschaffelt", "Philippe Van Thienen", "Tim Van Den Bossche", "Felix Van der Jeugt", "Caroline De Tender", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere"]'
+            :authors="[&quot;Pieter Verschaffelt&quot;, &quot;Philippe Van Thienen&quot;, &quot;Tim Van Den Bossche&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Caroline De Tender&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;, &quot;Bart Mesuere&quot;]"
             journal="Bioinformatics"
             year="2020"
             doi="doi.org/10.1093/bioinformatics/btaa553"
@@ -122,7 +122,7 @@
         <publication-card
             class="mt-5"
             title="Unipept 4.0: functional analysis of metaproteome data"
-            :authors='["Robbert Gurdeep Singh", "Alessandro Tanca", "Antonio Palomba", "Felix Van der Jeugt", "Pieter Verschaffelt", "Sergio Uzzau", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere"]'
+            :authors="[&quot;Robbert Gurdeep Singh&quot;, &quot;Alessandro Tanca&quot;, &quot;Antonio Palomba&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Pieter Verschaffelt&quot;, &quot;Sergio Uzzau&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;, &quot;Bart Mesuere&quot;]"
             journal="Journal of Proteome Research"
             year="2019"
             doi="doi.org/10.1021/acs.jproteome.8b00716"
@@ -144,7 +144,7 @@
         <publication-card
             class="mt-5"
             title="High-throughput metaproteomics data analysis with Unipept: a tutorial"
-            :authors='["Bart Mesuere", "Felix Van der Jeugt", "Toon Willems", "Tom Naessens", "Bart Devreese", "Lennart Martens", "Peter Dawyndt"]'
+            :authors="[&quot;Bart Mesuere&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Toon Willems&quot;, &quot;Tom Naessens&quot;, &quot;Bart Devreese&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;]"
             journal="Journal of Proteomics"
             year="2018"
             extra="171, pp 11-22"
@@ -156,7 +156,12 @@
                 In recent years, shotgun metaproteomics has established itself as an important tool to study the composition of complex
                 ecosystems and microbial communities. Two key steps in metaproteomics data analysis are the inference of proteins from
                 the identified peptides, and the determination of the taxonomic origin and function of these proteins. This tutorial
-                therefore introduces the Unipept command line interface (<RLink to="/clidocs" router>http://unipept.ugent.be/clidocs</RLink> )
+                therefore introduces the Unipept command line interface (<RLink
+                    to="/clidocs"
+                    router
+                >
+                    http://unipept.ugent.be/clidocs
+                </RLink> )
                 as a platform-independent tool for such metaproteomics data analyses. First, a detailed overview is given of the
                 available Unipept commands and their functions. Next, the power of the Unipept command line interface is illustrated
                 using two case studies that analyze a single tryptic peptide, and a set of peptides retrieved from a shotgun
@@ -168,7 +173,7 @@
         <publication-card
             class="mt-5"
             title="The unique peptidome: Taxon-specific tryptic peptides as biomarkers for targeted metaproteomics"
-            :authors='["Bart Mesuere", "Felix Van der Jeugt", "Bart Devreese", "Peter Vandamme", "Peter Dawyndt"]'
+            :authors="[&quot;Bart Mesuere&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Bart Devreese&quot;, &quot;Peter Vandamme&quot;, &quot;Peter Dawyndt&quot;]"
             journal="Proteomics"
             year="2016"
             extra="16 (17), pp 2313–2318"
@@ -193,7 +198,7 @@
         <publication-card
             class="mt-5"
             title="Unipept Web Services for Metaproteomics Analysis"
-            :authors='["Bart Mesuere", "Toon Willems", "Felix Van der Jeugt", "Bart Devreese", "Peter Vandamme", "Peter Dawyndt"]'
+            :authors="[&quot;Bart Mesuere&quot;, &quot;Toon Willems&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Bart Devreese&quot;, &quot;Peter Vandamme&quot;, &quot;Peter Dawyndt&quot;]"
             journal="Bioinformatics"
             year="2016"
             extra="32 (11), pp 1746-1748"
@@ -207,7 +212,9 @@
                 retrieval of all UniProt entries in which a given tryptic peptide occurs. Unipept version 2.4 introduced web services
                 that provide programmatic access to the metaproteomics analysis features. This enables integration of Unipept
                 functionality in custom applications and data processing pipelines. Availability and Implementation The web services
-                are freely available at <RLink to="http://api.unipept.ugent.be">http://api.unipept.ugent.be</RLink>> and are open
+                are freely available at <RLink to="http://api.unipept.ugent.be">
+                    http://api.unipept.ugent.be
+                </RLink>> and are open
                 sourced under the <Initialism>MIT</Initialism> license.
             </template>
         </publication-card>
@@ -215,7 +222,7 @@
         <publication-card
             class="mt-5"
             title="The Unipept Metaproteomics Analysis Pipeline"
-            :authors='["Bart Mesuere", "Griet Debyser", "Maarten Aerts", "Bart Devreese", "Peter Vandamme", "Peter Dawyndt"]'
+            :authors="[&quot;Bart Mesuere&quot;, &quot;Griet Debyser&quot;, &quot;Maarten Aerts&quot;, &quot;Bart Devreese&quot;, &quot;Peter Vandamme&quot;, &quot;Peter Dawyndt&quot;]"
             journal="Proteomics"
             year="2015"
             extra="15 (8), pp 1437–1442"
@@ -224,7 +231,12 @@
             :image="Publication2015Image"
         >
             <template #abstract>
-                Unipept (<RLink to="/" router>http://unipept.ugent.be</RLink>) is a web application that offers a user-friendly way to
+                Unipept (<RLink
+                    to="/"
+                    router
+                >
+                    http://unipept.ugent.be
+                </RLink>) is a web application that offers a user-friendly way to
                 explore the biodiversity of complex metaproteome samples by providing interactive visualizations. In this article, the
                 updates and changes to Unipept since its initial release are presented. This includes the addition of interactive
                 sunburst and treeview visualizations to the multipeptide analysis, the foundations of an application programming
@@ -236,7 +248,7 @@
         <publication-card
             class="mt-5"
             title="Unipept: Tryptic Peptide-Based Biodiversity Analysis of Metaproteome Samples"
-            :authors='["Bart Mesuere", "Bart Devreese", "Griet Debyser", "Maarten Aerts", "Peter Vandamme", "Peter Dawyndt"]'
+            :authors="[&quot;Bart Mesuere&quot;, &quot;Bart Devreese&quot;, &quot;Griet Debyser&quot;, &quot;Maarten Aerts&quot;, &quot;Peter Vandamme&quot;, &quot;Peter Dawyndt&quot;]"
             journal="J. Proteome Res."
             year="2012"
             extra="11 (12), pp 5773–5780"
@@ -245,7 +257,12 @@
             :image="Publication2012Image"
         >
             <template #abstract>
-                The Unipept web application (<RLink to="/" router>http://unipept.ugent.be</RLink>) supports biodiversity analysis of
+                The Unipept web application (<RLink
+                    to="/"
+                    router
+                >
+                    http://unipept.ugent.be
+                </RLink>) supports biodiversity analysis of
                 large and complex metaproteome samples using tryptic peptide information obtained from shotgun <Initialism>MS/MS</Initialism> experiments. Its
                 underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProt entries.
                 Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common

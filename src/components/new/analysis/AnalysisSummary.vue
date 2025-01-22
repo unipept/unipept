@@ -63,11 +63,11 @@
                             </span>
                         </v-tooltip>
                     </div>
-<!--                    <database-select-->
-<!--                        :model-value="analysis.config.database"-->
-<!--                        class="mt-1"-->
-<!--                        label="Selected database"-->
-<!--                    />-->
+                    <!--                    <database-select-->
+                    <!--                        :model-value="analysis.config.database"-->
+                    <!--                        class="mt-1"-->
+                    <!--                        label="Selected database"-->
+                    <!--                    />-->
                 </v-col>
             </v-row>
             <v-row>

@@ -8,7 +8,10 @@
             <h2>Create sample</h2>
             <h3>Step {{ currentStep }}. {{ currentStepTitle }}</h3>
         </v-card-title>
-        <v-card-text style="padding-top: 0 !important;" class="flex-grow-1">
+        <v-card-text
+            style="padding-top: 0 !important;"
+            class="flex-grow-1"
+        >
             <v-window v-model="currentStep">
                 <!-- Step 1: Select input data source type -->
                 <v-window-item :value="1">
@@ -19,7 +22,9 @@
                                     class="d-flex align-center"
                                     @click="navigateToPaste"
                                 >
-                                    <v-icon class="ml-4">mdi-content-paste</v-icon>
+                                    <v-icon class="ml-4">
+                                        mdi-content-paste
+                                    </v-icon>
                                     <div>
                                         <v-card-title>
                                             Paste Peptides Directly
@@ -36,7 +41,9 @@
                                     class="d-flex align-center"
                                     @click="navigateToImportWizard"
                                 >
-                                    <v-icon class="ml-4">mdi-file</v-icon>
+                                    <v-icon class="ml-4">
+                                        mdi-file
+                                    </v-icon>
                                     <div>
                                         <v-card-title>
                                             Import via File Wizard
@@ -53,7 +60,9 @@
                                     class="d-flex align-center"
                                     @click="navigateToBulkUpload"
                                 >
-                                    <v-icon class="ml-4">mdi-file-multiple</v-icon>
+                                    <v-icon class="ml-4">
+                                        mdi-file-multiple
+                                    </v-icon>
                                     <div>
                                         <v-card-title>
                                             Bulk Import Multiple Files
@@ -67,7 +76,7 @@
                         </v-row>
                     </v-container>
 
-                    <v-divider></v-divider>
+                    <v-divider />
 
                     <v-card-actions>
                         <v-btn
@@ -89,7 +98,7 @@
                             class="mb-4"
                         />
 
-                        <v-divider></v-divider>
+                        <v-divider />
 
                         <v-card-actions>
                             <v-btn
@@ -105,12 +114,12 @@
                             >
                                 Back
                             </v-btn>
-                            <v-spacer></v-spacer>
+                            <v-spacer />
                             <v-btn
                                 color="primary"
                                 variant="flat"
-                                @click="addSampleFromList"
                                 :disabled="!sample.name || !sample.rawPeptides || !isUnique(sample)"
+                                @click="addSampleFromList"
                             >
                                 Add sample
                             </v-btn>
@@ -119,9 +128,12 @@
 
                     <!-- Step 2b: Import samples with sequences and intensities from CSV or TSV files -->
                     <div v-else-if="sampleCreationType === 2">
-                        <file-upload v-model="intensitiesFile" class="mb-4"/>
+                        <file-upload
+                            v-model="intensitiesFile"
+                            class="mb-4"
+                        />
 
-                        <v-divider></v-divider>
+                        <v-divider />
 
                         <v-card-actions>
                             <v-btn
@@ -137,12 +149,12 @@
                             >
                                 Back
                             </v-btn>
-                            <v-spacer></v-spacer>
+                            <v-spacer />
                             <v-btn
                                 color="primary"
                                 variant="flat"
-                                @click="uploadIntensitiesFile"
                                 :disabled="intensitiesFile === null"
+                                @click="uploadIntensitiesFile"
                             >
                                 Upload file
                             </v-btn>
@@ -151,9 +163,13 @@
 
                     <!-- Step 2c: Bulk import samples from files -->
                     <div v-else-if="sampleCreationType === 3">
-                        <file-upload v-model="bulkFiles" class="mb-4" multiple />
+                        <file-upload
+                            v-model="bulkFiles"
+                            class="mb-4"
+                            multiple
+                        />
 
-                        <v-divider></v-divider>
+                        <v-divider />
 
                         <v-card-actions>
                             <v-btn
@@ -169,12 +185,12 @@
                             >
                                 Back
                             </v-btn>
-                            <v-spacer></v-spacer>
+                            <v-spacer />
                             <v-btn
                                 color="primary"
                                 variant="flat"
-                                @click="uploadFilesInBulk"
                                 :disabled="bulkFiles.length === 0"
+                                @click="uploadFilesInBulk"
                             >
                                 Upload files
                             </v-btn>
@@ -183,18 +199,21 @@
                 </v-window-item>
 
 
-                <v-window-item :value="3" v-if="sampleCreationType === 2">
+                <v-window-item
+                    v-if="sampleCreationType === 2"
+                    :value="3"
+                >
                     <!-- Step 3b: Process uploaded file and ask user to select which columns need to be imported -->
                     <div v-if="sampleCreationType === 2">
                         <column-file-import
+                            v-model="validFileImport"
                             :sample="sample"
                             :column-file="intensitiesFile!"
-                            v-model="validFileImport"
                             class="mb-4"
                         />
 
-                        <v-spacer></v-spacer>
-                        <v-divider></v-divider>
+                        <v-spacer />
+                        <v-divider />
 
                         <v-card-actions>
                             <v-btn
@@ -210,7 +229,7 @@
                             >
                                 Back
                             </v-btn>
-                            <v-spacer></v-spacer>
+                            <v-spacer />
                             <v-btn
                                 color="primary"
                                 variant="flat"

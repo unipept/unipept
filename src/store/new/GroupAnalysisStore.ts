@@ -4,7 +4,7 @@ import {computed, ref} from "vue";
 import {AnalysisConfig} from "@/components/pages/TestPage.vue";
 import {v4 as uuidv4} from "uuid";
 
-export const DEFAULT_NEW_GROUP_NAME: string = "Group";
+export const DEFAULT_NEW_GROUP_NAME = "Group";
 
 const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
     // ===============================================================

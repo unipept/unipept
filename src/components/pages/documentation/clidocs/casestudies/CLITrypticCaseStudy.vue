@@ -16,22 +16,43 @@
                 Because most proteins are simply too large to be analysed using a mass spectrometer, they are usually cleaved into smaller peptides before the
                 actual <initialism>MS</initialism> analysis takes place. In practice, most proteomics studies achieve such a cleavage by adding trypsin to a protein sample. Trypsin is a
                 serine protease found in the digestive system of humans and many other vertebrates, where it helps to digest food proteins. The enzyme has a very
-                specific function — it only cleaves <r-link to="https://en.wikipedia.org/wiki/Peptide">peptide</r-link> chains at the
-                <r-link to="https://en.wikipedia.org/wiki/Carboxylic_acid">carboxyl</r-link> side of the <r-link to="https://en.wikipedia.org/wiki/Amino_acid">amino acids</r-link>
-                <r-link to="https://en.wikipedia.org/wiki/Lysine">lysine</r-link> (represented by the letter <inline-code>K</inline-code>) or
-                <r-link to="https://en.wikipedia.org/wiki/Arginine">arginine</r-link> (represented by the letter <inline-code>R</inline-code>). As a result, it is commonly used in biological
-                research during <r-link to="https://en.wikipedia.org/wiki/Proteomics">proteomics</r-link> experiments to digest proteins into peptides for mass
-                spectrometry analysis, e.g., <r-link to="https://en.wikipedia.org/wiki/In-gel_digestion">in-gel digestion</r-link>.
+                specific function — it only cleaves <r-link to="https://en.wikipedia.org/wiki/Peptide">
+                    peptide
+                </r-link> chains at the
+                <r-link to="https://en.wikipedia.org/wiki/Carboxylic_acid">
+                    carboxyl
+                </r-link> side of the <r-link to="https://en.wikipedia.org/wiki/Amino_acid">
+                    amino acids
+                </r-link>
+                <r-link to="https://en.wikipedia.org/wiki/Lysine">
+                    lysine
+                </r-link> (represented by the letter <inline-code>K</inline-code>) or
+                <r-link to="https://en.wikipedia.org/wiki/Arginine">
+                    arginine
+                </r-link> (represented by the letter <inline-code>R</inline-code>). As a result, it is commonly used in biological
+                research during <r-link to="https://en.wikipedia.org/wiki/Proteomics">
+                    proteomics
+                </r-link> experiments to digest proteins into peptides for mass
+                spectrometry analysis, e.g., <r-link to="https://en.wikipedia.org/wiki/In-gel_digestion">
+                    in-gel digestion
+                </r-link>.
             </p>
 
             <p>
-                <i>High-performance liquid chromatography</i> (<initialism>HPLC</initialism>) is a <r-link to="https://en.wikipedia.org/wiki/Chromatography">chromatographic</r-link>
+                <i>High-performance liquid chromatography</i> (<initialism>HPLC</initialism>) is a <r-link to="https://en.wikipedia.org/wiki/Chromatography">
+                    chromatographic
+                </r-link>
                 technique used to separate the components in a mixture, to identify each component, and to quantify each component. When combined with shotgun tandem mass
                 spectrometric methods, the active proteins within a biological sample may be determined. A trypsin digest is used to cleave the proteins in a sample downstream
                 to every <inline-code>K</inline-code> (lysine) or <inline-code>R</inline-code> (arginine), except when followed by <inline-code>P</inline-code> (proline). The individual components that result after the
                 cleavage step are called tryptic peptides. The amino acid sequence of these tryptic peptides may then be determined by means of mass spectrometry. However, most
                 devices have a detection limit that only allows to determine the amino acid sequence of peptides having a length between 5 and 50 amino acids
-                (<r-link to="#fig1" router>Figure 1</r-link>).
+                (<r-link
+                    to="#fig1"
+                    router
+                >
+                    Figure 1
+                </r-link>).
             </p>
 
             <image-caption-card
@@ -46,7 +67,12 @@
 
             <p>
                 By searching for all proteins that contain a particular tryptic peptide that was sequenced from an environmental sample, we can get insight into
-                the biodiversity and functionality of the biological sample. The <r-link to="/" router>Unipept web application</r-link> supports biodiversity analysis
+                the biodiversity and functionality of the biological sample. The <r-link
+                    to="/"
+                    router
+                >
+                    Unipept web application
+                </r-link> supports biodiversity analysis
                 of large and complex metaproteome samples using tryptic peptide information obtained from shotgun <initialism>MS/MS</initialism> experiments. Its
                 underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProt entries.
             </p>
@@ -60,7 +86,17 @@
                 of the taxonomic annotations extracted from the matched UniProt entries, based on a cleaned up version of the <initialism>NCBI</initialism> Taxonomy. All
                 intermediate results are shown for the sample tryptic peptide <inline-code>ENFVY[IL]AK</inline-code> (isoleucine and leucine equated), leading to an
                 <initialism>LCA</initialism> in the phylum Streptophyta. Arrows at the bottom show which processing steps are available as functions in the
-                <r-link to="/apidocs" router>Unipept <initialism>API</initialism></r-link> and the <r-link to="/clidocs" router>Unipept <initialism>CLI</initialism></r-link>.
+                <r-link
+                    to="/apidocs"
+                    router
+                >
+                    Unipept <initialism>API</initialism>
+                </r-link> and the <r-link
+                    to="/clidocs"
+                    router
+                >
+                    Unipept <initialism>CLI</initialism>
+                </r-link>.
             </image-caption-card>
         </header-body-card>
 
@@ -70,8 +106,15 @@
             large-title
         >
             <p>
-                Before the Unipept command line interface (<initialism>CLI</initialism>) can be used, it first needs to be <r-link to="/clidocs" router>installed locally</r-link>.
-                Since the commands of the <initialism>CLI</initialism> are implemented in Ruby, the <r-link to="https://www.ruby-lang.org/en/downloads/">Ruby environment</r-link> must
+                Before the Unipept command line interface (<initialism>CLI</initialism>) can be used, it first needs to be <r-link
+                    to="/clidocs"
+                    router
+                >
+                    installed locally
+                </r-link>.
+                Since the commands of the <initialism>CLI</initialism> are implemented in Ruby, the <r-link to="https://www.ruby-lang.org/en/downloads/">
+                    Ruby environment
+                </r-link> must
                 be installed first (at least version 2.3). The Unipept <initialism>CLI</initialism> can then be installed using the <inline-code>gem</inline-code> command, which
                 is the RubyGems package manager for the Ruby programming language.
             </p>
@@ -92,11 +135,16 @@
 
             <p>
                 The Unipept <initialism>CLI</initialism> is a bundle of different commands that all come with detailed
-                <r-link to="/clidocs" router>online documentation</r-link>. Naturally, the most important command is <inline-code>unipept</inline-code>.
+                <r-link
+                    to="/clidocs"
+                    router
+                >
+                    online documentation
+                </r-link>. Naturally, the most important command is <inline-code>unipept</inline-code>.
             </p>
 
             <boxed>
-<pre>
+                <pre>
 <sentinel>$</sentinel> unipept --help
 NAME
 unipept - Command line interface to Unipept web services.
@@ -143,7 +191,12 @@ OPTIONS
             <p>
                 As the <inline-code>unipept</inline-code> command makes calls to the Unipept <initialism>API</initialism> that is provided by an instance of the Unipept
                 application server (web services that communicate with an instance of the Unipept database), the location of the Unipept application server must
-                be <r-link to="/clidocs" router>configured</r-link>. By default, the public Unipept server (api.unipept.ugent.be) is used, but this can be changed by passing the <initialism>URL</initialism>
+                be <r-link
+                    to="/clidocs"
+                    router
+                >
+                    configured
+                </r-link>. By default, the public Unipept server (api.unipept.ugent.be) is used, but this can be changed by passing the <initialism>URL</initialism>
                 of the server as an argument to the option <inline-code>--host</inline-code>. To avoid that a custom server needs to be specified with each use of the
                 <inline-code>unipept</inline-code> command, a custom server can be set as default using the <inline-code>unipept config</inline-code> subcommand. A server set with the
                 <inline-code>--host</inline-code> option always overrides the default server.
@@ -167,7 +220,17 @@ OPTIONS
         >
             <p>
                 Using the <inline-code>unipept</inline-code> command with a single tryptic peptide passed as an argument or read from <i>standard input</i>, corresponds to using
-                the <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link> feature from the Unipept web interface (<r-link to="#fig3" router>Figure 3</r-link>).
+                the <r-link
+                    to="/tpa"
+                    router
+                >
+                    Tryptic Peptide Analysis
+                </r-link> feature from the Unipept web interface (<r-link
+                    to="#fig3"
+                    router
+                >
+                    Figure 3
+                </r-link>).
                 Activating the option Equate I and L in the web interface corresponds to using the <inline-code>-e</inline-code> option with the <inline-code>unipept</inline-code> command.
             </p>
 
@@ -176,12 +239,22 @@ OPTIONS
                 class="mb-5"
                 :image="CaseStudyTPARequestImage"
             >
-                <b>Figure 3</b> Taxonomic identification of the tryptic peptide <inline-code>ENFVYIAK</inline-code> using the <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link>
+                <b>Figure 3</b> Taxonomic identification of the tryptic peptide <inline-code>ENFVYIAK</inline-code> using the <r-link
+                    to="/tpa"
+                    router
+                >
+                    Tryptic Peptide Analysis
+                </r-link>
                 feature from the Unipept web interface.
             </image-caption-card>
 
             <p>
-                The <inline-code>unipept pept2prot</inline-code> command is an implementation of the <inline-code>pept2prot</inline-code> step in <r-link to="#fig2" router>Figure 2</r-link>.
+                The <inline-code>unipept pept2prot</inline-code> command is an implementation of the <inline-code>pept2prot</inline-code> step in <r-link
+                    to="#fig2"
+                    router
+                >
+                    Figure 2
+                </r-link>.
                 This command can therefore be used to fetch all UniProt proteins that contain (exact matching) the given tryptic peptide. These peptides are listed
                 in the <i>Protein matches</i> tab on the page that shows the results of a Tryptic Peptide Analysis on the Unipept web interface. When the option
                 <inline-code>-a/--all</inline-code> is used, additional taxonomic and functional information is shown for each of the matched protein records. These metadata
@@ -189,7 +262,12 @@ OPTIONS
             </p>
 
             <p>
-                The <inline-code>unipept pept2taxa</inline-code> command is the composition of the <inline-code>pept2prot</inline-code> and <inline-code>prot2taxa</inline-code> steps in <r-link to="#fig2" router>Figure 2</r-link>,
+                The <inline-code>unipept pept2taxa</inline-code> command is the composition of the <inline-code>pept2prot</inline-code> and <inline-code>prot2taxa</inline-code> steps in <r-link
+                    to="#fig2"
+                    router
+                >
+                    Figure 2
+                </r-link>,
                 apart from the fact that this command also implements a deduplication of the matched taxa. The command can thus be used to fetch all taxonomic
                 annotations from all UniProt proteins that contain the given tryptic peptide. This information is represented in the Unipept web interface in
                 tabular format (<i>Lineage table tab</i>) and in tree format (<i>Lineage tree tab</i>). All information included in the table can be retrieved using the
@@ -198,12 +276,32 @@ OPTIONS
 
             <p>
                 The <inline-code>unipept pept2lca</inline-code> command is the composition of the <inline-code>pept2prot</inline-code>, <inline-code>prot2taxa</inline-code> and <inline-code>taxa2lca</inline-code> steps
-                in <r-link to="#fig2" router>Figure 2</r-link>. In other words, this command can be used to determine the taxonomic identification of a tryptic peptide.
+                in <r-link
+                    to="#fig2"
+                    router
+                >
+                    Figure 2
+                </r-link>. In other words, this command can be used to determine the taxonomic identification of a tryptic peptide.
                 This is done by computing the lowest common ancestor (<initialism>LCA</initialism>) from all taxonomic annotations of the UniProt proteins that
-                match the given tryptic peptide (<r-link to="#fig2" router>Figure 2</r-link>). This information can be found in the summary on top of the page that
-                shows the results of a Tryptic Peptide Analysis in the Unipept web interface (<r-link to="#fig4" router>Figure 4</r-link>). The complete lineage can
+                match the given tryptic peptide (<r-link
+                    to="#fig2"
+                    router
+                >
+                    Figure 2
+                </r-link>). This information can be found in the summary on top of the page that
+                shows the results of a Tryptic Peptide Analysis in the Unipept web interface (<r-link
+                    to="#fig4"
+                    router
+                >
+                    Figure 4
+                </r-link>). The complete lineage can
                 be retrieved using the <inline-code>-a</inline-code> option in combination with this command. Note that the computation of the <initialism>LCA</initialism>
-                (<inline-code>taxa2lca</inline-code> step in <r-link to="#fig4" router>Figure 4</r-link>) can be done using the <inline-code>unipept taxa2lca</inline-code> command of the
+                (<inline-code>taxa2lca</inline-code> step in <r-link
+                    to="#fig4"
+                    router
+                >
+                    Figure 4
+                </r-link>) can be done using the <inline-code>unipept taxa2lca</inline-code> command of the
                 Unipept <initialism>CLI</initialism>.
             </p>
 
@@ -212,7 +310,12 @@ OPTIONS
                 :image="CaseStudyTPAResponseImage"
             >
                 <b>Figure 4</b> Information about the lowest common ancestor of the tryptic peptide <inline-code>ENFVYIAK</inline-code>, as displayed on top of the page that shows the
-                results of a <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link> in the Unipept web interface.
+                results of a <r-link
+                    to="/tpa"
+                    router
+                >
+                    Tryptic Peptide Analysis
+                </r-link> in the Unipept web interface.
             </image-caption-card>
         </header-body-card>
 
@@ -485,7 +588,12 @@ OPTIONS
             </boxed>
 
             <p>
-                This output corresponds to the tree structure that appears at the left of <r-link to="#fig2" router>Figure 2</r-link> or the tree drawn in the
+                This output corresponds to the tree structure that appears at the left of <r-link
+                    to="#fig2"
+                    router
+                >
+                    Figure 2
+                </r-link> or the tree drawn in the
                 <i>Lineage tree</i> tab on the page that shows the results of a Tryptic Peptide Analysis in the Unipept web interface. Note that the tryptic peptide
                 <inline-code>ENFVYLAK</inline-code> was only found in a peach protein (Prunus persica), whereas its <inline-code>I=L</inline-code> variant was found in proteins of a species
                 of wild banana (<i>Musa acuminata subsp. malaccensis</i>) and in different members of the flowering plants including chick pea (<i>Cicer arietinum</i>),
@@ -513,7 +621,12 @@ OPTIONS
             </boxed>
 
             <p>
-                The correctness of the computed <initialism>LCA</initialism>s can be checked based on the taxonomic hierarchy shown in <r-link to="#fig2" router>Figure 2</r-link>.
+                The correctness of the computed <initialism>LCA</initialism>s can be checked based on the taxonomic hierarchy shown in <r-link
+                    to="#fig2"
+                    router
+                >
+                    Figure 2
+                </r-link>.
             </p>
         </header-body-card>
 

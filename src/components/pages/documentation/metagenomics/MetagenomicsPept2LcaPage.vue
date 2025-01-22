@@ -3,7 +3,9 @@
         <h1 class="font-weight-light">
             umgap pept2lca
         </h1>
-        <h3 class="font-weight-light">Maps a <initialism>FASTA</initialism> stream of peptides to taxon IDs.</h3>
+        <h3 class="font-weight-light">
+            Maps a <initialism>FASTA</initialism> stream of peptides to taxon IDs.
+        </h3>
 
         <v-divider class="my-2" />
 

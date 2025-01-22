@@ -22,7 +22,12 @@
 
             <p>
                 These case studies assume you have already followed the installation instructions on the
-                <RLink to="/umgap" router>overview</RLink> page.
+                <RLink
+                    to="/umgap"
+                    router
+                >
+                    overview
+                </RLink> page.
             </p>
         </header-body-card>
 

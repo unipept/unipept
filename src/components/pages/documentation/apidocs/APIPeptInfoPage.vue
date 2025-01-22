@@ -11,7 +11,12 @@
 
         <p>
             This method returns functional information and the lowest common ancestor a given tryptic peptide.
-            This is the same information as provided when performing a search with the <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link> in the web interface.
+            This is the same information as provided when performing a search with the <r-link
+                to="/tpa"
+                router
+            >
+                Tryptic Peptide Analysis
+            </r-link> in the web interface.
         </p>
 
         <!-- Request Card -->
@@ -22,7 +27,12 @@
         >
             <p>
                 The peptinfo method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/peptinfo</inline-code>.
-                <r-link to="#parameters" router>Parameters</r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
+                <r-link
+                    to="#parameters"
+                    router
+                >
+                    Parameters
+                </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
                 The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
             </p>
 
@@ -32,7 +42,12 @@
             <p>
                 <inline-code>input[]</inline-code> is a required parameter that takes one or more tryptic peptides.
                 Unipept will return the functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms and InterPro entries associated with each of the <inline-code>input[]</inline-code> peptides based on their occurrence in UniProt entries.
-                To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link to="#example2" router>example</r-link>).
+                To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
+                    to="#example2"
+                    router
+                >
+                    example
+                </r-link>).
             </p>
 
             <static-alert title="Input size">
@@ -50,7 +65,12 @@
                 <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries.
-                This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link> in the web interface.
+                This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
+                    to="/tpa"
+                    router
+                >
+                    Tryptic Peptide Analysis
+                </r-link> in the web interface.
             </p>
 
             <h3 class="font-weight-medium">
@@ -60,7 +80,12 @@
                 <inline-code>extra</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, Unipept will also return the name associated with a <initialism>GO</initialism>-term and an <initialism>EC</initialism>-number, the name and type associated with an InterPro entry, and the complete lineage of the taxonomic lowest common ancestor.
-                See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
+                See the <r-link
+                    to="#response"
+                    router
+                >
+                    response
+                </r-link> section for an overview of the information fields returned.
             </p>
 
             <h3 class="font-weight-medium">
@@ -90,44 +115,54 @@
             <ul class="my-3">
                 <li><inline-code>peptide</inline-code>: the peptide that was searched for.</li>
                 <li><inline-code>total_protein_count</inline-code>: total amount of proteins matched with the given peptide.</li>
-                <li><inline-code>ec</inline-code>:
+                <li>
+                    <inline-code>ec</inline-code>:
                     A list of <initialism>JSON</initialism> objects that each represent an <initialism>EC</initialism>-number associated with
                     the current tryptic peptide.
                     <ul>
                         <li><inline-code>ec_number</inline-code>: <initialism>EC</initialism>-number associated with the current tryptic peptide.</li>
-                        <li><inline-code>protein_count</inline-code>:
+                        <li>
+                            <inline-code>protein_count</inline-code>:
                             amount of proteins matched with the given tryptic peptide that are labeled with the current <initialism>EC</initialism>-number.
                         </li>
-                        <li><inline-code>name</inline-code>:
+                        <li>
+                            <inline-code>name</inline-code>:
                             optional, name of the <initialism>EC</initialism>-number. Included when the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>.
                         </li>
                     </ul>
                 </li>
-                <li><inline-code>go</inline-code>:
+                <li>
+                    <inline-code>go</inline-code>:
                     A list of <initialism>JSON</initialism> objects that each represent a <initialism>GO</initialism>-term associated with
                     the current tryptic peptide.
                     <ul>
                         <li><inline-code>go_term</inline-code>: <initialism>GO</initialism>-term associated with the current tryptic peptide.</li>
-                        <li><inline-code>protein_count</inline-code>:
+                        <li>
+                            <inline-code>protein_count</inline-code>:
                             amount of proteins matched with the given tryptic peptide that are labeled with the current <initialism>GO</initialism>-term.
                         </li>
-                        <li><inline-code>name</inline-code>:
+                        <li>
+                            <inline-code>name</inline-code>:
                             optional, name of the <initialism>GO</initialism>-term. Included when the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>.
                         </li>
                     </ul>
                 </li>
-                <li><inline-code>ipr</inline-code>:
+                <li>
+                    <inline-code>ipr</inline-code>:
                     A list of <initialism>JSON</initialism> objects that each represent an InterPro entry associated with
                     the current tryptic peptide.
                     <ul>
                         <li><inline-code>code</inline-code>: InterPro entry code associated with the current tryptic peptide.</li>
-                        <li><inline-code>protein_count</inline-code>:
+                        <li>
+                            <inline-code>protein_count</inline-code>:
                             amount of proteins matched with the given tryptic peptide that are labeled with the current InterPro code.
                         </li>
-                        <li><inline-code>name</inline-code>:
+                        <li>
+                            <inline-code>name</inline-code>:
                             optional, name of the InterPro entry. Included when the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>.
                         </li>
-                        <li><inline-code>type</inline-code>:
+                        <li>
+                            <inline-code>type</inline-code>:
                             optional, type of the InterPro entry. Included when the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>.
                         </li>
                     </ul>

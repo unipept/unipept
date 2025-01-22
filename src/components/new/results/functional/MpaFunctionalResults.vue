@@ -74,8 +74,8 @@
                         :data="goData"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        @downloadItem="downloadGoItem"
-                        @downloadTable="downloadGoTable"
+                        @download-item="downloadGoItem"
+                        @download-table="downloadGoTable"
                     >
                         <template #trust>
                             <span>
@@ -92,8 +92,8 @@
                         :data="ecData"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        @downloadItem="downloadEcItem"
-                        @downloadTable="downloadEcTable"
+                        @download-item="downloadEcItem"
+                        @download-table="downloadEcTable"
                     >
                         <template #trust>
                             <span>
@@ -111,8 +111,8 @@
                         :data="iprData"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        @downloadItem="downloadInterproItem"
-                        @downloadTable="downloadInterproTable"
+                        @download-item="downloadInterproItem"
+                        @download-table="downloadInterproTable"
                     >
                         <template #trust>
                             <span>

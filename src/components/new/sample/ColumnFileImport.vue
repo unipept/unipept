@@ -1,11 +1,22 @@
 <template>
     <div style="min-height: 500px;">
-        <div v-if="loading" class="d-flex flex-column align-center">
-            <v-progress-circular color="primary" indeterminate size="50" width="5"/>
+        <div
+            v-if="loading"
+            class="d-flex flex-column align-center"
+        >
+            <v-progress-circular
+                color="primary"
+                indeterminate
+                size="50"
+                width="5"
+            />
             <span class="mt-2">Processing uploaded file...</span>
         </div>
 
-        <v-container v-else class="px-0 py-2">
+        <v-container
+            v-else
+            class="px-0 py-2"
+        >
             <v-form v-model="validForm">
                 <v-row>
                     <div class="v-col-md-12 py-1">
@@ -14,17 +25,17 @@
 
                     <div class="v-col-md-6 py-1">
                         <v-text-field
-                            label="Sample name"
                             v-model="sample.name"
+                            label="Sample name"
                             hint="Name by which you can uniquely identify this specific sample."
                             persistent-hint
                             class="mb-2"
                         />
                         <v-select
+                            v-model="delimiter"
                             :items="delimiterOptions"
                             label="Delimiter"
                             hint="The delimiter used in this file has been autodetected. You can manually override it here if required."
-                            v-model="delimiter"
                             item-title="name"
                             item-value="character"
                             persistent-hint
@@ -33,34 +44,39 @@
 
                     <div class="v-col-md-4 py-0 document-checkbox">
                         <v-checkbox
+                            v-model="useFirstRowAsHeader"
                             label="Use first row as header"
                             density="compact"
                             hint="Enable this option to treat the first row of the file as column headers. Uncheck if the file has no headers and all rows contain data."
                             persistent-hint
                             color="primary"
                             class="pb-3"
-                            v-model="useFirstRowAsHeader"
                         />
                         <v-checkbox
+                            v-model="sanitizeSequenceColumn"
                             label="Sanitize sequences"
                             density="compact"
                             hint="Enable this option to automatically clean the peptide sequences by removing charge states, post-translational modification annotations, and other non-sequence information."
                             persistent-hint
-                            v-model="sanitizeSequenceColumn"
                             color="primary"
                         />
                     </div>
-
                 </v-row>
                 <v-row class="mb-n3">
                     <div class="v-col-md-6">
                         <div class="d-flex align-center pb-1">
                             <h4>Sequence column</h4>
-                            <v-icon size="extra-small" class="ml-1" color="blue">mdi-rhombus</v-icon>
+                            <v-icon
+                                size="extra-small"
+                                class="ml-1"
+                                color="blue"
+                            >
+                                mdi-rhombus
+                            </v-icon>
                         </div>
                         <v-select
-                            :items="columns"
                             v-model="selectedSequenceColumn"
+                            :items="columns"
                             density="comfortable"
                             hint="Please indicate which column contains the peptide sequences. Use the file preview below to verify your selection."
                             persistent-hint
@@ -70,12 +86,18 @@
                     <div class="v-col-md-6">
                         <div class="d-flex align-center pb-1">
                             <h4>Score column</h4>
-                            <v-icon size="extra-small" class="mx-1" color="orange">mdi-rhombus</v-icon>
+                            <v-icon
+                                size="extra-small"
+                                class="mx-1"
+                                color="orange"
+                            >
+                                mdi-rhombus
+                            </v-icon>
                             <span class="font-italic">(Optional)</span>
                         </div>
                         <v-select
-                            :items="columns"
                             v-model="selectedIntensitiesColumn"
+                            :items="columns"
                             density="comfortable"
                             clearable
                             hint="Please indicate which column contains the peptide intensities. The intensity values are optional. If provided, they are used by the Peptonizer module and drastically improves its accuracy."
@@ -87,31 +109,40 @@
                 <v-row>
                     <div class="v-col-md-12">
                         <h4>Import preview</h4>
-                        <v-table density="compact" class="column-table">
+                        <v-table
+                            density="compact"
+                            class="column-table"
+                        >
                             <thead>
-                            <tr>
-                                <th class="bg-grey-lighten-4 first-column"></th>
-                                <th
-                                    v-for="column of columns"
-                                    :key="column"
-                                    :class="[getColumnHeaderColor(column), 'font-weight-bold']" >
-                                    <div class="d-flex justify-space-between">
-                                        {{ column }}
-                                        <div
-                                            v-if="(column === selectedSequenceColumn && !validPeptides) || (column === selectedIntensitiesColumn && !validIntensities)"
-                                            class="float-right pl-2"
-                                        >
-                                            <v-icon v-bind="props" color="red">
-                                                mdi-alert
-                                            </v-icon>
+                                <tr>
+                                    <th class="bg-grey-lighten-4 first-column" />
+                                    <th
+                                        v-for="column of columns"
+                                        :key="column"
+                                        :class="[getColumnHeaderColor(column), 'font-weight-bold']"
+                                    >
+                                        <div class="d-flex justify-space-between">
+                                            {{ column }}
+                                            <div
+                                                v-if="(column === selectedSequenceColumn && !validPeptides) || (column === selectedIntensitiesColumn && !validIntensities)"
+                                                class="float-right pl-2"
+                                            >
+                                                <v-icon
+                                                    v-bind="props"
+                                                    color="red"
+                                                >
+                                                    mdi-alert
+                                                </v-icon>
+                                            </div>
                                         </div>
-                                    </div>
-                                </th>
-                            </tr>
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="[row_idx, row] of rows.slice(rowStart, rowStart + 5).entries()">
-                                    <td class="bg-grey-lighten-4 first-column text-right font-weight-bold">{{ row_idx + 1 }}</td>
+                                    <td class="bg-grey-lighten-4 first-column text-right font-weight-bold">
+                                        {{ row_idx + 1 }}
+                                    </td>
                                     <td
                                         v-for="[cell_idx, cell] of row.entries()"
                                         :key="`${row_idx}_${cell_idx}`"
@@ -123,10 +154,16 @@
                             </tbody>
                         </v-table>
                         <div class="mt-2">
-                            <div v-if="selectedSequenceColumn !== '' && !validPeptides" class="text-red" >
+                            <div
+                                v-if="selectedSequenceColumn !== '' && !validPeptides"
+                                class="text-red"
+                            >
                                 <span class="font-weight-bold">Invalid peptide sequences:</span> sequences are only allowed to consist of letters. Check the "sanitize sequences" option to perform an autoclean on this column.
                             </div>
-                            <div v-if="!validIntensities" class="text-red">
+                            <div
+                                v-if="!validIntensities"
+                                class="text-red"
+                            >
                                 <span class="font-weight-bold">Invalid intensities:</span> all intensities must be a valid numeric value.
                             </div>
                         </div>

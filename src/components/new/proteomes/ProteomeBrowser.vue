@@ -30,7 +30,11 @@
                     </v-text-field>
                 </div>
                 <span class="font-weight-bold">Hint:</span> browse
-                <a class="text-primary text-decoration-none" href="https://www.uniprot.org/proteomes" target="_blank">
+                <a
+                    class="text-primary text-decoration-none"
+                    href="https://www.uniprot.org/proteomes"
+                    target="_blank"
+                >
                     https://www.uniprot.org/proteomes
                 </a>
                 for a list of all available reference proteomes.
@@ -47,36 +51,78 @@
                     density="compact"
                 >
                     <template #no-data>
-                        <v-alert class="ma-3" density="compact" type="info" variant="tonal" text="No proteomes added yet" />
+                        <v-alert
+                            class="ma-3"
+                            density="compact"
+                            type="info"
+                            variant="tonal"
+                            text="No proteomes added yet"
+                        />
                     </template>
 
                     <template #item.type="{ item }">
-                        <v-icon v-if="item.type === ProteomeType.Reference" color="success" icon="mdi-check" />
+                        <v-icon
+                            v-if="item.type === ProteomeType.Reference"
+                            color="success"
+                            icon="mdi-check"
+                        />
 
-                        <v-tooltip v-else-if="item.type === ProteomeType.Other" location="bottom" open-delay="500">
+                        <v-tooltip
+                            v-else-if="item.type === ProteomeType.Other"
+                            location="bottom"
+                            open-delay="500"
+                        >
                             <template #activator="{ props }">
-                                <v-icon v-bind="props" color="warning" icon="mdi-alert-outline" />
+                                <v-icon
+                                    v-bind="props"
+                                    color="warning"
+                                    icon="mdi-alert-outline"
+                                />
                             </template>
                             <span>This proteome is not marked as a reference proteome, but will be processed for this database</span>
                         </v-tooltip>
 
-                        <v-tooltip v-else-if="item.type === ProteomeType.Redundant" location="bottom" open-delay="500">
+                        <v-tooltip
+                            v-else-if="item.type === ProteomeType.Redundant"
+                            location="bottom"
+                            open-delay="500"
+                        >
                             <template #activator="{ props }">
-                                <v-icon v-bind="props" color="error" icon="mdi-alert-circle-outline" />
+                                <v-icon
+                                    v-bind="props"
+                                    color="error"
+                                    icon="mdi-alert-circle-outline"
+                                />
                             </template>
                             <span>This proteome is marked as redundant by Uniprot and will <b>not</b> be processed for this database</span>
                         </v-tooltip>
 
-                        <v-tooltip v-else-if="item.type === ProteomeType.Excluded" location="bottom" open-delay="500">
+                        <v-tooltip
+                            v-else-if="item.type === ProteomeType.Excluded"
+                            location="bottom"
+                            open-delay="500"
+                        >
                             <template #activator="{ props }">
-                                <v-icon v-bind="props" color="error" icon="mdi-alert-circle-outline" />
+                                <v-icon
+                                    v-bind="props"
+                                    color="error"
+                                    icon="mdi-alert-circle-outline"
+                                />
                             </template>
                             <span>This proteome is marked as excluded by Uniprot and will not be processed for this database</span>
                         </v-tooltip>
 
-                        <v-tooltip v-else location="bottom" open-delay="500">
+                        <v-tooltip
+                            v-else
+                            location="bottom"
+                            open-delay="500"
+                        >
                             <template #activator="{ props }">
-                                <v-icon v-bind="props" color="error" icon="mdi-alert-circle-outline" />
+                                <v-icon
+                                    v-bind="props"
+                                    color="error"
+                                    icon="mdi-alert-circle-outline"
+                                />
                             </template>
                             <span>This proteome cannot be processed</span>
                         </v-tooltip>
@@ -84,17 +130,26 @@
 
                     <template #item.id="{ item }">
                         <span v-if="item.type in [ProteomeType.Reference, ProteomeType.Other]">{{ item.id }}</span>
-                        <span v-else class="text-error">{{ item.id }}</span>
+                        <span
+                            v-else
+                            class="text-error"
+                        >{{ item.id }}</span>
                     </template>
 
                     <template #item.organism="{ item }">
                         <span v-if="item.type in [ProteomeType.Reference, ProteomeType.Other]">{{ item.organism }}</span>
-                        <span v-else class="text-error">{{ item.organism }}</span>
+                        <span
+                            v-else
+                            class="text-error"
+                        >{{ item.organism }}</span>
                     </template>
 
                     <template #item.count="{ item }">
                         <span v-if="item.type in [ProteomeType.Reference, ProteomeType.Other]">{{ item.count }}</span>
-                        <span v-else class="text-error">{{ item.count }}</span>
+                        <span
+                            v-else
+                            class="text-error"
+                        >{{ item.count }}</span>
                     </template>
 
                     <template #item.action="{ item }">

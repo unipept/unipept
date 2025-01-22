@@ -20,31 +20,31 @@
                 >
                     <template #body="{ items }">
                         <tbody>
-                        <tr
-                            v-for="item in items"
-                            :key="item.definition.name"
-                        >
-                            <td>
+                            <tr
+                                v-for="item in items"
+                                :key="item.definition.name"
+                            >
+                                <td>
                                     <span class="font-small font-weight-bold">
                                         {{ item.definition.name }}
                                     </span>
-                            </td>
-                            <td
-                                v-for="l in item.lineage"
-                                :key="l ? l.id : generateId()"
-                                :class="[ l ? getColour(l.name) : '', 'lineage-cell', 'px-2']"
-                            >
-                                <a
-                                    v-if="l"
-                                    class="font-small font-weight-regular font-text no-link-colour"
-                                    :href="'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=' + l.id"
-                                    target="_blank"
+                                </td>
+                                <td
+                                    v-for="l in item.lineage"
+                                    :key="l ? l.id : generateId()"
+                                    :class="[ l ? getColour(l.name) : '', 'lineage-cell', 'px-2']"
                                 >
-                                    {{ l.name }}
-                                    <v-icon size="x-small">mdi-open-in-new</v-icon>
-                                </a>
-                            </td>
-                        </tr>
+                                    <a
+                                        v-if="l"
+                                        class="font-small font-weight-regular font-text no-link-colour"
+                                        :href="'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=' + l.id"
+                                        target="_blank"
+                                    >
+                                        {{ l.name }}
+                                        <v-icon size="x-small">mdi-open-in-new</v-icon>
+                                    </a>
+                                </td>
+                            </tr>
                         </tbody>
                     </template>
                 </v-data-table>

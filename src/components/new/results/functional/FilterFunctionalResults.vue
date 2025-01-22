@@ -51,7 +51,9 @@
                     color="primary"
                 >
                     <template #prepend>
-                        <v-icon size="small">mdi-greater-than-or-equal</v-icon>
+                        <v-icon size="small">
+                            mdi-greater-than-or-equal
+                        </v-icon>
                     </template>
 
                     <template #append>

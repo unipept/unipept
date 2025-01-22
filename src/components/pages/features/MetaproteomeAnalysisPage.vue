@@ -31,8 +31,13 @@
                     v-if="loadingSampleData"
                     class="d-flex flex-column align-center"
                 >
-                    <v-progress-circular indeterminate color="primary" />
-                    <div class="mt-4">Loading sample data...</div>
+                    <v-progress-circular
+                        indeterminate
+                        color="primary"
+                    />
+                    <div class="mt-4">
+                        Loading sample data...
+                    </div>
                 </div>
                 <demo-analysis-card
                     v-else

@@ -14,9 +14,9 @@ export enum PeptonizerStatus {
 }
 
 class UnipeptPeptonizerProgressListener implements PeptonizerProgressListener {
-    private totalTasks: number = 0;
-    private tasksFinished: number = 0;
-    private startEpoch: number = 0;
+    private totalTasks = 0;
+    private tasksFinished = 0;
+    private startEpoch = 0;
 
     constructor(
         private currentProgress: Ref<number>,

@@ -66,7 +66,9 @@
                 of a pipeline, <inline-code>... | umgap prot2kmer2lca index | ...</inline-code>, it can run in a separate (and persistent) process,
                 reusing the same loaded index. Run <inline-code>umgap prot2kmer2lca -m -s umgap-socket index</inline-code> as a service, and when the
                 index is loaded, change your original pipeline(s) to communicate with the socket using
-                <RLink to="http://man.openbsd.org/nc">OpenBSD's netcat</RLink>: <inline-code>... | nc -NU /path/to/umgap-socket | ...</inline-code>.
+                <RLink to="http://man.openbsd.org/nc">
+                    OpenBSD's netcat
+                </RLink>: <inline-code>... | nc -NU /path/to/umgap-socket | ...</inline-code>.
             </p>
 
             <parameter-table

@@ -15,7 +15,10 @@
                     <template #activator="{ props: tooltip }">
                         <span v-bind="tooltip">
                             Peptonizer
-                            <v-icon v-bind="tooltip" color="yellow">
+                            <v-icon
+                                v-bind="tooltip"
+                                color="yellow"
+                            >
                                 mdi-creation-outline
                             </v-icon>
                         </span>

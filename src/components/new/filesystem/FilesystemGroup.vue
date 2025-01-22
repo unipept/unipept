@@ -14,8 +14,18 @@
                 </template>
 
                 <template #prepend="{ isOpen }">
-                    <v-icon v-if="isOpen" v-bind="props">mdi-chevron-down</v-icon>
-                    <v-icon v-else v-bind="props">mdi-chevron-right</v-icon>
+                    <v-icon
+                        v-if="isOpen"
+                        v-bind="props"
+                    >
+                        mdi-chevron-down
+                    </v-icon>
+                    <v-icon
+                        v-else
+                        v-bind="props"
+                    >
+                        mdi-chevron-right
+                    </v-icon>
                 </template>
 
                 <template #append>

@@ -23,7 +23,10 @@
                 from the previous one to the one. Doing so is, however, quite technical and is not recommended for
                 non-technical users. Instead, we recommend to use a Linux system (such as Ubuntu) or a Mac in this case.
                 If you do want to move the virtual hard drive on Windows, you can follow the steps in
-                <a class="link" href="https://verschaffelt.be/increase-maximum-size-of-docker-volume-on-windows/">this guide</a>.
+                <a
+                    class="link"
+                    href="https://verschaffelt.be/increase-maximum-size-of-docker-volume-on-windows/"
+                >this guide</a>.
             </p>
             <h3 class="font-weight-bold">
                 Q: Is Docker always required when using the Unipept Desktop application?

@@ -12,7 +12,6 @@
         </v-card-title>
 
         <v-card-text>
-
             <v-data-table
                 v-model:expanded="expanded"
                 :headers="headers"
@@ -23,7 +22,7 @@
                 :loading="assay.status === AnalysisStatus.Running"
                 show-expand
             >
-                <template #item.uniprotAccessionId="{ item }" >
+                <template #item.uniprotAccessionId="{ item }">
                     <span
                         style="cursor: pointer;"
                         @click="openInUniProt(item.uniprotAccessionId)"

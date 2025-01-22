@@ -8,10 +8,21 @@
             @drop.prevent="onDrop"
             @click="triggerFileInput"
         >
-            <v-icon size="48" color="primary">mdi-cloud-upload</v-icon>
-            <p v-if="!selectedFiles">Drag and drop your files here, or <strong>click to browse</strong></p>
-            <p v-else-if="Array.isArray(selectedFiles)">{{ selectedFiles.map(file => file.name).join(", ") }}</p>
-            <p v-else>{{ selectedFiles.name }}</p>
+            <v-icon
+                size="48"
+                color="primary"
+            >
+                mdi-cloud-upload
+            </v-icon>
+            <p v-if="!selectedFiles">
+                Drag and drop your files here, or <strong>click to browse</strong>
+            </p>
+            <p v-else-if="Array.isArray(selectedFiles)">
+                {{ selectedFiles.map(file => file.name).join(", ") }}
+            </p>
+            <p v-else>
+                {{ selectedFiles.name }}
+            </p>
             <small>Supported formats: CSV, TSV</small>
         </div>
 
@@ -19,11 +30,11 @@
         <v-file-input
             ref="fileInput"
             v-model="selectedFiles"
-            @change="onFileSelect"
             style="display: none;"
             label="Hidden File Input"
             accept=".csv, .tsv, .txt, text/csv, text/tab-separated-values, text/plain"
             :multiple="multiple"
+            @change="onFileSelect"
         />
     </div>
 </template>

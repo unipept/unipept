@@ -12,7 +12,12 @@
         <p>
             The <inline-code>unipept taxa2lca</inline-code> command takes one or more <initialism>NCBI</initialism> taxon id's as input and returns the taxonomic lowest common
             ancestor (<initialism>LCA</initialism>) of these taxa as output. All this information is fetched by doing
-            <r-link to="/apidocs/taxa2lca" router><initialism>API</initialism>-requests</r-link> to the Unipept server.
+            <r-link
+                to="/apidocs/taxa2lca"
+                router
+            >
+                <initialism>API</initialism>-requests
+            </r-link> to the Unipept server.
         </p>
 
         <header-body-card
@@ -39,7 +44,12 @@
 
             <h3>File input</h3>
             <p>
-                Use the <r-link to="#options" router>--input parameter</r-link> to specify a file to use as input. If input is supplied using a file, a single
+                Use the <r-link
+                    to="#options"
+                    router
+                >
+                    --input parameter
+                </r-link> to specify a file to use as input. If input is supplied using a file, a single
                 peptide per line is expected.
             </p>
 
@@ -81,16 +91,41 @@
             <p>
                 The <inline-code>unipept taxa2lca</inline-code> command outputs the taxonomic lowest common ancestor (<initialism>LCA</initialism>) for a given set of taxon id's.
                 By default, the <initialism>NCBI</initialism> taxon id, taxon name and taxonomic rank of the <initialism>LCA</initialism> are returned. By using
-                the <r-link to="#options" router>--all parameter</r-link>, this can be supplemented with the full taxonomic lineage of the <initialism>LCA</initialism>.
-                Consult the <r-link to="/apidocs/taxa2lca" router><initialism>API</initialism> documentation</r-link> for a detailed list of output fields. A selection
-                of output fields can be specified with the <r-link to="#options" router>--select parameter</r-link>. By default, output is generated in csv format.
-                By using the <r-link to="#options" router>--format parameter</r-link>, the format can be changed into json or xml. The output can be written to a file
+                the <r-link
+                    to="#options"
+                    router
+                >
+                    --all parameter
+                </r-link>, this can be supplemented with the full taxonomic lineage of the <initialism>LCA</initialism>.
+                Consult the <r-link
+                    to="/apidocs/taxa2lca"
+                    router
+                >
+                    <initialism>API</initialism> documentation
+                </r-link> for a detailed list of output fields. A selection
+                of output fields can be specified with the <r-link
+                    to="#options"
+                    router
+                >
+                    --select parameter
+                </r-link>. By default, output is generated in csv format.
+                By using the <r-link
+                    to="#options"
+                    router
+                >
+                    --format parameter
+                </r-link>, the format can be changed into json or xml. The output can be written to a file
                 or to <i>standard output</i>.
             </p>
 
             <h3>File output</h3>
             <p>
-                Use the <r-link to="#options" router>--output parameter</r-link> to specify an output file. If the file aready exists, the output will be
+                Use the <r-link
+                    to="#options"
+                    router
+                >
+                    --output parameter
+                </r-link> to specify an output file. If the file aready exists, the output will be
                 appended to the end of the file.
             </p>
 

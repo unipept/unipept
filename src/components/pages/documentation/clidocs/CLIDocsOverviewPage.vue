@@ -9,14 +9,33 @@
         </h3>
 
         <p class="mt-5">
-            These tools provide a command line interface to the <r-link to="/apidocs" router>Unipept web services</r-link> and a few utility commands for handling proteins using the command line. All tools support fasta and plain text input, multiple output formats (csv, xml and json) and parallel web requests for improved performance.
+            These tools provide a command line interface to the <r-link
+                to="/apidocs"
+                router
+            >
+                Unipept web services
+            </r-link> and a few utility commands for handling proteins using the command line. All tools support fasta and plain text input, multiple output formats (csv, xml and json) and parallel web requests for improved performance.
         </p>
 
         <p class="mt-3">
             The Unipept command line tools are open source under the <initialism>MIT</initialism> License and all code is available on
-            <r-link to="https://github.com/unipept/unipept-cli">Github</r-link>. Changes between releases are listed in the <r-link to="/news/cli" router>changelog</r-link>.
+            <r-link to="https://github.com/unipept/unipept-cli">
+                Github
+            </r-link>. Changes between releases are listed in the <r-link
+                to="/news/cli"
+                router
+            >
+                changelog
+            </r-link>.
             In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to contact us by email
-            (<r-link to="unipept@ugent.be" mail>unipept@ugent.be</r-link>), or create an <r-link to="https://github.com/unipept/unipept-cli/issues">issue</r-link> on
+            (<r-link
+                to="unipept@ugent.be"
+                mail
+            >
+                unipept@ugent.be
+            </r-link>), or create an <r-link to="https://github.com/unipept/unipept-cli/issues">
+                issue
+            </r-link> on
             Github.
         </p>
 
@@ -29,8 +48,12 @@
             <v-table>
                 <thead>
                     <tr>
-                        <th class="text-left">Resource</th>
-                        <th class="text-left">Description</th>
+                        <th class="text-left">
+                            Resource
+                        </th>
+                        <th class="text-left">
+                            Description
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,12 +96,16 @@
             >
                 <p>
                     If the <inline-code>ruby --version</inline-code> command returns command not found, Ruby is not yet installed on your system. More information on installing
-                    Ruby can be found at <r-link to="https://www.ruby-lang.org/en/installation/">https://www.ruby-lang.org/en/installation/</r-link>.
+                    Ruby can be found at <r-link to="https://www.ruby-lang.org/en/installation/">
+                        https://www.ruby-lang.org/en/installation/
+                    </r-link>.
                 </p>
             </static-alert>
 
             <p>
-                The Unipept CLI is available as a <r-link to="https://rubygems.org/gems/unipept">gem</r-link>. This means it can easily be installed with the
+                The Unipept CLI is available as a <r-link to="https://rubygems.org/gems/unipept">
+                    gem
+                </r-link>. This means it can easily be installed with the
                 <inline-code>gem install unipept</inline-code> command:
             </p>
 
@@ -113,7 +140,9 @@
                 <p>
                     When trying to install a gem, you might run into permission problems if you don't have write access to the default installation directory.
                     This can be fixed by doing a user install, which installs the gem in your home directory. Simply run <inline-code>gem install unipept --user-install</inline-code>
-                    instead of the normal installation command. More information can be found on the <r-link to="https://guides.rubygems.org/faqs/#user-install">RubyGems website</r-link>.
+                    instead of the normal installation command. More information can be found on the <r-link to="https://guides.rubygems.org/faqs/#user-install">
+                        RubyGems website
+                    </r-link>.
                 </p>
             </static-alert>
 
@@ -124,7 +153,9 @@
                 <p>
                     Unipept <initialism>CLI</initialism> should work on Unix, Mac, and Windows. However, because of one of our underlying dependencies (curl),
                     some windows users experience issues during installation. In case of such issues, we recommend using the Unix Subsystem of Windows 10 instead.
-                    More information can be found on the <r-link to="https://docs.microsoft.com/en-us/windows/wsl/about">Microsoft website</r-link>.
+                    More information can be found on the <r-link to="https://docs.microsoft.com/en-us/windows/wsl/about">
+                        Microsoft website
+                    </r-link>.
                 </p>
             </static-alert>
         </header-body-card>
@@ -137,7 +168,12 @@
         >
             <p>
                 To update the Unipept command line tools to the latest version, simply run <inline-code>gem update unipept</inline-code>. The changes between releases are listed
-                in the <r-link to="/news" router>changelog</r-link>.
+                in the <r-link
+                    to="/news"
+                    router
+                >
+                    changelog
+                </r-link>.
             </p>
 
             <boxed>

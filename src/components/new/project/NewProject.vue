@@ -43,7 +43,12 @@
                         <v-card-text>
                             <p>
                                 After you've created a group, you can add samples to it. Samples are the actual data that you
-                                want to analyze. You can add samples by clicking the pencil icon (<v-icon size="x-small" style="position: relative; bottom: 1px;">mdi-pencil</v-icon>)
+                                want to analyze. You can add samples by clicking the pencil icon (<v-icon
+                                    size="x-small"
+                                    style="position: relative; bottom: 1px;"
+                                >
+                                    mdi-pencil
+                                </v-icon>)
                                 next to your group in the left sidebar.
                             </p>
                         </v-card-text>

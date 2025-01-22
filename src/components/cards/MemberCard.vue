@@ -15,7 +15,6 @@
                             alt="Avatar"
                             :src="imgUrl"
                             :cover="false"
-
                         />
                         <span
                             v-else
@@ -28,7 +27,10 @@
                 </template>
 
                 <v-list-item-title>
-                    <span class="font-weight-bold" style="font-size: 18px;">
+                    <span
+                        class="font-weight-bold"
+                        style="font-size: 18px;"
+                    >
                         {{ name }}
                     </span>
                 </v-list-item-title>

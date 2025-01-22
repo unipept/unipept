@@ -2,8 +2,7 @@
     <div v-if="!loading">
         <v-row class="mb-1">
             <v-col>
-                <slot name="trust">
-                </slot>
+                <slot name="trust" />
             </v-col>
         </v-row>
 
@@ -27,8 +26,8 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
-                    @downloadItem="downloadItem"
-                    @downloadTable="downloadTable"
+                    @download-item="downloadItem"
+                    @download-table="downloadTable"
                 />
             </v-col>
         </v-row>

@@ -81,13 +81,13 @@
             />
         </template>
 
-<!--        <template #item.database="{ item }">-->
-<!--            <database-select-->
-<!--                v-model="item.config.database"-->
-<!--                variant="underlined"-->
-<!--                hide-details-->
-<!--            />-->
-<!--        </template>-->
+        <!--        <template #item.database="{ item }">-->
+        <!--            <database-select-->
+        <!--                v-model="item.config.database"-->
+        <!--                variant="underlined"-->
+        <!--                hide-details-->
+        <!--            />-->
+        <!--        </template>-->
 
         <template #item.count="{ item }">
             <div class="d-flex align-center">

@@ -12,7 +12,10 @@
             />
         </v-card>
 
-        <v-card v-else min-height="500px">
+        <v-card
+            v-else
+            min-height="500px"
+        >
             <v-card-title class="d-flex align-center">
                 <h2>Manage group</h2>
                 <v-spacer />
@@ -48,11 +51,11 @@
                     class="d-flex justify-center pa-1"
                 >
                     <v-btn
-                        @click="addingSample = true"
                         text="Add new sample"
                         color="primary"
                         variant="text"
                         prepend-icon="mdi-plus"
+                        @click="addingSample = true"
                     />
                 </div>
 
@@ -75,7 +78,7 @@
                         @click="undoChangesDialogOpen = true"
                     />
 
-                    <v-spacer></v-spacer>
+                    <v-spacer />
 
                     <v-btn
                         color="primary"

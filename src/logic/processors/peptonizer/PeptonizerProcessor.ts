@@ -2,8 +2,8 @@ import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptoniz
 import CountTable from "@/logic/new/CountTable";
 import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 
-export const DEFAULT_PEPTIDE_INTENSITIES: number = 0.7;
-export const DEFAULT_PEPTONIZER_WORKERS: number = 2;
+export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
+export const DEFAULT_PEPTONIZER_WORKERS = 2;
 
 // These are the parameters over which the Peptonizer will run a grid search and look for the optimal result
 export const DEFAULT_PEPTONIZER_ALPHAS: number[] = [0.8, 0.9, 0.99];

@@ -34,7 +34,7 @@
                 <v-card-text>
                     This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains the tryptic peptide.
                 </v-card-text>
-                <treeview :ncbi-root="assay.ncbiTree!"/>
+                <treeview :ncbi-root="assay.ncbiTree!" />
             </v-window-item>
             <v-window-item value="lineage-table">
                 <lineage-table :assay="assay" />
@@ -46,14 +46,14 @@
                         :loading="assay.status! === AnalysisStatus.Running"
                         :show-percentage="false"
                         :show-download-item="false"
-                        @downloadTable="downloadGoTable"
+                        @download-table="downloadGoTable"
                     >
                         <template #trust>
-                        <span>
-                            This panel shows the Gene Ontology annotations that were matched to your peptides.
-                            <b>{{ assay.goTrust!.annotatedItems }}</b> proteins <b>({{ displayPercentage(assay.goTrust!.annotatedItems / assay.goTrust!.totalItems) }})</b>
-                            have at least one GO term assigned to them. Click on a row in a table to see a taxonomy tree that highlights occurrences.
-                        </span>
+                            <span>
+                                This panel shows the Gene Ontology annotations that were matched to your peptides.
+                                <b>{{ assay.goTrust!.annotatedItems }}</b> proteins <b>({{ displayPercentage(assay.goTrust!.annotatedItems / assay.goTrust!.totalItems) }})</b>
+                                have at least one GO term assigned to them. Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                            </span>
                         </template>
                     </functional-go-results>
                 </v-card-text>
@@ -65,7 +65,7 @@
                         :loading="assay.status! === AnalysisStatus.Running"
                         :show-percentage="false"
                         :show-download-item="false"
-                        @downloadTable="downloadEcTable"
+                        @download-table="downloadEcTable"
                     >
                         <template #trust>
                             <span>
@@ -84,7 +84,7 @@
                         :loading="assay.status! === AnalysisStatus.Running"
                         :show-percentage="false"
                         :show-download-item="false"
-                        @downloadTable="downloadIprTable"
+                        @download-table="downloadIprTable"
                     >
                         <template #trust>
                             <span>

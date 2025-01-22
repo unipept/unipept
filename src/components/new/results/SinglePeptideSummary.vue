@@ -134,7 +134,6 @@
             </v-col>
         </v-row>
     </div>
-
 </template>
 
 <script setup lang="ts">

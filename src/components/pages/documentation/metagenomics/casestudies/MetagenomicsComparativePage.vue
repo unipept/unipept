@@ -19,7 +19,9 @@
 
             <p>
                 The raw sequence data of the shotgun metagenomics sequencing is freely available at
-                <RLink to="https://www.ebi.ac.uk/ena/browser/view/PRJEB15448">ENA</RLink> under the project <initialism>ERP017180</initialism>.
+                <RLink to="https://www.ebi.ac.uk/ena/browser/view/PRJEB15448">
+                    ENA
+                </RLink> under the project <initialism>ERP017180</initialism>.
                 We will start our casestudy by downloading these files manually or via the command line.
             </p>
 
@@ -79,14 +81,30 @@
 
             <boxed>
                 <sentinel>$</sentinel> umgap-visualize.sh -u *.tid.fa.gz
-                <br>ERR1654119.tid.fa.gz: <RLink to="https://bl.ocks.org/5055456c85e9e103da221fbba6e6c269">https://bl.ocks.org/5055456c85e9e103da221fbba6e6c269</RLink>
-                <br>ERR1654120.tid.fa.gz: <RLink to="https://bl.ocks.org/31e0fc6e2d8705e5ef64e856318dc17c">https://bl.ocks.org/31e0fc6e2d8705e5ef64e856318dc17c</RLink>
-                <br>ERR1654121.tid.fa.gz: <RLink to="https://bl.ocks.org/019b89c96446a2949423d34f4281ee1c">https://bl.ocks.org/019b89c96446a2949423d34f4281ee1c</RLink>
-                <br>ERR1654122.tid.fa.gz: <RLink to="https://bl.ocks.org/3542a2a24fcf5ed3a791e937d2d6e618">https://bl.ocks.org/3542a2a24fcf5ed3a791e937d2d6e618</RLink>
-                <br>ERR1654123.tid.fa.gz: <RLink to="https://bl.ocks.org/ccc88f795dbd797b08cfe7c8d1187a13">https://bl.ocks.org/ccc88f795dbd797b08cfe7c8d1187a13</RLink>
-                <br>ERR1654124.tid.fa.gz: <RLink to="https://bl.ocks.org/794f9907fbb2488d94f94ccb7d06d835">https://bl.ocks.org/794f9907fbb2488d94f94ccb7d06d835</RLink>
-                <br>ERR1654125.tid.fa.gz: <RLink to="https://bl.ocks.org/7568952f1338768a6b62d32928c0ee74">https://bl.ocks.org/7568952f1338768a6b62d32928c0ee74</RLink>
-                <br>ERR1654126.tid.fa.gz: <RLink to="https://bl.ocks.org/f25941840ce1e706623750d561d7c47d">https://bl.ocks.org/f25941840ce1e706623750d561d7c47d</RLink>
+                <br>ERR1654119.tid.fa.gz: <RLink to="https://bl.ocks.org/5055456c85e9e103da221fbba6e6c269">
+                    https://bl.ocks.org/5055456c85e9e103da221fbba6e6c269
+                </RLink>
+                <br>ERR1654120.tid.fa.gz: <RLink to="https://bl.ocks.org/31e0fc6e2d8705e5ef64e856318dc17c">
+                    https://bl.ocks.org/31e0fc6e2d8705e5ef64e856318dc17c
+                </RLink>
+                <br>ERR1654121.tid.fa.gz: <RLink to="https://bl.ocks.org/019b89c96446a2949423d34f4281ee1c">
+                    https://bl.ocks.org/019b89c96446a2949423d34f4281ee1c
+                </RLink>
+                <br>ERR1654122.tid.fa.gz: <RLink to="https://bl.ocks.org/3542a2a24fcf5ed3a791e937d2d6e618">
+                    https://bl.ocks.org/3542a2a24fcf5ed3a791e937d2d6e618
+                </RLink>
+                <br>ERR1654123.tid.fa.gz: <RLink to="https://bl.ocks.org/ccc88f795dbd797b08cfe7c8d1187a13">
+                    https://bl.ocks.org/ccc88f795dbd797b08cfe7c8d1187a13
+                </RLink>
+                <br>ERR1654124.tid.fa.gz: <RLink to="https://bl.ocks.org/794f9907fbb2488d94f94ccb7d06d835">
+                    https://bl.ocks.org/794f9907fbb2488d94f94ccb7d06d835
+                </RLink>
+                <br>ERR1654125.tid.fa.gz: <RLink to="https://bl.ocks.org/7568952f1338768a6b62d32928c0ee74">
+                    https://bl.ocks.org/7568952f1338768a6b62d32928c0ee74
+                </RLink>
+                <br>ERR1654126.tid.fa.gz: <RLink to="https://bl.ocks.org/f25941840ce1e706623750d561d7c47d">
+                    https://bl.ocks.org/f25941840ce1e706623750d561d7c47d
+                </RLink>
             </boxed>
         </header-body-card>
 
@@ -118,9 +136,15 @@
 
             <p>
                 This <initialism>CSV</initialism> file can be processed by your favorite spreadsheet software or statistical analysis
-                frameworks such as R (packages of interest are <RLink to="https://joey711.github.io/phyloseq/">phyloseq</RLink> and
-                <RLink to="https://cran.rstudio.com/web/packages/vegan/index.html">vegan</RLink>, and
-                <RLink to="https://ggplot2.tidyverse.org/">ggplot2</RLink> for visualizations). For this study, it's interesting to have
+                frameworks such as R (packages of interest are <RLink to="https://joey711.github.io/phyloseq/">
+                    phyloseq
+                </RLink> and
+                <RLink to="https://cran.rstudio.com/web/packages/vegan/index.html">
+                    vegan
+                </RLink>, and
+                <RLink to="https://ggplot2.tidyverse.org/">
+                    ggplot2
+                </RLink> for visualizations). For this study, it's interesting to have
                 a look at the fraction each of the 20 most detected phyla represents in its sample. For phyla uninfluenced by the
                 addition of chitin to the sample, we expect to see a uniform spread over all 8 samples. The Mucoromycota and Ciliophora
                 phyla, however, are overrepresented in the 4 chitin-rich samples.
@@ -140,7 +164,9 @@
                 v-for="reference in references"
                 :key="reference.short"
             >
-                {{ reference.full }} <RLink :to="'https://' + reference.link">{{ reference.link }}</RLink>
+                {{ reference.full }} <RLink :to="'https://' + reference.link">
+                    {{ reference.link }}
+                </RLink>
             </li>
         </ul>
     </v-container>
