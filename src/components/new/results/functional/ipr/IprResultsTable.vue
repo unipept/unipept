@@ -77,24 +77,29 @@
 </template>
 
 <script setup lang="ts">
-import {ref, toRaw, watch} from "vue";
+import {ref, watch} from "vue";
 import usePercentage from "@/composables/new/usePercentage";
 import {NcbiTreeNode} from "unipept-web-components";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import useHighlightedTreeProcessor from "@/composables/new/processing/taxonomic/useHighlightedTreeProcessor";
 import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
 import useCsvDownload from "@/composables/new/useCsvDownload";
 import useOntologyStore from "@/store/new/OntologyStore";
+import InterproTableData from "@/components/new/results/functional/ipr/InterproTableData";
 
 const { download } = useCsvDownload();
 const { displayPercentage } = usePercentage();
 const { getNcbiDefinition } = useOntologyStore();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { analysis, items } = defineProps<{
+const { data, items } = defineProps<{
     items: IprResultsTableItem[];
-    analysis: SingleAnalysisStore;
+    data: InterproTableData;
     showPercentage: boolean;
+}>();
+
+const emits = defineEmits<{
+    (e: 'downloadItem', item: IprResultsTableItem): void;
+    (e: 'downloadTable', items: IprResultsTableItem[]): void;
 }>();
 
 const expanded = ref<number[]>([]);
@@ -102,9 +107,9 @@ const trees = new Map<string, NcbiTreeNode>();
 
 const calculateHighlightedNcbiTree = async (code: string) => {
     const highlightedTreeRoot = await processHighlightedTree(
-        toRaw(analysis.ncbiTree),
-        toRaw(analysis.iprToPeptides.get(code)),
-        toRaw(analysis.lcaToPeptides)
+        data.ncbiTree,
+        data.iprToPeptides.get(code),
+        data.lcaToPeptides
     );
 
     trees.set(code, highlightedTreeRoot);
@@ -126,38 +131,14 @@ const singleExpand = async (value: number[]) => {
 }
 
 const downloadItem = (item: IprResultsTableItem) => {
-    const header = ["peptide", "spectral count", "matching proteins", `matching proteins with ${item.code}`, `percentage proteins with ${item.code}`, "lca"];
-    const data = [header].concat(Array.from(analysis.iprToPeptides.get(item.code)).map(peptide => {
-        const peptideData = analysis.peptideToData.get(peptide);
-        const totalProteinCount = peptideData.faCounts.all;
-        const itemProteinCount = peptideData.ipr[item.code] ?? 0;
-        return [
-            peptide,
-            analysis.peptidesTable.get(peptide),
-            totalProteinCount,
-            itemProteinCount,
-            displayPercentage(itemProteinCount / totalProteinCount, Infinity),
-            getNcbiDefinition(peptideData.lca)?.name ?? "Unknown"
-        ];
-    }));
-
-    download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_${item.code.replace(":", "_")}.csv`);
+    emits("downloadItem", item);
 }
 
 const downloadTable = () => {
-    const header = ["peptides", "interpro entry", "name"]
-    const data = [header].concat(items.map(item => {
-        return [
-            item.count,
-            item.code,
-            item.name
-        ];
-    }));
-
-    download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_interpro_table.csv`);
+    emits("downloadTable", items);
 }
 
-watch(() => analysis, () => {
+watch(() => data, () => {
     expanded.value = [];
     trees.clear();
 });

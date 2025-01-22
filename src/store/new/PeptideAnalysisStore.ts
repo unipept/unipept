@@ -9,7 +9,6 @@ import useGoProcessor from "@/composables/new/processing/functional/useGoProcess
 import useInterproProcessor from "@/composables/new/processing/functional/useInterproProcessor";
 import usePept2filtered from "@/composables/new/communication/unipept/usePept2filtered";
 import CountTable from "@/logic/new/CountTable";
-import useTaxonomicProcessor from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
 
 const usePeptideAnalysisStore = (
@@ -45,11 +44,11 @@ const usePeptideAnalysisStore = (
     const analyse = async () => {
         status.value = AnalysisStatus.Running;
 
-        const peptideTable: CountTable<string> = new CountTable(new Map<string, number>([[peptide.value, 1]]));
+        await processProteins(peptide.value, config.value.equate);
+
+        const peptideTable: CountTable<string> = new CountTable(new Map<string, number>([[peptide.value, proteins.value.length]]));
 
         await processPept2Filtered([peptide.value], config.value.equate);
-
-        await processProteins(peptide.value, config.value.equate);
 
         await processEc(peptideTable, peptideToData.value!);
         await processGo(peptideTable, peptideToData.value!);

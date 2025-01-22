@@ -1,12 +1,9 @@
 <template>
-    <div v-if="!filtering">
+    <div v-if="!loading">
         <v-row class="mb-1">
             <v-col>
-            <span>
-                This panel shows the Gene Ontology annotations that were matched to your peptides.
-                <b>{{ trust.annotatedItems }}</b> proteins <b>({{ displayPercentage(trust.annotatedItems / trust.totalItems) }})</b>
-                have at least one GO term assigned to them. Click on a row in a table to see a taxonomy tree that highlights occurrences.
-            </span>
+                <slot name="trust">
+                </slot>
             </v-col>
         </v-row>
 
@@ -17,8 +14,10 @@
             <v-col cols="9">
                 <go-results-table
                     :items="biologicalProcessItems"
-                    :analysis="analysis"
+                    :data="data"
                     :show-percentage="showPercentage"
+                    @downloadItem="downloadItem"
+                    @downloadTable="downloadTable"
                 />
             </v-col>
             <v-col cols="3">
@@ -37,8 +36,10 @@
             <v-col cols="9">
                 <go-results-table
                     :items="cellularComponentItems"
-                    :analysis="analysis"
+                    :data="data"
                     :show-percentage="showPercentage"
+                    @downloadItem="downloadItem"
+                    @downloadTable="downloadTable"
                 />
             </v-col>
             <v-col cols="3">
@@ -57,8 +58,10 @@
             <v-col cols="9">
                 <go-results-table
                     :items="molecularFunctionItems"
-                    :analysis="analysis"
+                    :data="data"
                     :show-percentage="showPercentage"
+                    @downloadItem="downloadItem"
+                    @downloadTable="downloadTable"
                 />
             </v-col>
             <v-col cols="3">
@@ -78,30 +81,31 @@
 
 <script setup lang="ts">
 import GoResultsTable from "./GoResultsTable.vue";
-import FilterFunctionalResults from "@/components/new/results/functional/FilterFunctionalResults.vue";
-import {computed, ref} from "vue";
+import {computed} from "vue";
 import QuickGoCard from "@/components/new/results/functional/go/QuickGoCard.vue";
 import {GoNamespace} from "unipept-web-components";
-import usePercentage from "@/composables/new/usePercentage";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import useOntologyStore from "@/store/new/OntologyStore";
 import CountTable from "@/logic/new/CountTable";
 import FilterProgress from "@/components/new/results/functional/FilterProgress.vue";
-import {AnalysisStatus} from "@/store/new/SingleAnalysisStore";
+import GoTableData from "@/components/new/results/functional/go/GoTableData";
+import {GoResultsTableItem} from "@/components/new/results/functional/go/GoResultsTable.vue";
 
 const { getGoDefinition } = useOntologyStore();
-const { displayPercentage } = usePercentage();
 
-const { analysis } = defineProps<{
-    analysis: SingleAnalysisStore;
+const { data, loading } = defineProps<{
+    data: GoTableData;
+    loading: boolean;
     showPercentage: boolean;
 }>();
 
-const filtering = computed(() => analysis.filteringStatus !== AnalysisStatus.Finished);
-const trust = computed(() => analysis.goTrust);
-const biologicalProcessItems = computed(() => getItems(analysis.goTable).filter(x => x.namespace == GoNamespace.BiologicalProcess));
-const cellularComponentItems = computed(() => getItems(analysis.goTable).filter(x => x.namespace == GoNamespace.CellularComponent));
-const molecularFunctionItems = computed(() => getItems(analysis.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
+const emits = defineEmits<{
+    (e: 'downloadItem', item: GoResultsTableItem): void;
+    (e: 'downloadTable', items: GoResultsTableItem[]): void;
+}>();
+
+const biologicalProcessItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.BiologicalProcess));
+const cellularComponentItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.CellularComponent));
+const molecularFunctionItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
 
 const getItems = (items: CountTable<string>) => {
     return Array.from(items.entries())
@@ -110,8 +114,16 @@ const getItems = (items: CountTable<string>) => {
             name: getGoDefinition(key)?.name ?? "Unknown",
             namespace: getGoDefinition(key)?.namespace ?? "Unknown",
             count: value,
-            totalCount: analysis.goTrust.totalItems,
+            totalCount: data.goTrust.totalItems,
         }));
+}
+
+const downloadItem = (item: GoResultsTableItem) => {
+    emits('downloadItem', item);
+}
+
+const downloadTable = (items: GoResultsTableItem[]) => {
+    emits('downloadTable', items);
 }
 </script>
 

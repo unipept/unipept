@@ -11,7 +11,7 @@ export interface HighlightedTreeProcessorData {
 export default function useHighlightedTreeProcessor() {
     const { post } = useAsyncWebWorker(() => new HighlightTreeProcessorWebWorker());
 
-    const process = async (tree: NcbiTreeNode, peptides: string[], taxaToPeptides: Map<number, string[]>) => {
+    const process = async (tree: NcbiTreeNode, peptides: string[], taxaToPeptides: Map<number, string[]>): Promise<NcbiTreeNode> => {
         return post({
             tree,
             peptides,

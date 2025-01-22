@@ -1,13 +1,9 @@
 <template>
-    <div v-if="!filtering">
+    <div v-if="!loading">
         <v-row class="mb-1">
             <v-col>
-            <span>
-                This panel shows the InterPro annotations that were matched to your peptides.
-                <b>{{ trust.annotatedItems }}</b> proteins <b>({{ displayPercentage(trust.annotatedItems / trust.totalItems) }})</b>
-                have at least one InterPro entry assigned to them. Click on a row in a table to see a taxonomy tree that
-                highlights occurrences.
-            </span>
+                <slot name="trust">
+                </slot>
             </v-col>
         </v-row>
 
@@ -28,8 +24,10 @@
             <v-col cols="12">
                 <ipr-results-table
                     :items="filteredItems"
-                    :analysis="analysis"
+                    :data="data"
                     :show-percentage="showPercentage"
+                    @downloadItem="downloadItem"
+                    @downloadTable="downloadTable"
                 />
             </v-col>
         </v-row>
@@ -41,36 +39,37 @@
 </template>
 
 <script setup lang="ts">
-import IprResultsTable from "@/components/new/results/functional/ipr/IprResultsTable.vue";
-import FilterFunctionalResults from "@/components/new/results/functional/FilterFunctionalResults.vue";
+import IprResultsTable, {IprResultsTableItem} from "@/components/new/results/functional/ipr/IprResultsTable.vue";
 import {computed, ref} from "vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import usePercentage from "@/composables/new/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import FilterProgress from "@/components/new/results/functional/FilterProgress.vue";
-import {AnalysisStatus} from "@/store/new/SingleAnalysisStore";
+import InterproTableData from "@/components/new/results/functional/ipr/InterproTableData";
 
 const { getIprDefinition } = useOntologyStore();
-const { displayPercentage } = usePercentage();
 
-const { analysis } = defineProps<{
-    analysis: SingleAnalysisStore;
+const { data } = defineProps<{
+    data: InterproTableData;
+    loading: boolean;
     showPercentage: boolean;
+}>();
+
+const emits = defineEmits<{
+    (e: 'downloadItem', item: IprResultsTableItem): void;
+    (e: 'downloadTable', items: IprResultsTableItem[]): void;
 }>();
 
 const selectedNamespace = ref<string>("all");
 
-const filtering = computed(() => analysis.filteringStatus !== AnalysisStatus.Finished);
-const trust = computed(() => analysis.iprTrust);
-const items = computed(() => Array.from(analysis.iprTable.entries()).map(([key, value]) => {
+const items = computed(() => Array.from(data.iprTable!.entries()).map(([key, value]) => {
     return {
         code: key,
         name: getIprDefinition(key)?.name ?? "Unknown",
         namespace: getIprDefinition(key)?.namespace ?? "Unknown",
         count: value,
-        totalCount: analysis.iprTrust.totalItems,
+        totalCount: data.iprTrust!.totalItems,
     }
 }));
+
 const filteredItems = computed(() => {
     if (selectedNamespace.value === "all") {
         return items.value;
@@ -78,6 +77,14 @@ const filteredItems = computed(() => {
 
     return items.value.filter(x => x.namespace === selectedNamespace.value);
 });
+
+const downloadItem = (item: IprResultsTableItem) => {
+    emits('downloadItem', item);
+}
+
+const downloadTable = (items: IprResultsTableItem[]) => {
+    emits('downloadTable', items);
+}
 </script>
 
 <script lang="ts">

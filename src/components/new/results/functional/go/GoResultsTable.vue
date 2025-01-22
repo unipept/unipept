@@ -64,7 +64,7 @@
                     >
                         <treeview
                             v-if="trees.has(item.code)"
-                            :ncbi-root="trees.get(item.code)"
+                            :ncbi-root="trees.get(item.code)!"
                             :link-stroke-color="linkStrokeColor"
                             :node-stroke-color="highlightColorFunc"
                             :node-fill-color="highlightColorFunc"
@@ -77,40 +77,43 @@
 </template>
 
 <script setup lang="ts">
-import {ref, toRaw, watch} from "vue";
+import {ref, watch} from "vue";
 import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
 import useHighlightedTreeProcessor from "@/composables/new/processing/taxonomic/useHighlightedTreeProcessor";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {NcbiTreeNode} from "unipept-web-components";
 import usePercentage from "@/composables/new/usePercentage";
-import useOntologyStore from "@/store/new/OntologyStore";
 import useCsvDownload from "@/composables/new/useCsvDownload";
+import GoTableData from "@/components/new/results/functional/go/GoTableData";
 
 const { download } = useCsvDownload();
 const { displayPercentage } = usePercentage();
-const { getNcbiDefinition } = useOntologyStore();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { analysis, items } = defineProps<{
+const { data, items } = defineProps<{
     items: GoResultsTableItem[];
-    analysis: SingleAnalysisStore;
+    data: GoTableData;
     showPercentage: boolean;
 }>();
 
-const expanded = ref<number[]>([]);
+const emits = defineEmits<{
+    (e: 'downloadItem', item: GoResultsTableItem): void;
+    (e: 'downloadTable', items: GoResultsTableItem[]): void;
+}>();
+
+const expanded = ref<string[]>([]);
 const trees = new Map<string, NcbiTreeNode>();
 
 const calculateHighlightedNcbiTree = async (code: string) => {
     const highlightedTreeRoot = await processHighlightedTree(
-        toRaw(analysis.ncbiTree),
-        toRaw(analysis.goToPeptides.get(code)),
-        toRaw(analysis.lcaToPeptides)
+        data.ncbiTree,
+        data.goToPeptides.get(code)!,
+        data.lcaToPeptides
     );
 
     trees.set(code, highlightedTreeRoot);
 }
 
-const singleExpand = async (value: number[]) => {
+const singleExpand = async (value: string[]) => {
     if (value.length === 0) {
         expanded.value = [];
         return;
@@ -126,38 +129,14 @@ const singleExpand = async (value: number[]) => {
 }
 
 const downloadItem = (item: GoResultsTableItem) => {
-    const header = ["peptide", "spectral count", "matching proteins", `matching proteins with ${item.code}`, `percentage proteins with ${item.code}`, "lca"];
-    const data = [header].concat(Array.from(analysis.goToPeptides.get(item.code)).map(peptide => {
-        const peptideData = analysis.peptideToData.get(peptide);
-        const totalProteinCount = peptideData.faCounts.all;
-        const itemProteinCount = peptideData.go[item.code] ?? 0;
-        return [
-            peptide,
-            analysis.peptidesTable.get(peptide),
-            totalProteinCount,
-            itemProteinCount,
-            displayPercentage(itemProteinCount / totalProteinCount, Infinity),
-            getNcbiDefinition(peptideData.lca)?.name ?? "Unknown"
-        ];
-    }));
-
-    download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_${item.code.replace(":", "_")}.csv`);
+    emits('downloadItem', item);
 }
 
 const downloadTable = () => {
-    const header = ["peptides", "go term", "name"]
-    const data = [header].concat(items.map(item => {
-        return [
-            item.count,
-            item.code,
-            item.name
-        ];
-    }));
-
-    download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_go_table.csv`);
+    emits('downloadTable', items);
 }
 
-watch(() => analysis, () => {
+watch(() => data, () => {
     expanded.value = [];
     trees.clear();
 });

@@ -81,7 +81,7 @@
                     :analysis="selectedAnalysis"
                 />
 
-                <functional-results
+                <mpa-functional-results
                     class="mt-5"
                     :analysis="selectedAnalysis"
                 />
@@ -93,14 +93,15 @@
 <script setup lang="ts">
 import AnalysisSummaryProgress from "@/components/new/analysis/AnalysisSummaryProgress.vue";
 import Filesystem from "@/components/new/filesystem/Filesystem.vue";
-import FunctionalResults from "@/components/new/results/functional/FunctionalResults.vue";
+import MpaFunctionalResults from "@/components/new/results/functional/MpaFunctionalResults.vue";
 import AnalysisSummary from "@/components/new/analysis/AnalysisSummary.vue";
 import TaxonomicResults from "@/components/new/results/taxonomic/TaxonomicResults.vue";
 import {computed, onMounted, ref, watch} from "vue";
 import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
-import {AnalysisStatus, SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {DEFAULT_NEW_GROUP_NAME, GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
 import NewProject from "@/components/new/project/NewProject.vue";
+import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 
 const { project } = defineProps<{
     project: GroupAnalysisStore;
@@ -121,11 +122,11 @@ const selectedAnalysis = ref<SingleAnalysisStore>();
 const groups = computed(() => project.groups);
 
 const selectedAnalysisFinished = computed(() => {
-    return selectedAnalysis.value.status === AnalysisStatus.Finished;
+    return selectedAnalysis.value && selectedAnalysis.value.status === AnalysisStatus.Finished;
 });
 
 const selectedAnalysisFiltered = computed(() => {
-    return selectedAnalysis.value.taxonomicFilter !== 1;
+    return selectedAnalysis.value && selectedAnalysis.value.taxonomicFilter !== 1;
 });
 
 const addSample = (groupId: string, sample: SampleTableItem) => {

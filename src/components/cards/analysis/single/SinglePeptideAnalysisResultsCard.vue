@@ -40,12 +40,22 @@
                 <lineage-table :assay="assay" />
             </v-window-item>
             <v-window-item value="go-terms">
-                <!-- @vue-ignore -->
-<!--                <go-summary-card-->
-<!--                    :analysis-in-progress="assay.analysisInProgress"-->
-<!--                    :go-processor="assay.goProteinCountTableProcessor"-->
-<!--                    :go-ontology="assay.goOntology"-->
-<!--                />-->
+                <v-card-text>
+                    <functional-go-results
+                        :go-table="assay.goTable!"
+                        :go-trust="assay.goTrust!"
+                        :filtering-status="assay.status!"
+                        :show-percentage="false"
+                    >
+                        <template #trust>
+                        <span>
+                            This panel shows the Gene Ontology annotations that were matched to your peptides.
+                            <b>{{ assay.goTrust!.annotatedItems }}</b> proteins <b>({{ displayPercentage(assay.goTrust!.annotatedItems / assay.goTrust!.totalItems) }})</b>
+                            have at least one GO term assigned to them. Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                        </span>
+                        </template>
+                    </functional-go-results>
+                </v-card-text>
             </v-window-item>
             <v-window-item value="ec-numbers">
                 <!-- @vue-ignore -->
@@ -74,7 +84,8 @@ import MatchedProteinsTable from "@/components/tables/MatchedProteinsTable.vue";
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
 import LineageTable from "@/components/tables/LineageTable.vue";
 import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
-
+import FunctionalGoResults from "@/components/new/results/functional/go/FunctionalGoResults.vue";
+import usePercentage from "@/composables/new/usePercentage";
 
 export interface Props {
     assay: PeptideAnalysisStore
@@ -84,6 +95,8 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
     tab: "matched-proteins"
 });
+
+const { displayPercentage } = usePercentage();
 
 const emits = defineEmits(["tabUpdate"]);
 
