@@ -5,6 +5,7 @@ import {NcbiRank, NcbiTaxon} from "@/logic/new/ontology/taxonomic/Ncbi";
 import {Peptonizer, PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
 import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcessor";
+import useOntologyStore from "@/store/new/OntologyStore";
 
 export enum PeptonizerStatus {
     Pending,
@@ -126,11 +127,10 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         taxaIdsToConfidence.value = new Map<number, number>(Array.from(peptonizerData.entries()).map(([k, v]) => [Number.parseInt(k), v]));
 
         // Convert the labels from taxon IDs to taxon names
-        const ncbiOntologyUpdater = useNcbiOntology();
-        await ncbiOntologyUpdater.update(Array.from(taxaIdsToConfidence.value.keys()), false);
+        const {updateNcbiOntology, getNcbiDefinition } = useOntologyStore();
+        await updateNcbiOntology(Array.from(taxaIdsToConfidence.value.keys()), false);
 
-        const ncbiOntology = ncbiOntologyUpdater.ontology;
-        taxaNamesToConfidence.value = new Map(Array.from(taxaIdsToConfidence.value.entries()).map(([k, v]) => [ncbiOntology.value.get(k)!.name, v]));
+        taxaNamesToConfidence.value = new Map(Array.from(taxaIdsToConfidence.value.entries()).map(([k, v]) => [getNcbiDefinition(k)!.name, v]));
 
         status.value = PeptonizerStatus.Finished;
     }
