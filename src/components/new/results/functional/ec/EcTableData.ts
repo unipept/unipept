@@ -8,7 +8,9 @@ import FunctionalTrust from "@/types/FunctionalTrust";
 export default interface EcTableData {
     ecTable: CountTable<string>;
     ecTrust: FunctionalTrust;
-    ncbiTree: NcbiTreeNode;
     ecToPeptides: Map<string, string[]>;
-    lcaToPeptides: Map<string, string[]>;
+
+    // Only required when the rows of the EC table should be expandable
+    ncbiTree: NcbiTreeNode | undefined;
+    lcaToPeptides: Map<string, string[]> | undefined;
 }

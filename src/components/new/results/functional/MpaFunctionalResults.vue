@@ -211,7 +211,7 @@ const downloadGoItem = (item: GoResultsTableItem) => {
 }
 
 const downloadGoTable = (items: GoResultsTableItem[]) => {
-    const header = ["peptides", "go term", "name"]
+    const header = ["peptides", "go term", "name"];
     const data = [header].concat(items.map(item => {
         return [
             item.count,

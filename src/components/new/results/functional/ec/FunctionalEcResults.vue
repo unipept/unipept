@@ -13,6 +13,7 @@
                     :items="items"
                     :data="data"
                     :show-percentage="showPercentage"
+                    :show-download-item="showDownloadItem"
                     @downloadItem="downloadItem"
                     @downloadTable="downloadTable"
                 />
@@ -51,11 +52,12 @@ import { EcResultsTableItem } from "@/components/new/results/functional/ec/EcRes
 const { getEcDefinition } = useOntologyStore();
 const { root, process } = useEcTreeProcessor();
 
-const { data } = defineProps<{
+const { data } = withDefaults(defineProps<{
     data: EcTableData;
     loading: boolean;
     showPercentage: boolean;
-}>();
+    showDownloadItem?: boolean;
+}>(), { showDownloadItem: true });
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: EcResultsTableItem): void;

@@ -16,6 +16,7 @@
                     :items="biologicalProcessItems"
                     :data="data"
                     :show-percentage="showPercentage"
+                    :show-download-item="showDownloadItem"
                     @downloadItem="downloadItem"
                     @downloadTable="downloadTable"
                 />
@@ -38,6 +39,7 @@
                     :items="cellularComponentItems"
                     :data="data"
                     :show-percentage="showPercentage"
+                    :show-download-item="showDownloadItem"
                     @downloadItem="downloadItem"
                     @downloadTable="downloadTable"
                 />
@@ -60,6 +62,7 @@
                     :items="molecularFunctionItems"
                     :data="data"
                     :show-percentage="showPercentage"
+                    :show-download-item="showDownloadItem"
                     @downloadItem="downloadItem"
                     @downloadTable="downloadTable"
                 />
@@ -92,11 +95,12 @@ import {GoResultsTableItem} from "@/components/new/results/functional/go/GoResul
 
 const { getGoDefinition } = useOntologyStore();
 
-const { data, loading } = defineProps<{
+const { data, loading } = withDefaults(defineProps<{
     data: GoTableData;
     loading: boolean;
     showPercentage: boolean;
-}>();
+    showDownloadItem?: boolean;
+}>(), { showDownloadItem: true });
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: GoResultsTableItem): void;

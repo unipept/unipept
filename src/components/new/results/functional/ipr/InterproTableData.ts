@@ -8,7 +8,9 @@ import FunctionalTrust from "@/types/FunctionalTrust";
 export default interface InterproTableData {
     iprTable: CountTable<string>;
     iprTrust: FunctionalTrust;
-    ncbiTree: NcbiTreeNode;
     iprToPeptides: Map<string, string[]>;
-    lcaToPeptides: Map<string, string[]>;
+
+    // Only required when the rows of the Interpro table should be expandable
+    ncbiTree: NcbiTreeNode | undefined;
+    lcaToPeptides: Map<string, string[]> | undefined;
 }

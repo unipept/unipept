@@ -26,6 +26,7 @@
                     :items="filteredItems"
                     :data="data"
                     :show-percentage="showPercentage"
+                    :show-download-item="showDownloadItem"
                     @downloadItem="downloadItem"
                     @downloadTable="downloadTable"
                 />
@@ -47,11 +48,12 @@ import InterproTableData from "@/components/new/results/functional/ipr/InterproT
 
 const { getIprDefinition } = useOntologyStore();
 
-const { data } = defineProps<{
+const { data } = withDefaults(defineProps<{
     data: InterproTableData;
     loading: boolean;
     showPercentage: boolean;
-}>();
+    showDownloadItem?: boolean;
+}>(), { showDownloadItem: true });
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: IprResultsTableItem): void;

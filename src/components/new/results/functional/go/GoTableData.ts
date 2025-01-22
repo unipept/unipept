@@ -8,7 +8,9 @@ import FunctionalTrust from "@/types/FunctionalTrust";
 export default interface GoTableData {
     goTable: CountTable<string>;
     goTrust: FunctionalTrust;
-    ncbiTree: NcbiTreeNode;
     goToPeptides: Map<string, string[]>;
-    lcaToPeptides: Map<number, string[]>;
+
+    // Only required when the rows of the GO table should be expandable
+    ncbiTree: NcbiTreeNode | undefined;
+    lcaToPeptides: Map<number, string[]> | undefined;
 }

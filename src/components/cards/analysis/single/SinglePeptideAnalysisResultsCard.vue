@@ -42,10 +42,11 @@
             <v-window-item value="go-terms">
                 <v-card-text>
                     <functional-go-results
-                        :go-table="assay.goTable!"
-                        :go-trust="assay.goTrust!"
-                        :filtering-status="assay.status!"
+                        :data="goData"
+                        :loading="assay.status! === AnalysisStatus.Running"
                         :show-percentage="false"
+                        :show-download-item="false"
+                        @downloadTable="downloadGoTable"
                     >
                         <template #trust>
                         <span>
@@ -58,21 +59,42 @@
                 </v-card-text>
             </v-window-item>
             <v-window-item value="ec-numbers">
-                <!-- @vue-ignore -->
-<!--                <ec-summary-card-->
-<!--                    :analysis-in-progress="assay.analysisInProgress"-->
-<!--                    :ec-processor="assay.ecProteinCountTableProcessor"-->
-<!--                    :ec-ontology="assay.ecOntology"-->
-<!--                    :ec-tree="assay.ecTree"-->
-<!--                />-->
+                <v-card-text>
+                    <functional-ec-results
+                        :data="ecData"
+                        :loading="assay.status! === AnalysisStatus.Running"
+                        :show-percentage="false"
+                        :show-download-item="false"
+                        @downloadTable="downloadEcTable"
+                    >
+                        <template #trust>
+                            <span>
+                                This panel shows the Enzyme Commission numbers that were matched to your peptides.
+                                <b>{{ assay.ecTrust!.annotatedItems }}</b> proteins <b>({{ displayPercentage(assay.ecTrust!.annotatedItems / assay.ecTrust!.totalItems) }})</b>
+                                have at least one EC number assigned to them. Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                            </span>
+                        </template>
+                    </functional-ec-results>
+                </v-card-text>
             </v-window-item>
             <v-window-item value="interpro">
-                <!-- @vue-ignore -->
-<!--                <interpro-summary-card-->
-<!--                    :analysis-in-progress="assay.analysisInProgress"-->
-<!--                    :interpro-processor="assay.interproProteinCountTableProcessor"-->
-<!--                    :interpro-ontology="assay.interproOntology"-->
-<!--                />-->
+                <v-card-text>
+                    <functional-ipr-results
+                        :data="interproData"
+                        :loading="assay.status! === AnalysisStatus.Running"
+                        :show-percentage="false"
+                        :show-download-item="false"
+                        @downloadTable="downloadIprTable"
+                    >
+                        <template #trust>
+                            <span>
+                                This panel shows the Interpro entries that were matched to your peptides.
+                                <b>{{ assay.iprTrust!.annotatedItems }}</b> proteins <b>({{ displayPercentage(assay.iprTrust!.annotatedItems / assay.iprTrust!.totalItems) }})</b>
+                                have at least one Interpro entry assigned to them. Click on a row in a table to see a taxonomy tree that highlights occurrences.
+                            </span>
+                        </template>
+                    </functional-ipr-results>
+                </v-card-text>
             </v-window-item>
         </v-window>
     </v-card>
@@ -86,6 +108,16 @@ import LineageTable from "@/components/tables/LineageTable.vue";
 import Treeview from "@/components/new/results/taxonomic/Treeview.vue";
 import FunctionalGoResults from "@/components/new/results/functional/go/FunctionalGoResults.vue";
 import usePercentage from "@/composables/new/usePercentage";
+import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import FunctionalEcResults from "@/components/new/results/functional/ec/FunctionalEcResults.vue";
+import FunctionalIprResults from "@/components/new/results/functional/ipr/FunctionalIprResults.vue";
+import {GoResultsTableItem} from "@/components/new/results/functional/go/GoResultsTable.vue";
+import useCsvDownload from "@/composables/new/useCsvDownload";
+import {EcResultsTableItem} from "@/components/new/results/functional/ec/EcResultsTable.vue";
+import {IprResultsTableItem} from "@/components/new/results/functional/ipr/IprResultsTable.vue";
+
+const { displayPercentage } = usePercentage();
+const { download } = useCsvDownload();
 
 export interface Props {
     assay: PeptideAnalysisStore
@@ -96,11 +128,66 @@ const props = withDefaults(defineProps<Props>(), {
     tab: "matched-proteins"
 });
 
-const { displayPercentage } = usePercentage();
-
 const emits = defineEmits(["tabUpdate"]);
 
+const goData = ref<GoTableData>({
+    goTable: props.assay.goTable!,
+    goTrust: props.assay.goTrust!,
+    goToPeptides: props.assay.goToPeptides,
+});
+
+const ecData = ref<EcTableData>({
+    ecTable: props.assay.ecTable!,
+    ecTrust: props.assay.ecTrust!,
+    ecToPeptides: props.assay.ecToPeptides
+});
+
+const interproData = ref<InterproTableData>({
+    iprTable: props.assay.iprTable!,
+    iprTrust: props.assay.iprTrust!,
+    iprToPeptides: props.assay.iprToPeptides
+});
+
 const currentTab = ref<string>(props.tab);
+
+const downloadGoTable = (items: GoResultsTableItem[]) => {
+    const header = ["proteins", "go term", "name"];
+    const data = [header].concat(items.map(item => {
+        return [
+            item.count,
+            item.code,
+            item.name
+        ];
+    }));
+
+    download(data, `unipept_${props.assay.peptide}_go_table.csv`);
+}
+
+const downloadEcTable = (items: EcResultsTableItem[]) => {
+    const header = ["proteins", "ec number", "name"];
+    const data = [header].concat(items.map(item => {
+        return [
+            item.count,
+            item.code,
+            item.name
+        ];
+    }));
+
+    download(data, `unipept_${props.assay.peptide}_ec_table.csv`);
+}
+
+const downloadIprTable = (items: IprResultsTableItem[]) => {
+    const header = ["proteins", "ipr entry", "name"];
+    const data = [header].concat(items.map(item => {
+        return [
+            item.count,
+            item.code,
+            item.name
+        ];
+    }));
+
+    download(data, `unipept_${props.assay.peptide}_ipr_table.csv`);
+}
 
 watch(() => props.tab, (newTab) => {
     currentTab.value = newTab;

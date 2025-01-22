@@ -6,8 +6,7 @@
         :items-per-page="10"
         :loading="false"
         item-value="code"
-        density="compact"
-        show-expand
+        :show-expand="data.ncbiTree !== undefined"
         @update:expanded="singleExpand"
     >
         <template #header.action>
@@ -26,7 +25,15 @@
         </template>
 
         <template #item.count="{ item }">
-            <span>{{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}</span>
+            <div
+                :style="{
+                        padding: '12px',
+                        background: 'linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ' +
+                            (item.count / item.totalCount) * 100 + '%, rgba(255,255,255,0) ' + (item.count / item.totalCount) * 100 + '%)',
+                    }"
+            >
+                {{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}
+            </div>
         </template>
 
         <template #item.code="{ item }">
@@ -40,7 +47,7 @@
             </a>
         </template>
 
-        <template #item.action="{ item }">
+        <template #item.action="{ item }" v-if="showDownloadItem">
             <v-tooltip text="Download CSV summary of the filtered functional annotation">
                 <template #activator="{ props }">
                     <v-btn
@@ -77,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch} from "vue";
+import {ref, watch, toRaw} from "vue";
 import usePercentage from "@/composables/new/usePercentage";
 import {NcbiTreeNode} from "unipept-web-components";
 import useHighlightedTreeProcessor from "@/composables/new/processing/taxonomic/useHighlightedTreeProcessor";
@@ -95,6 +102,7 @@ const { data, items } = defineProps<{
     items: IprResultsTableItem[];
     data: InterproTableData;
     showPercentage: boolean;
+    showDownloadItem: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -107,9 +115,9 @@ const trees = new Map<string, NcbiTreeNode>();
 
 const calculateHighlightedNcbiTree = async (code: string) => {
     const highlightedTreeRoot = await processHighlightedTree(
-        data.ncbiTree,
-        data.iprToPeptides.get(code),
-        data.lcaToPeptides
+        toRaw(data.ncbiTree),
+        toRaw(data.iprToPeptides.get(code)),
+        toRaw(data.lcaToPeptides)
     );
 
     trees.set(code, highlightedTreeRoot);
