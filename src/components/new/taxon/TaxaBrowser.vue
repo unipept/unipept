@@ -209,7 +209,7 @@ const rankColors: string[] = [
 
 
 // Values that define UI behaviour of the component
-const selectedItems = defineModel<NcbiTaxon[]>({ default: [] });
+const selectedItems = defineModel<NcbiTaxon[]>();
 
 const selectItem = (item: NcbiTaxon) => {
     const idx = selectedItems.value.findIndex(element => element.id === item.id);
@@ -299,7 +299,7 @@ const computeUniprotRecordsCount = () => {
     );
 };
 
-watch(selectedItems, () => {
+watch(() => selectedItems, () => {
     computeUniprotRecordsCount();
 });
 

@@ -69,7 +69,7 @@
                                 considered as potential candidates during taxonomic inference.
                             </p>
                             <v-card elevation="0">
-                                <taxa-browser :selected-items="selectedTaxa" />
+                                <taxa-browser v-model="peptonizerStore.selectedTaxa" />
                             </v-card>
                         </v-col>
                     </v-row>
@@ -173,8 +173,6 @@ const peptonizerRankOptions: Ref<string[]> = ref(
     Object.values(NcbiRank)
 );
 const peptonizerRank: Ref<string> = ref("species");
-
-const selectedTaxa: Ref<NcbiTaxon[]> = ref([]);
 
 const startPeptonizer = async () => {
     peptonizerStep.value = 2;

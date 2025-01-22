@@ -84,6 +84,8 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
     const peptonizerInitalizationFinished = ref<boolean>(false);
     const peptonizerFinished = ref<boolean>(false);
 
+    const selectedTaxa = ref<NcbiTaxon[]>([]);
+
     let peptonizerProcessor: PeptonizerProcessor | undefined;
 
     const runPeptonizer = async (
@@ -152,6 +154,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         peptonizerStarted,
         peptonizerInitalizationFinished,
         peptonizerFinished,
+        selectedTaxa,
 
         runPeptonizer,
         cancelPeptonizer
