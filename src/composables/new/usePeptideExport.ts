@@ -33,8 +33,6 @@ export default function usePeptideExport() {
     ): Promise<string[][]> => {
         const [indexBuffer, dataBuffer] = analysis.peptideToData!.getBuffers();
 
-        console.log(goOntology);
-
         const workerInput: PeptideExportData = {
             peptideTable: toRaw(analysis.peptidesTable!),
             goOntology: toRaw(goOntology),

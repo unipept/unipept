@@ -7,7 +7,7 @@ export default function useCsvDownload() {
         saveAs
     } = useFileSystemAccess();
 
-    const download = async (data: string[][], filename: string, separator = ";") => {
+    const download = async (data: string[][], filename: string, separator = ";"): Promise<void> => {
         if (isSupported.value) {
             content.value = createCsvString(data, separator);
 

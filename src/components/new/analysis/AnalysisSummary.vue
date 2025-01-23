@@ -77,7 +77,7 @@
                             Peptide matches
                         </h2>
                         <v-spacer />
-                        <analysis-summary-export @download="download" />
+                        <analysis-summary-export @prepareDownload="prepareDownload" @download="download" />
                     </div>
                     <analysis-summary-table :items="peptides" />
                 </v-col>
@@ -93,7 +93,6 @@
 
 <script setup lang="ts">
 import AnalysisSummaryTable from "@/components/new/analysis/AnalysisSummaryTable.vue";
-import DatabaseSelect from "@/components/new/database/DatabaseSelect.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {computed, ref} from "vue";
 import usePercentage from "@/composables/new/usePercentage";
@@ -129,11 +128,20 @@ const missedPeptides = computed(() => {
     return analysis.peptideTrust!.missedPeptides;
 });
 
-const download = async (separator: string) => {
-    const extension = separator === "\t" ? "tsv" : "csv";
-    const peptideExport = await generateExport(analysis, ',');
-    await downloadCsv(peptideExport, `unipept_${analysis.name.replaceAll(" ", "_")}_mpa.${extension}`, separator);
+let peptideExportContent: string = "";
+let exportDelimiter: string = "";
+
+const prepareDownload = async (separator: string, callback: () => {}): Promise<void> => {
+    exportDelimiter = separator;
+    peptideExportContent = await generateExport(analysis, separator);
+    callback();
 };
+
+const download = async (callback: () => {}): Promise<void> => {
+    const exportExtension = exportDelimiter === "\t" ? "tsv" : "csv";
+    await downloadCsv(peptideExportContent, `unipept_${analysis.name.replaceAll(" ", "_")}_mpa.${exportExtension}`, exportDelimiter);
+    callback();
+}
 </script>
 
 <style scoped>

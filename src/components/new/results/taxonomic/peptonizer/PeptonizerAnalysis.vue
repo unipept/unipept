@@ -123,7 +123,7 @@
                         New analysis
                     </v-btn>
                     <v-spacer />
-                    <analysis-summary-export @download="exportCsv" />
+                    <analysis-summary-export @prepareDownload="exportCsv" @download="downloadCsv" />
                 </v-card-actions>
             </v-window-item>
         </v-window>
@@ -152,7 +152,7 @@ const props = defineProps<{
 }>();
 
 const {generateExport: generatePeptonizerExport}  = usePeptonizerExport();
-const {download: downloadCsv} = useCsvDownload();
+const {download} = useCsvDownload();
 
 
 const peptonizerStep: Ref<number> = ref(1);
@@ -187,10 +187,19 @@ const cancelPeptonizer = () => {
     isCancelling.value = false;
 }
 
-const exportCsv = async (delimiter: string) => {
-    const extension = delimiter === "\t" ? "tsv" : "csv";
-    const peptideExport = generatePeptonizerExport(props.peptonizerStore.taxaIdsToConfidence!);
-    await downloadCsv(peptideExport, `unipept_${props.sampleName.replaceAll(" ", "_")}_peptonizer.${extension}`, delimiter);
+let peptideExport: string = "";
+let exportDelimiter: string = "";
+
+const exportCsv = async (delimiter: string, callback: () => {}): Promise<void> => {
+    exportDelimiter = delimiter;
+    peptideExport = generatePeptonizerExport(props.peptonizerStore.taxaIdsToConfidence!);
+    callback();
+}
+
+const downloadCsv = async (callback: () => {}): Promise<void> => {
+    const exportExtension = exportDelimiter === "\t" ? "tsv" : "csv";
+    await download(peptideExport, `unipept_${props.sampleName.replaceAll(" ", "_")}_peptonizer.${exportExtension}`, exportDelimiter);
+    callback();
 }
 
 watch(() => props.peptonizerStore, () => {
