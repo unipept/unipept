@@ -137,7 +137,7 @@
 import {computed, onMounted, ref, watch} from "vue";
 import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
 import useAsync from "@/composables/new/useAsync";
-import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
+import {NcbiTaxon, NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
 import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/new/Constants";
 import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
@@ -273,7 +273,7 @@ const loadTaxa = async function({ page, itemsPerPage, sortBy }: LoadItemsParams)
     // Finally, show all these selected taxa in the data table
     taxa.value = [];
     for (const selectedTaxon of taxaIdsInRange) {
-        taxa.value.push(ncbiOntology.value.get(selectedTaxon)!);
+        taxa.value.push(ncbiOntology.get(selectedTaxon)!);
     }
     taxaLoading.value = false;
 }

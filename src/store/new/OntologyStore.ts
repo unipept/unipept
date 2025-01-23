@@ -11,10 +11,10 @@ const useOntologyStore = defineStore('ontologyStore', () => {
 
     const { ontology: ncbiOntology, update: updateNcbiOntology } = useNcbiOntology();
 
-    const getEcDefinition = (code: string) => ecOntology.value.get(code);
-    const getGoDefinition = (code: string) => goOntology.value.get(code);
-    const getIprDefinition = (code: string) => iprOntology.value.get(code);
-    const getNcbiDefinition = (id: number) => ncbiOntology.value.get(id);
+    const getEcDefinition = (code: string) => ecOntology.get(code);
+    const getGoDefinition = (code: string) => goOntology.get(code);
+    const getIprDefinition = (code: string) => iprOntology.get(code);
+    const getNcbiDefinition = (id: number) => ncbiOntology.get(id);
 
     return {
         getEcDefinition,

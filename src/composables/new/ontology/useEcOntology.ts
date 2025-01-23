@@ -23,12 +23,12 @@ export default function useEcOntology(
     baseUrl = "https://api.unipept.ugent.be",
     batchSize = 100
 ) {
-    const ontology = ref<Map<string, FunctionalDefinition>>(new Map());
+    const ontology = new Map<string, FunctionalDefinition>();
 
     const update = async (
         codes: string[]
     ) => {
-        codes = codes.filter(c => !ontology.value.has(c));
+        codes = codes.filter(c => !ontology.has(c));
 
         for(let i = 0; i < codes.length; i += batchSize) {
             const response = await fetch(`${baseUrl}/private_api/ecnumbers`, {
@@ -40,7 +40,7 @@ export default function useEcOntology(
             }).then(r => r.json());
 
             for (const definition of response) {
-                ontology.value.set(
+                ontology.set(
                     `EC:${definition.code}`,
                     {
                         code: `EC:${definition.code}`,

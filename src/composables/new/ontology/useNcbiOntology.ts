@@ -7,13 +7,13 @@ export default function useNcbiOntology(
     baseUrl = DEFAULT_API_BASE_URL,
     batchSize = DEFAULT_ONTOLOGY_BATCH_SIZE
 ) {
-    const ontology = ref<Map<number, NcbiTaxon>>(new Map());
+    const ontology = new Map<number, NcbiTaxon>();
 
     const update = async (
         ids: number[],
         withLineages = true
     ) => {
-        ids = ids.filter(id => !ontology.value.has(id));
+        ids = ids.filter(id => !ontology.has(id));
 
         const ncbiCommunicator = new NcbiResponseCommunicator(baseUrl, batchSize);
         const responses = await ncbiCommunicator.getResponses(ids);
@@ -21,7 +21,7 @@ export default function useNcbiOntology(
         // Stores every taxon in the lineages of the requested taxa
         const lineageIds = [];
         for (const response of responses) {
-            ontology.value.set(
+            ontology.set(
                 response.id,
                 {
                     id: response.id,
