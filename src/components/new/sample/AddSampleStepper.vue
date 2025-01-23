@@ -21,6 +21,7 @@
                                 <v-card
                                     class="d-flex align-center"
                                     @click="navigateToPaste"
+                                    style="min-height: 100%;"
                                 >
                                     <v-icon class="ml-4">
                                         mdi-content-paste
@@ -40,6 +41,7 @@
                                 <v-card
                                     class="d-flex align-center"
                                     @click="navigateToImportWizard"
+                                    style="min-height: 100%;"
                                 >
                                     <v-icon class="ml-4">
                                         mdi-file
@@ -59,6 +61,7 @@
                                 <v-card
                                     class="d-flex align-center"
                                     @click="navigateToBulkUpload"
+                                    style="min-height: 100%;"
                                 >
                                     <v-icon class="ml-4">
                                         mdi-file-multiple
