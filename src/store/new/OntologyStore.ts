@@ -24,7 +24,11 @@ const useOntologyStore = defineStore('ontologyStore', () => {
         updateEcOntology,
         updateGoOntology,
         updateIprOntology,
-        updateNcbiOntology
+        updateNcbiOntology,
+        ecOntology,
+        goOntology,
+        iprOntology,
+        ncbiOntology
     };
 });
 

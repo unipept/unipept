@@ -1,4 +1,4 @@
-export default class CountTable<O extends OntologyCode> extends Map<O, number> {
+export default class CountTable<O> extends Map<O, number> {
     public readonly totalCount: number;
 
     constructor(counts: Map<O, number>, totalCount?: number) {

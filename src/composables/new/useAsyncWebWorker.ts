@@ -1,5 +1,5 @@
-export default function useAsyncWebWorker(workerFunction: () => Worker) {
-    const post = async (data: object) => {
+export default function useAsyncWebWorker<In, Out>(workerFunction: () => Worker) {
+    const post = async (data: In): Promise<Out> => {
         const worker = workerFunction();
 
         return await new Promise((resolve, reject) => {

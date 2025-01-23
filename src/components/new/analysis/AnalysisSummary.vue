@@ -129,10 +129,10 @@ const missedPeptides = computed(() => {
     return analysis.peptideTrust!.missedPeptides;
 });
 
-const download = (separator: string) => {
+const download = async (separator: string) => {
     const extension = separator === "\t" ? "tsv" : "csv";
-    const peptideExport = generateExport(analysis, ',');
-    downloadCsv(peptideExport, `unipept_${analysis.name.replaceAll(" ", "_")}_mpa.${extension}`, separator);
+    const peptideExport = await generateExport(analysis, ',');
+    await downloadCsv(peptideExport, `unipept_${analysis.name.replaceAll(" ", "_")}_mpa.${extension}`, separator);
 };
 </script>
 
