@@ -12,8 +12,8 @@
 
 <script setup lang="ts">
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
-import {SampleTableItem} from "@/components/new/sample/SampleTable.vue";
-import Project from "@/components/new/project/Project.vue";
+import {SampleTableItem} from "@/components/sample/SampleTable.vue";
+import Project from "@/components/project/Project.vue";
 
 const groupStore = useGroupAnalysisStore();
 

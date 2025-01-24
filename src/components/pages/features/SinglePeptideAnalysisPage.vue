@@ -11,5 +11,5 @@
 </template>
 
 <script setup lang="ts">
-import SinglePeptideAnalysisSearchCard from '@/components/cards/analysis/single/SinglePeptideAnalysisSearchCard.vue';
+import SinglePeptideAnalysisSearchCard from '@/components/analysis/single/SinglePeptideAnalysisSearchCard.vue';
 </script>

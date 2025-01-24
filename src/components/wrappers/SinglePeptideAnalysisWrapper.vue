@@ -27,8 +27,8 @@ import { useFullscreen } from '@vueuse/core';
 import usePeptideAnalysisStore from "@/store/new/PeptideAnalysisStore";
 import {v4 as uuidv4} from "uuid";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import SinglePeptideAnalysisResultsCard from "@/components/cards/analysis/single/SinglePeptideAnalysisResultsCard.vue";
-import SinglePeptideSummary from "@/components/new/results/SinglePeptideSummary.vue";
+import SinglePeptideAnalysisResultsCard from "@/components/analysis/single/SinglePeptideAnalysisResultsCard.vue";
+import SinglePeptideSummary from "@/components/results/SinglePeptideSummary.vue";
 
 export interface Props {
     peptide: string

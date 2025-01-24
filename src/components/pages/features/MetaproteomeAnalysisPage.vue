@@ -50,8 +50,8 @@
 </template>
 
 <script setup lang="ts">
-import QuickAnalysisCard from "@/components/new/analysis/QuickAnalysisCard.vue";
-import DemoAnalysisCard from "@/components/new/analysis/DemoAnalysisCard.vue";
+import QuickAnalysisCard from "@/components/analysis/multi/QuickAnalysisCard.vue";
+import DemoAnalysisCard from "@/components/analysis/multi/DemoAnalysisCard.vue";
 import {AnalysisConfig} from "@/store/new/SingleAnalysisStore";
 import {useRouter} from "vue-router";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
