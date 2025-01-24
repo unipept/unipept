@@ -18,11 +18,11 @@ export interface FunctionalProcessorOutput {
 }
 
 export default function useFunctionalProcessor() {
-    const {post} = useAsyncWebWorker(() => new FunctionalProcessorWebWorker());
-
-    const process = post;
+    const {post} = useAsyncWebWorker<FunctionalProcessorData, FunctionalProcessorOutput>(
+        () => new FunctionalProcessorWebWorker()
+    );
 
     return {
-        process
+        process: post
     }
 }

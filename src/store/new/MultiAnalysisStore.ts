@@ -28,8 +28,13 @@ const useMultiAnalysisStore = (
     // ========================== METHODS ============================
     // ===============================================================
 
-    const getAnalysis = (id: string): SingleAnalysisStore | undefined => {
-        return _analyses.value.get(id);
+    const getAnalysis = (id: string): SingleAnalysisStore => {
+        // @ts-ignore (unfortunately TypeScript is not able to correctly infer the type of the SingleAnalysisStore here)
+        const analysis: SingleAnalysisStore | undefined =_analyses.value.get(id);
+        if (analysis === undefined) {
+            throw new Error(`Analysis with id ${id} not found in AnalysisStore.`);
+        }
+        return analysis;
     }
 
     const addAnalysis = (
@@ -42,15 +47,15 @@ const useMultiAnalysisStore = (
         return analysisId;
     }
 
-    const removeAnalysis = (id: string) => {
+    const removeAnalysis = (id: string): void => {
         _analyses.value.delete(id);
     }
 
-    const clear = () => {
+    const clear = (): void => {
         _analyses.value.clear();
     }
 
-    const updateName = (newName: string) => {
+    const updateName = (newName: string): void => {
         name.value = newName;
     }
 

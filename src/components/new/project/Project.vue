@@ -57,7 +57,7 @@
                         >
                             <span>
                                 <b>Filtered results:</b> these results are limited to the all peptides specific
-                                to <b>{{ selectedAnalysis.filteredOrganism.name }} ({{ selectedAnalysis.filteredOrganism.extra.rank }})</b>
+                                to <b>{{ selectedAnalysis.filteredOrganism!.name }} ({{ selectedAnalysis.filteredOrganism!.extra.rank }})</b>
                             </span>
                             <v-btn
                                 text="Reset filter"
@@ -106,12 +106,12 @@ const { project } = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    'sample:add': (groupId: string, sample: SampleTableItem) => void;
-    'sample:update': (groupId: string, analysisId: string, updatedSample: SampleTableItem) => void;
-    'sample:remove': (groupId: string, analysisId: string) => void;
-    'group:add': (name: string) => void;
-    'group:update': (groupId: string, updatedName: string) => void;
-    'group:remove': (groupId: string) => void;
+    (e: 'sample:add', groupId: string, sample: SampleTableItem): void;
+    (e: 'sample:update', groupId: string, analysisId: string, updatedSample: SampleTableItem): void;
+    (e: 'sample:remove', groupId: string, analysisId: string): void;
+    (e: 'group:add', name: string): void;
+    (e: 'group:update', groupId: string, updatedName: string): void;
+    (e: 'group:remove', groupId: string):  void;
 }>();
 
 const selectedGroupName = ref<string>();
@@ -159,7 +159,7 @@ const clearSelectedAnalysis = () => selectedAnalysis.value = undefined;
 
 const selectAnalysis = (groupId: string | undefined, analysisId: string | undefined) => {
     selectedAnalysis.value = groupId && analysisId ? project.getGroup(groupId)?.getAnalysis(analysisId) : undefined;
-    selectedGroupName.value = project.getGroup(groupId)?.name;
+    selectedGroupName.value = groupId ? project.getGroup(groupId)?.name : undefined;
 }
 
 const isSafari = ref(false);

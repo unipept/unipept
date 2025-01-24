@@ -119,11 +119,11 @@ const { group } = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    'sample:add': (groupId: string, sample: SampleTableItem) => void;
-    'sample:update': (groupId: string, analysisId: string, updatedSample: SampleTableItem) => void;
-    'sample:remove': (groupId: string, analysisId: string) => void;
-    'group:update': (groupId: string, updatedName: string) => void,
-    'group:remove': (groupId: string) => void
+    (e: 'sample:add', groupId: string, sample: SampleTableItem): void;
+    (e: 'sample:update', groupId: string, analysisId: string, updatedSample: SampleTableItem): void;
+    (e: 'sample:remove', groupId: string, analysisId: string): void;
+    (e: 'group:update', groupId: string, updatedName: string): void;
+    (e: 'group:remove', groupId: string): void
 }>();
 
 const samples = ref<SampleTableItem[]>(cloneOriginalSamples(group.analyses));

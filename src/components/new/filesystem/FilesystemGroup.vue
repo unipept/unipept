@@ -100,11 +100,11 @@ defineProps<{
 }>();
 
 const emits = defineEmits<{
-    "sample:add": (groupId: string, sample: SampleTableItem) => void;
-    "sample:update": (groupId: string, analysisId: string, updatedSample: SampleTableItem) => void;
-    "sample:remove": (groupId: string, sampleName: string) => void;
-    "group:update": (groupId: string, updatedName: string) => void;
-    "group:remove": (groupId: string) => void;
+    (e: "sample:add", groupId: string, sample: SampleTableItem): void;
+    (e: "sample:update", groupId: string, analysisId: string, updatedSample: SampleTableItem): void;
+    (e: "sample:remove", groupId: string, sampleName: string): void;
+    (e: "group:update", groupId: string, updatedName: string): void;
+    (e: "group:remove", groupId: string): void;
 }>();
 
 const manageSamplesDialogOpen = ref(false);

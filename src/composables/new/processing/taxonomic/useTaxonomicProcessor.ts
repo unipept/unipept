@@ -11,12 +11,21 @@ export interface TaxonomicProcessorData {
     dataBuffer: ArrayBuffer;
 }
 
+export interface TaxonomicProcessorWorkerOutput {
+    countsPerLca: Map<number, number>;
+    lcaToPeptides: Map<number, string[]>;
+    peptideToLca: Map<string, number>;
+    annotatedCount: number;
+}
+
 export default function useTaxonomicProcessor() {
     const countTable = ref<CountTable<number>>();
     const lcaToPeptides = ref<Map<number, string[]>>();
     const peptideToLca = ref<Map<string, number>>();
 
-    const { post } = useAsyncWebWorker(() => new TaxonomicProcessorWebWorker());
+    const { post } = useAsyncWebWorker<TaxonomicProcessordata, TaxonomicProcessorWorkerOutput>(
+        () => new TaxonomicProcessorWebWorker()
+    );
 
     const process = async (
         peptideCounts: CountTable<string>,

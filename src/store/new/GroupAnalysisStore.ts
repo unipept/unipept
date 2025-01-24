@@ -1,8 +1,8 @@
 import {defineStore} from "pinia";
 import useMultiAnalysisStore, {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import {computed, ref} from "vue";
-import {AnalysisConfig} from "@/components/pages/TestPage.vue";
 import {v4 as uuidv4} from "uuid";
+import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 
 export const DEFAULT_NEW_GROUP_NAME = "Group";
 
@@ -25,8 +25,12 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
     // ========================== METHODS ============================
     // ===============================================================
 
-    const getGroup = (id: string): MultiAnalysisStore | undefined => {
-        return _groups.value.get(id);
+    const getGroup = (id: string): MultiAnalysisStore => {
+        const group = _groups.value.get(id);
+        if (group === undefined) {
+            throw new Error(`Group with id ${id} not found.`);
+        }
+        return group;
     };
 
     const addGroup = (name: string): string => {
@@ -39,12 +43,12 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         _groups.value.delete(id);
     }
 
-    const addAnalysis = (groupId: string, analysisName: string, peptides: string[], config: AnalysisConfig): void => {
-        _groups.value.get(groupId)?.addAnalysis(analysisName, peptides, config);
+    const addAnalysis = (groupId: string, analysisName: string, peptides: string, config: AnalysisConfig): void => {
+        getGroup(groupId).addAnalysis(analysisName, peptides, config);
     };
 
     const removeAnalysis = (groupId: string, analysisName: string): void => {
-        _groups.value.get(groupId)?.removeAnalysis(analysisName);
+       getGroup(groupId).removeAnalysis(analysisName);
     };
 
     const clear = () => {
