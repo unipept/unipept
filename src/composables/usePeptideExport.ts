@@ -2,8 +2,8 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {NcbiTaxon} from "@/logic/new/ontology/taxonomic/Ncbi";
 import FunctionalDefinition from "@/logic/new/ontology/functional/FunctionalDefinition";
-import PeptideExportProcessorWorker from "@/composables/new/processing/workers/peptideExportProcessor.worker.ts?worker";
-import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
+import PeptideExportProcessorWorker from "@/composables/processing/workers/peptideExportProcessor.worker.ts?worker";
+import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import {toRaw} from "vue";
 
 

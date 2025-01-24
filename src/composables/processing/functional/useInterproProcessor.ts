@@ -1,4 +1,4 @@
-import useFunctionalProcessor from "@/composables/new/processing/functional/useFunctionalProcessor";
+import useFunctionalProcessor from "@/composables/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData} from "unipept-web-components";
 import {ref} from "vue";

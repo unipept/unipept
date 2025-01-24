@@ -1,4 +1,4 @@
-import EcCode from "@/logic/new/ontology/functional/ec/EcCode";
+import EcCode from "@/logic/ontology/functional/ec/EcCode";
 
 enum EcNamespace {
     // EC 1.x.x.x class

@@ -1,14 +1,14 @@
-import useFunctionalProcessor from "@/composables/new/processing/functional/useFunctionalProcessor";
+import useFunctionalProcessor from "@/composables/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData} from "unipept-web-components";
 import {ref} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
 import CountTable from "@/logic/new/CountTable";
 
-export default function useGoProcessor() {
+export default function useEcProcessor() {
     const countTable = ref<CountTable<string>>();
     const trust = ref<FunctionalTrust>();
-    const goToPeptides = ref<Map<string, string[]>>();
+    const ecToPeptides = ref<Map<string, string[]>>();
 
     const { process: processFunctional } = useFunctionalProcessor();
 
@@ -24,8 +24,8 @@ export default function useGoProcessor() {
             indexBuffer: buffer[0],
             dataBuffer: buffer[1],
             percentage,
-            termPrefix: "go",
-            proteinCountProperty: "go"
+            termPrefix: "ec",
+            proteinCountProperty: "ec"
         });
 
         countTable.value = new CountTable(processed.sortedCounts, processed.annotatedCount);
@@ -33,13 +33,13 @@ export default function useGoProcessor() {
             annotatedItems: processed.annotatedCount,
             totalItems: peptideCounts.totalCount
         }
-        goToPeptides.value = processed.itemToPeptides;
+        ecToPeptides.value = processed.itemToPeptides;
     }
 
     return {
         countTable,
         trust,
-        goToPeptides,
+        ecToPeptides,
 
         process
     }

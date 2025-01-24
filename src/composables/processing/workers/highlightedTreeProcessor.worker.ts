@@ -1,4 +1,4 @@
-import {HighlightedTreeProcessorData} from "@/composables/new/processing/taxonomic/useHighlightedTreeProcessor";
+import {HighlightedTreeProcessorData} from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import {NcbiTreeNode} from "unipept-web-components";
 
 self.onmessage = async (event) => {

@@ -1,6 +1,6 @@
 import {ShareableMap} from "shared-memory-datastructures";
 import {FunctionalCode, PeptideData, PeptideDataSerializer} from "unipept-web-components";
-import {FunctionalProcessorData} from "@/composables/new/processing/functional/useFunctionalProcessor";
+import {FunctionalProcessorData} from "@/composables/processing/functional/useFunctionalProcessor";
 
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));

@@ -2,7 +2,7 @@ import {PeptideExportData} from "@/composables/new/usePeptideExport";
 import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData, PeptideDataSerializer} from "unipept-web-components";
 import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
-import {GoNamespace} from "@/composables/new/ontology/useGoOntology";
+import {GoNamespace} from "@/composables/ontology/useGoOntology";
 import usePercentage from "@/composables/new/usePercentage";
 
 self.onmessage = async (event) => {

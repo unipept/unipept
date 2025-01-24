@@ -1,4 +1,4 @@
-import {PeptideProcessorData} from "@/composables/new/processing/peptide/usePeptideProcessor";
+import {PeptideProcessorData} from "@/composables/processing/peptide/usePeptideProcessor";
 
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));

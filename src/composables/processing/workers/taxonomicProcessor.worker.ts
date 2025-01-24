@@ -1,6 +1,6 @@
 import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData, PeptideDataSerializer} from "unipept-web-components";
-import {TaxonomicProcessorData} from "@/composables/new/processing/taxonomic/useTaxonomicProcessor";
+import {TaxonomicProcessorData} from "@/composables/processing/taxonomic/useTaxonomicProcessor";
 
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
