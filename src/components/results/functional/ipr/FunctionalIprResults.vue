@@ -47,12 +47,12 @@ import InterproTableData from "@/components/results/functional/ipr/InterproTable
 
 const { getIprDefinition } = useOntologyStore();
 
-const { data } = withDefaults(defineProps<{
+const { data, showDownloadItem = true } = defineProps<{
     data: InterproTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
-}>(), { showDownloadItem: true });
+}>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: IprResultsTableItem): void;

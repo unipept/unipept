@@ -55,5 +55,5 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/icons';
+@use '@/styles/icons';
 </style>

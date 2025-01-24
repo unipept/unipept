@@ -94,12 +94,12 @@ import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTa
 
 const { getGoDefinition } = useOntologyStore();
 
-const { data, loading } = withDefaults(defineProps<{
+const { data, loading, showDownloadItem = true } = defineProps<{
     data: GoTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
-}>(), { showDownloadItem: true });
+}>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: GoResultsTableItem): void;

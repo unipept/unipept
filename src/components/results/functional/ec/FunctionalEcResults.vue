@@ -51,12 +51,12 @@ import { EcResultsTableItem } from "@/components/results/functional/ec/EcResults
 const { getEcDefinition } = useOntologyStore();
 const { root, process } = useEcTreeProcessor();
 
-const { data } = withDefaults(defineProps<{
+const { data, showDownloadItem = true } = defineProps<{
     data: EcTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
-}>(), { showDownloadItem: true });
+}>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: EcResultsTableItem): void;
