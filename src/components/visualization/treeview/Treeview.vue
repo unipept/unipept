@@ -6,8 +6,8 @@
                 class="d-flex"
             >
                 <div
-                    v-for="line in lines"
-                    :key="line"
+                    v-for="(line, idx) in lines"
+                    :key="idx"
                 >
                     <vertical-line
                         v-if="line"
@@ -80,7 +80,7 @@
         <div v-if="isExpanded || node.match">
             <treeview
                 v-for="(child, i) in node.children"
-                :key="child"
+                :key="child.id"
                 v-model:items="selectedItems"
                 v-model:item="selectedText"
                 :node="child"

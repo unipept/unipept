@@ -27,6 +27,6 @@ const processRecursively = async (
 ): Promise<any> => {
     return f(
         node,
-        node.children?.map(child => processRecursively(child, f)) ?? []
+        node.children?.map((child: any) => processRecursively(child, f)) ?? []
     );
 }

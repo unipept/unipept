@@ -138,7 +138,7 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import FunctionalIprResults from "@/components/results/functional/ipr/FunctionalIprResults.vue";
 import FilterFunctionalResults from "@/components/results/functional/FilterFunctionalResults.vue";
 import usePercentage from "@/composables/usePercentage";
-import GoTableData from "@/components/results/functional/GoTableData";
+import GoTableData from "@/components/results/functional/go/GoTableData";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
@@ -165,24 +165,24 @@ const filter = ref<number>(analysis.functionalFilter);
 const goData = ref<GoTableData>({
     goTable: analysis.goTable!,
     goTrust: analysis.goTrust!,
-    ncbiTree: analysis.ncbiTree!,
-    goToPeptides: analysis.goToPeptides,
+    ncbiTree: analysis.ncbiTree,
+    goToPeptides: analysis.goToPeptides!,
     lcaToPeptides: analysis.lcaToPeptides
 });
 
 const ecData = ref<EcTableData>({
     ecTable: analysis.ecTable!,
     ecTrust: analysis.ecTrust!,
-    ncbiTree: analysis.ncbiTree!,
-    ecToPeptides: analysis.ecToPeptides,
+    ncbiTree: analysis.ncbiTree,
+    ecToPeptides: analysis.ecToPeptides!,
     lcaToPeptides: analysis.lcaToPeptides
 });
 
 const iprData = ref<InterproTableData>({
     iprTable: analysis.iprTable!,
     iprTrust: analysis.iprTrust!,
-    ncbiTree: analysis.ncbiTree!,
-    iprToPeptides: analysis.iprToPeptides,
+    ncbiTree: analysis.ncbiTree,
+    iprToPeptides: analysis.iprToPeptides!,
     lcaToPeptides: analysis.lcaToPeptides
 });
 
@@ -193,13 +193,13 @@ const updateFilter = (value: number) => {
 
 const downloadGoItem = (item: GoResultsTableItem) => {
     const header = ["peptide", "spectral count", "matching proteins", `matching proteins with ${item.code}`, `percentage proteins with ${item.code}`, "lca"];
-    const exportData = [header].concat(Array.from(analysis.goToPeptides.get(item.code)!).map(peptide => {
-        const peptideData = analysis.peptideToData.get(peptide);
+    const exportData = [header].concat(Array.from(analysis.goToPeptides!.get(item.code)!).map(peptide => {
+        const peptideData = analysis.peptideToData!.get(peptide)!;
         const totalProteinCount = peptideData.faCounts.all;
         const itemProteinCount = peptideData.go[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable.get(peptide),
+            analysis.peptidesTable!.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),
@@ -214,28 +214,27 @@ const downloadGoTable = (items: GoResultsTableItem[]) => {
     const header = ["peptides", "go term", "name"];
     const data = [header].concat(items.map(item => {
         return [
-            item.count,
+            item.count.toString(),
             item.code,
             item.name
         ];
     }));
-
     download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_go_table.csv`);
 }
 
 const downloadEcItem = (item: EcResultsTableItem) => {
     const header = ["peptide", "spectral count", "matching proteins", `matching proteins with ${item.code}`, `percentage proteins with ${item.code}`, "lca"];
-    const data = [header].concat(Array.from(analysis.ecToPeptides.get(item.code)).map(peptide => {
-        const peptideData = analysis.peptideToData.get(peptide);
-        const totalProteinCount = peptideData.faCounts.all;
-        const itemProteinCount = peptideData.ec[item.code] ?? 0;
+    const data = [header].concat(Array.from(analysis.ecToPeptides!.get(item.code)!).map(peptide => {
+        const peptideData = analysis.peptideToData!.get(peptide);
+        const totalProteinCount = peptideData!.faCounts.all;
+        const itemProteinCount = peptideData!.ec[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable.get(peptide),
+            analysis.peptidesTable!.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),
-            getNcbiDefinition(peptideData.lca)?.name ?? "Unknown"
+            getNcbiDefinition(peptideData!.lca)?.name ?? "Unknown"
         ];
     }));
 
@@ -246,7 +245,7 @@ const downloadEcTable = (items: EcResultsTableItem[]) => {
     const header = ["peptides", "ec number", "name"]
     const data = [header].concat(items.map(item => {
         return [
-            item.count,
+            item.count.toString(),
             item.code,
             item.name
         ];
@@ -257,17 +256,17 @@ const downloadEcTable = (items: EcResultsTableItem[]) => {
 
 const downloadInterproItem = (item: IprResultsTableItem) => {
     const header = ["peptide", "spectral count", "matching proteins", `matching proteins with ${item.code}`, `percentage proteins with ${item.code}`, "lca"];
-    const data = [header].concat(Array.from(analysis.iprToPeptides.get(item.code)).map(peptide => {
-        const peptideData = analysis.peptideToData.get(peptide);
-        const totalProteinCount = peptideData.faCounts.all;
-        const itemProteinCount = peptideData.ipr[item.code] ?? 0;
+    const data = [header].concat(Array.from(analysis.iprToPeptides!.get(item.code)!).map(peptide => {
+        const peptideData = analysis.peptideToData!.get(peptide);
+        const totalProteinCount = peptideData!.faCounts.all;
+        const itemProteinCount = peptideData!.ipr[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable.get(peptide),
+            analysis.peptidesTable!.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),
-            getNcbiDefinition(peptideData.lca)?.name ?? "Unknown"
+            getNcbiDefinition(peptideData!.lca)?.name ?? "Unknown"
         ];
     }));
 
@@ -278,7 +277,7 @@ const downloadInterproTable = (items: IprResultsTableItem[]) => {
     const header = ["peptides", "interpro entry", "name"]
     const data = [header].concat(items.map(item => {
         return [
-            item.count,
+            item.count.toString(),
             item.code,
             item.name
         ];

@@ -10,7 +10,11 @@ export default function usePngDownload() {
         saveAs
     } = useFileSystemAccess();
 
-    const downloadPng = async (svgElement, filename = 'image.png', scalingFactor = 1) => {
+    const downloadPng = async (
+        svgElement: SVGElement & { viewBox: any | undefined, width: any | undefined, height: any | undefined },
+        filename = 'image.png',
+        scalingFactor = 1
+    ) => {
         // Serialize the SVG element to a string
         const svgString = new XMLSerializer().serializeToString(svgElement);
 
@@ -20,7 +24,7 @@ export default function usePngDownload() {
 
         // Load the image
         // We have to use a Promise to wait for the image to load
-        const img = await new Promise((resolve, reject) => {
+        const img = await new Promise<HTMLImageElement>((resolve, reject) => {
             const img = new Image();
             img.crossOrigin = "anonymous";
             img.onload = () => resolve(img);
@@ -38,20 +42,37 @@ export default function usePngDownload() {
         canvas.height = originalHeight * scalingFactor;
 
         const ctx = canvas.getContext('2d');
+
+        if (ctx === null) {
+            throw new Error(`Canvas context should not be null!`);
+        }
+
         ctx.scale(scalingFactor, scalingFactor);
         ctx.drawImage(img, 0, 0, originalWidth, originalHeight);
 
-        const pngBlob = await new Promise((resolve) => {
+        const pngBlob = await new Promise<Blob | null>((resolve) => {
             canvas.toBlob((blob) => resolve(blob), 'image/png');
         });
+
+        if (pngBlob === null) {
+            throw new Error(`Could not create PNG blob!`);
+        }
 
         if (isSupported.value) {
             // Convert canvas to a PNG blob
             content.value = pngBlob;
 
-            await saveAs({
-                suggestedName: filename
-            }).catch(() => {});
+            try {
+                await saveAs({
+                    suggestedName: filename
+                });
+            } catch (error) {
+                // Check if the user is simply the result of the user cancelling the request. Rethrow the error
+                // otherwise.
+                if (!JSON.stringify(error).includes("The user aborted a request")) {
+                    throw error;
+                }
+            }
         } else {
             console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
 
@@ -67,7 +88,7 @@ export default function usePngDownload() {
         URL.revokeObjectURL(url);
     }
 
-    const downloadDomPng = async (htmlElement, filename = 'image.png', scalingFactor = 1) => {
+    const downloadDomPng = async (htmlElement: HTMLElement, filename = 'image.png', scalingFactor = 1) => {
         const pngDataUrl = await toPng(htmlElement, {
             skipFonts: true,
             pixelRatio: scalingFactor
@@ -75,9 +96,17 @@ export default function usePngDownload() {
 
         content.value = await fetch(pngDataUrl).then(res => res.blob());
 
-        await saveAs({
-            suggestedName: filename
-        }).catch(() => {});
+        try {
+            await saveAs({
+                suggestedName: filename
+            });
+        } catch (error) {
+            // Check if the user is simply the result of the user cancelling the request. Rethrow the error
+            // otherwise.
+            if (!JSON.stringify(error).includes("The user aborted a request")) {
+                throw error;
+            }
+        }
     }
 
     return {

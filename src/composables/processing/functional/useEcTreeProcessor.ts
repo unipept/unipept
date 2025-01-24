@@ -1,5 +1,6 @@
 import {ref} from "vue";
 import CountTable from "@/logic/processors/CountTable";
+import { DataNodeLike } from "unipept-visualizations";
 
 export default function useEcTreeProcessor() {
     const root = ref<DataNodeLike>();
@@ -9,7 +10,7 @@ export default function useEcTreeProcessor() {
     ) => {
         root.value = undefined;
 
-        const nodes = new Map<string, object>();
+        const nodes = new Map<string, any>();
 
         nodes.set("root", {
             name: "-.-.-.-",

@@ -10,7 +10,7 @@
         <publication-card
             class="mt-5"
             title="Biodiversity Analysis of Metaproteomics Samples with Unipept: A Comprehensive Tutorial"
-            :authors="[&quot;Tim Van Den Bossche&quot;, &quot;Pieter Verschaffelt&quot;, &quot;Tibo Vande Moortele&quot;, &quot;Peter Dawyndt&quot;, &quot;Lennart Martens&quot;, &quot;Bart Mesuere&quot;,]"
+            :authors='["Tim Van Den Bossche", "Pieter Verschaffelt", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere"]'
             journal="Protein Bioinformatics"
             year="2024"
             doi="doi.org/10.1007/978-1-0716-4007-4_11"
@@ -30,7 +30,7 @@
         <publication-card
             class="mt-5"
             title="Unipept in 2024: Expanding Metaproteomics Analysis with Support for Missed Cleavages, Semi-Tryptic and Non-Tryptic Peptides"
-            :authors="[&quot;Tibo Vande Moortele&quot;, &quot;Bram Devlaminck&quot;, &quot;Simon Van de Vyver&quot;, &quot;Tim Van Den Bossche&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;, &quot;Bart Mesuere&quot;, &quot;Pieter Verschaffelt&quot;]"
+            :authors='["Tibo Vande Moortele", "Bram Devlaminck", "Simon Van de Vyver", "Tim Van Den Bossche", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere", "Pieter Verschaffelt"]'
             journal="BioRXiv"
             year="2024"
             doi="doi.org/10.1101/2024.09.26.615136"
@@ -51,7 +51,7 @@
         <publication-card
             class="mt-5"
             title="Unipept Desktop 2.0: Construction of Targeted Reference Protein Databases for Metaproteogenomics Analyses"
-            :authors="[&quot;Pieter Verschaffelt&quot;, &quot;Alessandro Tanca&quot;, &quot;Marcello Abbondio&quot;, &quot;Tim Van Den Bossche&quot;, &quot;Tibo Vande Moortele&quot;, &quot;Peter Dawyndt&quot;, &quot;Lennart Martens&quot;, &quot;Bart Mesuere&quot;]"
+            :authors='["Pieter Verschaffelt", "Alessandro Tanca", "Marcello Abbondio", "Tim Van Den Bossche", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere"]'
             journal="Journal of Proteome Research"
             year="2023"
             doi="doi.org/10.1021/acs.jproteome.3c00091"
@@ -75,7 +75,7 @@
         <publication-card
             class="mt-5"
             title="Unipept Desktop: a faster, more powerful metaproteomics results analysis tool"
-            :authors="[&quot;Pieter Verschaffelt&quot;, &quot;Tim Van Den Bossche&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;, &quot;Bart Mesuere&quot;]"
+            :authors='["Pieter Verschaffelt", "Tim Van Den Bossche", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere"]'
             journal="Journal of Proteome Research"
             year="2021"
             doi="doi.org/10.1021/acs.jproteome.0c00855"
@@ -98,7 +98,7 @@
         <publication-card
             class="mt-5"
             title="Unipept CLI 2.0: adding support for visualizations and functional annotations"
-            :authors="[&quot;Pieter Verschaffelt&quot;, &quot;Philippe Van Thienen&quot;, &quot;Tim Van Den Bossche&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Caroline De Tender&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;, &quot;Bart Mesuere&quot;]"
+            :authors='["Pieter Verschaffelt", "Philippe Van Thienen", "Tim Van Den Bossche", "Felix Van der Jeugt", "Caroline De Tender", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere"]'
             journal="Bioinformatics"
             year="2020"
             doi="doi.org/10.1093/bioinformatics/btaa553"
@@ -122,7 +122,7 @@
         <publication-card
             class="mt-5"
             title="Unipept 4.0: functional analysis of metaproteome data"
-            :authors="[&quot;Robbert Gurdeep Singh&quot;, &quot;Alessandro Tanca&quot;, &quot;Antonio Palomba&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Pieter Verschaffelt&quot;, &quot;Sergio Uzzau&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;, &quot;Bart Mesuere&quot;]"
+            :authors='["Robbert Gurdeep Singh", "Alessandro Tanca", "Antonio Palomba", "Felix Van der Jeugt", "Pieter Verschaffelt", "Sergio Uzzau", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere"]'
             journal="Journal of Proteome Research"
             year="2019"
             doi="doi.org/10.1021/acs.jproteome.8b00716"
@@ -144,7 +144,7 @@
         <publication-card
             class="mt-5"
             title="High-throughput metaproteomics data analysis with Unipept: a tutorial"
-            :authors="[&quot;Bart Mesuere&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Toon Willems&quot;, &quot;Tom Naessens&quot;, &quot;Bart Devreese&quot;, &quot;Lennart Martens&quot;, &quot;Peter Dawyndt&quot;]"
+            :authors='["Bart Mesuere", "Felix Van der Jeugt", "Toon Willems", "Tom Naessens", "Bart Devreese", "Lennart Martens", "Peter Dawyndt"]'
             journal="Journal of Proteomics"
             year="2018"
             extra="171, pp 11-22"
@@ -173,7 +173,7 @@
         <publication-card
             class="mt-5"
             title="The unique peptidome: Taxon-specific tryptic peptides as biomarkers for targeted metaproteomics"
-            :authors="[&quot;Bart Mesuere&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Bart Devreese&quot;, &quot;Peter Vandamme&quot;, &quot;Peter Dawyndt&quot;]"
+            :authors='["Bart Mesuere", "Felix Van der Jeugt", "Bart Devreese", "Peter Vandamme", "Peter Dawyndt"]'
             journal="Proteomics"
             year="2016"
             extra="16 (17), pp 2313–2318"
@@ -198,7 +198,7 @@
         <publication-card
             class="mt-5"
             title="Unipept Web Services for Metaproteomics Analysis"
-            :authors="[&quot;Bart Mesuere&quot;, &quot;Toon Willems&quot;, &quot;Felix Van der Jeugt&quot;, &quot;Bart Devreese&quot;, &quot;Peter Vandamme&quot;, &quot;Peter Dawyndt&quot;]"
+            :authors='["Bart Mesuere", "Toon Willems", "Felix Van der Jeugt", "Bart Devreese", "Peter Vandamme", "Peter Dawyndt"]'
             journal="Bioinformatics"
             year="2016"
             extra="32 (11), pp 1746-1748"
@@ -222,7 +222,7 @@
         <publication-card
             class="mt-5"
             title="The Unipept Metaproteomics Analysis Pipeline"
-            :authors="[&quot;Bart Mesuere&quot;, &quot;Griet Debyser&quot;, &quot;Maarten Aerts&quot;, &quot;Bart Devreese&quot;, &quot;Peter Vandamme&quot;, &quot;Peter Dawyndt&quot;]"
+            :authors='["Bart Mesuere", "Griet Debyser", "Maarten Aerts", "Bart Devreese", "Peter Vandamme", "Peter Dawyndt"]'
             journal="Proteomics"
             year="2015"
             extra="15 (8), pp 1437–1442"
@@ -248,7 +248,7 @@
         <publication-card
             class="mt-5"
             title="Unipept: Tryptic Peptide-Based Biodiversity Analysis of Metaproteome Samples"
-            :authors="[&quot;Bart Mesuere&quot;, &quot;Bart Devreese&quot;, &quot;Griet Debyser&quot;, &quot;Maarten Aerts&quot;, &quot;Peter Vandamme&quot;, &quot;Peter Dawyndt&quot;]"
+            :authors='["Bart Mesuere", "Bart Devreese", "Griet Debyser", "Maarten Aerts", "Peter Vandamme", "Peter Dawyndt"]'
             journal="J. Proteome Res."
             year="2012"
             extra="11 (12), pp 5773–5780"

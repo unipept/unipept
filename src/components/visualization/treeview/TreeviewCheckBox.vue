@@ -17,7 +17,7 @@
 import { ref } from 'vue';
 import CheckBox from './icons/CheckBox.vue';
 import CheckBoxTicked from './icons/CheckBoxTicked.vue';
-import Size from './Treeview.vue';
+import {Size} from './Treeview.vue';
 import { watch } from 'vue';
 
 export interface Props {

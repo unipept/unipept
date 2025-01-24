@@ -35,17 +35,21 @@ export default class UniprotCommunicator {
     }
 
     public static async getProteome(proteome: string): Promise<Proteome | undefined> {
-        return await NetworkUtils.getJSON(
-            `${UniprotCommunicator.PROTEOMES_STREAM_URL}?format=json&query=upid:${proteome}`
-        )
-        .then(res => res.results[0])
-        .then(p => ({
-            id: p.id,
-            type: UniprotCommunicator.castProteomeType(p.proteomeType),
-            organism: p.taxonomy.scientificName + (p.taxonomy.commonName ? " (" + p.taxonomy.commonName + ")" : ""),
-            count: p.proteinCount
-        }))
-        .catch(() => undefined);
+        try {
+            const res = await NetworkUtils.getJSON(
+                `${UniprotCommunicator.PROTEOMES_STREAM_URL}?format=json&query=upid:${proteome}`
+            );
+
+            const p = res.results[0];
+            return {
+                id: p.id,
+                type: UniprotCommunicator.castProteomeType(p.proteomeType),
+                organism: p.taxonomy.scientificName + (p.taxonomy.commonName ? " (" + p.taxonomy.commonName + ")" : ""),
+                count: p.proteinCount
+            };
+        } catch (e) {
+            return undefined;
+        }
     }
 
     private static castProteomeType(type: string): ProteomeType {
@@ -55,5 +59,6 @@ export default class UniprotCommunicator {
             case "Redundant proteome": return ProteomeType.Redundant;
             case "Excluded": return ProteomeType.Excluded;
         }
+        throw new Error(`Provided proteome type ${type} does not exist.`)
     }
 }

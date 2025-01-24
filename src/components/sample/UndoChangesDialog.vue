@@ -35,7 +35,7 @@
 const dialogOpen = defineModel<boolean>();
 
 const emits = defineEmits<{
-    "confirm": () => void;
+    (e: "confirm"): void;
 }>();
 
 const confirm = () => {

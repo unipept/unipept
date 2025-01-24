@@ -160,10 +160,9 @@ const removeSample = (index: number) => {
     samples.value!.splice(index, 1);
     samples.value = [ ...samples.value! ];
 }
-</script>
 
-<script lang="ts">
-const headers = [
+// @ts-ignore need to annotate headers until Vuetify 3 correctly exposes type of headers
+const headers: any = [
     {
         title: "Sample name",
         align: "start",

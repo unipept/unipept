@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "check": "vue-tsc --noEmit",
+    "typeCheck": "vue-tsc --noEmit",
     "build": "vite build && ./post-build.sh",
     "preview": "vite preview",
     "lint": "eslint"

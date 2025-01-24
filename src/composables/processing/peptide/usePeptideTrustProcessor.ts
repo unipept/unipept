@@ -10,7 +10,7 @@ export default function usePeptideTrustProcessor() {
     const process = (
         countTable: CountTable<string>,
         peptideData: ShareableMap<string, PeptideData>
-    ): PeptideTrust => {
+    ): void => {
         let matchedPeptides = 0;
         const missedPeptides: string[] = [];
 

@@ -22,7 +22,7 @@ export default class AsyncHelper<T> {
         asyncResult: () => Promise<T>,
         mutation: (result: T) => void
     ): Promise<void> {
-        this.executing = true;
+        this.executing.value = true;
         this.asyncCount++;
         const count = this.asyncCount;
 
@@ -30,7 +30,7 @@ export default class AsyncHelper<T> {
 
         if (count === this.asyncCount) {
             mutation(result);
-            this.executing = false;
+            this.executing.value = false;
         }
     }
 

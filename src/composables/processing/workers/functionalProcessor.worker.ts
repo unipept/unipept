@@ -34,8 +34,9 @@ const process = async ({
             continue;
         }
 
-        const proteinCount = peptideData.faCounts[proteinCountProperty];
-        const terms = peptideData[termPrefix];
+        const proteinCount: number = peptideData.faCounts[proteinCountProperty];
+        // @ts-ignore peptide data comes straight from Unipept API
+        const terms: Map<string, number> = peptideData[termPrefix] as Map<string, number>;
 
         for (const [term, proteinCountOfTerm] of Object.entries(terms)) {
             if ((proteinCountOfTerm / proteinCount) * 100 > percentage) {
@@ -45,7 +46,7 @@ const process = async ({
             if (!itemToPeptides.has(term)) {
                 itemToPeptides.set(term, []);
             }
-            itemToPeptides.get(term).push(peptide);
+            itemToPeptides.get(term)!.push(peptide);
         }
 
         // If there is at least one protein that belongs to this peptide annotated with an annotation of the

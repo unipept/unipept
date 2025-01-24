@@ -84,9 +84,9 @@ const headers: ComputedRef<any> = computed(() => {
 const usedColours: Map<string, string> = new Map();
 const colourCounter = ref<number>(0);
 
-const items: ComputedRef<{ definition: NcbiTaxon, lineage: NcbiTaxon[] }[]> = computed(() => {
+const items: ComputedRef<{ definition: NcbiTaxon, lineage: (NcbiTaxon | undefined)[] }[]> = computed(() => {
     const ontologyStore = useOntologyStore();
-    const results: { definition: NcbiTaxon, lineage: NcbiTaxon[] }[] = [];
+    const results: { definition: NcbiTaxon, lineage: (NcbiTaxon | undefined)[] }[] = [];
 
     props.assay.proteins.forEach((p: ProteinResponse) => {
         const def = ontologyStore.getNcbiDefinition(p.organism);

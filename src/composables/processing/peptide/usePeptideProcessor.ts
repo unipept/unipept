@@ -10,7 +10,7 @@ export interface PeptideProcessorData {
 }
 
 export interface PeptideProcessorWorkerOutput {
-    peptideCounts: number;
+    peptideCounts: Map<string, number>;
     totalPeptideCount: number;
 }
 

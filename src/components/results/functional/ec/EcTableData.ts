@@ -12,5 +12,5 @@ export default interface EcTableData {
 
     // Only required when the rows of the EC table should be expandable
     ncbiTree: NcbiTreeNode | undefined;
-    lcaToPeptides: Map<string, string[]> | undefined;
+    lcaToPeptides: Map<number, string[]> | undefined;
 }

@@ -35,7 +35,7 @@ const process = async ({
         if (!lcaToPeptides.has(lca)) {
             lcaToPeptides.set(lca, []);
         }
-        lcaToPeptides.get(lca).push(peptide);
+        lcaToPeptides.get(lca)!.push(peptide);
 
         annotatedCount += peptideCount;
     }

@@ -12,5 +12,5 @@ export default interface InterproTableData {
 
     // Only required when the rows of the Interpro table should be expandable
     ncbiTree: NcbiTreeNode | undefined;
-    lcaToPeptides: Map<string, string[]> | undefined;
+    lcaToPeptides: Map<number, string[]> | undefined;
 }

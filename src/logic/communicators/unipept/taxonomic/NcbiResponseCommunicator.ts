@@ -1,6 +1,6 @@
 import NcbiResponse from "./NcbiResponse";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
-import NcbiTaxon, {NcbiId} from "@/logic/ontology/taxonomic/Ncbi";
+import {NcbiId} from "@/logic/ontology/taxonomic/Ncbi";
 
 export default class NcbiResponseCommunicator {
     public static readonly NCBI_ENDPOINT: string = "/private_api/taxa";

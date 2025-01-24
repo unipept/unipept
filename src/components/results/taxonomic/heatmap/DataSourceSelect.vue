@@ -29,6 +29,15 @@ import {GoNamespace} from "@/composables/ontology/useGoOntology";
 import {EcNamespace} from "@/composables/ontology/useEcOntology";
 import {InterproNamespace} from "@/composables/ontology/useInterproOntology";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
+import CountTable from "@/logic/processors/CountTable";
+
+enum DataSource {
+    NCBI = "NCBI taxonomy",
+    GO = "Gene Ontology",
+    EC = "Enzyme Commission",
+    INTERPRO = "Interpro"
+}
+
 
 const {
     getNcbiDefinition,
@@ -57,10 +66,10 @@ const categories = computed(() => {
 
 const items = computed(() => {
     switch (selectedDataSource.value) {
-        case DataSource.NCBI: return getItems(analysis.lcaTable, analysis.lcaToPeptides, getNcbiDefinition);
-        case DataSource.GO: return getItems(analysis.goTable, analysis.goToPeptides, getGoDefinition);
-        case DataSource.EC: return getItems(analysis.ecTable, analysis.ecToPeptides, getEcDefinition);
-        case DataSource.INTERPRO: return getItems(analysis.iprTable, analysis.iprToPeptides, getIprDefinition);
+        case DataSource.NCBI: return getItems(analysis.lcaTable!, analysis.lcaToPeptides!, getNcbiDefinition);
+        case DataSource.GO: return getItems(analysis.goTable!, analysis.goToPeptides!, getGoDefinition);
+        case DataSource.EC: return getItems(analysis.ecTable!, analysis.ecToPeptides!, getEcDefinition);
+        case DataSource.INTERPRO: return getItems(analysis.iprTable!, analysis.iprToPeptides!, getIprDefinition);
         default: return [];
     }
 });
@@ -72,21 +81,11 @@ watch(() => analysis, () => {
 watch(selectedDataSource, () => {
     selectedItems.value = [];
 });
-</script>
 
-<script lang="ts">
-import CountTable from "@/logic/processors/CountTable";
-
-enum DataSource {
-    NCBI = "NCBI taxonomy",
-    GO = "Gene Ontology",
-    EC = "Enzyme Commission",
-    INTERPRO = "Interpro"
-}
 
 const dataSources = Object.values(DataSource);
 
-const getItems = (countTable: CountTable, peptideMapping: Map<any, string>, ontology: any) => {
+const getItems = (countTable: CountTable<string | number>, peptideMapping: Map<number | string, string[]>, ontology: any) => {
     const items = [...countTable.entries()].map(([id, count]) => {
         const definition = ontology(id);
         return {

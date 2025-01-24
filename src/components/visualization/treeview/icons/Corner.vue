@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import Size from '../Treeview.vue';
+import {Size} from '../Treeview.vue';
 
 export interface Props {
     color?: string

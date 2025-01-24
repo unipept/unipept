@@ -1,7 +1,7 @@
-import {IconProps} from "vuetify";
+import {IconProps, IconSet} from "vuetify";
 import {h} from "vue";
 
-const unipeptIconsAliases: IconAliases = {
+const unipeptIconsAliases = {
     fileLightningOutline: 'unipept-file-lightning-outline'
 }
 

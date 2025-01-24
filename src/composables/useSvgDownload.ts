@@ -21,9 +21,17 @@ export default function useSvgDownload() {
         if (isSupported.value) {
             content.value = svgString;
 
-            await saveAs({
-                suggestedName: filename
-            }).catch(() => {});
+            try {
+                await saveAs({
+                    suggestedName: filename
+                });
+            } catch (error) {
+                // Check if the user is simply the result of the user cancelling the request. Rethrow the error
+                // otherwise.
+                if (!JSON.stringify(error).includes("The user aborted a request")) {
+                    throw error;
+                }
+            }
         } else {
             console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
 
