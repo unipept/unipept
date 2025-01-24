@@ -57,7 +57,7 @@ import AllNormalizerImage from "@/assets/normalization/all_normalizer.svg";
 import ColumnNormalizerImage from "@/assets/normalization/column_normalizer.svg";
 import RowNormalizerImage from "@/assets/normalization/row_normalizer.svg";
 import {computed} from "vue";
-import {NormalizationType} from "@/composables/new/useNormalization";
+import {NormalizationType} from "@/composables/useNormalization";
 
 const selected = defineModel<NormalizationType>({ default: NormalizationType.All });
 

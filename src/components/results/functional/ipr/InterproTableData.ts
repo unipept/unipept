@@ -1,5 +1,5 @@
 import {NcbiTreeNode} from "unipept-web-components";
-import CountTable from "@/logic/new/CountTable";
+import CountTable from "@/logic/processors/CountTable";
 import FunctionalTrust from "@/types/FunctionalTrust";
 
 /**

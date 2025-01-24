@@ -141,7 +141,7 @@ import {computed} from "vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
-import usePercentage from "@/composables/new/usePercentage";
+import usePercentage from "@/composables/usePercentage";
 
 export interface Props {
     assay: PeptideAnalysisStore

@@ -3,7 +3,7 @@ import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData} from "unipept-web-components";
 import {ref} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
-import CountTable from "@/logic/new/CountTable";
+import CountTable from "@/logic/processors/CountTable";
 
 export default function useGoProcessor() {
     const countTable = ref<CountTable<string>>();

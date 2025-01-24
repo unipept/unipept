@@ -1,6 +1,6 @@
 import {shallowRef} from "vue";
 import {NcbiTreeNode} from "unipept-web-components";
-import CountTable from "@/logic/new/CountTable";
+import CountTable from "@/logic/processors/CountTable";
 import useOntologyStore from "@/store/new/OntologyStore";
 
 export default function useNcbiTreeProcessor() {

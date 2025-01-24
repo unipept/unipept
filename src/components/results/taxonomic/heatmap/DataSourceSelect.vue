@@ -25,10 +25,10 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import DataSourceSelectTable from "./DataSourceSelectTable.vue";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {DataSourceTableItem} from "@/components/results/taxonomic/heatmap/DataSourceSelectTable.vue";
-import {GoNamespace} from "@/composables/new/ontology/useGoOntology";
-import {EcNamespace} from "@/composables/new/ontology/useEcOntology";
-import {InterproNamespace} from "@/composables/new/ontology/useInterproOntology";
-import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
+import {GoNamespace} from "@/composables/ontology/useGoOntology";
+import {EcNamespace} from "@/composables/ontology/useEcOntology";
+import {InterproNamespace} from "@/composables/ontology/useInterproOntology";
+import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 
 const {
     getNcbiDefinition,
@@ -75,7 +75,7 @@ watch(selectedDataSource, () => {
 </script>
 
 <script lang="ts">
-import CountTable from "@/logic/new/CountTable";
+import CountTable from "@/logic/processors/CountTable";
 
 enum DataSource {
     NCBI = "NCBI taxonomy",

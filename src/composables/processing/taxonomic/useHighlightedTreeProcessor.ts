@@ -1,5 +1,5 @@
 import {NcbiTreeNode} from "unipept-web-components";
-import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
+import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import HighlightTreeProcessorWebWorker from "../workers/highlightedTreeProcessor.worker.ts?worker&inline";
 
 export interface HighlightedTreeProcessorData {

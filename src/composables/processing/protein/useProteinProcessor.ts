@@ -3,7 +3,7 @@ import ProteinResponseCommunicator, {
     MetaProteinResponse,
     ProteinResponse
 } from "@/logic/communicators/unipept/protein/ProteinResponseCommunicator";
-import {DEFAULT_API_BASE_URL} from "@/logic/new/Constants";
+import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
 
 
 export default function useProteinProcessor(

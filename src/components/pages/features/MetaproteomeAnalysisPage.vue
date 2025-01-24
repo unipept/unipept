@@ -57,7 +57,7 @@ import {useRouter} from "vue-router";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
-import {SampleData} from "@/composables/new/communication/unipept/useSampleData";
+import {SampleData} from "@/composables/communication/unipept/useSampleData";
 
 const router = useRouter();
 const groupStore = useGroupAnalysisStore();

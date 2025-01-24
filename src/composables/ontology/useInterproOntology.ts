@@ -1,5 +1,5 @@
 import {ref} from "vue";
-import FunctionalDefinition from "@/logic/new/ontology/functional/FunctionalDefinition";
+import FunctionalDefinition from "@/logic/ontology/functional/FunctionalDefinition";
 
 export enum InterproNamespace {
     ActiveSite = "active site",

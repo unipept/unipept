@@ -91,11 +91,11 @@
 
 <script setup lang="ts">
 import {ref, watch, toRaw} from "vue";
-import usePercentage from "@/composables/new/usePercentage";
+import usePercentage from "@/composables/usePercentage";
 import {NcbiTreeNode} from "unipept-web-components";
-import useHighlightedTreeProcessor from "@/composables/new/processing/taxonomic/useHighlightedTreeProcessor";
+import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
-import useCsvDownload from "@/composables/new/useCsvDownload";
+import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/new/OntologyStore";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 

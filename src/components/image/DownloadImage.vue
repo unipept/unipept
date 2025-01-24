@@ -71,8 +71,8 @@
 
 <script setup lang="ts">
 import {computed, ref, watch} from "vue";
-import useSvgDownload from "@/composables/new/useSvgDownload";
-import usePngDownload from "@/composables/new/usePngDownload";
+import useSvgDownload from "@/composables/useSvgDownload";
+import usePngDownload from "@/composables/usePngDownload";
 import {toSvg} from "html-to-image";
 
 const { downloadSvg } = useSvgDownload();

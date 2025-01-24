@@ -146,7 +146,7 @@
 <script setup lang="ts">
 import Treeview from '@/components/visualization/treeview/Treeview.vue';
 import {computed, ref, watch} from "vue";
-import useTreeFilter from "@/composables/new/useTreeFilter";
+import useTreeFilter from "@/composables/useTreeFilter";
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore

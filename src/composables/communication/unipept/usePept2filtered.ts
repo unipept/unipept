@@ -2,7 +2,7 @@ import {ShareableMap} from "shared-memory-datastructures";
 import {PeptideData, PeptideDataSerializer} from "unipept-web-components";
 import { parallelLimit } from "async";
 import {ref} from "vue";
-import {DEFAULT_API_BASE_URL} from "@/logic/new/Constants";
+import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
 
 export default function usePept2filtered(
     baseUrl = DEFAULT_API_BASE_URL,

@@ -2,14 +2,14 @@ import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 import {ref} from "vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import useOntologyStore from "@/store/new/OntologyStore";
-import useProteinProcessor from "@/composables/new/processing/protein/useProteinProcessor";
+import useProteinProcessor from "@/composables/processing/protein/useProteinProcessor";
 import {defineStore} from "pinia";
-import useEcProcessor from "@/composables/new/processing/functional/useEcProcessor";
-import useGoProcessor from "@/composables/new/processing/functional/useGoProcessor";
-import useInterproProcessor from "@/composables/new/processing/functional/useInterproProcessor";
-import usePept2filtered from "@/composables/new/communication/unipept/usePept2filtered";
-import CountTable from "@/logic/new/CountTable";
-import useNcbiTreeProcessor from "@/composables/new/processing/taxonomic/useNcbiTreeProcessor";
+import useEcProcessor from "@/composables/processing/functional/useEcProcessor";
+import useGoProcessor from "@/composables/processing/functional/useGoProcessor";
+import useInterproProcessor from "@/composables/processing/functional/useInterproProcessor";
+import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
+import CountTable from "@/logic/processors/CountTable";
+import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTreeProcessor";
 
 const usePeptideAnalysisStore = (
     _id: string,

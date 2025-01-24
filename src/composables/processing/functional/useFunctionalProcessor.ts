@@ -1,6 +1,6 @@
-import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
+import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import FunctionalProcessorWebWorker from "../workers/functionalProcessor.worker.ts?worker";
-import FunctionalCode from "@/logic/new/ontology/functional/FunctionalCode";
+import FunctionalCode from "@/logic/ontology/functional/FunctionalCode";
 
 export interface FunctionalProcessorData {
     peptideCounts: Map<string, number>;

@@ -1,6 +1,6 @@
 import {ref} from "vue";
-import {convertEcNumberToEcNamespace} from "@/logic/new/ontology/functional/ec/EcNamespace";
-import FunctionalDefinition from "@/logic/new/ontology/functional/FunctionalDefinition";
+import {convertEcNumberToEcNamespace} from "@/logic/ontology/functional/ec/EcNamespace";
+import FunctionalDefinition from "@/logic/ontology/functional/FunctionalDefinition";
 
 export enum EcNamespace {
     // EC 1.x.x.x class

@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import useTimeFormatter from "@/composables/new/useTimeFormatter";
+import useTimeFormatter from "@/composables/useTimeFormatter";
 
 defineProps<{
     progress: number,

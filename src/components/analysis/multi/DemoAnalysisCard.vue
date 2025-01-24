@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import {SampleData} from "@/composables/new/communication/unipept/useSampleData";
+import {SampleData} from "@/composables/communication/unipept/useSampleData";
 
 const { samples } = defineProps<{
     samples: SampleData[]

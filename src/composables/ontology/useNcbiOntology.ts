@@ -1,7 +1,7 @@
 import {ref} from "vue";
-import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/new/Constants";
+import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
-import {NcbiTaxon} from "@/logic/new/ontology/taxonomic/Ncbi";
+import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 
 export default function useNcbiOntology(
     baseUrl = DEFAULT_API_BASE_URL,

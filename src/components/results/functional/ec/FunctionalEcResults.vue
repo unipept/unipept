@@ -43,7 +43,7 @@ import EcResultsTable from "@/components/results/functional/ec/EcResultsTable.vu
 import {computed, onMounted, ref, watch} from "vue";
 import useOntologyStore from "@/store/new/OntologyStore";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
-import useEcTreeProcessor from "@/composables/new/processing/functional/useEcTreeProcessor";
+import useEcTreeProcessor from "@/composables/processing/functional/useEcTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 import { EcResultsTableItem } from "@/components/results/functional/ec/EcResultsTable.vue"

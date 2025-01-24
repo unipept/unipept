@@ -1,6 +1,6 @@
 import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
-import CountTable from "@/logic/new/CountTable";
-import {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
+import CountTable from "@/logic/processors/CountTable";
+import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 
 export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
 export const DEFAULT_PEPTONIZER_WORKERS = 2;

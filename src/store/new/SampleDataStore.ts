@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import useSampleData from "@/composables/new/communication/unipept/useSampleData";
+import useSampleData from "@/composables/communication/unipept/useSampleData";
 
 const useSampleDataStore = () => defineStore(`sampleDataStore`, () => {
     const { samples, process: processSampleData } = useSampleData();

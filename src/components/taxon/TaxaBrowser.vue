@@ -136,11 +136,11 @@
 <script setup lang="ts">
 import {computed, onMounted, ref, watch} from "vue";
 import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
-import useAsync from "@/composables/new/useAsync";
-import {NcbiTaxon, NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
+import useAsync from "@/composables/useAsync";
+import {NcbiTaxon, NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
-import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/new/Constants";
-import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
+import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
+import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [

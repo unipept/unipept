@@ -92,10 +92,10 @@
 <script setup lang="ts">
 import {ref, watch, toRaw} from "vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
-import useHighlightedTreeProcessor from "@/composables/new/processing/taxonomic/useHighlightedTreeProcessor";
+import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import {NcbiTreeNode} from "unipept-web-components";
-import usePercentage from "@/composables/new/usePercentage";
-import useCsvDownload from "@/composables/new/useCsvDownload";
+import usePercentage from "@/composables/usePercentage";
+import useCsvDownload from "@/composables/useCsvDownload";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 
 const { download } = useCsvDownload();

@@ -1,7 +1,7 @@
 import {PeptideData} from "unipept-web-components";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideTrust from "@/types/PeptideTrust";
-import CountTable from "@/logic/new/CountTable";
+import CountTable from "@/logic/processors/CountTable";
 import {ref} from "vue";
 
 export default function usePeptideTrustProcessor() {

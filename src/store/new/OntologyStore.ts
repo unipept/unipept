@@ -1,8 +1,8 @@
 import {defineStore} from "pinia";
-import useEcOntology from "@/composables/new/ontology/useEcOntology";
-import useGoOntology from "@/composables/new/ontology/useGoOntology";
-import useInterproOntology from "@/composables/new/ontology/useInterproOntology";
-import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
+import useEcOntology from "@/composables/ontology/useEcOntology";
+import useGoOntology from "@/composables/ontology/useGoOntology";
+import useInterproOntology from "@/composables/ontology/useInterproOntology";
+import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 
 const useOntologyStore = defineStore('ontologyStore', () => {
     const { ontology: ecOntology, update: updateEcOntology } = useEcOntology();

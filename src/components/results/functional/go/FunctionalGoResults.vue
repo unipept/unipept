@@ -87,7 +87,7 @@ import {computed} from "vue";
 import QuickGoCard from "@/components/results/functional/go/QuickGoCard.vue";
 import {GoNamespace} from "unipept-web-components";
 import useOntologyStore from "@/store/new/OntologyStore";
-import CountTable from "@/logic/new/CountTable";
+import CountTable from "@/logic/processors/CountTable";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";

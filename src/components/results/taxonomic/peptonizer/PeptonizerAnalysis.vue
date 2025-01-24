@@ -131,15 +131,15 @@
 </template>
 
 <script setup lang="ts">
-import CountTable from "@/logic/new/CountTable";
+import CountTable from "@/logic/processors/CountTable";
 import {PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisStore";
 import {Ref, ref, watch} from "vue";
 import PeptonizerProgress from "@/components/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/results/taxonomic/peptonizer/PeptonizerChart.vue";
 import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
-import NcbiTaxon, {NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
-import usePeptonizerExport from "@/composables/new/usePeptonizerExport";
-import useCsvDownload from "@/composables/new/useCsvDownload";
+import NcbiTaxon, {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
+import usePeptonizerExport from "@/composables/usePeptonizerExport";
+import useCsvDownload from "@/composables/useCsvDownload";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
 
 const props = defineProps<{

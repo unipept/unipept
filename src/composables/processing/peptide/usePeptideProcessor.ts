@@ -1,5 +1,5 @@
-import CountTable from "@/logic/new/CountTable";
-import useAsyncWebWorker from "@/composables/new/useAsyncWebWorker";
+import CountTable from "@/logic/processors/CountTable";
+import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import {ref} from "vue";
 import PeptideProcessorWebWorker from "../workers/peptideProcessor.worker.ts?worker&inline";
 

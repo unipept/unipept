@@ -137,13 +137,13 @@ import FunctionalEcResults from "@/components/results/functional/ec/FunctionalEc
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import FunctionalIprResults from "@/components/results/functional/ipr/FunctionalIprResults.vue";
 import FilterFunctionalResults from "@/components/results/functional/FilterFunctionalResults.vue";
-import usePercentage from "@/composables/new/usePercentage";
+import usePercentage from "@/composables/usePercentage";
 import GoTableData from "@/components/results/functional/GoTableData";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
-import useCsvDownload from "@/composables/new/useCsvDownload";
+import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue";
 import {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";

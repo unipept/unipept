@@ -202,12 +202,12 @@
 
 <script setup lang="ts">
 import {computed, onMounted, ref, Ref, ComputedRef} from 'vue';
-import FunctionalDefinition from "@/logic/new/ontology/functional/FunctionalDefinition";
+import FunctionalDefinition from "@/logic/ontology/functional/FunctionalDefinition";
 import {PeptideData} from "unipept-web-components";
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
 import useOntologyStore from "@/store/new/OntologyStore";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
-import useStringUtils from "@/composables/new/useStringUtils";
+import useStringUtils from "@/composables/useStringUtils";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 
 type MatchedProtein = {

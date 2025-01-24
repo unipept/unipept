@@ -93,7 +93,7 @@ import {computed, ref, watch} from 'vue';
 import DataSourceSelect from './DataSourceSelect.vue';
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import NormalizationSelect from "@/components/results/taxonomic/heatmap/NormalizationSelect.vue";
-import useNormalization, {NormalizationType} from "@/composables/new/useNormalization";
+import useNormalization, {NormalizationType} from "@/composables/useNormalization";
 import {DataSourceTableItem} from "@/components/results/taxonomic/heatmap/DataSourceSelectTable.vue";
 import Heatmap from "@/components/results/taxonomic/heatmap/Heatmap.vue";
 

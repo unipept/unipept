@@ -95,11 +95,11 @@
 import AnalysisSummaryTable from "@/components/analysis/multi/AnalysisSummaryTable.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {computed, ref} from "vue";
-import usePercentage from "@/composables/new/usePercentage";
+import usePercentage from "@/composables/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
-import useCsvDownload from "@/composables/new/useCsvDownload";
-import usePeptideExport from "@/composables/new/usePeptideExport";
+import useCsvDownload from "@/composables/useCsvDownload";
+import usePeptideExport from "@/composables/usePeptideExport";
 import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDialog.vue";
 
 const { getNcbiDefinition } = useOntologyStore();

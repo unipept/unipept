@@ -1,9 +1,9 @@
 import {ref, Ref} from "vue";
 import {defineStore} from "pinia";
-import CountTable from "@/logic/new/CountTable";
-import {NcbiRank, NcbiTaxon} from "@/logic/new/ontology/taxonomic/Ncbi";
+import CountTable from "@/logic/processors/CountTable";
+import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import {Peptonizer, PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
-import useNcbiOntology from "@/composables/new/ontology/useNcbiOntology";
+import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcessor";
 import useOntologyStore from "@/store/new/OntologyStore";
 

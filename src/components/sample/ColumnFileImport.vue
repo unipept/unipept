@@ -177,7 +177,7 @@
 <script setup lang="ts">
 import {computed, onMounted, ref, Ref, toRef, watch} from "vue";
 import { SampleTableItem } from "@/components/sample/SampleTable.vue";
-import useFileParser from "@/composables/new/useFileParser";
+import useFileParser from "@/composables/useFileParser";
 
 interface DelimiterType {
     character: string,

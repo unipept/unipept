@@ -256,7 +256,7 @@ import AddSampleCard from "@/components/sample/AddSampleCard.vue";
 import {v4 as uuidv4} from "uuid";
 import FileUpload from "@/components/filesystem/FileUpload.vue";
 import ColumnFileImport from "@/components/sample/ColumnFileImport.vue";
-import useFileParser from "@/composables/new/useFileParser";
+import useFileParser from "@/composables/useFileParser";
 
 const emits = defineEmits<{
     (e: 'confirm', samples: SampleTableItem[]): void;

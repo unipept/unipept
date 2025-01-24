@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { computed, ref, ComputedRef, Ref } from 'vue';
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
-import {NcbiRank, NcbiTaxon} from "@/logic/new/ontology/taxonomic/Ncbi";
+import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {ProteinResponse} from "@/logic/communicators/unipept/protein/ProteinResponseCommunicator";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";

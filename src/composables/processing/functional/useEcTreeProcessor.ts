@@ -1,5 +1,5 @@
 import {ref} from "vue";
-import CountTable from "@/logic/new/CountTable";
+import CountTable from "@/logic/processors/CountTable";
 
 export default function useEcTreeProcessor() {
     const root = ref<DataNodeLike>();

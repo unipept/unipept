@@ -1,4 +1,4 @@
-import {NcbiId, NcbiRank} from "@/logic/new/ontology/taxonomic/Ncbi";
+import {NcbiId, NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 
 export default interface NcbiResponse {
     id: NcbiId,
