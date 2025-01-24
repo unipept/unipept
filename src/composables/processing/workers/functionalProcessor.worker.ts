@@ -58,7 +58,7 @@ const process = async ({
     // Counts per code is guaranteed to be sorted by count (note that JS Maps return values in the order they were
     // inserted!)
     const sortedCounts: Map<FunctionalCode, number> = new Map([...countsPerCode].sort(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         
         ([code1, count1]: [string, number], [code2, count2]: [string, number]) => count2 - count1
     ));
 

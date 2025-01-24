@@ -64,9 +64,8 @@ const chartOptions = computed<Options>(() => {
 
     // Extract entries from the Map, format values, and sort them
     const entries = Array.from(props.peptonizerResult.entries()).map(
-        ([key, value]) => [key, parseFloat(value.toFixed(2))]
+        ([key, value]) => [key, parseFloat(value.toFixed(2))] as [string, number]
     );
-    // @ts-ignore
     const sortedEntries = entries.sort((a, b) => b[1] - a[1]);
 
     // Extract keys and values from the sorted entries

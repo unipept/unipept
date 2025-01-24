@@ -41,7 +41,9 @@ class UnipeptPeptonizerProgressListener implements PeptonizerProgressListener {
         this.finished.value = true;
     }
 
-    peptonizerCancelled() {}
+    peptonizerCancelled() {
+        // Not required by Peptonizer
+    }
 
     taskStarted(_parameterSet: PeptonizerParameterSet, _workerId: number) {
         if (!this.initializationFinished.value) {
@@ -66,11 +68,17 @@ class UnipeptPeptonizerProgressListener implements PeptonizerProgressListener {
         this.etaSeconds.value = (timeSinceStart / this.currentProgress.value) * (100 - this.currentProgress.value);
     }
 
-    graphsUpdated(_currentGraph: number, _totalGraphs: number, _workerId: number): void {}
+    graphsUpdated(_currentGraph: number, _totalGraphs: number, _workerId: number): void {
+        // Not required
+    }
 
-    maxResidualUpdated(_maxResidual: number, _tolerance: number, _workerId: number): void {}
+    maxResidualUpdated(_maxResidual: number, _tolerance: number, _workerId: number): void {
+        // Not required
+    }
 
-    iterationsUpdated(_currentIteration: number, _totalIterations: number, _workerId: number): void {}
+    iterationsUpdated(_currentIteration: number, _totalIterations: number, _workerId: number): void {
+        // Not required
+    }
 }
 
 const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${sampleId}`, () => {
