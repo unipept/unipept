@@ -13,6 +13,13 @@ const baseURL = process.env.CI ? "/unipept" : "/";
 // https://vitejs.dev/config/
 export default defineConfig({
     base: baseURL,
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: "modern"
+            }
+        }
+    },
     plugins: [
         vue({
             template: { transformAssetUrls }
