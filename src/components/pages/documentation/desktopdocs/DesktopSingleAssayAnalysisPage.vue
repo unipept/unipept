@@ -69,7 +69,9 @@
             </h3>
             <p>
                 Once a study has been created, you can add a new assay by clicking the little file icon
-                (<v-icon x-small>mdi-file-plus-outline</v-icon>) on the right side of the study name. A dialog
+                (<v-icon x-small>
+                    mdi-file-plus-outline
+                </v-icon>) on the right side of the study name. A dialog
                 will pop up (see Figure 1). This dialog allows you to create one (or more!) assays at once. If you
                 click the <span class="font-weight-bold">Add assay</span> button, you will be prompted to choose between
                 two options. The first option (<span class="font-weight-bold">Empty assay</span>) allows you to manually

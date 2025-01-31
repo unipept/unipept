@@ -11,7 +11,12 @@
 
         <p>
             This method returns the taxonomic lowest common ancestor for a given tryptic peptide.
-            This is the same information as provided when performing a search with the <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link> in the web interface.
+            This is the same information as provided when performing a search with the <r-link
+                to="/tpa"
+                router
+            >
+                Tryptic Peptide Analysis
+            </r-link> in the web interface.
         </p>
 
         <!-- Request Card -->
@@ -22,7 +27,12 @@
         >
             <p>
                 The pept2lca method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/pept2lca</inline-code>.
-                <r-link to="#parameters" router>Parameters</r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
+                <r-link
+                    to="#parameters"
+                    router
+                >
+                    Parameters
+                </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
                 The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
             </p>
 
@@ -32,7 +42,12 @@
             <p>
                 <inline-code>input[]</inline-code> is a required parameter that takes one or more tryptic peptides.
                 Unipept will return the taxonomic lowest common ancestor for each of the <inline-code>input[]</inline-code> peptides based on their occurrence in UniProt entries.
-                To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link to="#example2" router>example</r-link>).
+                To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
+                    to="#example2"
+                    router
+                >
+                    example
+                </r-link>).
             </p>
 
             <static-alert title="Input size">
@@ -50,7 +65,12 @@
                 <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries.
-                This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link to="/tpa" router>Tryptic Peptide Analysis</r-link> in the web interface.
+                This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
+                    to="/tpa"
+                    router
+                >
+                    Tryptic Peptide Analysis
+                </r-link> in the web interface.
             </p>
 
             <h3 class="font-weight-medium">
@@ -60,7 +80,12 @@
                 <inline-code>extra</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, Unipept will return the complete lineage of the taxonomic lowest common ancestor.
-                See the  <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
+                See the  <r-link
+                    to="#response"
+                    router
+                >
+                    response
+                </r-link> section for an overview of the information fields returned.
             </p>
 
             <h3 class="font-weight-medium">
@@ -71,7 +96,12 @@
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
                 When both <inline-code>names</inline-code> and <inline-code>extra</inline-code> are set to <inline-code>true</inline-code>, Unipept will return the names of all ranks in the lineage of the taxonomic lowest common ancestor.
                 Setting only <inline-code>names</inline-code> to <inline-code>true</inline-code> will not result in additional information fields being returned.
-                See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
+                See the <r-link
+                    to="#response"
+                    router
+                >
+                    response
+                </r-link> section for an overview of the information fields returned.
             </p>
 
             <static-alert title="Performance penalty">

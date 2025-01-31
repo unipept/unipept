@@ -149,7 +149,9 @@
                 If your are planning to use the Unipept Desktop application to build custom targeted protein reference
                 databases (which are required for proteogenomics data analyses), then you also need to make sure that
                 <a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a> is installed and working on
-                your system. See <ResourceLink to="/desktop/configuration#docker">this page</ResourceLink> for more
+                your system. See <ResourceLink to="/desktop/configuration#docker">
+                    this page
+                </ResourceLink> for more
                 information on how to set up Docker Desktop with the Unipept Desktop application.
             </v-alert>
         </header-body-card>
@@ -479,7 +481,10 @@
                 A summary of all changes that were made between the current version of the application and the previous
                 version will always be displayed on the right side of the home page. This summary (for all versions)
                 is also available on our
-                <a class="link" href="https://github.com/unipept/unipept-desktop/releases">release notes page</a>.
+                <a
+                    class="link"
+                    href="https://github.com/unipept/unipept-desktop/releases"
+                >release notes page</a>.
             </p>
             <div class="mb-6">
                 <v-img

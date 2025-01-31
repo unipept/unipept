@@ -57,8 +57,8 @@
                     <v-tab
                         v-for="item in navItems"
                         :key="item.name"
-                        @click="navigateToPage(item)"
                         class="text-white font-weight-bold"
+                        @click="navigateToPage(item)"
                     >
                         {{ item.name }}
                     </v-tab>
@@ -67,7 +67,11 @@
         </v-app-bar>
 
         <v-main class="d-flex flex-column">
-            <v-container class="main-container flex-grow-1" style="max-width: 1400px;" fluid>
+            <v-container
+                class="main-container flex-grow-1"
+                style="max-width: 1400px;"
+                fluid
+            >
                 <router-view :key="navigationKey" />
             </v-container>
 
@@ -76,6 +80,7 @@
                 class="bg-grey-darken-3 d-flex"
                 style="flex: 0 0 auto; "
                 height="100px"
+                order="1000"
             >
                 <div style="width: 100%">
                     <div class="d-md-flex justify-space-between">
@@ -134,7 +139,7 @@
                     </div>
                     <div class="d-md-flex justify-space-between">
                         <div class="text-center text-grey mt-3 mt-md-0">
-                            © 2023 Universiteit Gent
+                            © 2025 Universiteit Gent
                         </div>
                         <div class="text-center mt-3 mt-md-0">
                             <router-link
@@ -187,12 +192,12 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-    { name: "Tryptic Peptide Analysis", path: "/tpa", forceReload: true },
-    { name: "Metaproteomics Analysis", path: "/mpa", forceReload: true },
+    { name: "Single Peptide Analysis", path: "/spa", forceReload: false },
+    { name: "Metaproteomics Analysis", path: "/mpa", forceReload: false },
     { name: "API", path: "/apidocs", forceReload: false },
     { name: "CLI", path: "/clidocs", forceReload: false },
     { name: "Metagenomics", path: "/umgap", forceReload: false },
-    { name: "Unipept Desktop", path: "/desktop", forceReload: false }
+    { name: "Unipept Desktop", path: "/desktop", forceReload: false },
 ];
 
 QueueManager.initializeQueue(configStore.taskQueueSize);
@@ -204,7 +209,7 @@ onBeforeMount(async () => {
     uniprotVersion.value = await unipeptCommunicator.uniprotVersion();
 });
 
-let navigationKey = ref<number>(1);
+const navigationKey = ref<number>(1);
 const navigateToPage = async function(navItem: NavItem) {
     await router.push(navItem.path);
 

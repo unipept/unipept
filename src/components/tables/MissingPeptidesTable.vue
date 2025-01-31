@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!-- @vue-ignore (TODO: types should work once data tables are not in labs anymore) -->
         <v-data-table
             :headers="headers"
             :loading="!items"
@@ -8,7 +7,7 @@
             :items-per-page="10"
         >
             <template #item.peptide="{ item }">
-                <span>{{ item.raw.peptide }}</span>
+                <span>{{ item.peptide }}</span>
             </template>
 
             <template #item.action="{ item }">
@@ -19,7 +18,7 @@
                             size="small"
                             variant="plain"
                             v-bind="props"
-                            @click="openItem(item.raw.peptide)"
+                            @click="openItem(item.peptide)"
                         />
                     </template>
                 </v-tooltip>
@@ -31,7 +30,6 @@
 <script setup lang="ts">
 import { Peptide } from 'unipept-web-components';
 import { computed, ref } from "vue";
-import { VDataTable } from "vuetify/labs/VDataTable";
 
 export interface Props {
     items: Peptide[]
@@ -39,7 +37,8 @@ export interface Props {
 
 const props = defineProps<Props>();
 
-const headers = ref([
+// @ts-ignore need to annotate this as any until Vuetify correctly exports the type of DataTableHeaders
+const headers: any = ref([
     {
         title: "Peptide",
         align: "start",

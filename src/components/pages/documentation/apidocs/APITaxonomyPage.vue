@@ -21,7 +21,12 @@
         >
             <p>
                 The taxonomy method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/taxonomy</inline-code>.
-                <r-link to="#parameters" router>Parameters</r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
+                <r-link
+                    to="#parameters"
+                    router
+                >
+                    Parameters
+                </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
                 The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
             </p>
 
@@ -30,7 +35,12 @@
             </h3>
             <p>
                 <inline-code>input[]</inline-code> is a required parameter that takes one or more taxon identifiers. Unipept will return the taxonomic information for the given taxa.
-                To pass multiple taxon identifiers, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link to="#example2" router>example</r-link>).
+                To pass multiple taxon identifiers, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
+                    to="#example2"
+                    router
+                >
+                    example
+                </r-link>).
             </p>
 
             <static-alert title="Input size">
@@ -48,7 +58,12 @@
                 <inline-code>extra</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, Unipept will return the complete lineage for each taxon.
-                See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
+                See the <r-link
+                    to="#response"
+                    router
+                >
+                    response
+                </r-link> section for an overview of the information fields returned.
             </p>
 
             <h3 class="font-weight-medium">
@@ -59,7 +74,12 @@
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
                 When both <inline-code>names</inline-code> and <inline-code>extra</inline-code> are set to <inline-code>true</inline-code>, Unipept will return the names of all ranks in the lineage of each organism.
                 Setting only <inline-code>names</inline-code> to <inline-code>true</inline-code> will not result in additional information fields being returned.
-                See the <r-link to="#response" router>response</r-link> section for an overview of the information fields returned.
+                See the <r-link
+                    to="#response"
+                    router
+                >
+                    response
+                </r-link> section for an overview of the information fields returned.
             </p>
 
             <static-alert title="Performance penalty">
@@ -240,7 +260,9 @@
             :response="response1"
         >
             <template #description>
-                This example retrieves taxonomic information for the organism <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>).
+                This example retrieves taxonomic information for the organism <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
+                    817
+                </r-link>).
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxonomy -d 'input[]=817'
@@ -257,7 +279,11 @@
             :response="response2"
         >
             <template #description>
-                This example retrieves taxonomic information for the organism <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>) and <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">329854</r-link>).
+                This example retrieves taxonomic information for the organism <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
+                    817
+                </r-link>) and <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">
+                    329854
+                </r-link>).
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854'
@@ -273,7 +299,9 @@
             :response="response3"
         >
             <template #description>
-                This example retrieves taxonomic information for the organism <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>), including its complete lineage.
+                This example retrieves taxonomic information for the organism <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
+                    817
+                </r-link>), including its complete lineage.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxonomy -d 'input[]=817' -d 'extra=true'
@@ -289,7 +317,9 @@
             :response="response4"
         >
             <template #description>
-                This example retrieves taxonomic information for the organism <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">817</r-link>), including its complete lineage with names.
+                This example retrieves taxonomic information for the organism <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
+                    817
+                </r-link>), including its complete lineage with names.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxonomy -d 'input[]=817' -d 'extra=true' -d 'names=true'

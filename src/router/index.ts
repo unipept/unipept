@@ -1,9 +1,14 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
 
-const tpaMeta = {
-    publication: "Vande Moortele et al. (2024) BioRXiv",
-    publicationLink: "doi.org/10.1101/2024.09.26.615136",
+const spaMeta = {
+    publication: "Vande Moortele et al. (2025) Journal of Proteome Research",
+    publicationLink: "doi.org/10.1021/acs.jproteome.4c00848",
+};
+
+const mpaMeta = {
+    publication: "Vande Moortele et al. (2025) Journal of Proteome Research",
+    publicationLink: "doi.org/10.1021/acs.jproteome.4c00848",
 };
 
 const apidocsMeta = {
@@ -41,23 +46,28 @@ const routes = [
         }
     },
     {
-        path: "/tpa",
-        component: () => import("@/components/pages/features/TrypticPeptideAnalysisPage.vue"),
-        meta: tpaMeta
+        path: "/spa",
+        alias: "/tpa",
+        component: () => import("@/components/pages/features/SinglePeptideAnalysisPage.vue"),
+        meta: spaMeta
     },
     {
-        path: "/tpa/:sequence",
-        name: "tpaResult",
-        component: () => import("@/components/pages/features/TrypticPeptideAnalysisResultPage.vue"),
-        meta: tpaMeta
+        path: "/spa/:sequence",
+        alias: "/tpa/:sequence",
+        name: "spaResult",
+        component: () => import("@/components/pages/features/SinglePeptideAnalysisResultPage.vue"),
+        meta: spaMeta
     },
     {
         path: "/mpa",
         component: () => import("@/components/pages/features/MetaproteomeAnalysisPage.vue"),
-        meta: {
-            publication: "Vande Moortele et al. (2024) BioRXiv",
-            publicationLink: "doi.org/10.1101/2024.09.26.615136"
-        }
+        meta: mpaMeta
+    },
+    {
+        path: "/mpa/results",
+        name: "mpaResults",
+        component:  () => import("@/components/pages/features/MetaproteomeResultsPage.vue"),
+        meta: mpaMeta
     },
     {
         path: "/apidocs",
@@ -176,7 +186,7 @@ const routes = [
             publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
             publicationLink: "doi:10.1021/acs.jproteome.8b00716"
         }
-    },
+    }
 ]
 
 const router = createRouter({

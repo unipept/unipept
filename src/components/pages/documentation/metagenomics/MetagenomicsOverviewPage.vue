@@ -29,7 +29,12 @@
 
         <p class="mt-5">
             The <initialism>UMGAP</initialism> is a collection of command line tools. Combine them into your own pipeline to identify
-            (short) shotgun metagenomics reads guided by our <RLink to="/umgap/casestudies" router>case studies</RLink>, or use one of the
+            (short) shotgun metagenomics reads guided by our <RLink
+                to="/umgap/casestudies"
+                router
+            >
+                case studies
+            </RLink>, or use one of the
             preconfigured pipelines. After each read is assigned a taxon, collect the results in frequency tabels and interactive
             visualizations. With communication via <i>standard input</i> and <i>standard output</i>, and an easy to understand,
             consistent intermediate format, it's easy to plug your own extensions into the pipeline.
@@ -50,9 +55,18 @@
         </p>
 
         <p>
-            The UMGAP is free and open-source software under the MIT License and all code is available on <RLink to="https://github.com/unipept/umgap">Github</RLink>.
+            The UMGAP is free and open-source software under the MIT License and all code is available on <RLink to="https://github.com/unipept/umgap">
+                Github
+            </RLink>.
             In case you have encountered an issue using these tools, have feature requests or found a bug, don't hesitate to contact us
-            by email (<RLink to="unipept@ugent.be" mail>unipept@ugent.be</RLink>), or create an <RLink to="https://github.com/unipept/umgap/issues">issue</RLink> on Github.
+            by email (<RLink
+                to="unipept@ugent.be"
+                mail
+            >
+                unipept@ugent.be
+            </RLink>), or create an <RLink to="https://github.com/unipept/umgap/issues">
+                issue
+            </RLink> on Github.
         </p>
 
         <header-body-card
@@ -75,8 +89,8 @@
                 <tbody>
                     <tr
                         v-for="item in functions"
-                        class="clickable"
                         :key="item.resource"
+                        class="clickable"
                         @click="navigate(item.link)"
                     >
                         <td>
@@ -113,14 +127,18 @@
             >
                 <p>
                     If the <inline-code>rustc --version</inline-code> command returns <i>command not found</i>, Rust is not yet installed on your system. More
-                    information on installing Rust can be found at <RLink to="https://www.rust-lang.org/tools/install">https://www.rust-lang.org/tools/install</RLink>.
+                    information on installing Rust can be found at <RLink to="https://www.rust-lang.org/tools/install">
+                        https://www.rust-lang.org/tools/install
+                    </RLink>.
                 </p>
             </static-alert>
 
             <p>
                 The next step is to download the UMGAP source code. The easiest way to do this, is by cloning our git repository using
                 <inline-code>git clone https://github.com/unipept/umgap.git</inline-code>. Alternatively, you can also click the download button on
-                <RLink to="https://github.com/unipept/umgap">Github</RLink>.
+                <RLink to="https://github.com/unipept/umgap">
+                    Github
+                </RLink>.
             </p>
 
             <p>
@@ -170,7 +188,12 @@
         >
             <p>
                 To update <initialism>UMGAP</initialism>, simply repeat the install instructions and be sure to redownload the source code. The
-                changes between releases are listed in the <RLink to="/news/umgap" router>changelog</RLink>.
+                changes between releases are listed in the <RLink
+                    to="/news/umgap"
+                    router
+                >
+                    changelog
+                </RLink>.
             </p>
         </header-body-card>
 
@@ -182,7 +205,9 @@
         >
             <p>
                 If you want to use FragGeneScanPlusPlus as gene predictor, this needs to be installed as well. Instructions can be
-                found at <RLink to="https://github.com/unipept/FragGeneScanPlusPlus">https://github.com/unipept/FragGeneScanPlusPlus</RLink>.
+                found at <RLink to="https://github.com/unipept/FragGeneScanPlusPlus">
+                    https://github.com/unipept/FragGeneScanPlusPlus
+                </RLink>.
             </p>
 
             <p>

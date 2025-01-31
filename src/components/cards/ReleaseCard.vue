@@ -13,7 +13,7 @@
         >
             <v-hover v-slot="{ isHovering, props }">
                 <v-card
-                    :hover="isHovering"
+                    :hover="!!isHovering"
                     v-bind="props"
                 >
                     <v-card-title class="bg-blue text-white pa-4 ">
@@ -30,7 +30,7 @@
                         v-if="changelog.description"
                         class="px-5 pt-5 mb-n7"
                     >
-                        <div v-html="changelog.description"></div>
+                        <div v-html="changelog.description" />
                     </v-card-text>
 
                     <v-card-text class="mt-5">

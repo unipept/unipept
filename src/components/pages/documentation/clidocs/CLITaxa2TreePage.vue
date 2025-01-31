@@ -11,7 +11,12 @@
 
         <p>
             The <inline-code>unipept taxa2lca</inline-code> command takes one or more <initialism>NCBI</initialism> taxon id's as input and returns the taxonomic tree of these
-            taxa as output. All this information is fetched by doing  <r-link to="/apidocs/taxa2tree" router><initialism>API</initialism>-requests</r-link> to the
+            taxa as output. All this information is fetched by doing  <r-link
+                to="/apidocs/taxa2tree"
+                router
+            >
+                <initialism>API</initialism>-requests
+            </r-link> to the
             Unipept server.
         </p>
 
@@ -38,7 +43,12 @@
 
             <h3>File input</h3>
             <p>
-                Use the <r-link to="#options" router>--input parameter</r-link> to specify a file to use as input. If input is supplied using a file, a single
+                Use the <r-link
+                    to="#options"
+                    router
+                >
+                    --input parameter
+                </r-link> to specify a file to use as input. If input is supplied using a file, a single
                 peptide per line is expected.
             </p>
 
@@ -78,14 +88,29 @@
             <p>
                 The <inline-code>unipept taxa2tree</inline-code> command outputs the taxonomic tree for a given set of taxon IDs. By default, the <initialism>NCBI</initialism> taxon id,
                 taxon name, taxonomic rank, count and self count of each node in the tree are returned in the json format. Consult the
-                <r-link to="/apidocs/taxa2tree" router><initialism>API</initialism> documentation</r-link> for a detailed list of output fields. By default, output is
-                generated in json format. By using the <r-link to="#options" router>--format parameter</r-link>, the format can be changed into html or an url. The output
+                <r-link
+                    to="/apidocs/taxa2tree"
+                    router
+                >
+                    <initialism>API</initialism> documentation
+                </r-link> for a detailed list of output fields. By default, output is
+                generated in json format. By using the <r-link
+                    to="#options"
+                    router
+                >
+                    --format parameter
+                </r-link>, the format can be changed into html or an url. The output
                 can be written to a file or to <i>standard output</i>.
             </p>
 
             <h3>File output</h3>
             <p>
-                Use the <r-link to="#options" router>--output parameter</r-link> to specify an output file. If the file aready exists, the output will be
+                Use the <r-link
+                    to="#options"
+                    router
+                >
+                    --output parameter
+                </r-link> to specify an output file. If the file aready exists, the output will be
                 appended to the end of the file.
             </p>
 
@@ -158,9 +183,12 @@
             <h4>Example</h4>
             <boxed style="padding-bottom: 16px; white-space: pre;">
                 <sentinel>$</sentinel> unipept taxa2tree <b>--format</b> url 817 329854 1099853
-                <br><a href="https://bl.ocks.org/2c8279c53874528aa3f1ddd018953e60" target="_blank">https://bl.ocks.org/2c8279c53874528aa3f1ddd018953e60</a>
+                <br><a
+                    href="https://bl.ocks.org/2c8279c53874528aa3f1ddd018953e60"
+                    target="_blank"
+                >https://bl.ocks.org/2c8279c53874528aa3f1ddd018953e60</a>
                 <br><sentinel>$</sentinel> unipept taxa2lca <b>--format</b> html 817 329854 1099853
-<pre>
+                <pre>
 &lt;!DOCTYPE html>
 &lt;html>
     &lt;head>

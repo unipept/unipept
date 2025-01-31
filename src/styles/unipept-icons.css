@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'unipept-icons';
+  src: url('@/fonts/unipept-icons/unipept-icons.eot?48663431');
+  src: url('@/fonts/unipept-icons/unipept-icons.eot?48663431#iefix') format('embedded-opentype'),
+       url('@/fonts/unipept-icons/unipept-icons.woff2?48663431') format('woff2'),
+       url('@/fonts/unipept-icons/unipept-icons.woff?48663431') format('woff'),
+       url('@/fonts/unipept-icons/unipept-icons.ttf?48663431') format('truetype'),
+       url('@/fonts/unipept-icons/unipept-icons.svg?48663431#unipept-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="unipept-icon-"]:before, [class*=" unipept-icon-"]:before {
+  display: inline-block;
+  font: normal normal normal 24px/1 "unipept-icons";
+  font-size: inherit;
+  text-rendering: auto;
+  line-height: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.unipept-icon-file-lightning-outline:before { content: '\e800'; } /* '' */

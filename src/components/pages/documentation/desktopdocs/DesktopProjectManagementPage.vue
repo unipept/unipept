@@ -33,7 +33,10 @@
                     <span class="font-weight-bold">Project:</span>
                     A project is a collection of studies, and every study is a collection of assays. This terminology
                     adheres to the definitions found in the
-                    <a class="link" href="https://isa-specs.readthedocs.io/en/latest/isatab.html">ISA-tab standard</a>.
+                    <a
+                        class="link"
+                        href="https://isa-specs.readthedocs.io/en/latest/isatab.html"
+                    >ISA-tab standard</a>.
                 </li>
                 <li>
                     <span class="font-weight-bold">Study:</span>
