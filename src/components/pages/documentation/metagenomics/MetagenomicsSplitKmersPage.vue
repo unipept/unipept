@@ -31,7 +31,7 @@
             </p>
 
             <boxed style="max-height: fit-content;">
-<pre>
+                <pre>
 <sentinel>$</sentinel> <b>cat input.tsv</b>
 654924	MNAKYDTDQGVGRMLFLGTIGLAVVVGGLMAYGYYYDGKTPSSGTSFHTASPSFSSRYRY
 176652	MIKLFCVLAAFISINSACQSSHQQREEFTVATYHSSSICTTYCYSNCVVASQHKGLNVESYTCDKPDPYGRETVCKCTLIKCHDI

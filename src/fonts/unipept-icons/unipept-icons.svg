@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2025 by original authors @ fontello.com</metadata>
+<defs>
+<font id="unipept-icons" horiz-adv-x="1000" >
+<font-face font-family="unipept-icons" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="file-lightning-outline" unicode="&#xe800;" d="M583 767h-333c-46 0-83-38-83-84v-666c0-46 37-84 83-84h500c46 0 83 38 83 84v500z m167-750h-500v666h292v-208h208z m-346 206h-104l146 303v-173h104l-146-304z" horiz-adv-x="1000" />
+</font>
+</defs>
+</svg>

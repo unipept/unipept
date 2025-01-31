@@ -12,11 +12,27 @@
                     The Unipept web application supports biodiversity and functional analysis of large and complex metaproteome samples.
                     Its underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProt entries.
                     Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common ancestor approach that is robust against taxonomic misarrangements, misidentifications and inaccuracies.
-                    This application consists of two separate functionalities: the <RLink to="/tpa" router>Tryptic Peptide Analysis</RLink> and the <RLink to="/mpa" router>Metaproteomics Analysis</RLink>.
+                    This application consists of two separate functionalities: the <RLink
+                        to="/tpa"
+                        router
+                    >
+                        Tryptic Peptide Analysis
+                    </RLink> and the <RLink
+                        to="/mpa"
+                        router
+                    >
+                        Metaproteomics Analysis
+                    </RLink>.
                 </p>
                 <p>
-                    The initial Unipept publication can be found at <RLink to="https://pubs.acs.org/doi/10.1021/pr300576s">Unipept: tryptic peptide-based biodiversity analysis of metaproteome samples</RLink>, a follow up publication can be found at <RLink to="https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/pmic.201400361">The Unipept Metaproteomics Analysis Pipeline</RLink>.
-                    The API was published as <RLink to="https://academic.oup.com/bioinformatics/article/32/11/1746/1742840?login=false">Unipept Web Services for Metaproteomics Analysis</RLink>.
+                    The initial Unipept publication can be found at <RLink to="https://pubs.acs.org/doi/10.1021/pr300576s">
+                        Unipept: tryptic peptide-based biodiversity analysis of metaproteome samples
+                    </RLink>, a follow up publication can be found at <RLink to="https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/pmic.201400361">
+                        The Unipept Metaproteomics Analysis Pipeline
+                    </RLink>.
+                    The API was published as <RLink to="https://academic.oup.com/bioinformatics/article/32/11/1746/1742840?login=false">
+                        Unipept Web Services for Metaproteomics Analysis
+                    </RLink>.
                 </p>
             </v-col>
 
@@ -37,10 +53,10 @@
                                 </RLink>
                             </li>
                             <li>
-                              Unipept Desktop 2.0: Verschaffelt et al. (2023)
-                              <RLink to="https://doi.org/10.1021/acs.jproteome.3c00091">
-                                  doi.org/10.1021/acs.jproteome.3c00091
-                              </RLink>
+                                Unipept Desktop 2.0: Verschaffelt et al. (2023)
+                                <RLink to="https://doi.org/10.1021/acs.jproteome.3c00091">
+                                    doi.org/10.1021/acs.jproteome.3c00091
+                                </RLink>
                             </li>
                             <li>
                                 Unipept Desktop: Verschaffelt et al. (2021)
@@ -170,14 +186,16 @@ import HeaderBodyCard from '../cards/HeaderBodyCard.vue';
 import MemberCard from '../cards/MemberCard.vue';
 import elixirLogoImage from "@/assets/about/elixir-logo.svg";
 import ugentLogoImage from "@/assets/about/ugent-logo.png";
+import timProfilePicture from "@/assets/profiles/tim_van_den_bossche.png?url"
+import tanjaProfilePicture from "@/assets/profiles/tanja_holstein.png?url"
 
 const members = [
     { name: "Bart Mesuere", title: "Project lead", imgUrl: "https://avatars.githubusercontent.com/u/481872?v=4" },
     { name: "Pieter Verschaffelt", title: "PostDoc", imgUrl: "https://avatars.githubusercontent.com/u/9608686?v=4" },
-    { name: "Tim Van Den Bossche", title: "PostDoc", imgUrl: "" },
+    { name: "Tim Van Den Bossche", title: "PostDoc", imgUrl: timProfilePicture },
     { name: "Tibo Vande Moortele", title: "PhD student", imgUrl: "https://avatars.githubusercontent.com/u/34175340?v=4" },
     { name: "Simon Van de Vyver", title: "PhD student", imgUrl: "" },
-    { name: "Tanja Holstein", title: "PhD student", imgUrl: "" },
+    { name: "Tanja Holstein", title: "PhD student", imgUrl: tanjaProfilePicture },
     { name: "Jasper Janin", title: "Master student 2024 - 2025", imgUrl: "" },
     { name: "Peter Dawyndt", title: "P.I.", imgUrl: "https://avatars.githubusercontent.com/u/5736113?v=4" },
     { name: "Lennart Martens", title: "P.I.", imgUrl: "" }

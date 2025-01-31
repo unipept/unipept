@@ -1,0 +1,28 @@
+.icon {
+  display: flex;
+}
+
+.icon.x-small {
+  width: 1em !important;
+  height: 1em !important;
+}
+
+.icon.small {
+  width: 1.25em !important;
+  height: 1.25em !important;
+}
+
+.icon.default {
+  width: 1.5em !important;
+  height: 1.5em !important;
+}
+
+.icon.large {
+  width: 1.75em !important;
+  height: 1.75em !important;
+}
+
+.icon.x-large {
+  width: 2em !important;
+  height: 2em !important;
+}

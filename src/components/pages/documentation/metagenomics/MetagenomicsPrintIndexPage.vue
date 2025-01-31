@@ -19,7 +19,7 @@
             large-title
         >
             <boxed style="max-height: fit-content;">
-<pre>
+                <pre>
 <sentinel>$</sentinel> <b>umgap printindex tryptic.index</b>
 ...
 AAAAADRPANEIGGR	293089

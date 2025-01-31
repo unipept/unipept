@@ -12,7 +12,12 @@
         <p>
             The <inline-code>prot2pept</inline-code> command takes one or more protein sequences as input, performs an in silico tryptic digest on them and returns the
             digested peptides as output. By default, a trypsin digest is simulated, but other proteases can be specified by using the
-            <r-link to="#options" router>--patern parameter</r-link>. This command runs entirely locally and doesn't connect to any server.
+            <r-link
+                to="#options"
+                router
+            >
+                --patern parameter
+            </r-link>. This command runs entirely locally and doesn't connect to any server.
         </p>
 
         <header-body-card

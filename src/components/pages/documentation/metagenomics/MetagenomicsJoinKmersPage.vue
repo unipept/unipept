@@ -36,7 +36,7 @@
             </p>
 
             <boxed style="max-height: fit-content;">
-<pre>
+                <pre>
 <sentinel>$</sentinel> <b>cat input.tsv</b>
 AAAAA	34924
 AAAAA	30423

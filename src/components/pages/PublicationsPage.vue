@@ -9,6 +9,26 @@
 
         <publication-card
             class="mt-5"
+            title="Biodiversity Analysis of Metaproteomics Samples with Unipept: A Comprehensive Tutorial"
+            :authors='["Tim Van Den Bossche", "Pieter Verschaffelt", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere"]'
+            journal="Protein Bioinformatics"
+            year="2024"
+            doi="doi.org/10.1007/978-1-0716-4007-4_11"
+            google-scholar="https://scholar.google.com/scholar?cluster=6092631055419369067&hl=nl&as_sdt=0,5"
+            :image="Publication2024Image"
+        >
+            <template #abstract>
+                Metaproteomics has become a crucial omics technology for studying microbiomes.
+                In this area, the Unipept ecosystem, accessible at https://unipept.ugent.be, has emerged as a valuable resource for analyzing metaproteomic data.
+                It offers in-depth insights into both taxonomic distributions and functional characteristics of complex ecosystems.
+                This tutorial explains essential concepts like Lowest Common Ancestor (LCA) determination and the handling of peptides with missed cleavages.
+                It also provides a detailed, step-by-step guide on using the Unipept Web application and Unipept Desktop for thorough metaproteomics analyses.
+                By integrating theoretical principles with practical methodologies, this tutorial empowers researchers with the essential knowledge and tools needed to fully utilize metaproteomics in their microbiome studies.
+            </template>
+        </publication-card>
+
+        <publication-card
+            class="mt-5"
             title="Unipept in 2024: Expanding Metaproteomics Analysis with Support for Missed Cleavages, Semi-Tryptic and Non-Tryptic Peptides"
             :authors='["Tibo Vande Moortele", "Bram Devlaminck", "Simon Van de Vyver", "Tim Van Den Bossche", "Lennart Martens", "Peter Dawyndt", "Bart Mesuere", "Pieter Verschaffelt"]'
             journal="BioRXiv"
@@ -136,7 +156,12 @@
                 In recent years, shotgun metaproteomics has established itself as an important tool to study the composition of complex
                 ecosystems and microbial communities. Two key steps in metaproteomics data analysis are the inference of proteins from
                 the identified peptides, and the determination of the taxonomic origin and function of these proteins. This tutorial
-                therefore introduces the Unipept command line interface (<RLink to="/clidocs" router>http://unipept.ugent.be/clidocs</RLink> )
+                therefore introduces the Unipept command line interface (<RLink
+                    to="/clidocs"
+                    router
+                >
+                    http://unipept.ugent.be/clidocs
+                </RLink> )
                 as a platform-independent tool for such metaproteomics data analyses. First, a detailed overview is given of the
                 available Unipept commands and their functions. Next, the power of the Unipept command line interface is illustrated
                 using two case studies that analyze a single tryptic peptide, and a set of peptides retrieved from a shotgun
@@ -187,7 +212,9 @@
                 retrieval of all UniProt entries in which a given tryptic peptide occurs. Unipept version 2.4 introduced web services
                 that provide programmatic access to the metaproteomics analysis features. This enables integration of Unipept
                 functionality in custom applications and data processing pipelines. Availability and Implementation The web services
-                are freely available at <RLink to="http://api.unipept.ugent.be">http://api.unipept.ugent.be</RLink>> and are open
+                are freely available at <RLink to="http://api.unipept.ugent.be">
+                    http://api.unipept.ugent.be
+                </RLink>> and are open
                 sourced under the <Initialism>MIT</Initialism> license.
             </template>
         </publication-card>
@@ -204,7 +231,12 @@
             :image="Publication2015Image"
         >
             <template #abstract>
-                Unipept (<RLink to="/" router>http://unipept.ugent.be</RLink>) is a web application that offers a user-friendly way to
+                Unipept (<RLink
+                    to="/"
+                    router
+                >
+                    http://unipept.ugent.be
+                </RLink>) is a web application that offers a user-friendly way to
                 explore the biodiversity of complex metaproteome samples by providing interactive visualizations. In this article, the
                 updates and changes to Unipept since its initial release are presented. This includes the addition of interactive
                 sunburst and treeview visualizations to the multipeptide analysis, the foundations of an application programming
@@ -225,7 +257,12 @@
             :image="Publication2012Image"
         >
             <template #abstract>
-                The Unipept web application (<RLink to="/" router>http://unipept.ugent.be</RLink>) supports biodiversity analysis of
+                The Unipept web application (<RLink
+                    to="/"
+                    router
+                >
+                    http://unipept.ugent.be
+                </RLink>) supports biodiversity analysis of
                 large and complex metaproteome samples using tryptic peptide information obtained from shotgun <Initialism>MS/MS</Initialism> experiments. Its
                 underlying index structure is designed to quickly retrieve all occurrences of a tryptic peptide in UniProt entries.
                 Taxon-specificity of the tryptic peptide is successively derived from these occurrences using a novel lowest common
@@ -243,6 +280,7 @@
 import PublicationCard from '../cards/PublicationCard.vue';
 import Initialism from '../highlights/Initialism.vue';
 import RLink from '../highlights/ResourceLink.vue';
+import Publication2024Image from '@/assets/publications-2024.jpg';
 import Publication2023Image from '@/assets/publications-2023.jpg';
 import Publication2021Image from '@/assets/publications-2021.jpg';
 import Publication2020Image from '@/assets/publications-2020.jpg';

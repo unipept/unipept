@@ -31,7 +31,7 @@
             </p>
 
             <boxed style="max-height: fit-content;">
-<pre>
+                <pre>
 <sentinel>$</sentinel> <b>cat input.txt</b>
 2026807
 888268
@@ -53,7 +53,7 @@ taxon_id	taxon_name	taxon_rank
             </p>
 
             <boxed>
-<pre>
+                <pre>
 <sentinel>$</sentinel> <b>cat input2.fa</b>
 >header1
 2026807
@@ -76,7 +76,7 @@ taxon_id	taxon_name	taxon_rank
             </p>
 
             <boxed>
-<pre>
+                <pre>
 <sentinel>$</sentinel> <b>cat input3.fa</b>
 888268
 <sentinel>$</sentinel> <b>umgap taxonomy -a taxons.tsv &lt; input3.fa</b>

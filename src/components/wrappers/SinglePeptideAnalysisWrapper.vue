@@ -1,9 +1,10 @@
 <template>
-    <div>
+    <div
+        v-if="analysisStore.status === AnalysisStatus.Finished"
+    >
         <single-peptide-summary
-            class="my-5"
-            :assay="analysisStore.assay"
-            :toggle-fullcreen="toggle"
+            class="mb-4"
+            :assay="analysisStore"
             go-link
             ec-link
             interpro-link
@@ -11,9 +12,9 @@
             @ec-link-clicked="() => onEcClicked()"
             @interpro-link-clicked="() => onInterproClicked()"
         />
-        <single-peptide-analysis
+        <single-peptide-analysis-results-card
             id="Analysis"
-            :assay="analysisStore.assay"
+            :assay="analysisStore"
             :tab="currentTab"
             @tab-update="currentTab = $event"
         />
@@ -22,9 +23,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { SinglePeptideSummary, SinglePeptideAnalysis } from 'unipept-web-components';
 import { useFullscreen } from '@vueuse/core';
-import useSingleAnalysis from "@/store/SingleAnalysisStore";
+import usePeptideAnalysisStore from "@/store/new/PeptideAnalysisStore";
+import {v4 as uuidv4} from "uuid";
+import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import SinglePeptideAnalysisResultsCard from "@/components/analysis/single/SinglePeptideAnalysisResultsCard.vue";
+import SinglePeptideSummary from "@/components/results/SinglePeptideSummary.vue";
+
 export interface Props {
     peptide: string
     equateIl: boolean
@@ -32,13 +37,20 @@ export interface Props {
 
 const { peptide, equateIl } = defineProps<Props>();
 
-const analysisStore = useSingleAnalysis();
-
-const { toggle } = useFullscreen();
+const analysisStore = usePeptideAnalysisStore(
+    uuidv4(),
+    peptide,
+    {
+        equate: equateIl,
+        filter: false,
+        missed: true,
+        database: ""
+    }
+);
 
 const currentTab = ref<string>("matched-proteins");
 
-analysisStore.analyse(peptide, equateIl);
+analysisStore.analyse();
 
 const onGoClicked = () => {
     currentTab.value = "go-terms";

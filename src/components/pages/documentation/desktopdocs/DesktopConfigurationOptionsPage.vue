@@ -61,7 +61,10 @@
             </h3>
             <p>
                 If you are using our online service for the analysis of a sample, you are typically using the
-                <a class="link" href="https://api.unipept.ugent.be">https://api.unipept.ugent.be</a> endpoint. Sometimes, however,
+                <a
+                    class="link"
+                    href="https://api.unipept.ugent.be"
+                >https://api.unipept.ugent.be</a> endpoint. Sometimes, however,
                 you might be interested to use a custom endpoint that's set up by a third party. This allows you, for
                 example, to use a local instance of the Unipept API-server and avoid sensitive data to be sent over
                 the internet. Add custom API-endpoints that adhere to the Unipept API-specification here. You can
@@ -127,7 +130,10 @@
                 <span class="font-weight-bold">Warning:</span>
                 Make sure that Docker Desktop is properly installed on your system. Otherwise, the settings for this
                 configuration options will not have any effect (and analyses using targeted protein reference
-                databases will not work properly). Check <a class="link" href="https://docs.docker.com/get-docker/">this guide</a>
+                databases will not work properly). Check <a
+                    class="link"
+                    href="https://docs.docker.com/get-docker/"
+                >this guide</a>
                 for a quick explanation on how to install Docker on your system.
             </v-alert>
 
@@ -139,7 +145,10 @@
                 Normally, the correct default connection settings for your system are used by default. If, however,
                 the application is unable to connect to the Docker daemon, then please verify that the settings here
                 are correct and adjust where necessary. You can check
-                <a class="link" href="https://github.com/apocas/dockerode#getting-started">this webpage</a> for more information on
+                <a
+                    class="link"
+                    href="https://github.com/apocas/dockerode#getting-started"
+                >this webpage</a> for more information on
                 what configuration values are excepted.
             </p>
 
