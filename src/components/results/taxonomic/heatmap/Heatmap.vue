@@ -18,6 +18,7 @@
     </visualization-controls>
 
     <download-image
+        v-if="svg"
         v-model="downloadImageModalOpen"
         :image="svg"
         filename="heatmap"
@@ -37,7 +38,7 @@ const props = defineProps<{
     columnLabels: string[]
 }>();
 
-const controls = useTemplateRef("controls");
+const controls = useTemplateRef<HTMLElement>("controls");
 const visualization = useTemplateRef("visualization");
 const visualizationObject = ref<UnipeptHeatmap | undefined>(undefined);
 
@@ -45,8 +46,12 @@ const rotated = ref(false);
 const downloadImageModalOpen = ref(false);
 
 const svg = computed(() => {
+    if (!visualizationObject.value) {
+        return;
+    }
+
     const svgString = visualizationObject.value?.toSVG();
-    return new DOMParser().parseFromString(svgString, "image/svg+xml").documentElement as SVGElement;
+    return new DOMParser().parseFromString(svgString, "image/svg+xml").documentElement as unknown as SVGElement;
 });
 
 const { isFullscreen, toggle } = useFullscreen(controls);
@@ -57,11 +62,14 @@ const createHeatmap = (): UnipeptHeatmap | undefined => {
         return;
     }
 
-    const settings = {
-        width: width.value,
-        height: height.value,
-        dendrogramEnabled: true
-    } as HeatmapSettings;
+    if (!visualization.value) {
+        throw new Error("Heatmap visualization HTML-element could not be found.");
+    }
+
+    const settings = new HeatmapSettings();
+    settings.width = width.value;
+    settings.height = height.value;
+    settings.dendrogramEnabled = true;
 
     const rowLabels = rotated.value ? props.columnLabels : props.rowLabels;
     const columnLabels = rotated.value ? props.rowLabels : props.columnLabels;

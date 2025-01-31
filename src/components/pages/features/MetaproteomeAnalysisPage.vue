@@ -52,12 +52,12 @@
 <script setup lang="ts">
 import QuickAnalysisCard from "@/components/analysis/multi/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/analysis/multi/DemoAnalysisCard.vue";
-import {AnalysisConfig} from "@/store/new/SingleAnalysisStore";
 import {useRouter} from "vue-router";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
+import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 
 const router = useRouter();
 const groupStore = useGroupAnalysisStore();

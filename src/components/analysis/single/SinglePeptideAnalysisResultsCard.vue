@@ -115,6 +115,9 @@ import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTa
 import useCsvDownload from "@/composables/useCsvDownload";
 import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue";
 import {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
+import GoTableData from "@/components/results/functional/go/GoTableData";
+import EcTableData from "@/components/results/functional/ec/EcTableData";
+import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 
 const { displayPercentage } = usePercentage();
 const { download } = useCsvDownload();
@@ -133,19 +136,19 @@ const emits = defineEmits(["tabUpdate"]);
 const goData = ref<GoTableData>({
     goTable: props.assay.goTable!,
     goTrust: props.assay.goTrust!,
-    goToPeptides: props.assay.goToPeptides,
+    goToPeptides: props.assay.goToPeptides!
 });
 
 const ecData = ref<EcTableData>({
     ecTable: props.assay.ecTable!,
     ecTrust: props.assay.ecTrust!,
-    ecToPeptides: props.assay.ecToPeptides
+    ecToPeptides: props.assay.ecToPeptides!
 });
 
 const interproData = ref<InterproTableData>({
     iprTable: props.assay.iprTable!,
     iprTrust: props.assay.iprTrust!,
-    iprToPeptides: props.assay.iprToPeptides
+    iprToPeptides: props.assay.iprToPeptides!
 });
 
 const currentTab = ref<string>(props.tab);
@@ -154,7 +157,7 @@ const downloadGoTable = (items: GoResultsTableItem[]) => {
     const header = ["proteins", "go term", "name"];
     const data = [header].concat(items.map(item => {
         return [
-            item.count,
+            item.count.toString(),
             item.code,
             item.name
         ];
@@ -167,7 +170,7 @@ const downloadEcTable = (items: EcResultsTableItem[]) => {
     const header = ["proteins", "ec number", "name"];
     const data = [header].concat(items.map(item => {
         return [
-            item.count,
+            item.count.toString(),
             item.code,
             item.name
         ];
@@ -180,7 +183,7 @@ const downloadIprTable = (items: IprResultsTableItem[]) => {
     const header = ["proteins", "ipr entry", "name"];
     const data = [header].concat(items.map(item => {
         return [
-            item.count,
+            item.count.toString(),
             item.code,
             item.name
         ];

@@ -10,16 +10,18 @@
                         Analysis summary
                     </h2>
 
-                    <h3 class="font-weight-bold">
-                        This sample contains {{ analysis.peptideTrust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides, of which we matched {{ analysis.peptideTrust.matchedPeptides }} peptides.
-                    </h3>
-                    <h1 class="text-subtitle-1">
-                        <a
-                            @click="showMissingPeptides = true"
-                        >
-                            {{ analysis.peptideTrust.missedPeptides.length }} peptides
-                        </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found.
-                    </h1>
+                    <template v-if="analysis.peptideTrust">
+                        <h3 class="font-weight-bold">
+                            This sample contains {{ analysis.peptideTrust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides, of which we matched {{ analysis.peptideTrust.matchedPeptides }} peptides.
+                        </h3>
+                        <h1 class="text-subtitle-1">
+                            <a
+                                @click="showMissingPeptides = true"
+                            >
+                                {{ analysis.peptideTrust.missedPeptides.length }} peptides
+                            </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found.
+                        </h1>
+                    </template>
                 </v-col>
                 <v-col cols="4">
                     <v-checkbox
@@ -128,16 +130,16 @@ const missedPeptides = computed(() => {
     return analysis.peptideTrust!.missedPeptides;
 });
 
-let peptideExportContent: string = "";
+let peptideExportContent: string[][] = [];
 let exportDelimiter: string = "";
 
-const prepareDownload = async (separator: string, callback: () => {}): Promise<void> => {
+const prepareDownload = async (separator: string, callback: () => void): Promise<void> => {
     exportDelimiter = separator;
     peptideExportContent = await generateExport(analysis, separator);
     callback();
 };
 
-const download = async (callback: () => {}): Promise<void> => {
+const download = async (callback: () => void): Promise<void> => {
     const exportExtension = exportDelimiter === "\t" ? "tsv" : "csv";
     await downloadCsv(peptideExportContent, `unipept_${analysis.name.replaceAll(" ", "_")}_mpa.${exportExtension}`, exportDelimiter);
     callback();

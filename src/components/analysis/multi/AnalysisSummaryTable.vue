@@ -51,7 +51,8 @@ defineProps<{
 </script>
 
 <script lang="ts">
-const headers = [
+// Need to cast to any until Vuetify correctly exposes TableHeaderItems
+const headers: any = [
     {
         title: "Peptide",
         align: "start",

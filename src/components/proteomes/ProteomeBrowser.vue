@@ -173,9 +173,10 @@
 <script setup lang="ts">
 import {computed, ref, watch} from "vue";
 import UniprotCommunicator, {ProteomeType} from "@/logic/communicators/uniprot/UniprotCommunicator";
-import {NcbiTaxon} from "unipept-web-components";
 
-const headers = [
+
+// TODO: need to annotate this as any until Vuetify correctly exposes the DataTableHeader types.
+const headers: any = [
     {
         title: "Status",
         align: "center",

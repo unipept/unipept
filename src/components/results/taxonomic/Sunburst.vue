@@ -34,6 +34,7 @@
     </visualization-controls>
 
     <download-image
+        v-if="svg"
         v-model="downloadImageModalOpen"
         :image="svg"
         filename="sunburst"
@@ -59,27 +60,33 @@ const props = withDefaults(defineProps<{
 
 const filterId = defineModel<number>();
 
-const controls = useTemplateRef("controls");
-const visualization = useTemplateRef("visualization");
+const controls = useTemplateRef<HTMLElement>("controls");
+const visualization = useTemplateRef<HTMLDivElement>("visualization");
 const visualizationObject = ref<UnipeptSunburst | undefined>(undefined);
 
 const useFixedColors = ref(false);
 const downloadImageModalOpen = ref(false);
 
-const svg = computed(() => visualizationObject.value?.element.querySelector(":scope > svg"));
+const svg = computed(() => {
+    console.log(visualization.value?.querySelectorAll(":scope > svg"));
+    return visualization.value?.querySelector(":scope > svg") as SVGElement;
+})
 
 const { isFullscreen, toggle } = useFullscreen(controls);
 
 const createSunburst = (fullscreen = false): UnipeptSunburst | undefined => {
     if(!props.ncbiRoot) return;
 
-    const settings = {
-        width: props.width,
-        height: props.height,
-        useFixedColors: useFixedColors.value,
-        rerootCallback: d => filterId.value = d.id,
-        getTooltipText: tooltipContent
-    } as SunburstSettings;
+    if (!visualization.value) {
+        throw new Error("Sunburst visualization HTML-element could not be found.");
+    }
+
+    const settings = new SunburstSettings();
+    settings.width = props.width;
+    settings.height = props.height;
+    settings.useFixedColors = useFixedColors.value;
+    settings.rerootCallback = d => filterId.value = d.id;
+    settings.getTooltipText = tooltipContent;
 
     const sunburst = new UnipeptSunburst(
         visualization.value,
@@ -100,6 +107,11 @@ const createSunburst = (fullscreen = false): UnipeptSunburst | undefined => {
 
 const redraw = () => {
     const savedFilterId = filterId.value;
+
+    if (!savedFilterId) {
+        throw new Error("Filter ID for visualization was not properly set.");
+    }
+
     visualizationObject.value = createSunburst(isFullscreen.value);
     visualizationObject.value?.reroot(savedFilterId, false);
     filterId.value = savedFilterId;
@@ -125,6 +137,11 @@ watch(useFixedColors, () => {
 });
 
 watch(filterId, () => {
+    if (!filterId.value) {
+        // No need to reroot the visualization if no valid filter ID was set.
+        return;
+    }
+
     visualizationObject.value?.reroot(filterId.value, false);
 });
 

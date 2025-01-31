@@ -18,6 +18,7 @@
     </visualization-controls>
 
     <download-image
+        v-if="div"
         v-model="downloadImageModalOpen"
         :image="div"
         filename="treemap"
@@ -38,27 +39,30 @@ const props = defineProps<{
 
 const filterId = defineModel<number>();
 
-const controls = useTemplateRef("controls");
-const visualization = useTemplateRef("visualization");
+const controls = useTemplateRef<HTMLElement>("controls");
+const visualization = useTemplateRef<HTMLDivElement>("visualization");
 const visualizationObject = ref<UnipeptTreemap | undefined>(undefined);
 
 const downloadImageModalOpen = ref(false);
-const div = computed(() => visualizationObject.value?.element);
+const div = computed(() => visualization.value);
 
 const { isFullscreen, toggle } = useFullscreen(controls);
 const { width, height } = useElementSize(controls);
 
 const createTreemap = (fullscreen = false): UnipeptTreemap | undefined => {
+    if (!visualization.value) {
+        throw new Error("Treemap visualization HTML-element could not be found.");
+    }
+
     visualization.value.innerHTML = "";
 
     if(!props.ncbiRoot) return;
 
-    const settings = {
-        width: width.value,
-        height: height.value - 60,
-        rerootCallback: d => filterId.value = d.id,
-        getTooltipText: tooltipContent
-    } as TreemapSettings;
+    const settings = new TreemapSettings();
+    settings.width = width.value;
+    settings.height = height.value;
+    settings.rerootCallback = d => filterId.value = d.id;
+    settings.getTooltipText = tooltipContent;
 
     const treemap = new UnipeptTreemap(
         visualization.value,
@@ -79,6 +83,11 @@ const createTreemap = (fullscreen = false): UnipeptTreemap | undefined => {
 
 const redraw = () => {
     const savedFilterId = filterId.value;
+
+    if (!savedFilterId) {
+        throw new Error("Filter ID for visualization was not properly set.");
+    }
+
     visualizationObject.value = createTreemap(!isFullscreen.value);
     visualizationObject.value?.reroot(savedFilterId, false);
     filterId.value = savedFilterId;
@@ -104,6 +113,11 @@ watch(width, () => {
 });
 
 watch(filterId, () => {
+    if (!filterId.value) {
+        // No need to reroot the visualization if no valid filter ID was set.
+        return;
+    }
+
     visualizationObject.value?.reroot(filterId.value, false);
 });
 

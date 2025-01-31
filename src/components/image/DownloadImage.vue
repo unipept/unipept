@@ -84,12 +84,12 @@ const {
     image,
     filename
 } = defineProps<{
-    image: SVGElement | HTMLElement
+    image: SVGElement | HTMLElement;
     filename: string
 }>();
 
 const selectedFormat = ref(Format.SVG.valueOf());
-const selectedScalingFactor = ref(ScalingFactor.Hundred.valueOf());
+const selectedScalingFactor = ref(ScalingFactor.Hundred);
 const imageDataUrl = ref<string>("");
 
 const supportedFormats = computed(() => {
@@ -101,8 +101,8 @@ const supportedFormats = computed(() => {
 })
 
 const resolution = computed(() => {
-    const width = image.clientWidth || image.width?.baseVal.value;
-    const height = image.clientHeight || image.height?.baseVal.value;
+    const width = image.clientWidth;
+    const height = image.clientHeight;
     const factor = scalingFactorToNumber(selectedScalingFactor.value);
 
     return {
@@ -112,6 +112,8 @@ const resolution = computed(() => {
 })
 
 const download = async () => {
+    console.log("Download image:");
+    console.log(image);
     if (image instanceof HTMLElement) {
         await downloadDomPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
     } else if (selectedFormat.value === Format.SVG.valueOf()) {
@@ -136,7 +138,7 @@ watch(dialogOpen, async (value) => {
                 // Use decodeURIComponent to decode the URI encoding
                 decodeURIComponent(svgDataUrl.split(",")[1]),
                 "image/svg+xml"
-            ).documentElement as SVGElement;
+            ).documentElement as unknown as SVGElement & { viewBox: any | undefined, width: any | undefined, height: any | undefined };
             selectedFormat.value = Format.PNG.valueOf();
         }
         const svgData = new XMLSerializer().serializeToString(svgElement);

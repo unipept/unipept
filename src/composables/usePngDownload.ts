@@ -11,7 +11,7 @@ export default function usePngDownload() {
     } = useFileSystemAccess();
 
     const downloadPng = async (
-        svgElement: SVGElement & { viewBox: any | undefined, width: any | undefined, height: any | undefined },
+        svgElement: SVGElement,
         filename = 'image.png',
         scalingFactor = 1
     ) => {
@@ -32,9 +32,19 @@ export default function usePngDownload() {
             img.src = url;
         });
 
+        console.log(svgElement);
+
         // Get the original dimensions of the SVG
-        const originalWidth = svgElement.viewBox?.baseVal.width || svgElement.width?.baseVal.value || svgElement.clientWidth;
-        const originalHeight = svgElement.viewBox?.baseVal.height || svgElement.height?.baseVal.value || svgElement.clientHeight;
+        let originalWidth;
+        let originalHeight;
+
+        if (svgElement instanceof SVGSVGElement) {
+            originalWidth = svgElement.viewBox.baseVal.width;
+            originalHeight = svgElement.viewBox.baseVal.height;
+        } else {
+            originalWidth = svgElement.clientWidth;
+            originalHeight = svgElement.clientHeight;
+        }
 
         // Create a canvas element
         const canvas = document.createElement('canvas');

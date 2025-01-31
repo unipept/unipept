@@ -76,8 +76,8 @@
 import {Ref, ref} from "vue";
 
 const emits = defineEmits<{
-    (e: 'prepareDownload', delimiter: string, callback: () => {}): Promise<void>,
-    (e: 'download'): void
+    (e: 'prepareDownload', delimiter: string, callback: () => void): Promise<void>,
+    (e: 'download', callback: () => void): Promise<void>
 }>();
 
 const dialogOpen: Ref<boolean> = ref(false);
@@ -86,12 +86,12 @@ const loading: Ref<boolean> = ref(false);
 const prepareDownload = async (delimiter: string): Promise<void> => {
     loading.value = true;
     dialogOpen.value = true;
-    await new Promise<void>(resolve => emits("prepareDownload", delimiter, resolve));
+    await new Promise<void>(resolve => emits("prepareDownload", delimiter, () => resolve()));
     loading.value = false;
 }
 
 const download = async (): Promise<void> => {
-    await new Promise<void>(resolve => emits("download", resolve));
+    await new Promise<void>(resolve => emits("download", () => resolve()));
     dialogOpen.value = false;
 }
 </script>

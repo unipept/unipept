@@ -41,7 +41,7 @@ defineProps<{
 }>();
 
 const emits = defineEmits<{
-    "confirm": () => void;
+    (e: "confirm"): void;
 }>();
 
 const confirm = () => {

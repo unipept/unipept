@@ -46,7 +46,8 @@ import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import useEcTreeProcessor from "@/composables/processing/functional/useEcTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
-import { EcResultsTableItem } from "@/components/results/functional/ec/EcResultsTable.vue"
+import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue"
+import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
 
 const { getEcDefinition } = useOntologyStore();
 const { root, process } = useEcTreeProcessor();

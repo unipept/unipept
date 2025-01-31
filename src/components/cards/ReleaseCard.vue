@@ -13,7 +13,7 @@
         >
             <v-hover v-slot="{ isHovering, props }">
                 <v-card
-                    :hover="isHovering"
+                    :hover="!!isHovering"
                     v-bind="props"
                 >
                     <v-card-title class="bg-blue text-white pa-4 ">

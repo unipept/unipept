@@ -137,7 +137,7 @@ import {Ref, ref, watch} from "vue";
 import PeptonizerProgress from "@/components/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/results/taxonomic/peptonizer/PeptonizerChart.vue";
 import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
-import NcbiTaxon, {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
+import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import usePeptonizerExport from "@/composables/usePeptonizerExport";
 import useCsvDownload from "@/composables/useCsvDownload";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
@@ -187,16 +187,16 @@ const cancelPeptonizer = () => {
     isCancelling.value = false;
 }
 
-let peptideExport: string = "";
+let peptideExport: string[][] = [];
 let exportDelimiter: string = "";
 
-const exportCsv = async (delimiter: string, callback: () => {}): Promise<void> => {
+const exportCsv = async (delimiter: string, callback: () => void): Promise<void> => {
     exportDelimiter = delimiter;
     peptideExport = generatePeptonizerExport(props.peptonizerStore.taxaIdsToConfidence!);
     callback();
 }
 
-const downloadCsv = async (callback: () => {}): Promise<void> => {
+const downloadCsv = async (callback: () => void): Promise<void> => {
     const exportExtension = exportDelimiter === "\t" ? "tsv" : "csv";
     await download(peptideExport, `unipept_${props.sampleName.replaceAll(" ", "_")}_peptonizer.${exportExtension}`, exportDelimiter);
     callback();

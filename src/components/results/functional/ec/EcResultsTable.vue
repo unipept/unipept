@@ -77,7 +77,7 @@
                     >
                         <treeview
                             v-if="trees.has(item.code)"
-                            :ncbi-root="trees.get(item.code)"
+                            :ncbi-root="trees.get(item.code)!"
                             :link-stroke-color="linkStrokeColor"
                             :node-stroke-color="highlightColorFunc"
                             :node-fill-color="highlightColorFunc"
@@ -95,13 +95,9 @@ import usePercentage from "@/composables/usePercentage";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import {NcbiTreeNode} from "unipept-web-components";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
-import useCsvDownload from "@/composables/useCsvDownload";
-import useOntologyStore from "@/store/new/OntologyStore";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 
-const { download } = useCsvDownload();
 const { displayPercentage } = usePercentage();
-const { getNcbiDefinition } = useOntologyStore();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
 const { data, items } = defineProps<{
@@ -116,20 +112,20 @@ const emits = defineEmits<{
     (e: 'downloadTable', item: EcResultsTableItem[]): void;
 }>();
 
-const expanded = ref<number[]>([]);
+const expanded = ref<string[]>([]);
 const trees = new Map<string, NcbiTreeNode>();
 
 const calculateHighlightedNcbiTree = async (code: string) => {
     const highlightedTreeRoot = await processHighlightedTree(
-        toRaw(data.ncbiTree),
-        toRaw(data.ecToPeptides.get(code)),
-        toRaw(data.lcaToPeptides)
+        toRaw(data.ncbiTree!),
+        toRaw(data.ecToPeptides.get(code)!),
+        toRaw(data.lcaToPeptides!)
     );
 
     trees.set(code, highlightedTreeRoot);
 }
 
-const singleExpand = async (value: number[]) => {
+const singleExpand = async (value: string[]) => {
     if (value.length === 0) {
         expanded.value = [];
         return;
@@ -156,10 +152,9 @@ watch(() => data, () => {
     expanded.value = [];
     trees.clear();
 });
-</script>
 
-<script lang="ts">
-const headers = [
+// Need to cast to any here until Vuetify properly exposes DataTableHeader type
+const headers: any = [
     {
         title: "Peptides",
         align: "start",

@@ -18,6 +18,7 @@
     </visualization-controls>
 
     <download-image
+        v-if="svg"
         v-model="downloadImageModalOpen"
         :image="svg"
         filename="treeview"
@@ -25,26 +26,29 @@
 </template>
 
 <script setup lang="ts">
-import { Treeview as UnipeptTreeview, TreeviewSettings } from 'unipept-visualizations';
-import {computed, onMounted, ref, useTemplateRef, watch} from 'vue';
+import { Treeview as UnipeptTreeview, TreeviewSettings, DataNodeLike } from 'unipept-visualizations';
+import {computed, nextTick, onMounted, ref, useTemplateRef, watch} from 'vue';
 import {NcbiTreeNode} from "unipept-web-components";
 import VisualizationControls from "@/components/results/taxonomic/VisualizationControls.vue";
 import {useElementSize, useFullscreen} from "@vueuse/core";
 import DownloadImage from "@/components/image/DownloadImage.vue";
 
 const props = defineProps<{
-    ncbiRoot: NcbiTreeNode
+    ncbiRoot: DataNodeLike
     linkStrokeColor?: (d: any) => string
     nodeStrokeColor?: (d: any) => string
     nodeFillColor?: (d: any) => string
 }>();
 
-const controls = useTemplateRef("controls");
-const visualization = useTemplateRef("visualization");
+const controls = useTemplateRef<HTMLElement>("controls");
+const visualization = useTemplateRef<HTMLDivElement>("visualization");
 const visualizationObject = ref<UnipeptTreeview | undefined>(undefined);
 
 const downloadImageModalOpen = ref(false);
 
+// @ts-ignore We're accessing the private property element of UnipeptTreeview here, but this is the only way
+// we get access to a properly initialized SVG... We might have to consider adding a getter for this element
+// in a future version of the Unipept Visualizations library.
 const svg = computed(() => visualizationObject.value?.element.querySelector(":scope > svg"))
 
 const { isFullscreen, toggle } = useFullscreen(controls);
@@ -53,11 +57,14 @@ const { width, height } = useElementSize(controls);
 const createTreeview = (fullscreen = false): UnipeptTreeview | undefined => {
     if(!props.ncbiRoot) return;
 
-    const settings = {
-        width: width.value,
-        height: height.value,
-        getTooltipText: tooltipContent
-    } as TreeviewSettings;
+    if (!visualization.value) {
+        throw new Error("Treeview visualization HTML-element could not be found.");
+    }
+
+    const settings = new TreeviewSettings();
+    settings.width = width.value;
+    settings.height = height.value;
+    settings.getTooltipText = tooltipContent;
 
     if (props.linkStrokeColor) {
         settings.linkStrokeColor = props.linkStrokeColor;

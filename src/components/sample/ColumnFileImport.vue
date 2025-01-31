@@ -317,7 +317,7 @@ const parseContent = async function() {
 
     // Reset rows
     rows.value = [];
-    for (const line of lines.slice(rowStart)) {
+    for (const line of lines.slice(rowStart.value)) {
         if (line.trim() !== "") {
             rows.value.push(line.trim().split(delimiter.value));
         }

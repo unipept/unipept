@@ -77,7 +77,7 @@
                     >
                         <treeview
                             v-if="trees.has(item.code)"
-                            :ncbi-root="trees.get(item.code)"
+                            :ncbi-root="trees.get(item.code)!"
                             :link-stroke-color="linkStrokeColor"
                             :node-stroke-color="highlightColorFunc"
                             :node-fill-color="highlightColorFunc"
@@ -98,10 +98,9 @@ import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/new/OntologyStore";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
+import {DataNodeLike} from "unipept-visualizations";
 
-const { download } = useCsvDownload();
 const { displayPercentage } = usePercentage();
-const { getNcbiDefinition } = useOntologyStore();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
 const { data, items } = defineProps<{
@@ -116,20 +115,20 @@ const emits = defineEmits<{
     (e: 'downloadTable', items: IprResultsTableItem[]): void;
 }>();
 
-const expanded = ref<number[]>([]);
-const trees = new Map<string, NcbiTreeNode>();
+const expanded = ref<string[]>([]);
+const trees = new Map<string, DataNodeLike>();
 
 const calculateHighlightedNcbiTree = async (code: string) => {
     const highlightedTreeRoot = await processHighlightedTree(
-        toRaw(data.ncbiTree),
-        toRaw(data.iprToPeptides.get(code)),
-        toRaw(data.lcaToPeptides)
+        toRaw(data.ncbiTree!),
+        toRaw(data.iprToPeptides.get(code)!),
+        toRaw(data.lcaToPeptides!)
     );
 
     trees.set(code, highlightedTreeRoot);
 }
 
-const singleExpand = async (value: number[]) => {
+const singleExpand = async (value: string[]) => {
     if (value.length === 0) {
         expanded.value = [];
         return;
@@ -156,10 +155,9 @@ watch(() => data, () => {
     expanded.value = [];
     trees.clear();
 });
-</script>
 
-<script lang="ts">
-const headers = [
+// TODO remove the any type annotation when Vuetify properly exports DataTableHeader types
+const headers: any = [
     {
         title: "Peptides",
         align: "start",

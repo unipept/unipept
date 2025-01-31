@@ -79,7 +79,7 @@
 import {DEFAULT_NEW_GROUP_NAME} from "@/store/new/GroupAnalysisStore";
 
 const emits = defineEmits<{
-    'group:add': (name: string) => void;
+    (e: 'group:add', name: string): void;
 }>();
 
 const addGroup = (name: string) => {

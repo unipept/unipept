@@ -51,7 +51,7 @@ const { samples } = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    "select": (sample: SampleData) => void;
+    (e: "select", sample: SampleData): void;
 }>();
 
 const openReference = (sample: SampleData) => window.open(sample.url, '_blank');

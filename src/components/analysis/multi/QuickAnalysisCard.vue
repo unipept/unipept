@@ -80,12 +80,11 @@
 </template>
 
 <script setup lang="ts">
-import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import {ref} from "vue";
-import {AnalysisConfig} from "@/store/new/SingleAnalysisStore";
+import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 
 const emits = defineEmits<{
-    analyze: (rawPeptides: string, config: AnalysisConfig) => void
+    (e: "analyze", rawPeptides: string, config: AnalysisConfig): void;
 }>();
 
 const rawPeptides = ref("");

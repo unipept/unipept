@@ -98,7 +98,6 @@ import usePercentage from "@/composables/usePercentage";
 import useCsvDownload from "@/composables/useCsvDownload";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 
-const { download } = useCsvDownload();
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
@@ -120,9 +119,9 @@ const trees = new Map<string, NcbiTreeNode>();
 const calculateHighlightedNcbiTree = async (code: string) => {
 
     const highlightedTreeRoot = await processHighlightedTree(
-        toRaw(data.ncbiTree),
+        toRaw(data.ncbiTree!),
         toRaw(data.goToPeptides.get(code)!),
-        toRaw(data.lcaToPeptides)
+        toRaw(data.lcaToPeptides!)
     );
 
     trees.set(code, highlightedTreeRoot);
@@ -155,10 +154,9 @@ watch(() => data, () => {
     expanded.value = [];
     trees.clear();
 });
-</script>
 
-<script lang="ts">
-const headers = [
+// TODO: get rid of any type annotation here when Vuetify properly exports the DataTableHeader type
+const headers: any = [
     {
         title: "Peptides",
         align: "start",

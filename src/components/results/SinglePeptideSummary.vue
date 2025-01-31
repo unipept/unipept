@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!assay.status === AnalysisStatus.Running">
+    <div v-if="assay.status === AnalysisStatus.Running">
         <div class="display-1">
             Tryptic peptide analysis of {{ assay.peptide }}
         </div>
@@ -53,7 +53,7 @@
                                 target="_blank"
                                 class="link primary--text"
                             >
-                                {{ getNcbiDefinition(organismId).name }}
+                                {{ getNcbiDefinition(organismId)!.name }}
                             </a>
                             <span v-else>
                                 Unknown
@@ -70,7 +70,7 @@
                 <div class="headline">
                     Function
                 </div>
-                <div>
+                <div v-if="assay.goTrust">
                     <span class="font-weight-bold">{{ assay.goTrust.annotatedItems }} proteins</span>
                     ({{ displayPercentage(assay.goTrust.annotatedItems / assay.goTrust.totalItems) }})
                     have at least one
@@ -89,8 +89,11 @@
                     </span>
                     assigned to them.
                 </div>
+                <div v-else>
+                    Error while computing trust for GO-terms...
+                </div>
 
-                <div>
+                <div v-if="assay.ecTrust">
                     <span class="font-weight-bold">{{ assay.ecTrust.annotatedItems }} proteins</span>
                     ({{ displayPercentage(assay.ecTrust.annotatedItems / assay.ecTrust.totalItems) }})
                     have at least one
@@ -109,8 +112,11 @@
                     </span>
                     assigned to them.
                 </div>
+                <div v-else>
+                    Error while computing trust for EC-numbers...
+                </div>
 
-                <div>
+                <div v-if="assay.iprTrust">
                     <span class="font-weight-bold">
                         {{ assay.iprTrust.annotatedItems }} proteins
                     </span>
@@ -131,6 +137,9 @@
                     </span>
                     assigned to them.
                 </div>
+                <div v-else>
+                    Error while computing trust for InterPro-entries...
+                </div>
             </v-col>
         </v-row>
     </div>
@@ -142,6 +151,7 @@ import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
 import usePercentage from "@/composables/usePercentage";
+import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 
 export interface Props {
     assay: PeptideAnalysisStore
