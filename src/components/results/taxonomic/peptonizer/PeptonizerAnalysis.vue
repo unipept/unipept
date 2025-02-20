@@ -104,27 +104,60 @@
             </v-window-item>
 
             <v-window-item :value="3">
-                <!-- Show final Peptonizer results to the user -->
-                <peptonizer-chart
-                    v-if="peptonizerStore.taxaNamesToConfidence"
-                    :rank="peptonizerRank"
-                    :uses-default-scores="usesDefaultScores"
-                    :peptonizer-result="peptonizerStore.taxaNamesToConfidence!"
-                />
+                <template v-if="peptonizerStore.status === PeptonizerStatus.Finished">
+                    <!-- Show final Peptonizer results to the user -->
+                    <peptonizer-chart
+                        v-if="peptonizerStore.taxaNamesToConfidence"
+                        :rank="peptonizerRank"
+                        :uses-default-scores="usesDefaultScores"
+                        :peptonizer-result="peptonizerStore.taxaNamesToConfidence!"
+                    />
 
-                <v-divider />
+                    <v-divider />
 
-                <v-card-actions>
-                    <v-btn
+                    <v-card-actions>
+                        <v-btn
+                            variant="tonal"
+                            prepend-icon="mdi-restart"
+                            @click="peptonizerStep = 1"
+                        >
+                          New analysis
+                        </v-btn>
+                        <v-spacer />
+                        <analysis-summary-export @prepareDownload="exportCsv" @download="downloadCsv" />
+                    </v-card-actions>
+                </template>
+
+                <template v-if="peptonizerStore.status === PeptonizerStatus.Failed">
+                    <v-alert
                         variant="tonal"
-                        prepend-icon="mdi-restart"
-                        @click="peptonizerStep = 1"
+                        type="error"
+                        class="my-2"
                     >
-                        New analysis
-                    </v-btn>
-                    <v-spacer />
-                    <analysis-summary-export @prepareDownload="exportCsv" @download="downloadCsv" />
-                </v-card-actions>
+                        <div>
+                            An error occurred while running Peptonizer. Please try again.
+                            Feel free to contact us if the issue persists.
+                        </div>
+                        <div class="font-weight-bold">
+                            Error details:
+                        </div>
+                        <div>
+                            {{ peptonizerStore.peptonizerError }}
+                        </div>
+                    </v-alert>
+
+                    <v-divider />
+
+                    <v-card-actions>
+                        <v-btn
+                            variant="tonal"
+                            prepend-icon="mdi-restart"
+                            @click="peptonizerStep = 1"
+                        >
+                            New analysis
+                        </v-btn>
+                    </v-card-actions>
+                </template>
             </v-window-item>
         </v-window>
     </v-card-text>
@@ -202,7 +235,7 @@ const downloadCsv = async (callback: () => void): Promise<void> => {
     callback();
 }
 
-watch(() => props.peptonizerStore, () => {
+watch(() => props.peptonizerStore.status, () => {
     const peptonizerStatus = props.peptonizerStore.status;
     if (peptonizerStatus === PeptonizerStatus.Pending) {
         peptonizerStep.value = 1;

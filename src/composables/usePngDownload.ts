@@ -32,8 +32,6 @@ export default function usePngDownload() {
             img.src = url;
         });
 
-        console.log(svgElement);
-
         // Get the original dimensions of the SVG
         let originalWidth;
         let originalHeight;

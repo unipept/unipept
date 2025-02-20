@@ -112,8 +112,6 @@ const resolution = computed(() => {
 })
 
 const download = async () => {
-    console.log("Download image:");
-    console.log(image);
     if (image instanceof HTMLElement) {
         await downloadDomPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
     } else if (selectedFormat.value === Format.SVG.valueOf()) {

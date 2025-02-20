@@ -44,24 +44,26 @@ export default class PeptonizerProcessor {
             await PeptonizerProcessor.inProgress;
         }
 
-        PeptonizerProcessor.inProgress = this.peptonizer.peptonize(
-            peptideIntensities,
-            new Map<string, number>(Array.from(peptideCountTable.entries())),
-            DEFAULT_PEPTONIZER_ALPHAS,
-            DEFAULT_PEPTONIZER_BETAS,
-            DEFAULT_PEPTONIZER_PRIORS,
-            rank,
-            taxonQuery.length > 0 ? taxonQuery : [1],
-            DEFAULT_TAXA_IN_GRAPH,
-            listener,
-            DEFAULT_PEPTONIZER_WORKERS
-        );
+        try {
+            PeptonizerProcessor.inProgress = this.peptonizer.peptonize(
+                peptideIntensities,
+                new Map<string, number>(Array.from(peptideCountTable.entries())),
+                DEFAULT_PEPTONIZER_ALPHAS,
+                DEFAULT_PEPTONIZER_BETAS,
+                DEFAULT_PEPTONIZER_PRIORS,
+                rank,
+                taxonQuery.length > 0 ? taxonQuery : [1],
+                DEFAULT_TAXA_IN_GRAPH,
+                listener,
+                DEFAULT_PEPTONIZER_WORKERS
+            );
 
-        const result = await PeptonizerProcessor.inProgress;
-
-        PeptonizerProcessor.inProgress = undefined;
-
-        return result;
+            return await PeptonizerProcessor.inProgress;
+        } catch (error) {
+            throw error;
+        } finally {
+            PeptonizerProcessor.inProgress = undefined;
+        }
     }
 
     public cancelPeptonizer() {
