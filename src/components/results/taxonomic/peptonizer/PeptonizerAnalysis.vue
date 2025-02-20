@@ -136,14 +136,12 @@
                     >
                         <div>
                             An error occurred while running Peptonizer. Please try again.
-                            Feel free to contact us if the issue persists.
+                            Please contact us if the issue persists.
                         </div>
                         <div class="font-weight-bold">
                             Error details:
                         </div>
-                        <div>
-                            {{ peptonizerStore.peptonizerError }}
-                        </div>
+                        <pre>{{ peptonizerStore.peptonizerError }}</pre>
                     </v-alert>
 
                     <v-divider />
