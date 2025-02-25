@@ -9,7 +9,7 @@ updates:
       timezone: Europe/Brussels
 
   # Maintain dependencies for NPM
-  - package-ecosystem: "yarn"
+  - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "monthly"
