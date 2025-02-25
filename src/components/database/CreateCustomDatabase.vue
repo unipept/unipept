@@ -195,7 +195,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
-import {NcbiTaxon} from "unipept-web-components";
+import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
 
 const dialogOpen = defineModel<boolean>();
