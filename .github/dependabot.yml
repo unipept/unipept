@@ -5,13 +5,13 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-      time: "9:00"
+      time: "09:00"
       timezone: Europe/Brussels
 
   # Maintain dependencies for NPM
-  - package-ecosystem: "npm"
+  - package-ecosystem: "yarn"
     directory: "/"
     schedule:
       interval: "monthly"
-      time: "9:00"
+      time: "09:00"
       timezone: Europe/Brussels
