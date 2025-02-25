@@ -2493,7 +2493,7 @@ pathe@^2.0.1:
 
 "peptonizer@file:./peptonizer-v0.0.26.tgz":
   version "0.0.26"
-  resolved "file:./peptonizer-v0.0.26.tgz#1f7e23a180310ed93eb302201265d91a1fedaadf"
+  resolved "file:./peptonizer-v0.0.26.tgz#e6a56a1f661af85313b4d67fab4e3ca0c53641c0"
   dependencies:
     "@types/async" "^3.2.24"
     async "^3.2.6"
