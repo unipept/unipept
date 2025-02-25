@@ -25,8 +25,8 @@
                 >
                     <template #default="{ step, next, prev }">
                         <v-stepper-vertical-item
-                            :complete="step > 1"
-                            :editable="step > 1"
+                            :complete="step as number > 1"
+                            :editable="step as number > 1"
                             title="Database name"
                             subtitle="Provide basic construction details"
                             value="1"
@@ -67,7 +67,7 @@
                         </v-stepper-vertical-item>
 
                         <v-stepper-vertical-item
-                            :complete="step > 2"
+                            :complete="step as number > 2"
                             :editable="isValidDatabaseName"
                             title="Construction method"
                             subtitle="Please select how you want to construct the database"
@@ -123,14 +123,14 @@
 
                         <v-stepper-vertical-item
                             v-if="filter === Filter.None"
-                            :complete="step > 3"
+                            :complete="step as number > 3"
                             title="Select a construction method first"
                             value="3"
                         />
 
                         <v-stepper-vertical-item
                             v-else-if="filter === Filter.Manually"
-                            :complete="step > 3"
+                            :complete="step as number > 3"
                             editable
                             title="Filter organisms"
                             subtitle="Select which organisms will be present in the output database"
@@ -159,7 +159,7 @@
 
                         <v-stepper-vertical-item
                             v-else
-                            :complete="step > 3"
+                            :complete="step as number > 3"
                             editable
                             title="Select reference proteomes"
                             subtitle="Decide on a set of reference proteomes that should be present in the database"

@@ -1,9 +1,12 @@
 import {ref} from "vue";
 
-interface FilteredTree {
-    name: string
+export interface FilteredTree {
+    id: number;
+    name: string;
+    nameExtra: string;
     children: FilteredTree[]
     match?: { start: number, end: number }
+    extra: any
 }
 
 export default function useTreeFilter(tree: FilteredTree) {
