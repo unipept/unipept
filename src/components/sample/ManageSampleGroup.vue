@@ -194,6 +194,16 @@ const removeGroup = () => {
 };
 
 const addSamples = (newSamples: SampleTableItem[]) => {
+    const lastSampleIndex = samples.value.length - 1;
+    if (lastSampleIndex >= 0) {
+        newSamples.forEach(s => s.config = {
+            equate: samples.value[lastSampleIndex].config.equate,
+            filter: samples.value[lastSampleIndex].config.filter,
+            missed: samples.value[lastSampleIndex].config.missed,
+            database: samples.value[lastSampleIndex].config.database
+        });
+    }
+
     samples.value = [...samples.value!, ...newSamples ];
     addingSample.value = false;
 };
@@ -206,6 +216,7 @@ watch(dialogOpen, () => {
         // If the dialog is closed, confirm the changes
         confirmChanges();
     }
+    addingSample.value = false;
 });
 </script>
 

@@ -22,41 +22,10 @@
                 no-resize
             />
         </div>
-        <div class="align-self-center">
-            <v-checkbox
-                v-model="sample.config.equate"
-                color="primary"
-                label="Equate I and L"
-                density="compact"
-                hide-details
-            />
-            <v-checkbox
-                v-model="sample.config.filter"
-                color="primary"
-                label="Filter duplicate peptides"
-                density="compact"
-                hide-details
-            />
-            <v-checkbox
-                v-model="sample.config.missed"
-                color="primary"
-                label="Enable missed cleavages"
-                density="compact"
-                hide-details
-                disabled
-            />
-            <!--            <database-select-->
-            <!--                v-model="sample.config.database"-->
-            <!--                class="mt-1"-->
-            <!--                label="Selected database"-->
-            <!--                hide-details-->
-            <!--            />-->
-        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 
 const props = defineProps<{
