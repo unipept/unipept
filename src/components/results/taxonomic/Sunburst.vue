@@ -68,7 +68,6 @@ const useFixedColors = ref(false);
 const downloadImageModalOpen = ref(false);
 
 const svg = computed(() => {
-    console.log(visualization.value?.querySelectorAll(":scope > svg"));
     return visualization.value?.querySelector(":scope > svg") as SVGElement;
 })
 

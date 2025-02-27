@@ -82,7 +82,7 @@ const removeGroup = (groupId: string) => {
 };
 
 watch(selected, (value) => {
-  if (value.length === 1 && value[0].includes(":")) {
+    if (value.length === 1 && value[0].includes(":")) {
         const splitted = value[0].split(':');
         emits('select', splitted[0], splitted[1]);
     }

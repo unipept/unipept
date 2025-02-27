@@ -10,7 +10,8 @@ import useOntologyStore from "@/store/new/OntologyStore";
 export enum PeptonizerStatus {
     Pending,
     Running,
-    Finished
+    Finished,
+    Failed
 }
 
 class UnipeptPeptonizerProgressListener implements PeptonizerProgressListener {
@@ -91,6 +92,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
     const peptonizerStarted = ref<boolean>(false);
     const peptonizerInitalizationFinished = ref<boolean>(false);
     const peptonizerFinished = ref<boolean>(false);
+    const peptonizerError = ref<string>("");
 
     const selectedTaxa = ref<NcbiTaxon[]>([]);
 
@@ -107,6 +109,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         // Reset to initial values
         taxaIdsToConfidence.value = undefined;
         taxaNamesToConfidence.value = undefined;
+        peptonizerError.value = "";
 
         const listener = new UnipeptPeptonizerProgressListener(
             currentProgress,
@@ -116,31 +119,36 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
             peptonizerFinished
         );
 
-        peptonizerProcessor = new PeptonizerProcessor();
-        const peptonizerData = await peptonizerProcessor.runPeptonizer(
-            peptideCountTable,
-            rank,
-            selectedTaxa.value.length > 0 ? selectedTaxa.value.map((x: NcbiTaxon) => x.id) : [1],
-            listener,
-            equateIl,
-            peptideIntensities
-        );
+        try {
+            peptonizerProcessor = new PeptonizerProcessor();
+            const peptonizerData = await peptonizerProcessor.runPeptonizer(
+                peptideCountTable,
+                rank,
+                selectedTaxa.value.length > 0 ? selectedTaxa.value.map((x: NcbiTaxon) => x.id) : [1],
+                listener,
+                equateIl,
+                peptideIntensities
+            );
 
-        // No data is returned by the peptonizer if it's execution has been cancelled by the user
-        if (!peptonizerData) {
-            status.value = PeptonizerStatus.Pending;
-            return;
+            // No data is returned by the peptonizer if it's execution has been cancelled by the user
+            if (!peptonizerData) {
+                status.value = PeptonizerStatus.Pending;
+                return;
+            }
+
+            taxaIdsToConfidence.value = new Map<number, number>(Array.from(peptonizerData.entries()).map(([k, v]) => [Number.parseInt(k), v]));
+
+            // Convert the labels from taxon IDs to taxon names
+            const {updateNcbiOntology, getNcbiDefinition} = useOntologyStore();
+            await updateNcbiOntology(Array.from(taxaIdsToConfidence.value.keys()), false);
+
+            taxaNamesToConfidence.value = new Map(Array.from(taxaIdsToConfidence.value.entries()).map(([k, v]) => [getNcbiDefinition(k)!.name, v]));
+
+            status.value = PeptonizerStatus.Finished;
+        } catch (error) {
+            status.value = PeptonizerStatus.Failed;
+            peptonizerError.value = (error as any).toString();
         }
-
-        taxaIdsToConfidence.value = new Map<number, number>(Array.from(peptonizerData.entries()).map(([k, v]) => [Number.parseInt(k), v]));
-
-        // Convert the labels from taxon IDs to taxon names
-        const {updateNcbiOntology, getNcbiDefinition } = useOntologyStore();
-        await updateNcbiOntology(Array.from(taxaIdsToConfidence.value.keys()), false);
-
-        taxaNamesToConfidence.value = new Map(Array.from(taxaIdsToConfidence.value.entries()).map(([k, v]) => [getNcbiDefinition(k)!.name, v]));
-
-        status.value = PeptonizerStatus.Finished;
     }
 
     const cancelPeptonizer = () => {
@@ -160,6 +168,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         peptonizerStarted,
         peptonizerInitalizationFinished,
         peptonizerFinished,
+        peptonizerError,
         selectedTaxa,
 
         runPeptonizer,
