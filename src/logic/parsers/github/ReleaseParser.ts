@@ -9,5 +9,5 @@ export type ReleaseParserResult = {
 };
 
 export interface ReleaseParser {
-    parse(body: string): ReleaseParserResult;
+    parse(body: string): Promise<ReleaseParserResult>;
 }

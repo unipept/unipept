@@ -93,7 +93,7 @@
 import {ref, toRaw, watch} from "vue";
 import usePercentage from "@/composables/usePercentage";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
-import {NcbiTreeNode} from "unipept-web-components";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 

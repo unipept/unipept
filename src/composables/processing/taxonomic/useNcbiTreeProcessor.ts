@@ -1,12 +1,13 @@
 import {shallowRef} from "vue";
-import {NcbiTreeNode} from "unipept-web-components";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import CountTable from "@/logic/processors/CountTable";
 import useOntologyStore from "@/store/new/OntologyStore";
 
 export default function useNcbiTreeProcessor() {
     const { getNcbiDefinition } = useOntologyStore();
 
-    const root = shallowRef<NcbiTreeNode>();
+    const root = shallowRef<NcbiTreeNode>(new NcbiTreeNode(1, "organism", "root"));
+
     const nodes = shallowRef(new Map<number, NcbiTreeNode>());
 
     const process = (

@@ -121,7 +121,7 @@
                             prepend-icon="mdi-restart"
                             @click="peptonizerStep = 1"
                         >
-                          New analysis
+                            New analysis
                         </v-btn>
                         <v-spacer />
                         <analysis-summary-export @prepareDownload="exportCsv" @download="downloadCsv" />

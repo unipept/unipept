@@ -2,19 +2,11 @@ import { ChangelogItem, ReleaseParser, ReleaseParserResult } from "./ReleasePars
 import { marked } from "marked";
 
 export default class DescriptionChangelogParser implements ReleaseParser {
-    public parse(body: string): ReleaseParserResult {
+    public async parse(body: string): Promise<ReleaseParserResult> {
         return {
-            description: marked(body),
+            description: await marked(body),
             changelog: []
         }
-        // const [description, ...rest] = body.replace(/- /g, "* ").split("* ");
-        //
-        // return {
-        //     description: description,
-        //     changelog: rest
-        //         .filter(item => item.length)
-        //         .map(this.splitTag)
-        // };
     }
 
     private splitTag(item: string): ChangelogItem {

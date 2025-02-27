@@ -5,7 +5,7 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-      time: "9:00"
+      time: "09:00"
       timezone: Europe/Brussels
 
   # Maintain dependencies for NPM
@@ -13,5 +13,5 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-      time: "9:00"
+      time: "09:00"
       timezone: Europe/Brussels

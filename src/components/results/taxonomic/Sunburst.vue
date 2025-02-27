@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { Sunburst as UnipeptSunburst, SunburstSettings } from 'unipept-visualizations';
 import {computed, onMounted, ref, useTemplateRef, watch} from 'vue';
-import {NcbiTreeNode} from "unipept-web-components";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import VisualizationControls from "@/components/results/taxonomic/VisualizationControls.vue";
 import {useFullscreen} from "@vueuse/core";
 import DownloadImage from "@/components/image/DownloadImage.vue";

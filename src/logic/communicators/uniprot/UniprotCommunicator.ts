@@ -1,4 +1,4 @@
-import {NcbiId, NetworkUtils} from "unipept-web-components";
+import NetworkUtils from "@/logic/communicators/NetworkUtils";
 
 export enum ProteomeType {
     Reference,
@@ -18,7 +18,7 @@ export default class UniprotCommunicator {
     private static UNIPROT_API_URL = "https://rest.uniprot.org/uniprotkb/search";
     private static PROTEOMES_STREAM_URL = "https://rest.uniprot.org/proteomes/stream";
 
-    public static async getRecordCount(taxa: NcbiId[]): Promise<number> {
+    public static async getRecordCount(taxa: number[]): Promise<number> {
         let idQuery: string;
         if (taxa.length === 0) {
             idQuery = "*";

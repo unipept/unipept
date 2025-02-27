@@ -1,4 +1,4 @@
-import {PeptideData} from "unipept-web-components";
+import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideTrust from "@/types/PeptideTrust";
 import CountTable from "@/logic/processors/CountTable";
