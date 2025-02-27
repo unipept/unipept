@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref, watch} from "vue";
+import {computed, ComputedRef, ref, watch} from "vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import DataSourceSelectTable from "./DataSourceSelectTable.vue";
 import useOntologyStore from "@/store/new/OntologyStore";
@@ -46,7 +46,7 @@ const {
     getIprDefinition
 } = useOntologyStore();
 
-const selectedItems = defineModel<DataSourceTableItem[]>();
+const selectedItems = defineModel<DataSourceTableItem[]>({ required: true });
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
@@ -93,7 +93,7 @@ const getItems = (countTable: CountTable<string | number>, peptideMapping: Map<n
             name: definition?.name || "Unknown",
             category: definition?.rank || definition?.namespace || "Unknown",
             count: count,
-            peptides: peptideMapping.get(id)
+            peptides: peptideMapping?.get(id) || []
         };
     });
 

@@ -24,7 +24,12 @@ const addSample = (groupId: string, sample: SampleTableItem) => {
         sample.config,
         sample.intensities
     );
-    groupStore.getGroup(groupId).getAnalysis(analysisId).analyse();
+    const analysis = groupStore.getGroup(groupId).getAnalysis(analysisId);
+    if (!analysis) {
+      throw Error(`Could not create a new analysis with the provided properties. Analysis with id ${analysisId} is invalid.`);
+    } else {
+      analysis.analyse();
+    }
 }
 
 const removeSample = (groupId: string, analysisId: string) => {

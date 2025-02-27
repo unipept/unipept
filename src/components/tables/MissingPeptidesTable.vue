@@ -28,11 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import { Peptide } from 'unipept-web-components';
 import { computed, ref } from "vue";
 
 export interface Props {
-    items: Peptide[]
+    items: string[]
 }
 
 const props = defineProps<Props>();
@@ -63,11 +62,11 @@ const itemObjects = computed(() => {
     });
 });
 
-const openItem = function(peptide: Peptide) {
+const openItem = function(peptide: string) {
     window.open(url(peptide), "_blank");
 }
 
-const url = (peptide: Peptide) => {
+const url = (peptide: string) => {
     return "http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on" +
         "&USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY=" + peptide + "&GAPCOSTS=11%201" +
         "&EQ_MENU=Enter%20organism%20name%20or%20id--completions%20will%20be%20suggested&DATABASE=nr" +

@@ -159,7 +159,7 @@ const selectedItem = ref();
 const dialogOpen = ref(false);
 
 const selfPeptides = computed(() =>
-    [...new Set(analysis.lcaToPeptides.get(selectedItem.value?.id) || [])].map(p => ({ name: p }))
+    [...new Set(analysis.lcaToPeptides?.get(selectedItem.value?.id) || [])].map(p => ({ name: p }))
 );
 const subPeptides = computed(() => {
     const nodeInOriginalTree = recursiveSearch(analysis.ncbiTree, selectedItem.value?.id);
@@ -183,8 +183,9 @@ watch(selectedItem, () => {
 </script>
 
 <script lang="ts">
-import {NcbiTreeNode} from "unipept-web-components";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {FilteredTree} from "@/composables/useTreeFilter";
 
 const headers = [
     { text: 'Peptide', value: 'name', width: '98%' },
@@ -203,18 +204,22 @@ const copyToClipboard = (peptides: string[]) => {
     navigator.clipboard.writeText(peptides.join('\n'));
 }
 
-const constructTree = (node: NcbiTreeNode): NcbiTreeNode => {
-    node.nameExtra = `${node.selfCount}/${node.count}`;
-    node.children = node.children.map(child => constructTree(child));
-    return node;
+const constructTree = (node: NcbiTreeNode): FilteredTree => {
+    return {
+        id: node.id,
+        name: node.name,
+        nameExtra: `${node.selfCount}/${node.count}`,
+        children: node.children.map(child => constructTree(child)),
+        extra: node.extra
+    }
 }
 
-const recursivePeptides = (analysis: SingleAnalysisStore, node: NcbiTreeNode): string[] => {
+const recursivePeptides = (analysis: SingleAnalysisStore, node?: NcbiTreeNode): string[] => {
     if (!node) {
         return [];
     }
 
-    const ownPeptides = [...analysis.lcaToPeptides.get(node.id) || []];
+    const ownPeptides = [...analysis.lcaToPeptides?.get(node.id) || []];
 
     for (const child of node.children) {
         ownPeptides.push(...recursivePeptides(analysis, child));
@@ -223,7 +228,7 @@ const recursivePeptides = (analysis: SingleAnalysisStore, node: NcbiTreeNode): s
     return ownPeptides;
 }
 
-const recursiveSearch = (node: NcbiTreeNode, id: number): NcbiTreeNode => {
+const recursiveSearch = (node: NcbiTreeNode, id: number): NcbiTreeNode | undefined => {
     if (node.id === id) {
         return node;
     }
@@ -234,6 +239,8 @@ const recursiveSearch = (node: NcbiTreeNode, id: number): NcbiTreeNode => {
             return result;
         }
     }
+
+    return undefined;
 }
 </script>
 

@@ -1,6 +1,6 @@
 import useFunctionalProcessor from "@/composables/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
-import {PeptideData} from "unipept-web-components";
+import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {ref} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
 import CountTable from "@/logic/processors/CountTable";

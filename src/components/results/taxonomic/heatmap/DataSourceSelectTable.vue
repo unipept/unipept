@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import {ref, watch} from "vue";
 
-const selected = defineModel<DataSourceTableItem[]>();
+const selected = defineModel<DataSourceTableItem[]>({ required: true });
 
 const { items, categories } = defineProps<{
     items: DataSourceTableItem[]
@@ -76,7 +76,8 @@ export interface DataSourceTableItem {
     peptides: string[]
 }
 
-const headers = [
+// TODO: Change when Vuetify correctly exposes types for headers
+const headers: any = [
     {
         title: "Name",
         align: "start",
@@ -94,7 +95,7 @@ const headers = [
         align: "start",
         key: "count",
         width: "20%"
-    },
+    }
 ];
 
 const categoryFilter = (value: any, category: string, item: any) => {

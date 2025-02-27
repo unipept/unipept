@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { Treeview as UnipeptTreeview, TreeviewSettings, DataNodeLike } from 'unipept-visualizations';
 import {computed, nextTick, onMounted, ref, useTemplateRef, watch} from 'vue';
-import {NcbiTreeNode} from "unipept-web-components";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import VisualizationControls from "@/components/results/taxonomic/VisualizationControls.vue";
 import {useElementSize, useFullscreen} from "@vueuse/core";
 import DownloadImage from "@/components/image/DownloadImage.vue";

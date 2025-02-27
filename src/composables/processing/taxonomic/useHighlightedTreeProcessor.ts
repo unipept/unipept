@@ -1,4 +1,4 @@
-import {NcbiTreeNode} from "unipept-web-components";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import HighlightTreeProcessorWebWorker from "../workers/highlightedTreeProcessor.worker.ts?worker&inline";
 

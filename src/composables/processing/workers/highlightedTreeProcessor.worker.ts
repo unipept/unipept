@@ -1,5 +1,5 @@
 import {HighlightedTreeProcessorData} from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
-import {NcbiTreeNode} from "unipept-web-components";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
