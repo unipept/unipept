@@ -1,7 +1,7 @@
 import { ChangelogItem, ReleaseParser, ReleaseParserResult } from "./ReleaseParser";
 
 export default class DesktopReleaseParser implements ReleaseParser {
-    public parse(body: string): ReleaseParserResult {
+    public async parse(body: string): Promise<ReleaseParserResult> {
         const [description, ...rest] = body.split("**");
 
         if(rest.length == 0) {

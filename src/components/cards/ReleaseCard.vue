@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="changelog">
         <v-card v-if="!release.tag_name">
             <v-card-title class="bg-blue text-white pa-4 ">
                 This application has not yet been released
@@ -65,12 +65,16 @@
             </v-hover>
         </a>
     </div>
+    <div v-else class="d-flex justify-center">
+        <v-progress-circular indeterminate color="primary" />
+    </div>
 </template>
 
 <script setup lang="ts">
 import { GithubRelease } from '@/logic/communicators/github/GithubCommunicator';
-import { ReleaseParser } from '@/logic/parsers/github/ReleaseParser';
+import {ReleaseParser, ReleaseParserResult} from '@/logic/parsers/github/ReleaseParser';
 import Rlink from '../highlights/ResourceLink.vue';
+import {onMounted, ref, Ref, watch} from "vue";
 
 export interface Props {
     release: GithubRelease,
@@ -84,8 +88,11 @@ const formatDate = (dateString: string) => {
     return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
 }
 
-const changelog = parser.parse(release.body);
+const changelog: Ref<ReleaseParserResult | undefined> = ref();
 
+onMounted(async () => {
+  changelog.value = await parser.parse(release.body)
+});
 </script>
 
 <style scoped>
