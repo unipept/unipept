@@ -34,7 +34,7 @@
     "@babel/types": "^7.21.4",
     "@types/node": "^22.13.5",
     "@types/webfontloader": "^1.6.35",
-    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.21.0",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",
