@@ -75,6 +75,7 @@
                         variant="text"
                         text="Undo changes"
                         prepend-icon="mdi-undo"
+                        :disabled="!canUndo"
                         @click="undoChangesDialogOpen = true"
                     />
 
@@ -139,6 +140,15 @@ const isValid = computed(() => {
     const allUnique = samples.value.every(s => samples.value.filter(s2 => s2.name === s.name).length === 1);
     return noneEmpty && allUnique;
 });
+
+const canUndo = computed(() =>
+    groupName.value !== group.name
+    || group.analyses.some(s => !samples.value.find(s2 => s2.id === s.id))
+    || samples.value.some(s => {
+        const originalAnalysis = group.getAnalysis(s.id);
+        return !originalAnalysis || (originalAnalysis && isDirty(originalAnalysis, s));
+    })
+);
 
 const isUnique = (item: SampleTableItem) => {
     return samples.value!.filter(s => s.id !== item?.id && s.name === item.name).length === 0
