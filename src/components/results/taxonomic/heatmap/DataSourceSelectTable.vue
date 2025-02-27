@@ -30,7 +30,6 @@
             v-model="selected"
             :headers="headers"
             :items="items"
-            :value-comparator="Object.is"
             :search="selectedCategory"
             :custom-filter="categoryFilter"
             :items-per-page="5"
