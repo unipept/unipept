@@ -33,6 +33,10 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         return group;
     };
 
+    const getFirstGroup = (): MultiAnalysisStore | undefined => {
+        return groups.value[0];
+    }
+
     const addGroup = (name: string): string => {
         const id = uuidv4();
         _groups.value.set(id, useMultiAnalysisStore(id, name));
@@ -73,6 +77,7 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         empty,
 
         getGroup,
+        getFirstGroup,
         addGroup,
         removeGroup,
         addAnalysis,

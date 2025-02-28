@@ -33,6 +33,14 @@ const useMultiAnalysisStore = (
         return _analyses.value.get(id);
     }
 
+    const getFirstAnalysis = (): SingleAnalysisStore | undefined => {
+        if (!empty.value) {
+            // @ts-ignore (unfortunately TypeScript is not able to correctly infer the type of the SingleAnalysisStore here)
+            return analyses.value[0];
+        }
+        return undefined;
+    }
+
     const addAnalysis = (
         name: string, rawPeptides: string,
         config: AnalysisConfig,
@@ -62,6 +70,7 @@ const useMultiAnalysisStore = (
         empty,
 
         getAnalysis,
+        getFirstAnalysis,
         addAnalysis,
         removeAnalysis,
         clear,
