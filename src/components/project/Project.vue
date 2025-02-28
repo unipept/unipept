@@ -3,10 +3,8 @@
         permanent
     >
         <filesystem
-            :groups="groups"
-            @select="selectAnalysis"
-            @select:clear="clearSelectedAnalysis"
-
+            v-model="selectedAnalyses"
+            :project="project"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -40,8 +38,8 @@
         />
 
         <div v-else>
-            <analysis-summary-progress v-if="selectedAnalysis && !selectedAnalysisFinished" />
-            <div v-if="selectedAnalysis && selectedAnalysisFinished">
+            <analysis-summary-progress v-if="!selectedAnalysisFinished" />
+            <div v-else>
                 <div
                     v-if="selectedAnalysisFiltered"
                     class="position-sticky bg-white py-5 mt-n5 mx-n2"
@@ -94,7 +92,7 @@ import Filesystem from "@/components/filesystem/Filesystem.vue";
 import MpaFunctionalResults from "@/components/results/functional/MpaFunctionalResults.vue";
 import AnalysisSummary from "@/components/analysis/multi/AnalysisSummary.vue";
 import TaxonomicResults from "@/components/results/taxonomic/TaxonomicResults.vue";
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, ComputedRef, onMounted, Ref, ref, watch} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {DEFAULT_NEW_GROUP_NAME, GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
@@ -115,9 +113,9 @@ const emits = defineEmits<{
 }>();
 
 const selectedGroupName = ref<string>();
-const selectedAnalysis = ref<SingleAnalysisStore>();
+const selectedAnalyses: Ref = ref<SingleAnalysisStore[]>([]);
 
-const groups = computed(() => project.groups);
+const selectedAnalysis: ComputedRef = computed(() => selectedAnalyses.value?.[0]);
 
 const selectedAnalysisFinished = computed(() => {
     return selectedAnalysis.value && selectedAnalysis.value.status === AnalysisStatus.Finished;
@@ -152,13 +150,14 @@ const removeGroup = (groupId: string) => {
 }
 
 const resetTaxonomicFilter = () => {
-    selectedAnalysis.value?.updateTaxonomicFilter(1);
+    selectedAnalyses.value?.forEach(analysis => analysis.updateTaxonomicFilter(1));
 }
 
-const clearSelectedAnalysis = () => selectedAnalysis.value = undefined;
-
 const selectAnalysis = (groupId: string | undefined, analysisId: string | undefined) => {
-    selectedAnalysis.value = groupId && analysisId ? project.getGroup(groupId)?.getAnalysis(analysisId) : undefined;
+    if (groupId && analysisId) {
+        const analysis = project.getGroup(groupId)?.getAnalysis(analysisId);
+        selectedAnalyses.value = analysis ? [ analysis ] : [];
+    }
     selectedGroupName.value = groupId ? project.getGroup(groupId)?.name : undefined;
 }
 
@@ -175,8 +174,15 @@ function detectSafari(): boolean {
 
 onMounted(() => {
     isSafari.value = detectSafari();
-});
 
+    const group = project.getFirstGroup();
+    if (group) {
+        const analysis = group.getFirstAnalysis();
+        if (analysis) {
+            selectAnalysis(group.id, analysis.id);
+        }
+    }
+});
 </script>
 
 <style scoped>

@@ -1,10 +1,11 @@
 <template>
     <div
-        v-if="!groups || groups.length === 0"
+        v-if="!project.groups || project.groups.length === 0"
         class="mt-4 d-flex justify-center"
     >
         No samples added yet...
     </div>
+
     <v-list
         v-model:opened="expanded"
         v-model:selected="selected"
@@ -17,9 +18,8 @@
         mandatory
     >
         <filesystem-group
-            v-for="group in groups"
+            v-for="group in project.groups"
             :key="group.id"
-            :value="group.id"
             :group="group"
             @sample:add="addSample"
             @sample:update="updateSample"
@@ -33,11 +33,14 @@
 <script setup lang="ts">
 import FilesystemGroup from "@/components/filesystem/FilesystemGroup.vue";
 import {onMounted, ref, watch} from "vue";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
+import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
 
-const { groups } = defineProps<{
-    groups: MultiAnalysisStore[];
+const selected = defineModel<SingleAnalysisStore[]>({ required: true });
+
+const { project } = defineProps<{
+    project: GroupAnalysisStore;
 }>();
 
 const emits = defineEmits<{
@@ -51,7 +54,6 @@ const emits = defineEmits<{
 }>();
 
 const expanded = ref<string[]>([]);
-const selected = ref<string[]>([]);
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
     emits('sample:add', groupId, sample);
@@ -62,9 +64,8 @@ const updateSample = (groupId: string, analysisId: string, updatedSample: Sample
 };
 
 const removeSample = (groupId: string, analysisId: string) => {
-    if (analysisId === selected.value?.[0]?.split(':')[1]) {
+    if (analysisId === selected.value[0]?.id) {
         selected.value = [];
-        emits('select:clear');
     }
     emits('sample:remove', groupId, analysisId);
 };
@@ -74,29 +75,17 @@ const updateGroup = (groupId: string, updatedName: string) => {
 };
 
 const removeGroup = (groupId: string) => {
-    if (groupId === selected.value?.[0]?.split(':')[0]) {
+    if (selected.value.length > 0 && project.getGroup(groupId).getAnalysis(selected.value[0]?.id)) {
         selected.value = [];
-        emits('select:clear');
     }
     emits('group:remove', groupId);
 };
 
-watch(selected, (value) => {
-  if (value.length === 1 && value[0].includes(":")) {
-        const splitted = value[0].split(':');
-        emits('select', splitted[0], splitted[1]);
-    }
-});
-
-watch(() => groups, () => {
-    expanded.value = groups.map(group => group.id);
+watch(() => project.groups, () => {
+    expanded.value = project.groups.map(group => group.id);
 });
 
 onMounted(() => {
-    expanded.value = groups.map(group => group.id);
+    expanded.value = project.groups.map(group => group.id);
 });
 </script>
-
-<style scoped>
-
-</style>
