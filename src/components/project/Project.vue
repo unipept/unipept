@@ -150,7 +150,7 @@ const removeGroup = (groupId: string) => {
 }
 
 const resetTaxonomicFilter = () => {
-    selectedAnalyses.value?.forEach(analysis => analysis.updateTaxonomicFilter(1));
+    selectedAnalyses.value?.forEach((analysis: SingleAnalysisStore) => analysis.updateTaxonomicFilter(1));
 }
 
 const selectAnalysis = (groupId: string | undefined, analysisId: string | undefined) => {
