@@ -75,6 +75,7 @@
                         variant="text"
                         text="Undo changes"
                         prepend-icon="mdi-undo"
+                        :disabled="!canUndo"
                         @click="undoChangesDialogOpen = true"
                     />
 
@@ -140,6 +141,15 @@ const isValid = computed(() => {
     return noneEmpty && allUnique;
 });
 
+const canUndo = computed(() =>
+    groupName.value !== group.name
+    || group.analyses.some(s => !samples.value.find(s2 => s2.id === s.id))
+    || samples.value.some(s => {
+        const originalAnalysis = group.getAnalysis(s.id);
+        return !originalAnalysis || (originalAnalysis && isDirty(originalAnalysis, s));
+    })
+);
+
 const isUnique = (item: SampleTableItem) => {
     return samples.value!.filter(s => s.id !== item?.id && s.name === item.name).length === 0
 };
@@ -184,6 +194,16 @@ const removeGroup = () => {
 };
 
 const addSamples = (newSamples: SampleTableItem[]) => {
+    const lastSampleIndex = samples.value.length - 1;
+    if (lastSampleIndex >= 0) {
+        newSamples.forEach(s => s.config = {
+            equate: samples.value[lastSampleIndex].config.equate,
+            filter: samples.value[lastSampleIndex].config.filter,
+            missed: samples.value[lastSampleIndex].config.missed,
+            database: samples.value[lastSampleIndex].config.database
+        });
+    }
+
     samples.value = [...samples.value!, ...newSamples ];
     addingSample.value = false;
 };
@@ -196,6 +216,7 @@ watch(dialogOpen, () => {
         // If the dialog is closed, confirm the changes
         confirmChanges();
     }
+    addingSample.value = false;
 });
 </script>
 
