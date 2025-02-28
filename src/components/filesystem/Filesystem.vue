@@ -16,6 +16,7 @@
         open-strategy="multiple"
         active-strategy="single-leaf"
         mandatory
+        @update:selected="selectItem"
     >
         <filesystem-group
             v-for="group in project.groups"
@@ -79,6 +80,13 @@ const removeGroup = (groupId: string) => {
         selected.value = [];
     }
     emits('group:remove', groupId);
+};
+
+const selectItem = (newSelected: (SingleAnalysisStore | string)[]) => {
+    if (typeof newSelected[0] === 'string') {
+        // We have to set the selected value to itself to trigger the watcher
+        selected.value = [ ...selected.value ];
+    }
 };
 
 watch(() => project.groups, () => {
