@@ -30,13 +30,6 @@
             @group:add="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
         />
 
-        <v-empty-state
-            v-else-if="!selectedAnalysis"
-            title="No sample selected"
-            text="Please select a sample from the sidebar on the left to see its details"
-            icon="mdi-flask-outline"
-        />
-
         <div v-else>
             <analysis-summary-progress v-if="!selectedAnalysisFinished" />
             <div v-else>
