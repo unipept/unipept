@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
-    "@types/uuid": "^9.0.2",
+    "@types/uuid": "^10.0.0",
     "@vueuse/components": "^11.2.0",
     "@vueuse/core": "^12.3.0",
     "async": "^3.2.6",
