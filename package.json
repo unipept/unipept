@@ -15,7 +15,7 @@
     "@vueuse/components": "^11.2.0",
     "@vueuse/core": "^12.3.0",
     "async": "^3.2.6",
-    "highcharts": "^11.4.8",
+    "highcharts": "^12.1.2",
     "highcharts-vue": "^2.0.1",
     "html-to-image": "^1.11.11",
     "peptonizer": "file:./peptonizer-v0.0.26.tgz",
