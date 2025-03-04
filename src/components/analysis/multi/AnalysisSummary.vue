@@ -123,7 +123,8 @@ const peptides = computed(() => [...analysis.peptidesTable!.entries()].map(([pep
         occurrence: count,
         lca: getNcbiDefinition(lca)?.name ?? "N/A",
         rank: getNcbiDefinition(lca)?.rank ?? "N/A",
-        found: analysis.peptideToLca!.has(peptide)
+        found: analysis.peptideToLca!.has(peptide),
+        faCounts: analysis.peptideToData!.get(peptide)?.faCounts
     };
 }));
 const missedPeptides = computed(() => {

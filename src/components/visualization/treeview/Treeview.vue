@@ -148,19 +148,11 @@ watch(() => expanded, (newValue) => {
 export interface TreeviewItem {
     id: number
     name: string
-    nameExtra: string
-    highlighted: boolean
     children: TreeviewItem[]
 
+    nameExtra?: string
+    highlighted?: boolean
     match?: { start: number, end: number }
-}
-
-export const defaultTreeviewItem: TreeviewItem = {
-    id: 1,
-    name: "Organism",
-    nameExtra: "no rank",
-    highlighted: false,
-    children: []
 }
 
 export type Size = 'x-small' | 'small' | 'default' | 'large' | 'x-large';

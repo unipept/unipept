@@ -172,13 +172,9 @@
 </template>
 
 <script setup lang="ts">
-import { QueueManager } from 'unipept-web-components';
 import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router'
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
-import useConfigurationStore from "@/store/ConfigurationStore";
-
-const configStore = useConfigurationStore();
 
 const router = useRouter();
 
@@ -200,8 +196,6 @@ const navItems: NavItem[] = [
     { name: "Unipept Desktop", path: "/desktop", forceReload: false },
 ];
 
-QueueManager.initializeQueue(configStore.taskQueueSize);
-
 const unipeptCommunicator = new UnipeptCommunicator();
 
 onBeforeMount(async () => {
@@ -221,9 +215,6 @@ const navigateToPage = async function(navItem: NavItem) {
 
 
 <style lang="scss">
-//noinspection CssUnknownTarget (Intellij does not yet consider the package.json exports field)
-@import "unipept-web-components/style.css";
-
 body {
     font-size: 16px;
 }

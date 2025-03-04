@@ -1,4 +1,4 @@
-import {NcbiTreeNode} from "unipept-web-components";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import CountTable from "@/logic/processors/CountTable";
 import FunctionalTrust from "@/types/FunctionalTrust";
 

@@ -1,5 +1,5 @@
 <template>
-    <v-list-group :value="value">
+    <v-list-group :value="group.id">
         <template #activator="{ props }">
             <v-list-item
                 base-color="grey-darken-3"
@@ -42,7 +42,7 @@
         <v-list-item
             v-for="analysis in group.analyses"
             :key="analysis.id"
-            :value="`${group.id}:${analysis.id}`"
+            :value="analysis"
             :title="analysis.name"
             color="primary"
             density="compact"
@@ -96,7 +96,6 @@ import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 
 defineProps<{
     group: MultiAnalysisStore;
-    value: string;
 }>();
 
 const emits = defineEmits<{
@@ -129,7 +128,3 @@ const removeGroup = (groupId: string) => {
     emits('group:remove', groupId);
 };
 </script>
-
-<style scoped>
-
-</style>
