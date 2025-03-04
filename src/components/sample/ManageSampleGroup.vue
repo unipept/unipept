@@ -43,6 +43,7 @@
 
                 <sample-table
                     v-model="samples"
+                    :filters="filters"
                     class="mt-3"
                 />
 
@@ -112,11 +113,13 @@ import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import RemoveGroupDialog from "@/components/sample/RemoveGroupDialog.vue";
 import AddSampleStepper from "@/components/sample/AddSampleStepper.vue";
 import UndoChangesDialog from "@/components/sample/UndoChangesDialog.vue";
+import { CustomFilterStore } from "@/store/new/CustomFilterStore";
 
 const dialogOpen = defineModel<boolean>();
 
-const { group } = defineProps<{
+const { group, filters } = defineProps<{
     group: MultiAnalysisStore
+    filters: CustomFilterStore
 }>();
 
 const emit = defineEmits<{

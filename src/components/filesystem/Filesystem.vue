@@ -22,6 +22,7 @@
             v-for="group in project.groups"
             :key="group.id"
             :group="group"
+            :filters="project.customFilterStore"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"

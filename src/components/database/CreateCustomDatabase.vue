@@ -200,7 +200,11 @@ import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
 
 const dialogOpen = defineModel<boolean>();
 
-const databaseName = ref<string>();
+const emits = defineEmits<{
+    (e: 'create', name: string, filter: { taxa: number[] } | { proteomes: string[] }): void,
+}>();
+
+const databaseName = ref<string>("");
 const isValidDatabaseName = ref(false);
 const filter = ref<Filter>(Filter.None);
 
@@ -208,10 +212,14 @@ const selectedTaxa = ref<NcbiTaxon[]>([]);
 const selectedProteomes = ref<any[]>([]);
 
 const buildTaxonDatabase = () => {
+    const ids = selectedTaxa.value.map(taxon => taxon.id);
+    emits("create", databaseName.value, { taxa: ids });
     dialogOpen.value = false;
 };
 
 const buildProteomeDatabase = () => {
+    const ids = selectedProteomes.value.map(proteome => proteome.id);
+    emits("create", databaseName.value, { proteomes: ids });
     dialogOpen.value = false;
 };
 </script>

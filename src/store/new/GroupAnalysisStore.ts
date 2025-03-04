@@ -3,10 +3,17 @@ import useMultiAnalysisStore, {MultiAnalysisStore} from "@/store/new/MultiAnalys
 import {computed, ref} from "vue";
 import {v4 as uuidv4} from "uuid";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import useCustomFilterStore from "@/store/new/CustomFilterStore";
 
 export const DEFAULT_NEW_GROUP_NAME = "Group";
 
 const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
+    // ===============================================================
+    // ========================== STORES =============================
+    // ===============================================================
+
+    const customFilterStore = useCustomFilterStore();
+
     // ===============================================================
     // ======================== REFERENCES ===========================
     // ===============================================================
@@ -73,6 +80,8 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
     }
 
     return {
+        customFilterStore,
+
         groups,
         empty,
 

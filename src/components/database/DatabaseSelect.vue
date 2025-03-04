@@ -2,7 +2,7 @@
     <v-select
         v-model="selectedDatabase"
         v-bind="selectProps"
-        :items="['UniProtKB']"
+        :items="filterItems"
         density="compact"
     >
         <template #item="{ props }">
@@ -25,24 +25,39 @@
         </template>
     </v-select>
 
-    <create-custom-database v-model="createDatabaseOpen" />
+    <create-custom-database
+        v-model="createDatabaseOpen"
+        @create="createFilter"
+    />
 </template>
 
 <script setup lang="ts">
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
-import {ref} from "vue";
+import {computed, ref} from "vue";
+import {CustomFilterStore} from "@/store/new/CustomFilterStore";
+
+const selectedDatabase = defineModel<string>();
 
 const selectProps = withDefaults(defineProps<{
+    filters?: CustomFilterStore
     variant?: 'outlined' | 'underlined'
     hideDetails?: boolean
+    readonly?: boolean
     label?: string
     class?: string
 }>(), {
     hideDetails: false,
-    variant: 'outlined'
+    variant: 'outlined',
+    readonly: false,
 });
 
-const selectedDatabase = defineModel<string>();
-
 const createDatabaseOpen = ref(false);
+
+const filterItems = computed(() => {
+    return selectProps.filters?.filters || [];
+});
+
+const createFilter = (name: string, filter: any) => {
+    selectProps.filters?.addFilter(name, filter);
+};
 </script>

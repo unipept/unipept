@@ -81,13 +81,14 @@
             />
         </template>
 
-        <!--        <template #item.database="{ item }">-->
-        <!--            <database-select-->
-        <!--                v-model="item.config.database"-->
-        <!--                variant="underlined"-->
-        <!--                hide-details-->
-        <!--            />-->
-        <!--        </template>-->
+        <template #item.database="{ item }">
+            <database-select
+                v-model="item.config.database"
+                :filters="filters"
+                variant="underlined"
+                hide-details
+            />
+        </template>
 
         <template #item.count="{ item }">
             <div class="d-flex align-center">
@@ -132,8 +133,13 @@
 import {ref} from "vue";
 import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import SampleContentTable from "@/components/sample/SampleContentTable.vue";
+import {CustomFilterStore} from "@/store/new/CustomFilterStore";
 
 const samples = defineModel<SampleTableItem[]>();
+
+const { filters } = defineProps<{
+    filters: CustomFilterStore
+}>();
 
 const expanded = ref<string[]>([]);
 const addingSample = ref(false);
@@ -183,11 +189,11 @@ const headers: any = [
         align: "start",
         value: "missed",
     },
-    // {
-    //     title: "Database",
-    //     align: "start",
-    //     value: "database",
-    // },
+    {
+        title: "Database",
+        align: "start",
+        value: "database",
+    },
     {
         title: "# Peptides",
         align: "start",
