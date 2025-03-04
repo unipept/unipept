@@ -2507,9 +2507,9 @@ pathe@^2.0.1:
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-2.0.3.tgz#3ecbec55421685b70a9da872b2cff3e1cbed1716"
   integrity sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==
 
-"peptonizer@file:./peptonizer-v0.0.26.tgz":
-  version "0.0.26"
-  resolved "file:./peptonizer-v0.0.26.tgz#e6a56a1f661af85313b4d67fab4e3ca0c53641c0"
+"peptonizer@file:./peptonizer-v0.0.27.tgz":
+  version "0.0.27"
+  resolved "file:./peptonizer-v0.0.27.tgz#4c006df7b50d40d0bc354d9810547300e9979b07"
   dependencies:
     "@types/async" "^3.2.24"
     async "^3.2.6"
