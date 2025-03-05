@@ -41,13 +41,13 @@
                                                     density="comfortable"
                                                     variant="outlined"
                                                     label="Database name"
+                                                    hint="Give your database a name to easily recognize it."
+                                                    persistent-hint
                                                     :rules="[
                                                         v => !!v || 'Provide a valid name for your database',
+                                                        v => !customFilterStore.hasFilter(v) || 'A filter with this name already exists'
                                                     ]"
                                                 />
-                                            </div>
-                                            <div class="mt-n6">
-                                                <span class="text-caption text-grey-darken-2">Give your database a name to easily recognize it.</span>
                                             </div>
                                         </v-col>
                                     </v-row>
@@ -101,7 +101,7 @@
                                             color="primary"
                                             text="Manually filter database"
                                             variant="tonal"
-                                            @click="filter = Filter.Manually; next()"
+                                            @click="() => { filterSelection = FilterSelection.Manually; next(); }"
                                         />
                                     </v-col>
                                     <v-col
@@ -112,7 +112,7 @@
                                             color="primary"
                                             text="Construct from reference proteomes"
                                             variant="tonal"
-                                            @click="filter = Filter.ReferenceProteomes; next()"
+                                            @click="() => { filterSelection = FilterSelection.ReferenceProteomes; next(); }"
                                         />
                                     </v-col>
                                 </v-row>
@@ -122,14 +122,14 @@
                         </v-stepper-vertical-item>
 
                         <v-stepper-vertical-item
-                            v-if="filter === Filter.None"
+                            v-if="filterSelection === FilterSelection.None"
                             :complete="step as number > 3"
                             title="Select a construction method first"
                             value="3"
                         />
 
                         <v-stepper-vertical-item
-                            v-else-if="filter === Filter.Manually"
+                            v-else-if="filterSelection === FilterSelection.Manually"
                             :complete="step as number > 3"
                             editable
                             title="Filter organisms"
@@ -197,35 +197,42 @@ import {ref} from "vue";
 import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
+import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
+
+const customFilterStore = useCustomFilterStore();
 
 const dialogOpen = defineModel<boolean>();
 
 const emits = defineEmits<{
-    (e: 'create', name: string, filter: { taxa: number[] } | { proteomes: string[] }): void,
+    (e: 'create', name: string, filter: Filter): void,
 }>();
 
 const databaseName = ref<string>("");
 const isValidDatabaseName = ref(false);
-const filter = ref<Filter>(Filter.None);
+const filterSelection = ref<FilterSelection>(FilterSelection.None);
 
 const selectedTaxa = ref<NcbiTaxon[]>([]);
 const selectedProteomes = ref<any[]>([]);
 
 const buildTaxonDatabase = () => {
-    const ids = selectedTaxa.value.map(taxon => taxon.id);
-    emits("create", databaseName.value, { taxa: ids });
+    emits("create", databaseName.value, {
+        filter: FilterType.Taxon,
+        data: selectedTaxa.value.map(taxon => taxon.id)
+    });
     dialogOpen.value = false;
 };
 
 const buildProteomeDatabase = () => {
-    const ids = selectedProteomes.value.map(proteome => proteome.id);
-    emits("create", databaseName.value, { proteomes: ids });
+    emits("create", databaseName.value, {
+        filter: FilterType.Proteome,
+        data: selectedProteomes.value.map(proteome => proteome.id)
+    });
     dialogOpen.value = false;
 };
 </script>
 
 <script lang="ts">
-enum Filter {
+enum FilterSelection {
     None,
     Manually,
     ReferenceProteomes

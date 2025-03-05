@@ -78,7 +78,6 @@
         <manage-sample-group
             v-model="manageSamplesDialogOpen"
             :group="group"
-            :filters="filters"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -97,8 +96,7 @@ import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {CustomFilterStore} from "@/store/new/CustomFilterStore";
 
 defineProps<{
-    group: MultiAnalysisStore;
-    filters: CustomFilterStore
+    group: MultiAnalysisStore
 }>();
 
 const emits = defineEmits<{

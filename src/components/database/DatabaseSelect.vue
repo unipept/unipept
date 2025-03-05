@@ -34,12 +34,13 @@
 <script setup lang="ts">
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
 import {computed, ref} from "vue";
-import {CustomFilterStore} from "@/store/new/CustomFilterStore";
+import useCustomFilterStore from "@/store/new/CustomFilterStore";
+
+const customFilterStore = useCustomFilterStore();
 
 const selectedDatabase = defineModel<string>();
 
 const selectProps = withDefaults(defineProps<{
-    filters?: CustomFilterStore
     variant?: 'outlined' | 'underlined'
     hideDetails?: boolean
     readonly?: boolean
@@ -53,11 +54,10 @@ const selectProps = withDefaults(defineProps<{
 
 const createDatabaseOpen = ref(false);
 
-const filterItems = computed(() => {
-    return selectProps.filters?.filters || [];
-});
+const filterItems = computed(() => customFilterStore.filters);
 
 const createFilter = (name: string, filter: any) => {
-    selectProps.filters?.addFilter(name, filter);
+    customFilterStore.addFilter(name, filter);
+    selectedDatabase.value = name;
 };
 </script>

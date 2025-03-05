@@ -9,12 +9,6 @@ export const DEFAULT_NEW_GROUP_NAME = "Group";
 
 const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
     // ===============================================================
-    // ========================== STORES =============================
-    // ===============================================================
-
-    const customFilterStore = useCustomFilterStore();
-
-    // ===============================================================
     // ======================== REFERENCES ===========================
     // ===============================================================
 
@@ -80,8 +74,6 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
     }
 
     return {
-        customFilterStore,
-
         groups,
         empty,
 

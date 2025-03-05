@@ -1,14 +1,14 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
 
-enum FilterType {
+export enum FilterType {
     Taxon,
     Proteome,
     Protein,
     UniProtKB,
 }
 
-interface Filter {
+export interface Filter {
     filter: FilterType;
     data?: number[] | string[];
 }
@@ -27,11 +27,16 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
         _filters.value.set(key, filter);
     }
 
+    const hasFilter = (key: string): boolean => {
+        return _filters.value.has(key);
+    }
+
     return {
         filters,
 
         getFilter,
-        addFilter
+        addFilter,
+        hasFilter
     };
 });
 
