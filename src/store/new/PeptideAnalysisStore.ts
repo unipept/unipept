@@ -48,7 +48,7 @@ const usePeptideAnalysisStore = (
 
         const peptideTable: CountTable<string> = new CountTable(new Map<string, number>([[peptide.value, proteins.value.length]]));
 
-        await processPept2Filtered([peptide.value], config.value.equate);
+        await processPept2Filtered([peptide.value], config.value.equate, undefined);
 
         await processEc(peptideTable, peptideToData.value!);
         await processGo(peptideTable, peptideToData.value!);

@@ -16,7 +16,7 @@ export default function usePept2filtered(
     const process = async (
         peptides: string[],
         equate: boolean,
-        filter: Filter
+        filter: Filter | undefined
     ) => {
         const result = new ShareableMap<string, PeptideData>(undefined, undefined, new PeptideDataSerializer());
 
@@ -51,7 +51,9 @@ export default function usePept2filtered(
         peptideData.value = result;
     }
 
-    const constructFilterJson = (filter: Filter) => {
+    const constructFilterJson = (filter: Filter | undefined) => {
+        if (!filter) return {};
+
         switch (filter.filter) {
             case FilterType.Taxon: return { filter: { taxa: filter.data } };
             case FilterType.Proteome: return { filter: { proteomes: filter.data } };
