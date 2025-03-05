@@ -72,7 +72,6 @@
                 variant="tonal"
                 text="Analyze"
                 class="float-right mb-3"
-                :disabled="rawPeptides.length === 0"
                 @click="analyze"
             />
         </v-card-text>
