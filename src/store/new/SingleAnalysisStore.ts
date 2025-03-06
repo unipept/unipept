@@ -12,6 +12,7 @@ import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTree
 import usePeptonizerStore from "@/store/new/PeptonizerAnalysisStore";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import useCustomFilterStore from "@/store/new/CustomFilterStore";
 
 
 const useSingleAnalysisStore = (
@@ -23,6 +24,7 @@ const useSingleAnalysisStore = (
     _peptideIntensities?: Map<string, number>
 ) => defineStore(`singleSampleStore/${_id}`, () => {
     const ontologyStore = useOntologyStore();
+    const customFilterStore = useCustomFilterStore();
 
     // ===============================================================
     // ======================== REFERENCES ===========================
@@ -75,7 +77,8 @@ const useSingleAnalysisStore = (
 
         await processPeptides(peptides.value!, config.value.equate, config.value.filter);
 
-        await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate);
+        const filter = customFilterStore.getFilter(config.value.database);
+        await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate, filter);
         processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
 
         await processLca(peptidesTable.value!, peptideToData.value!);

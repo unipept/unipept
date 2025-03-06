@@ -93,9 +93,10 @@ import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import {ref} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {CustomFilterStore} from "@/store/new/CustomFilterStore";
 
 defineProps<{
-    group: MultiAnalysisStore;
+    group: MultiAnalysisStore
 }>();
 
 const emits = defineEmits<{
