@@ -64,6 +64,7 @@
                     <peptonizer-analysis
                         :sample-name="analysis.name"
                         :uses-default-scores="analysis.intensities === undefined"
+                        :peptide-data="analysis.peptideToData!"
                         :peptide-count-table="analysis.peptidesTable!"
                         :peptide-intensities="analysis.intensities!"
                         :equate-il="analysis.config.equate"
