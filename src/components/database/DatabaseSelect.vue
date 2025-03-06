@@ -1,5 +1,13 @@
 <template>
+    <v-text-field
+        v-if="readonly"
+        v-bind="selectProps"
+        density="compact"
+        style="pointer-events: none"
+    />
+
     <v-select
+        v-else
         v-model="selectedDatabase"
         v-bind="selectProps"
         :items="filterItems"
