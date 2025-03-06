@@ -174,7 +174,6 @@
 import {computed, ref, watch} from "vue";
 import UniprotCommunicator, {ProteomeType} from "@/logic/communicators/uniprot/UniprotCommunicator";
 
-
 // TODO: need to annotate this as any until Vuetify correctly exposes the DataTableHeader types.
 const headers: any = [
     {
@@ -190,7 +189,7 @@ const headers: any = [
         width: "15%"
     },
     {
-        title: "Organisme name",
+        title: "Organism name",
         align: "start",
         value: "organism",
         width: "50%"

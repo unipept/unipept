@@ -65,11 +65,13 @@
                             </span>
                         </v-tooltip>
                     </div>
-                    <!--                    <database-select-->
-                    <!--                        :model-value="analysis.config.database"-->
-                    <!--                        class="mt-1"-->
-                    <!--                        label="Selected database"-->
-                    <!--                    />-->
+
+                    <database-select
+                        :model-value="analysis.config.database"
+                        class="mt-1"
+                        label="Selected database"
+                        readonly
+                    />
                 </v-col>
             </v-row>
             <v-row>
@@ -103,6 +105,7 @@ import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryEx
 import useCsvDownload from "@/composables/useCsvDownload";
 import usePeptideExport from "@/composables/usePeptideExport";
 import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDialog.vue";
+import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 
 const { getNcbiDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
