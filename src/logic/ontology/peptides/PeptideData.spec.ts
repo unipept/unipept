@@ -42,11 +42,7 @@ describe("PeptideData", () => {
                     GO: 3,
                     IPR: 2
                 },
-                data: {
-                    ec: new Map(),
-                    go: new Map(),
-                    ipr: new Map()
-                }
+                data: {"EC:1.2.3.5": 2, "GO:0000001": 35, "IPR:IPR000121": 18}
             }
         };
 
