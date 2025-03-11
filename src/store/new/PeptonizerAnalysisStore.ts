@@ -1,9 +1,8 @@
 import {ref, Ref} from "vue";
 import {defineStore} from "pinia";
 import CountTable from "@/logic/processors/CountTable";
-import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import {Peptonizer, PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
-import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
+import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
+import {PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcessor";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {ShareableMap} from "shared-memory-datastructures";
@@ -96,8 +95,6 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
     const peptonizerFinished = ref<boolean>(false);
     const peptonizerError = ref<string>("");
 
-    const selectedTaxa = ref<NcbiTaxon[]>([]);
-
     let peptonizerProcessor: PeptonizerProcessor | undefined;
 
     const runPeptonizer = async (
@@ -123,11 +120,19 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         );
 
         try {
+            const peptideTaxa = new Map<string, number[]>();
+
+            for (const peptide of peptideCountTable.keys()) {
+                if (peptideToData.get(peptide)) {
+                    peptideTaxa.set(peptide, peptideToData.get(peptide)!.taxa);
+                }
+            }
+
             peptonizerProcessor = new PeptonizerProcessor();
             const peptonizerData = await peptonizerProcessor.runPeptonizer(
+                peptideTaxa,
                 peptideCountTable,
                 rank,
-                selectedTaxa.value.length > 0 ? selectedTaxa.value.map((x: NcbiTaxon) => x.id) : [1],
                 listener,
                 equateIl,
                 peptideIntensities
@@ -172,7 +177,6 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         peptonizerInitalizationFinished,
         peptonizerFinished,
         peptonizerError,
-        selectedTaxa,
 
         runPeptonizer,
         cancelPeptonizer

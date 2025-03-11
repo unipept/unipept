@@ -36,8 +36,16 @@ export default class PeptideData {
     public static readonly TAXON_SIZE = 4;
 
     public get TAXA_START() {
-        const faCounts = this.faCounts;
-        const faDataLength = 12 + faCounts.go * 8 + faCounts.ipr * 8 + faCounts.ec * 20;
+        let goStart = this.dataView.getUint32(PeptideData.FA_GO_INDEX_OFFSET);
+        const goLength = this.dataView.getUint32(goStart);
+
+        let ecStart = this.dataView.getUint32(PeptideData.FA_EC_INDEX_OFFSET);
+        const ecLength = this.dataView.getUint32(ecStart);
+
+        let iprStart = this.dataView.getUint32(PeptideData.FA_IPR_INDEX_OFFSET);
+        const iprLength = this.dataView.getUint32(iprStart);
+
+        const faDataLength = 12 + goLength * 8 + iprLength * 8 + ecLength * 20;
         return PeptideData.FA_DATA_START + faDataLength;
     }
 
@@ -129,7 +137,7 @@ export default class PeptideData {
 
         // Keep track of how many taxa there are stored in this object
         dataView.setUint32(taxaStart, response.taxa?.length || 0);
-        currentPos = taxaStart + PeptideData.TAXON_SIZE;
+        currentPos = taxaStart + PeptideData.TAXON_COUNT_SIZE;
         // Store the actual taxa IDs
         for (const taxon of response.taxa || []) {
             dataView.setUint32(currentPos, taxon);

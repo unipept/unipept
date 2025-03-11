@@ -2518,13 +2518,13 @@ pathe@^2.0.1, pathe@^2.0.3:
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-2.0.3.tgz#3ecbec55421685b70a9da872b2cff3e1cbed1716"
   integrity sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==
 
-"peptonizer@file:./peptonizer-v0.0.29.tgz":
-  version "0.0.29"
-  resolved "file:./peptonizer-v0.0.29.tgz#111b9fe63d4fc1ee4e6d06f3ff10952761b4e132"
+"peptonizer@file:./peptonizer-v0.0.30.tgz":
+  version "0.0.30"
+  resolved "file:./peptonizer-v0.0.30.tgz#22e600e2974ae82cb36aa9bfe13b662c266b0e22"
   dependencies:
     "@types/async" "^3.2.24"
     async "^3.2.6"
-    pyodide "^0.27.3"
+    pyodide "0.26.4"
     rollup-plugin-dts "^6.1.1"
     vite-plugin-dts "^4.5.3"
 
@@ -2600,10 +2600,10 @@ punycode@^2.1.0:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.3.1.tgz#027422e2faec0b25e1549c3e1bd8309b9133b6e5"
   integrity sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==
 
-pyodide@^0.27.3:
-  version "0.27.3"
-  resolved "https://registry.yarnpkg.com/pyodide/-/pyodide-0.27.3.tgz#85d7e196d9074a951866907b8061eca1e5ff442e"
-  integrity sha512-6NwKEbPk0M3Wic2T1TCZijgZH9VE4RkHp1VGljS1sou0NjGdsmY2R/fG5oLmdDkjTRMI1iW7WYaY9pofX8gg1g==
+pyodide@0.26.4:
+  version "0.26.4"
+  resolved "https://registry.yarnpkg.com/pyodide/-/pyodide-0.26.4.tgz#e1420722d86d78cb35a4734404eee5b070ca7189"
+  integrity sha512-z2CHsjVlhhJi5tYBF0AYAfNEPo3zq/z+xOpFtk1tweJkRaTqU4UK/7pLvo8DBU2VDPH31vB3pSI+8fnoqrVrFg==
   dependencies:
     ws "^8.5.0"
 
