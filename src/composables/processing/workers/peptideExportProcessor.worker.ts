@@ -1,10 +1,10 @@
 import {PeptideExportData} from "@/composables/usePeptideExport";
 import {ShareableMap} from "shared-memory-datastructures";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
-import {GoNamespace} from "@/composables/ontology/useGoOntology";
 import usePercentage from "@/composables/usePercentage";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));

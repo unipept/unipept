@@ -202,22 +202,25 @@
 
 <script setup lang="ts">
 import {computed, onMounted, ref, Ref, ComputedRef} from 'vue';
-import FunctionalDefinition from "@/logic/ontology/functional/FunctionalDefinition";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
 import useOntologyStore from "@/store/new/OntologyStore";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import useStringUtils from "@/composables/useStringUtils";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
+import {InterproNamespace} from "@/logic/communicators/unipept/functional/InterproResponse";
+import {EcNamespace} from "@/logic/communicators/unipept/functional/EcResponse";
 
 type MatchedProtein = {
     uniprotAccessionId: string,
     name: string,
     organism: string,
     functionalAnnotations: {
-        go: FunctionalDefinition[],
-        ec: FunctionalDefinition[],
-        interpro: FunctionalDefinition[]
+        go: FunctionalDefinition<GoNamespace>[],
+        ec: FunctionalDefinition<EcNamespace>[],
+        interpro: FunctionalDefinition<InterproNamespace>[]
     },
     totalAnnotations: number
 };

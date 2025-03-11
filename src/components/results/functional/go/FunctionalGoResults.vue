@@ -90,7 +90,7 @@ import CountTable from "@/logic/processors/CountTable";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
-import {GoNamespace} from "@/composables/ontology/useGoOntology";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 const { getGoDefinition } = useOntologyStore();
 
