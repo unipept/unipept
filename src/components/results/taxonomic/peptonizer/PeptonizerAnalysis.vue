@@ -167,7 +167,7 @@ import {PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisS
 import {Ref, ref, watch} from "vue";
 import PeptonizerProgress from "@/components/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/results/taxonomic/peptonizer/PeptonizerChart.vue";
-import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
+import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import usePeptonizerExport from "@/composables/usePeptonizerExport";
 import useCsvDownload from "@/composables/useCsvDownload";

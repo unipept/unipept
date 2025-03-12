@@ -227,7 +227,7 @@
 
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
+import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
 import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
