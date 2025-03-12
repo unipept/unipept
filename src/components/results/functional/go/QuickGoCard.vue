@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
-import {GoNamespace} from "@/composables/ontology/useGoOntology";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 const props = defineProps<{
     items: GoResultsTableItem[]
