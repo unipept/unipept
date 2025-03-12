@@ -75,44 +75,48 @@
                         >
                             <v-container fluid>
                                 <v-row>
-                                    <v-col cols="6">
+                                    <v-col cols="6" class="d-flex flex-column">
                                         <span>
                                             Manually select which UniProt sources (e.g. TrEMBL and SwissProt) should be
                                             used for the database construction and which proteins should be included
                                             based on a given set of taxa.
                                         </span>
-                                    </v-col>
-
-                                    <v-col cols="6">
-                                        <span>
-                                            Provide a list of UniProt reference proteomes that should be used as the
-                                            basis for a custom protein reference database. All available UniProt sources
-                                            (both TrEMBL and SwissProt) will be consulted in this case.
-                                        </span>
-                                    </v-col>
-                                </v-row>
-
-                                <v-row>
-                                    <v-col
-                                        cols="6"
-                                        class="d-flex flex-column"
-                                    >
                                         <v-btn
+                                            class="mt-3"
                                             color="primary"
                                             text="Manually filter database"
                                             variant="tonal"
                                             @click="() => { filterSelection = FilterSelection.Manually; next(); }"
                                         />
                                     </v-col>
-                                    <v-col
-                                        cols="6"
-                                        class="d-flex flex-column"
-                                    >
+
+                                    <v-col cols="6" class="d-flex flex-column">
+                                        <span>
+                                            Provide a list of UniProt reference proteomes that should be used as the
+                                            basis for a custom protein reference database. All available UniProt sources
+                                            (both TrEMBL and SwissProt) will be consulted in this case.
+                                        </span>
                                         <v-btn
+                                            class="mt-3"
                                             color="primary"
                                             text="Construct from reference proteomes"
                                             variant="tonal"
                                             @click="() => { filterSelection = FilterSelection.ReferenceProteomes; next(); }"
+                                        />
+                                    </v-col>
+
+                                    <v-col cols="6" class="d-flex flex-column">
+                                        <span>
+                                            Provide a list of UniProt protein identifiers that should be used as the
+                                            basis for a custom protein reference database. All available UniProt sources
+                                            (both TrEMBL and SwissProt) will be consulted in this case.
+                                        </span>
+                                        <v-btn
+                                            class="mt-3"
+                                            color="primary"
+                                            text="Construct from UniProt proteins"
+                                            variant="tonal"
+                                            @click="() => { filterSelection = FilterSelection.Proteins; next(); }"
                                         />
                                     </v-col>
                                 </v-row>
@@ -158,7 +162,7 @@
                         </v-stepper-vertical-item>
 
                         <v-stepper-vertical-item
-                            v-else
+                            v-else-if="filterSelection === FilterSelection.ReferenceProteomes"
                             :complete="step as number > 3"
                             editable
                             title="Select reference proteomes"
@@ -185,6 +189,35 @@
                                 />
                             </template>
                         </v-stepper-vertical-item>
+
+                        <v-stepper-vertical-item
+                            v-else
+                            :complete="step as number > 3"
+                            editable
+                            title="Select UniProtKB proteins"
+                            subtitle="Decide on a set of proteins that should be present in the database"
+                            value="3"
+                        >
+                            <protein-browser v-model="selectedProteins" />
+
+                            <template #prev>
+                                <v-btn
+                                    color="primary"
+                                    variant="tonal"
+                                    text="Build database"
+                                    @click="buildProteinDatabase"
+                                />
+                            </template>
+
+                            <template #next>
+                                <v-btn
+                                    color="primary"
+                                    variant="text"
+                                    text="Go back"
+                                    @click="prev"
+                                />
+                            </template>
+                        </v-stepper-vertical-item>
                     </template>
                 </v-stepper-vertical>
             </v-card-text>
@@ -193,11 +226,12 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
 import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
+import ProteinBrowser from "@/components/proteins/ProteinBrowser.vue";
 
 const customFilterStore = useCustomFilterStore();
 
@@ -213,6 +247,7 @@ const filterSelection = ref<FilterSelection>(FilterSelection.None);
 
 const selectedTaxa = ref<NcbiTaxon[]>([]);
 const selectedProteomes = ref<any[]>([]);
+const selectedProteins = ref<any[]>([]);
 
 const buildTaxonDatabase = () => {
     emits("create", databaseName.value, {
@@ -229,13 +264,37 @@ const buildProteomeDatabase = () => {
     });
     dialogOpen.value = false;
 };
+
+const buildProteinDatabase = () => {
+    emits("create", databaseName.value, {
+        filter: FilterType.Protein,
+        data: selectedProteins.value.map(protein => protein.protein)
+    });
+    dialogOpen.value = false;
+};
+
+const resetDialog = () => {
+    databaseName.value = "";
+    isValidDatabaseName.value = false;
+    filterSelection.value = FilterSelection.None;
+    selectedTaxa.value = [];
+    selectedProteomes.value = [];
+    selectedProteins.value = [];
+}
+
+watch(dialogOpen, () => {
+    if (!dialogOpen.value) {
+        resetDialog();
+    }
+})
 </script>
 
 <script lang="ts">
 enum FilterSelection {
     None,
     Manually,
-    ReferenceProteomes
+    ReferenceProteomes,
+    Proteins
 }
 </script>
 
