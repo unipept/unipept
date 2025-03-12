@@ -4,8 +4,30 @@
             Publications
         </h1>
         <h3 class="font-weight-light">
-            This page lists all Unipept peer-reviewed journal articles in reverse-chronological order.
+            This page lists all Unipept peer-reviewed journal articles or preprints in reverse-chronological order.
         </h3>
+
+        <publication-card
+            class="mt-5"
+            title="Direct construction of sparse suffix arrays with Libsais"
+            :authors='["Simon Van de Vyver", "Tibo Vande Moortele", "Peter Dawyndt", "Bart Mesuere", "Pieter Verschaffelt"]'
+            journal="bioRxiv"
+            year="2025"
+            doi="doi.org/10.1101/2025.02.24.639849"
+            google-scholar="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q=Direct+construction+of+sparse+suffix+arrays+with+Libsais&btnG="
+            :image="Preprint2025Image"
+        >
+            <template #abstract>
+                Pattern matching is a fundamental challenge in bioinformatics, especially in the fields of genomics, transcriptomics and proteomics. 
+                Efficient indexing structures, such as suffix arrays, are critical for searching large datasets. 
+                While sparse suffix arrays offer significant memory savings compared to full suffix arrays, they typically still require the construction of a full suffix array prior to a sampling step, 
+                resulting in substantial memory overhead during the construction phase. 
+                We present an alternative method to directly construct the sparse suffix array using a simple, yet powerful text encoding, in combination with the widely used Libsais library. 
+                This approach bypasses the need for constructing a full suffix array, reducing memory usage by 63% and construction time by 55% when building a sparse suffix array with sparseness factor 3 for the entire UniProt knowledgebase. 
+                The method is particularly effective for applications with small alphabets, such as a nucleotide or amino acid alphabet. 
+                An open-source implementation of this method is available on GitHub, enabling easy adoption for large-scale bioinformatics applications.
+            </template>
+        </publication-card>
 
         <publication-card
             class="mt-5"
@@ -280,6 +302,7 @@
 import PublicationCard from '../cards/PublicationCard.vue';
 import Initialism from '../highlights/Initialism.vue';
 import RLink from '../highlights/ResourceLink.vue';
+import Preprint2025Image from '@/assets/preprint-2025.png';
 import Publication2024Image from '@/assets/publications-2024.jpg';
 import Publication2023Image from '@/assets/publications-2023.jpg';
 import Publication2021Image from '@/assets/publications-2021.jpg';
