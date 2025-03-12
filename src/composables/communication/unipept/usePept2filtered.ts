@@ -24,17 +24,13 @@ export default function usePept2filtered(
 
         const requests = [];
         for(let i = 0; i < peptides.length; i += batchSize) {
-            console.log(JSON.stringify({
-                peptides: peptides.slice(i, i + batchSize),
-                equate_il: equate,
-                ...constructFilterJson(filter)
-            }))
             requests.push(async () => {
                 const response = await fetch(`${baseUrl}/mpa/pept2data`, {
                     method: "POST",
                     body: JSON.stringify({
                         peptides: peptides.slice(i, i + batchSize),
                         equate_il: equate,
+                        report_taxa: true,
                         ...constructFilterJson(filter)
                     }),
                     headers: { "Content-Type": "application/json" }
