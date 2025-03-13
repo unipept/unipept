@@ -169,7 +169,7 @@
                             subtitle="Decide on a set of reference proteomes that should be present in the database"
                             value="3"
                         >
-                            <proteome-browser v-model="selectedProteomes" />
+                            <reference-proteome-browser v-model="selectedProteomes" />
 
                             <template #prev>
                                 <v-btn
@@ -232,6 +232,7 @@ import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
 import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
 import ProteinBrowser from "@/components/proteins/ProteinBrowser.vue";
+import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
 
 const customFilterStore = useCustomFilterStore();
 

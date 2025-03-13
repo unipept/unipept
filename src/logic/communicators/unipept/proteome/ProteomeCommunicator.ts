@@ -13,7 +13,7 @@ export default class ProteomeCommunicator {
         private readonly batchSize: number
     ) {}
 
-    public async getResponse(
+    public async getResponses(
         ids: string[]
     ): Promise<ProteomeResponse[]> {
         while (ProteomeCommunicator.inProgress) {
@@ -55,23 +55,26 @@ export default class ProteomeCommunicator {
     /**
      * Retrieves a range of proteomes with optional filtering and sorting.
      *
-     * @param start - First proteome ID that should be included in the result (inclusive).
-     * @param end - First proteome ID that should not be included in the result (exclusive).
-     * @param filter - Optional filter string to search for specific proteomes (which contain this filter text in their
+     * @param start First proteome ID that should be included in the result (inclusive).
+     * @param end First proteome ID that should not be included in the result (exclusive).
+     * @param filter Optional filter string to search for specific proteomes (which contain this filter text in their
      * ID).
-     * @param sortDescending - Optional flag to sort results in descending order.
+     * @param sortBy Optional column by which the items should be filtered
+     * @param sortDescending Optional flag to sort results in descending order.
      * @return A promise that resolves to an array of UniProt reference proteome IDs (as strings).
      */
     public async getProteomeRange(
         start: number,
         end: number,
         filter = "",
+        sortBy: "id" | "protein_count" | "taxon_name" = "id",
         sortDescending = false
     ): Promise<string[]> {
         const data = JSON.stringify({
             start: start,
             end: end,
             filter: filter,
+            sort_by: sortBy,
             sort_descending: sortDescending
         });
 
