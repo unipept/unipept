@@ -18,7 +18,7 @@
 
             <v-divider />
 
-            <v-card-text class="mt-2">
+            <v-card-text class="pa-0">
                 <v-stepper-vertical
                     color="primary"
                     flat
@@ -139,8 +139,9 @@
                             title="Filter organisms"
                             subtitle="Select which organisms will be present in the output database"
                             value="3"
+                            class="pa-0"
                         >
-                            <taxa-browser v-model="selectedTaxa" />
+                            <taxa-browser v-model="selectedTaxa" class="mb-4" />
 
                             <template #prev>
                                 <v-btn 

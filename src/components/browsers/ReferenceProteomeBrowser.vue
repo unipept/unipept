@@ -10,8 +10,9 @@
                         :items-per-page="5"
                         :loading="proteomesLoading"
                         :search="filterValue"
-                        density="compact"
                         @update:options="loadProteomes"
+                        density="comfortable"
+                        color="primary"
                     >
                         <template #footer.prepend>
                             <v-text-field
@@ -43,7 +44,7 @@
                     </v-data-table-server>
                 </div>
 
-                <div class="text-caption mb-2">
+                <div class="text-caption mt-n2 mb-2 ml-1">
                     <span>Hint:</span>
                     enter a keyword to search for proteomes. You can search by reference proteome ID or organism name.
                 </div>

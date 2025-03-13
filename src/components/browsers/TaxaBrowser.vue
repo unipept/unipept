@@ -1,136 +1,151 @@
 <template>
-    <v-container fluid>
-        <v-row>
-            <v-col cols="12">
-                <div class="mb-4">
-                    <!--                    <v-alert-->
-                    <!--                        title="Taxa selected for filtering"-->
-                    <!--                        text="Only UniProtKB-records that are associated with a selected organism or one of its children will be retained in the resulting database."-->
-                    <!--                        type="info"-->
-                    <!--                        variant="tonal"-->
-                    <!--                    />-->
+    <div>
+        <v-card style="width: 100%;" class="mb-2">
+            <v-card-text>
+                <h3 class="mb-2">Database summary</h3>
 
-                    <div>
-                        <v-container>
-                            <v-row>
-                                <div style="width: 100%;">
-                                    <div class="d-flex align-center">
-                                        <div
-                                            v-if="selectedItems.length === 0"
-                                            style="text-align: center; width: 100%;"
-                                        >
-                                            <div>No taxa selected yet. No filtering will be applied.</div>
-                                            <div class="text-caption">
-                                                Use the table and search bar below to find taxa that can be used for filtering.
-                                            </div>
-                                        </div>
-                                        <v-chip-group
-                                            v-else
-                                            column
-                                            class="flex-grow-1"
-                                        >
-                                            <v-chip
-                                                v-for="taxon in selectedItems"
-                                                :key="taxon.id"
-                                                :class="`bg-${getRankColor(taxon.rank)}`"
-                                                closable
-                                                variant="flat"
-                                                @click:close="selectItem(taxon)"
-                                            >
-                                                {{ taxon.name }}
-                                            </v-chip>
-                                        </v-chip-group>
-                                        <v-tooltip
-                                            v-if="selectedItems.length > 0"
-                                            location="bottom"
-                                            open-delay="500"
-                                        >
-                                            <template #activator="{ props }">
-                                                <v-btn
-                                                    v-bind="props"
-                                                    class="align-self-center"
-                                                    variant="outlined"
-                                                    color="error"
-                                                    @click="clearSelection"
-                                                >
-                                                    Clear all
-                                                </v-btn>
-                                            </template>
-                                            <span>Clear selection</span>
-                                        </v-tooltip>
-                                    </div>
-                                    <v-divider />
-                                </div>
-                            </v-row>
-                            <v-row>
-                                <div class="mt-1">
-                                    <span v-if="isExecuting">Computing protein count...</span>
-                                    <span v-else>
-                                        <b>{{ formattedUniprotRecordsCount }}</b> UniProtKB records are associated with this filter settings.
-                                    </span>
-                                </div>
-                            </v-row>
-                        </v-container>
-                    </div>
-                </div>
-
-                <div>
-                    <v-data-table-server
-                        :headers="headers"
-                        :items="taxa"
-                        :items-length="taxaLength"
-                        :items-per-page="5"
-                        :loading="taxaLoading"
-                        :search="filterValue"
-                        density="compact"
-                        @update:options="loadTaxa"
-                    >
-                        <template #footer.prepend>
-                            <v-text-field
-                                v-model="filterValue"
-                                class="mr-6"
-                                color="primary"
-                                prepend-inner-icon="mdi-magnify"
-                                clearable
-                                clear-icon="mdi-close"
-                                label="Search"
-                                density="compact"
-                                variant="outlined"
-                                hide-details
-                                @click:clear="clearSearch"
-                            />
-                        </template>
-                        <template #item.rank="{ item }">
-                            <div class="d-flex align-center">
-                                <div
-                                    style="height: 10px; width: 10px; border-radius: 50%;"
-                                    :class="`mr-2 bg-${getRankColor(item.rank)}`"
-                                />
-                                <div>{{ item.rank }}</div>
-                            </div>
-                        </template>
-                        <template #item.action="{ item }">
-                            <v-btn
-                                color="primary"
-                                density="compact"
-                                variant="text"
-                                prepend-icon="mdi-plus"
-                                :disabled="itemSelected(item)"
-                                @click="selectItem(item)"
+                <div class="d-flex">
+                    <v-col cols="8">
+                        <h4>Selected taxa</h4>
+                        <div class="text-caption">
+                            This is a summary of all taxa that have been selected for inclusion in your database.
+                            Proteins from UniProtKB that are associated to any of these taxa, or their descendants will be included in the final database.
+                            If no taxa are selected here, the final database will contain all UniProtKB proteins (TrEMBL + SwissProt).
+                        </div>
+                        <div class="d-flex mt-4">
+                            <div
+                                v-if="selectedItems.length === 0"
+                                class="settings-text"
                             >
-                                Add
-                            </v-btn>
-                        </template>
-                    </v-data-table-server>
-                </div>
+                                No taxa selected yet. No filtering will be applied. Select taxa from the table above.
+                            </div>
+                            <div
+                                v-else
+                                class="flex-grow-1 d-flex"
+                                style="column-gap: 5px;"
+                            >
+                                <v-chip
+                                    v-for="taxon in selectedItems"
+                                    :key="taxon.id"
+                                    :class="`bg-${getRankColor(taxon.rank)}`"
+                                    closable
+                                    variant="flat"
+                                    @click:close="selectItem(taxon)"
+                                >
+                                    {{ taxon.name }}
+                                </v-chip>
+                            </div>
+                            <v-tooltip
+                                v-if="selectedItems.length > 0"
+                                location="bottom"
+                                open-delay="500"
+                            >
+                                <template #activator="{ props }">
+                                    <v-btn
+                                        v-bind="props"
+                                        class="align-self-center"
+                                        variant="outlined"
+                                        color="error"
+                                        @click="clearSelection"
+                                    >
+                                        Clear all
+                                    </v-btn>
+                                </template>
+                                <span>Clear selection</span>
+                            </v-tooltip>
+                        </div>
+                    </v-col>
 
-                <div class="text-caption mb-2">
+                    <v-col cols="4">
+                        <h4>Statistics</h4>
+                        <div class="text-caption">
+                            Final database composition statistics
+                        </div>
+                        <div class="d-flex align-center mt-2">
+                            <v-icon class="mr-2">mdi-database</v-icon>
+                            <span v-if="isExecuting">Computing protein count...</span>
+                            <span v-else>{{ formattedUniprotRecordsCount }} proteins</span>
+                        </div>
+                        <div class="d-flex align-center">
+                            <v-icon class="mr-2">mdi-bacteria</v-icon>
+                            <span v-if="isExecuting">Computing taxon count...</span>
+                            <span v-else>{{ formattedTaxaCount }} different taxa</span>
+                        </div>
+                    </v-col>
+                </div>
+            </v-card-text>
+        </v-card>
+
+        <v-card style="width: 100%;">
+            <v-card-text>
+                <h3>Taxon browser</h3>
+
+                <v-data-table-server
+                    :headers="headers"
+                    :items="taxa"
+                    :items-length="taxaLength"
+                    :items-per-page="5"
+                    :loading="taxaLoading"
+                    :search="filterValue"
+                    density="compact"
+                    @update:options="loadTaxa"
+                >
+                    <template #footer.prepend>
+                        <v-text-field
+                            v-model="filterValue"
+                            class="mr-6"
+                            color="primary"
+                            prepend-inner-icon="mdi-magnify"
+                            clearable
+                            clear-icon="mdi-close"
+                            label="Search"
+                            density="compact"
+                            variant="outlined"
+                            hide-details
+                            @click:clear="clearSearch"
+                        />
+                    </template>
+                    <template #item.rank="{ item }">
+                        <div class="d-flex align-center">
+                            <div
+                                style="height: 10px; width: 10px; border-radius: 50%;"
+                                :class="`mr-2 bg-${getRankColor(item.rank)}`"
+                            />
+                            <div>{{ item.rank }}</div>
+                        </div>
+                    </template>
+                    <template #item.action="{ item }">
+                        <v-btn
+                            v-if="itemSelected(item)"
+                            color="red"
+                            density="compact"
+                            variant="text"
+                            prepend-icon="mdi-minus"
+                            @click="selectItem(item)"
+                        >
+                            Remove
+                        </v-btn>
+
+                        <v-btn
+                            v-else
+                            color="primary"
+                            density="compact"
+                            variant="text"
+                            prepend-icon="mdi-plus"
+                            @click="selectItem(item)"
+                        >
+                            Select
+                        </v-btn>
+                    </template>
+                </v-data-table-server>
+                <div class="text-caption mt-n2 ml-1">
                     <span>Hint:</span>
                     enter a keyword to search for taxa. You can search by name, NCBI identifier or rank.
                 </div>
-            </v-col>
-        </v-row>
-    </v-container>
+            </v-card-text>
+        </v-card>
+
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -155,21 +170,21 @@ const headers: any = [
         title: "Name",
         align: "start",
         value: "name",
-        width: "45%",
+        width: "40%",
         sortable: true
     },
     {
         title: "Rank Name",
         align: "start",
         value: "rank",
-        width: "38%",
+        width: "30%",
         sortable: true
     },
     {
         title: "",
         align: "left",
         value: "action",
-        width: "2%",
+        width: "15%",
         sortable: false
     }
 ];
@@ -299,6 +314,17 @@ const computeUniprotRecordsCount = () => {
     );
 };
 
+const taxaCount = ref(0);
+const formattedTaxaCount = computed(() =>
+    taxaCount.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+);
+
+const computeTaxaCount = () => {
+    performIfLast(
+
+    )
+}
+
 watch(selectedItems, () => {
     computeUniprotRecordsCount();
 });
@@ -309,9 +335,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.inline-code {
-    background-color: #eee;
-    font-family: Roboto mono, monospace;
-    padding: 0 4px;
+.settings-text {
+    font-size: 14px;
+    color: rgba(0,0,0,.6);
 }
 </style>
