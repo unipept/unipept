@@ -5,7 +5,15 @@
                 <h3 class="mb-2">Database summary</h3>
 
                 <div class="d-flex">
-                    <v-col cols="8">
+                    <v-col cols="8" :class="invalidTaxaIds.length !== 0 ? 'pt-0' : ''">
+                        <v-alert
+                            v-if="invalidTaxaIds.length !== 0"
+                            class="mb-2"
+                            type="error"
+                            variant="outlined"
+                            :text="`Some taxon IDs from the file you've uploaded are invalid: ${invalidTaxaIds.join(', ')}. Please check and correct any mistakes.`"
+                        />
+
                         <h4>Selected taxa</h4>
                         <div class="text-caption">
                             This is a summary of all taxa that have been selected for inclusion in your database.
@@ -40,16 +48,17 @@
                                 open-delay="500"
                             >
                                 <template #activator="{ props }">
-                                    <v-btn
+                                    <file-upload-button
                                         v-bind="props"
                                         class="mr-2"
                                         style="align-self: start;"
-                                        variant="outlined"
                                         color="primary"
+                                        :loading="processingUploadedTaxa"
+                                        @upload="uploadTaxaFromFile"
                                         prepend-icon="mdi-file-upload"
                                     >
                                         Upload from file
-                                    </v-btn>
+                                    </file-upload-button>
                                 </template>
                                 <span>Select taxa from a file containing taxa IDs (one per line).</span>
                             </v-tooltip>
@@ -174,6 +183,7 @@ import {NcbiTaxon, NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
+import FileUploadButton from "@/components/filesystem/FileUploadButton.vue";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -312,6 +322,46 @@ const loadTaxa = async function({ page, itemsPerPage, sortBy }: LoadItemsParams)
 }
 
 const clearSearch = () => filterValue.value = "";
+
+// Bulk insert taxa through uploaded file
+const processingUploadedTaxa = ref<boolean>(false);
+
+const invalidTaxaIds = ref<string[]>([]);
+
+const uploadTaxaFromFile = async (file: File) => {
+    processingUploadedTaxa.value = true;
+    invalidTaxaIds.value = [];
+
+    const taxaIds = await file.text().then(t => t.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0));
+
+    // First, try to convert the taxon IDs to integers
+    const parsedTaxaIds: number[] = [];
+    for (const taxonId of taxaIds) {
+        const parsedTaxonId = parseInt(taxonId);
+        if (isNaN(parsedTaxonId)) {
+            invalidTaxaIds.value.push(taxonId);
+        } else {
+            parsedTaxaIds.push(parsedTaxonId);
+        }
+    }
+
+    const {ontology: ncbiOntology, update: updateNcbiOntology} = useNcbiOntology();
+
+    await updateNcbiOntology(parsedTaxaIds, false);
+
+    // Then, add to the selected taxa, and check if these are actually valid taxon IDs
+    for (const taxonId of parsedTaxaIds) {
+        if (ncbiOntology.has(taxonId)) {
+            if (!selectedItems.value.some(t => t.id === taxonId)) {
+                selectItem(ncbiOntology.get(taxonId)!);
+            }
+        } else {
+            invalidTaxaIds.value.push(taxonId.toString());
+        }
+    }
+
+    processingUploadedTaxa.value = false;
+}
 
 // Logic responsible for computing the amount of UniProt proteins associated with the selected taxa
 const { isExecuting, performIfLast } = useAsync<number>();
