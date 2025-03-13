@@ -25,11 +25,11 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import DataSourceSelectTable from "./DataSourceSelectTable.vue";
 import useOntologyStore from "@/store/new/OntologyStore";
 import {DataSourceTableItem} from "@/components/results/taxonomic/heatmap/DataSourceSelectTable.vue";
-import {GoNamespace} from "@/composables/ontology/useGoOntology";
-import {EcNamespace} from "@/composables/ontology/useEcOntology";
-import {InterproNamespace} from "@/composables/ontology/useInterproOntology";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import CountTable from "@/logic/processors/CountTable";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
+import {EcNamespace} from "@/logic/communicators/unipept/functional/EcResponse";
+import {InterproNamespace} from "@/logic/communicators/unipept/functional/InterproResponse";
 
 enum DataSource {
     NCBI = "NCBI taxonomy",

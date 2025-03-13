@@ -1,48 +1,31 @@
-import {ref} from "vue";
-import FunctionalDefinition from "@/logic/ontology/functional/FunctionalDefinition";
-
-export enum InterproNamespace {
-    ActiveSite = "active site",
-    BindingSite = "binding site",
-    ConservedSite = "conserved site",
-    Domain = "domain",
-    Family = "family",
-    HomologousSuperfamily = "homologous superfamily",
-    PTM = "ptm",
-    Repeat = "repeat",
-    Unknown = "unknown"
-}
+import InterproResponseCommunicator from "@/logic/communicators/unipept/functional/InterproResponseCommunicator";
+import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
+import {InterproNamespace} from "@/logic/communicators/unipept/functional/InterproResponse";
+import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
 
 export default function useInterproOntology(
-    baseUrl = "https://api.unipept.ugent.be",
-    batchSize = 100
+    baseUrl = DEFAULT_API_BASE_URL,
+    batchSize = DEFAULT_ONTOLOGY_BATCH_SIZE
 ) {
-    const ontology = new Map<string, FunctionalDefinition>();
+    const ontology = new Map<string, FunctionalDefinition<InterproNamespace>>();
 
     const update = async (
         codes: string[]
     ) => {
-        codes = Array.from(new Set(codes.filter(c => !ontology.has(c))));
+        codes = codes.filter(c => !ontology.has(c));
 
-        for (let i = 0; i < codes.length; i += batchSize) {
-            const response = await fetch(`${baseUrl}/private_api/interpros`, {
-                method: "POST",
-                body: JSON.stringify({
-                    interpros: codes.slice(i, i + batchSize).map(c => c.substring(4))
-                }),
-                headers: { "Content-Type": "application/json" }
-            }).then(r => r.json());
+        const interproCommunicator = new InterproResponseCommunicator(baseUrl, batchSize);
+        const responses = await interproCommunicator.getResponses(codes);
 
-            for (const definition of response) {
-                ontology.set(
-                    `IPR:${definition.code}`,
-                    {
-                        code: `IPR:${definition.code}`,
-                        name: definition.name,
-                        namespace: definition.category.toLowerCase().replace("_", " ")
-                    }
-                );
-            }
+        for (const definition of responses) {
+            ontology.set(
+                definition.code,
+                {
+                    code: definition.code,
+                    name: definition.name,
+                    namespace: definition.namespace
+                }
+            );
         }
     }
 

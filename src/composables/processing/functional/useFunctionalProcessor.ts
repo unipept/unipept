@@ -1,6 +1,5 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import FunctionalProcessorWebWorker from "../workers/functionalProcessor.worker.ts?worker";
-import FunctionalCode from "@/logic/ontology/functional/FunctionalCode";
 
 export interface FunctionalProcessorData {
     peptideCounts: Map<string, number>;
@@ -12,8 +11,8 @@ export interface FunctionalProcessorData {
 }
 
 export interface FunctionalProcessorOutput {
-    sortedCounts: Map<FunctionalCode, number> ;
-    itemToPeptides: Map<FunctionalCode, string[]>;
+    sortedCounts: Map<string, number> ;
+    itemToPeptides: Map<string, string[]>;
     annotatedCount: number;
 }
 

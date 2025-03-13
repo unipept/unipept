@@ -23,9 +23,9 @@ export default class PeptonizerProcessor {
     }
 
     public async runPeptonizer(
+        peptidesTaxa: Map<string, number[]>,
         peptideCountTable: CountTable<string>,
         rank: NcbiRank,
-        taxonQuery: number[],
         listener: PeptonizerProgressListener,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
@@ -46,13 +46,13 @@ export default class PeptonizerProcessor {
 
         try {
             PeptonizerProcessor.inProgress = this.peptonizer.peptonize(
+                peptidesTaxa,
                 peptideIntensities,
                 new Map<string, number>(Array.from(peptideCountTable.entries())),
                 DEFAULT_PEPTONIZER_ALPHAS,
                 DEFAULT_PEPTONIZER_BETAS,
                 DEFAULT_PEPTONIZER_PRIORS,
                 rank,
-                taxonQuery.length > 0 ? taxonQuery : [1],
                 DEFAULT_TAXA_IN_GRAPH,
                 listener,
                 DEFAULT_PEPTONIZER_WORKERS
