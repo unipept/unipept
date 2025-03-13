@@ -61,8 +61,10 @@
                 </div>
 
                 <analysis-summary
+                    v-if="selectedGroup"
                     :analysis="selectedAnalysis"
-                    :group-name="selectedGroupName!"
+                    :group="selectedGroup"
+                    @edit="manageSamplesDialogOpen = true"
                 />
 
                 <taxonomic-results
@@ -73,6 +75,17 @@
                 <mpa-functional-results
                     class="mt-5"
                     :analysis="selectedAnalysis"
+                />
+
+                <manage-sample-group
+                    v-if="selectedGroup"
+                    v-model="manageSamplesDialogOpen"
+                    :group="selectedGroup"
+                    @sample:add="addSample"
+                    @sample:update="updateSample"
+                    @sample:remove="removeSample"
+                    @group:update="updateGroup"
+                    @group:remove="removeGroup"
                 />
             </div>
         </div>
@@ -91,6 +104,8 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {DEFAULT_NEW_GROUP_NAME, GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
 import NewProject from "@/components/project/NewProject.vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
 
 const { project } = defineProps<{
     project: GroupAnalysisStore;
@@ -105,8 +120,9 @@ const emits = defineEmits<{
     (e: 'group:remove', groupId: string):  void;
 }>();
 
-const selectedGroupName = ref<string>();
+const manageSamplesDialogOpen = ref(false);
 const selectedAnalyses: Ref = ref<SingleAnalysisStore[]>([]);
+const selectedGroup = ref<MultiAnalysisStore | undefined>();
 
 const selectedAnalysis: ComputedRef = computed(() => selectedAnalyses.value?.[0]);
 
@@ -150,8 +166,8 @@ const selectAnalysis = (groupId: string | undefined, analysisId: string | undefi
     if (groupId && analysisId) {
         const analysis = project.getGroup(groupId)?.getAnalysis(analysisId);
         selectedAnalyses.value = analysis ? [ analysis ] : [];
+        selectedGroup.value = project.getGroup(groupId);
     }
-    selectedGroupName.value = groupId ? project.getGroup(groupId)?.name : undefined;
 }
 
 const isSafari = ref(false);
