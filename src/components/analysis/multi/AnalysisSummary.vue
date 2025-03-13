@@ -21,6 +21,18 @@
                                 {{ analysis.peptideTrust.missedPeptides.length }} peptides
                             </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found.
                         </h1>
+
+                        <h3 class="font-weight-bold mt-3">
+                            Last analysed on {{ analysis.lastAnalysedString }}
+                        </h3>
+
+                        <h1 v-if="latest === analysis.databaseVersion" class="text-subtitle-1">
+                            Analysis is up-to-date with the latest UniProt release ({{ analysis.databaseVersion }}).
+                        </h1>
+
+                        <h1 v-else class="text-subtitle-1">
+                            Analysis is outdated. The latest UniProt release is {{ latest }}. Click <a @click="restartAnalysis">here</a> to restart the analysis.
+                        </h1>
                     </template>
                 </v-col>
                 <v-col cols="4">
@@ -112,7 +124,7 @@
 <script setup lang="ts">
 import AnalysisSummaryTable from "@/components/analysis/multi/AnalysisSummaryTable.vue";
 import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import usePercentage from "@/composables/usePercentage";
 import useOntologyStore from "@/store/new/OntologyStore";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
@@ -120,11 +132,13 @@ import useCsvDownload from "@/composables/useCsvDownload";
 import usePeptideExport from "@/composables/usePeptideExport";
 import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDialog.vue";
 import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
+import useMetaData from "@/composables/communication/unipept/useMetaData";
 
 const { getNcbiDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
 const { generateExport } = usePeptideExport();
 const { download: downloadCsv } = useCsvDownload();
+const { databaseVersion: latest, process } = useMetaData();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
@@ -162,6 +176,12 @@ const download = async (callback: () => void): Promise<void> => {
     await downloadCsv(peptideExportContent, `unipept_${analysis.name.replaceAll(" ", "_")}_mpa.${exportExtension}`, exportDelimiter);
     callback();
 }
+
+const restartAnalysis = async () => {
+    await analysis.analyse();
+}
+
+onMounted(process);
 </script>
 
 <style scoped>
