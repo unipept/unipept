@@ -61,6 +61,7 @@
                 </div>
 
                 <analysis-summary
+                    v-if="selectedGroup"
                     :analysis="selectedAnalysis"
                     :group="selectedGroup"
                     @edit="manageSamplesDialogOpen = true"
@@ -77,6 +78,7 @@
                 />
 
                 <manage-sample-group
+                    v-if="selectedGroup"
                     v-model="manageSamplesDialogOpen"
                     :group="selectedGroup"
                     @sample:add="addSample"
@@ -102,7 +104,7 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {DEFAULT_NEW_GROUP_NAME, GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
 import NewProject from "@/components/project/NewProject.vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import MultiAnalysisStore from "@/store/new/MultiAnalysisStore";
+import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
 
 const { project } = defineProps<{

@@ -60,7 +60,6 @@
 
                     <div class="mt-1">
                         <v-icon
-                            v-bind="tooltip"
                             class="ms-1"
                             :icon="analysis.config.missed ? 'mdi-check-circle' : 'mdi-close-circle'"
                             :color="analysis.config.missed ? 'success' : 'error'"
