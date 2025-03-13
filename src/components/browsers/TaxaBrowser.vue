@@ -12,15 +12,16 @@
                             Proteins from UniProtKB that are associated to any of these taxa, or their descendants will be included in the final database.
                             If no taxa are selected here, the final database will contain all UniProtKB proteins (TrEMBL + SwissProt).
                         </div>
-                        <div class="d-flex mt-4">
+                        <div class="d-flex align-center mt-4">
                             <div
                                 v-if="selectedItems.length === 0"
-                                class="settings-text"
+                                class="flex-grow-1 settings-text"
                             >
-                                No taxa selected yet. No filtering will be applied. Select taxa from the table above.
+                                No taxa selected yet. No filtering will be applied. Select taxa from the table below.
                             </div>
-                            <div
+                            <v-chip-group
                                 v-else
+                                column
                                 class="flex-grow-1 d-flex"
                                 style="column-gap: 5px;"
                             >
@@ -34,19 +35,37 @@
                                 >
                                     {{ taxon.name }}
                                 </v-chip>
-                            </div>
+                            </v-chip-group>
                             <v-tooltip
-                                v-if="selectedItems.length > 0"
                                 location="bottom"
                                 open-delay="500"
                             >
                                 <template #activator="{ props }">
                                     <v-btn
                                         v-bind="props"
-                                        class="align-self-center"
+                                        class="mr-2"
+                                        style="align-self: start;"
                                         variant="outlined"
+                                        color="primary"
+                                        prepend-icon="mdi-file-upload"
+                                    >
+                                        Upload from file
+                                    </v-btn>
+                                </template>
+                                <span>Select taxa from a file containing taxa IDs (one per line).</span>
+                            </v-tooltip>
+                            <v-tooltip
+                                location="bottom"
+                                open-delay="500"
+                            >
+                                <template #activator="{ props }">
+                                    <v-btn
+                                        v-bind="props"
+                                        variant="outlined"
+                                        style="align-self: start;"
                                         color="error"
                                         @click="clearSelection"
+                                        :disabled="selectedItems.length === 0"
                                     >
                                         Clear all
                                     </v-btn>

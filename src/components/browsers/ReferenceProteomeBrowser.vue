@@ -1,56 +1,142 @@
 <template>
-    <v-container fluid>
-        <v-row>
-            <v-col cols="12">
-                <div style="width: 100%;">
-                    <v-data-table-server
-                        :headers="headers"
-                        :items="proteomes"
-                        :items-length="proteomesLength"
-                        :items-per-page="5"
-                        :loading="proteomesLoading"
-                        :search="filterValue"
-                        @update:options="loadProteomes"
-                        density="comfortable"
-                        color="primary"
-                    >
-                        <template #footer.prepend>
-                            <v-text-field
-                                v-model="filterValue"
-                                class="mr-6"
-                                color="primary"
-                                prepend-inner-icon="mdi-magnify"
-                                clearable
-                                clear-icon="mdi-close"
-                                label="Search"
-                                density="compact"
-                                variant="outlined"
-                                hide-details
-                                @click:clear="clearSearch"
-                            />
-                        </template>
-                        <template #item.action="{ item }">
-                            <v-btn
-                                color="primary"
-                                density="compact"
-                                variant="text"
-                                prepend-icon="mdi-plus"
-                                :disabled="itemSelected(item)"
-                                @click="selectItem(item)"
+    <div>
+        <v-card style="width: 100%;" class="mb-2">
+            <v-card-text>
+                <h3 class="mb-2">Database summary</h3>
+
+                <div class="d-flex">
+                    <v-col cols="8">
+                        <h4>Selected reference proteomes</h4>
+                        <div class="text-caption">
+                            This is a summary of all reference proteomes that have been selected for inclusion in your database.
+                            Proteins from UniProtKB that are associated to any of these reference proteomes will be included in the final database.
+                        </div>
+                        <div class="d-flex mt-4">
+                            <div
+                                v-if="selectedItems.length === 0"
+                                class="settings-text"
                             >
-                                Add
-                            </v-btn>
-                        </template>
-                    </v-data-table-server>
+                                No proteomes selected yet. Please select reference proteomes from the table below.
+                            </div>
+                            <div
+                                v-else
+                                class="flex-grow-1 d-flex"
+                                style="column-gap: 5px;"
+                            >
+                                <v-chip
+                                    v-for="proteome in selectedItems"
+                                    :key="proteome.id"
+                                    :class="`bg-primary`"
+                                    closable
+                                    variant="flat"
+                                    @click:close="selectItem(proteome)"
+                                >
+                                    {{ proteome.id }}
+                                </v-chip>
+                            </div>
+                            <v-tooltip
+                                v-if="selectedItems.length > 0"
+                                location="bottom"
+                                open-delay="500"
+                            >
+                                <template #activator="{ props }">
+                                    <v-btn
+                                        v-bind="props"
+                                        class="align-self-center"
+                                        variant="outlined"
+                                        color="error"
+                                        @click="clearSelection"
+                                    >
+                                        Clear all
+                                    </v-btn>
+                                </template>
+                                <span>Clear selection</span>
+                            </v-tooltip>
+                        </div>
+                    </v-col>
+
+                    <v-col cols="4">
+                        <h4>Statistics</h4>
+                        <div class="text-caption">
+                            Final database composition statistics
+                        </div>
+                        <div class="d-flex align-center mt-2">
+                            <v-icon class="mr-2">mdi-database</v-icon>
+<!--                            <span v-if="isExecuting">Computing protein count...</span>-->
+<!--                            <span v-else>{{ formattedUniprotRecordsCount }} proteins</span>-->
+                        </div>
+                        <div class="d-flex align-center">
+                            <v-icon class="mr-2">mdi-bacteria</v-icon>
+<!--                            <span v-if="isExecuting">Computing taxon count...</span>-->
+<!--                            <span v-else>{{ formattedTaxaCount }} different taxa</span>-->
+                        </div>
+                    </v-col>
                 </div>
+            </v-card-text>
+        </v-card>
+
+        <v-card style="width: 100%;">
+            <v-card-text>
+                <h3>Reference proteome browser</h3>
+
+                <v-data-table-server
+                    :headers="headers"
+                    :items="proteomes"
+                    :items-length="proteomesLength"
+                    :items-per-page="5"
+                    :loading="proteomesLoading"
+                    :search="filterValue"
+                    @update:options="loadProteomes"
+                    density="comfortable"
+                    color="primary"
+                >
+                    <template #footer.prepend>
+                        <v-text-field
+                            v-model="filterValue"
+                            class="mr-6"
+                            color="primary"
+                            prepend-inner-icon="mdi-magnify"
+                            clearable
+                            clear-icon="mdi-close"
+                            label="Search"
+                            density="compact"
+                            variant="outlined"
+                            hide-details
+                            @click:clear="clearSearch"
+                        />
+                    </template>
+                    <template #item.action="{ item }">
+                        <v-btn
+                            v-if="itemSelected(item)"
+                            color="red"
+                            density="compact"
+                            variant="text"
+                            prepend-icon="mdi-minus"
+                            @click="selectItem(item)"
+                        >
+                            Remove
+                        </v-btn>
+
+                        <v-btn
+                            v-else
+                            color="primary"
+                            density="compact"
+                            variant="text"
+                            prepend-icon="mdi-plus"
+                            @click="selectItem(item)"
+                        >
+                            Select
+                        </v-btn>
+                    </template>
+                </v-data-table-server>
 
                 <div class="text-caption mt-n2 mb-2 ml-1">
                     <span>Hint:</span>
                     enter a keyword to search for proteomes. You can search by reference proteome ID or organism name.
                 </div>
-            </v-col>
-        </v-row>
-    </v-container>
+            </v-card-text>
+        </v-card>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -66,14 +152,14 @@ const headers: any = [
         title: "Reference Proteome ID",
         align: "start",
         value: "id",
-        width: "39%",
+        width: "20%",
         sortable: true
     },
     {
         title: "Organism Name",
         align: "start",
         value: "taxonName",
-        width: "39%",
+        width: "40%",
         sortable: true
     },
     {
@@ -87,7 +173,7 @@ const headers: any = [
         title: "",
         align: "left",
         value: "action",
-        width: "2%",
+        width: "20%",
         sortable: false
     }
 ];

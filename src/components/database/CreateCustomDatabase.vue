@@ -170,7 +170,7 @@
                             subtitle="Decide on a set of reference proteomes that should be present in the database"
                             value="3"
                         >
-                            <reference-proteome-browser v-model="selectedProteomes" />
+                            <reference-proteome-browser v-model="selectedProteomes" class="mb-4" />
 
                             <template #prev>
                                 <v-btn
