@@ -24,31 +24,40 @@
                     </template>
                 </v-col>
                 <v-col cols="4">
-                    <v-checkbox
-                        :model-value="analysis.config.equate"
-                        color="primary"
-                        label="Equate I and L"
-                        density="compact"
-                        hide-details
-                        readonly
-                    />
-                    <v-checkbox
-                        :model-value="analysis.config.filter"
-                        color="primary"
-                        label="Filter duplicate peptides"
-                        density="compact"
-                        hide-details
-                        readonly
-                    />
-                    <div class="d-flex align-center">
-                        <v-checkbox
-                            :model-value="analysis.config.missed"
-                            color="primary"
-                            density="compact"
-                            hide-details
-                            label="Advanced missed cleavages"
-                            disabled
+                    <div class="mt-1">
+                        <v-icon
+                            v-bind="tooltip"
+                            class="ms-1"
+                            :icon="analysis.config.equate ? 'mdi-check-circle' : 'mdi-close-circle'"
+                            :color="analysis.config.equate ? 'success' : 'error'"
                         />
+                        <span>
+                            Equate I and L
+                        </span>
+                    </div>
+
+                    <div class="mt-1">
+                        <v-icon
+                            v-bind="tooltip"
+                            class="ms-1"
+                            :icon="analysis.config.filter ? 'mdi-check-circle' : 'mdi-close-circle'"
+                            :color="analysis.config.filter ? 'success' : 'error'"
+                        />
+                        <span>
+                            Filter duplicate peptides
+                        </span>
+                    </div>
+
+                    <div class="mt-1">
+                        <v-icon
+                            v-bind="tooltip"
+                            class="ms-1"
+                            :icon="analysis.config.missed ? 'mdi-check-circle' : 'mdi-close-circle'"
+                            :color="analysis.config.missed ? 'success' : 'error'"
+                        />
+                        <span>
+                            Advanced missed cleavages
+                        </span>
                         <v-tooltip width="30%">
                             <template #activator="{ props: tooltip }">
                                 <v-icon
@@ -66,12 +75,17 @@
                         </v-tooltip>
                     </div>
 
-                    <database-select
-                        :model-value="analysis.config.database"
-                        class="mt-1"
-                        label="Selected database"
-                        readonly
-                    />
+                    <div class="mt-5">
+                        <v-icon
+                            v-bind="tooltip"
+                            class="ms-1"
+                            icon="mdi-database"
+                            color="primary"
+                        />
+                        <span>
+                            Selected database: {{ analysis.config.database }}
+                        </span>
+                    </div>
                 </v-col>
             </v-row>
             <v-row>
