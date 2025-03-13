@@ -1,10 +1,10 @@
 <template>
     <v-card flat>
         <v-card-title>
-            <span class="text-h4">{{ analysis.name }} ({{ groupName }})</span>
+            <span class="text-h4">{{ analysis.name }} ({{ group.name }})</span>
         </v-card-title>
         <v-card-text>
-            <v-row class="mt-n6">
+            <v-row class="mt-n6 d-flex align-center">
                 <v-col cols="8">
                     <h2 class="pb-2">
                         Analysis summary
@@ -38,7 +38,6 @@
                 <v-col cols="4">
                     <div class="mt-1">
                         <v-icon
-                            v-bind="tooltip"
                             class="ms-1"
                             :icon="analysis.config.equate ? 'mdi-check-circle' : 'mdi-close-circle'"
                             :color="analysis.config.equate ? 'success' : 'error'"
@@ -50,7 +49,6 @@
 
                     <div class="mt-1">
                         <v-icon
-                            v-bind="tooltip"
                             class="ms-1"
                             :icon="analysis.config.filter ? 'mdi-check-circle' : 'mdi-close-circle'"
                             :color="analysis.config.filter ? 'success' : 'error'"
@@ -87,16 +85,26 @@
                         </v-tooltip>
                     </div>
 
-                    <div class="mt-5">
+                    <div class="mt-1">
                         <v-icon
-                            v-bind="tooltip"
                             class="ms-1"
                             icon="mdi-database"
-                            color="primary"
+                            color="grey"
                         />
                         <span>
                             Selected database: {{ analysis.config.database }}
                         </span>
+                    </div>
+
+                    <div class="mt-5">
+                        <v-icon
+                            class="ms-1"
+                            icon="mdi-pencil"
+                            color="primary"
+                        />
+                        <a @click="editAnalysis">
+                            Edit search parameters
+                        </a>
                     </div>
                 </v-col>
             </v-row>
@@ -133,6 +141,8 @@ import usePeptideExport from "@/composables/usePeptideExport";
 import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDialog.vue";
 import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
+import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
+import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 
 const { getNcbiDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
@@ -142,7 +152,11 @@ const { databaseVersion: latest, process } = useMetaData();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
-    groupName: string
+    group: MultiAnalysisStore
+}>();
+
+const emits = defineEmits<{
+    (e: 'edit'): void;
 }>();
 
 const showMissingPeptides = ref(false);
@@ -179,6 +193,10 @@ const download = async (callback: () => void): Promise<void> => {
 
 const restartAnalysis = async () => {
     await analysis.analyse();
+}
+
+const editAnalysis = () => {
+    emits('edit');
 }
 
 onMounted(process);
