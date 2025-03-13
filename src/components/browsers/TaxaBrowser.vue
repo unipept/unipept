@@ -23,7 +23,6 @@
                                 v-else
                                 column
                                 class="flex-grow-1 d-flex"
-                                style="column-gap: 5px;"
                             >
                                 <v-chip
                                     v-for="taxon in selectedItems"
@@ -83,12 +82,12 @@
                         <div class="d-flex align-center mt-2">
                             <v-icon class="mr-2">mdi-database</v-icon>
                             <span v-if="isExecuting">Computing protein count...</span>
-                            <span v-else>{{ formattedUniprotRecordsCount }} proteins</span>
+                            <span v-else>~ {{ formattedUniprotRecordsCount }} proteins</span>
                         </div>
                         <div class="d-flex align-center">
                             <v-icon class="mr-2">mdi-bacteria</v-icon>
                             <span v-if="isExecuting">Computing taxon count...</span>
-                            <span v-else>{{ formattedTaxaCount }} different taxa</span>
+                            <span v-else>xxx different taxa</span>
                         </div>
                     </v-col>
                 </div>
@@ -338,11 +337,11 @@ const formattedTaxaCount = computed(() =>
     taxaCount.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
 );
 
-const computeTaxaCount = () => {
-    performIfLast(
-
-    )
-}
+// const computeTaxaCount = () => {
+//     performIfLast(
+//
+//     )
+// }
 
 watch(selectedItems, () => {
     computeUniprotRecordsCount();

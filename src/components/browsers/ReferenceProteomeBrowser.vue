@@ -5,7 +5,14 @@
                 <h3 class="mb-2">Database summary</h3>
 
                 <div class="d-flex">
-                    <v-col cols="8">
+                    <v-col cols="8" :class="invalidReferenceProteomes.length !== 0 ? 'pt-0' : ''">
+                        <v-alert
+                            v-if="invalidReferenceProteomes.length !== 0"
+                            class="mb-2"
+                            type="error"
+                            variant="outlined"
+                            :text="`Some reference proteomes from the file you've uploaded are invalid: ${invalidReferenceProteomes.join(', ')}. Please check and correct any mistakes.`"
+                        />
                         <h4>Selected reference proteomes</h4>
                         <div class="text-caption">
                             This is a summary of all reference proteomes that have been selected for inclusion in your database.
@@ -14,14 +21,14 @@
                         <div class="d-flex mt-4">
                             <div
                                 v-if="selectedItems.length === 0"
-                                class="settings-text"
+                                class="settings-text flex-grow-1"
                             >
                                 No proteomes selected yet. Please select reference proteomes from the table below.
                             </div>
-                            <div
+                            <v-chip-group
                                 v-else
                                 class="flex-grow-1 d-flex"
-                                style="column-gap: 5px;"
+                                column
                             >
                                 <v-chip
                                     v-for="proteome in selectedItems"
@@ -33,19 +40,38 @@
                                 >
                                     {{ proteome.id }}
                                 </v-chip>
-                            </div>
+                            </v-chip-group>
                             <v-tooltip
-                                v-if="selectedItems.length > 0"
+                                location="bottom"
+                                open-delay="500"
+                            >
+                                <template #activator="{ props }">
+                                    <file-upload-button
+                                        v-bind="props"
+                                        class="mr-2"
+                                        style="align-self: start;"
+                                        color="primary"
+                                        :loading="processingUploadedProteomes"
+                                        @upload="uploadReferenceProteomesFromFile"
+                                        prepend-icon="mdi-file-upload"
+                                    >
+                                        Upload from file
+                                    </file-upload-button>
+                                </template>
+                                <span>Select reference proteomes from a file containing proteome IDs (one per line).</span>
+                            </v-tooltip>
+                            <v-tooltip
                                 location="bottom"
                                 open-delay="500"
                             >
                                 <template #activator="{ props }">
                                     <v-btn
                                         v-bind="props"
-                                        class="align-self-center"
                                         variant="outlined"
+                                        style="align-self: start;"
                                         color="error"
                                         @click="clearSelection"
+                                        :disabled="selectedItems.length === 0"
                                     >
                                         Clear all
                                     </v-btn>
@@ -62,13 +88,11 @@
                         </div>
                         <div class="d-flex align-center mt-2">
                             <v-icon class="mr-2">mdi-database</v-icon>
-<!--                            <span v-if="isExecuting">Computing protein count...</span>-->
-<!--                            <span v-else>{{ formattedUniprotRecordsCount }} proteins</span>-->
+                            <span>~ {{ formattedUniprotRecordsCount }} proteins</span>
                         </div>
                         <div class="d-flex align-center">
                             <v-icon class="mr-2">mdi-bacteria</v-icon>
-<!--                            <span v-if="isExecuting">Computing taxon count...</span>-->
-<!--                            <span v-else>{{ formattedTaxaCount }} different taxa</span>-->
+                            <span>{{ formattedTaxaCount }} different taxa</span>
                         </div>
                     </v-col>
                 </div>
@@ -142,10 +166,12 @@
 <script setup lang="ts">
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
-import {ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import ProteomeCommunicator from "@/logic/communicators/unipept/proteome/ProteomeCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
+import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
+import FileUploadButton from "@/components/filesystem/FileUploadButton.vue";
 
 const headers: any = [
     {
@@ -244,8 +270,68 @@ const loadProteomes = async function({ page, itemsPerPage, sortBy }: LoadItemsPa
 }
 
 const clearSearch = () => filterValue.value = "";
+
+// Uploading and processing reference proteomes from file
+const invalidReferenceProteomes = ref<string[]>([]);
+
+const processingUploadedProteomes = ref<boolean>(false);
+
+const uploadReferenceProteomesFromFile = async (file: File) => {
+    processingUploadedProteomes.value = true;
+    invalidReferenceProteomes.value = [];
+
+    const proteomes = await file.text().then(t => t.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0));
+
+    const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
+
+    await updateProteomeOntology(proteomes);
+
+    for (const proteome of proteomes) {
+        if (proteomeOntology.has(proteome)) {
+            if (!selectedItems.value.some(item => item.id === proteome)) {
+                selectedItems.value.push(proteomeOntology.get(proteome)!);
+            }
+        } else {
+            invalidReferenceProteomes.value.push(proteome);
+        }
+    }
+
+    processingUploadedProteomes.value = false;
+}
+
+// Counting of proteins and taxa
+const uniprotRecordCount = ref(0);
+const formattedUniprotRecordsCount = computed(() =>
+    uniprotRecordCount.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+);
+
+const computeUniprotRecordsCount = () => {
+    uniprotRecordCount.value = selectedItems.value.reduce((acc, proteome) => acc + proteome.proteinCount, 0);
+};
+
+const taxaCount = ref(0);
+const formattedTaxaCount = computed(() =>
+    taxaCount.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+)
+
+const computeTaxaCount = () => {
+    taxaCount.value = new Set(selectedItems.value.map(proteome => proteome.taxonId)).size;
+}
+
+watch(selectedItems, () => {
+    computeUniprotRecordsCount();
+    computeTaxaCount()
+});
+
+onMounted(() => {
+    computeUniprotRecordsCount();
+    computeTaxaCount()
+});
 </script>
 
 <style scoped>
-
+.settings-text {
+    font-size: 14px;
+    color: rgba(0,0,0,.6);
+}
 </style>

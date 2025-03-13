@@ -1,7 +1,7 @@
 <template>
     <v-dialog
         v-model="dialogOpen"
-        max-width="80%"
+        max-width="1800px"
     >
         <v-card>
             <v-card-title class="d-flex align-center">
