@@ -264,7 +264,10 @@ const selectItem = (item: NcbiTaxon) => {
     selectedItems.value = [ ...selectedItems.value ];
 }
 
-const clearSelection = () => selectedItems.value = [];
+const clearSelection = () => {
+    selectedItems.value = [];
+    invalidTaxaIds.value = [];
+}
 
 const itemSelected = (item: NcbiTaxon) => selectedItems.value.some(i => i.id === item.id);
 

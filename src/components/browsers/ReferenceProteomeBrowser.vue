@@ -217,7 +217,10 @@ const selectItem = (item: ReferenceProteome) => {
     selectedItems.value = [ ...selectedItems.value ];
 }
 
-const clearSelection = () => selectedItems.value = [];
+const clearSelection = () => {
+    selectedItems.value = [];
+    invalidReferenceProteomes.value = [];
+}
 
 const itemSelected = (item: ReferenceProteome) => selectedItems.value.some(i => i.id === item.id);
 
