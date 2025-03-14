@@ -88,14 +88,14 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
 import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
 import {NcbiTaxon, NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
-import useBrowserSelection from "@/components/browsers/useBrowserSelection";
+import useDatabaseSummary from "@/components/browsers/useDatabaseSummary";
+import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowserLoader";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -163,16 +163,16 @@ const rankColors: string[] = [
 ];
 
 // Commonly reused logic and values extracted from composable
+const selectedItems = defineModel<NcbiTaxon[]>({default: []});
+
 const {
     uploadFile: uploadTaxonFile,
-    selectedItems,
     invalidItems,
     selectItem,
     clearSelection,
     itemSelected
-} = useBrowserSelection<number, NcbiTaxon>();
+} = useDatabaseSummary<number, NcbiTaxon>(selectedItems);
 
-const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 const {ontology: ncbiOntology, update: updateNcbiOntology} = useNcbiOntology();
 
 
@@ -187,8 +187,6 @@ const getRankColor = (taxon: NcbiTaxon): string => {
     return rankColors[idx % rankColors.length];
 }
 
-// TODO switch to model for selected items
-// const selectedItems = defineModel<NcbiTaxon[]>({default: []});
 
 // Start of logic for processing the uploaded taxon file
 const processUploadedTaxa = async (file: File, callback: () => void) => {
@@ -232,50 +230,26 @@ const processUploadedTaxa = async (file: File, callback: () => void) => {
 }
 
 // Logic for loading taxa and showing them in the browser table
-interface LoadItemsParams {
-    page: number;
-    itemsPerPage: number;
-    sortBy: { key: string, order: "asc" | "desc" }[];
-}
+const {
+    loading: taxaLoading,
+    items: taxa,
+    itemsLength: taxaLength,
+    load: loadTaxaForBrowser,
+    filterValue,
+    clearSearch
+} = useBrowserLoader<number, NcbiTaxon>();
 
-const taxaLoading = ref<boolean>(true);
-const taxa = ref<NcbiTaxon[]>([]);
-const taxaLength = ref<number>(0);
+const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 
-// value that's used to filter the names of taxa by
-const filterValue = ref("");
-
-const loadTaxa = async function({ page, itemsPerPage, sortBy }: LoadItemsParams) {
-    taxaLoading.value = true;
-    // How many taxa satisfy the given requirements?
-    taxaLength.value = await ncbiCommunicator.getNcbiCount(filterValue.value);
-
-    // Retrieve the IDs of the taxa that are present in the given range.
-    let sortByColumn: "id" | "name" | "rank" | undefined = undefined;
-    let sortDesc = false;
-    if (sortBy && sortBy.length > 0) {
-        sortByColumn = sortBy[0].key.toLowerCase() as ("id" | "name" | "rank" | undefined);
-        sortDesc = sortBy[0].order === "desc";
-    }
-    const taxaIdsInRange = await ncbiCommunicator.getNcbiRange(
-        (page - 1) * itemsPerPage,
-        page * itemsPerPage,
-        filterValue.value,
-        sortByColumn,
-        sortDesc
-    );
-
-    // Update the NCBI ontology such that the name (and other properties) of these taxa are actually available.
-    await updateNcbiOntology(taxaIdsInRange, false);
-    // Finally, show all these selected taxa in the data table
-    taxa.value = [];
-    for (const selectedTaxon of taxaIdsInRange) {
-        taxa.value.push(ncbiOntology.get(selectedTaxon)!);
-    }
-    taxaLoading.value = false;
-}
-
-const clearSearch = () => filterValue.value = "";
+const loadTaxa = async (params: LoadItemsParams) => {
+    await loadTaxaForBrowser(
+        params,
+        updateNcbiOntology,
+        ncbiOntology,
+        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => ncbiCommunicator.getNcbiRange(start, end, filter, sortByColumn as any, sortDesc),
+        (filter) => ncbiCommunicator.getNcbiCount(filter)
+    )
+};
 
 // Logic responsible for computing the amount of UniProt proteins associated with the selected taxa
 const computeProteinCount = async () => {
@@ -284,6 +258,3 @@ const computeProteinCount = async () => {
     );
 };
 </script>
-
-<style scoped>
-</style>

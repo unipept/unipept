@@ -81,12 +81,12 @@
 
 <script setup lang="ts">
 import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
-import {ref} from "vue";
 import ProteomeCommunicator from "@/logic/communicators/unipept/proteome/ProteomeCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
-import useBrowserSelection from "@/components/browsers/useBrowserSelection";
+import useDatabaseSummary from "@/components/browsers/useDatabaseSummary";
+import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowserLoader";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -121,64 +121,39 @@ const headers: any = [
 ];
 
 // Commonly reused logic and values extracted from composable
+const selectedItems = defineModel<ReferenceProteome[]>({default: []});
+
 const {
     uploadFile: uploadProteomeFile,
-    selectedItems,
     invalidItems,
     selectItem,
     clearSelection,
     itemSelected
-} = useBrowserSelection<string, ReferenceProteome>();
+} = useDatabaseSummary<string, ReferenceProteome>(selectedItems);
 
-// Logic for loading reference proteomes and showing them in the browser table
-interface LoadItemsParams {
-    page: number;
-    itemsPerPage: number;
-    sortBy: { key: string, order: "asc" | "desc" }[];
-}
-
-const proteomesLoading = ref<boolean>(true);
-const proteomes = ref<ReferenceProteome[]>([]);
-const proteomesLength = ref<number>(0);
-
-const filterValue = ref("");
-
-const proteomeCommunicator = new ProteomeCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
 
-const loadProteomes = async function({ page, itemsPerPage, sortBy }: LoadItemsParams) {
-    proteomesLoading.value = true;
-    proteomesLength.value = await proteomeCommunicator.getProteomeCount(filterValue.value);
+// Logic for loading reference proteomes and showing them in the browser table
+const {
+    loading: proteomesLoading,
+    items: proteomes,
+    itemsLength: proteomesLength,
+    load: loadProteomesForBrowser,
+    filterValue,
+    clearSearch
+} = useBrowserLoader<string, ReferenceProteome>();
 
-    // Retrieve the IDs of the taxa that are present in the given range.
-    let sortByColumn: "id" | "protein_count" | "taxon_name" | undefined = undefined;
-    let sortDesc = false;
-    if (sortBy && sortBy.length > 0) {
-        sortByColumn = sortBy[0].key.toLowerCase()
-            .replace("count", "_count")
-            .replace("name", "_name") as ("id" | "protein_count" | "taxon_name" | undefined);
-        sortDesc = sortBy[0].order === "desc";
-    }
+const proteomeCommunicator = new ProteomeCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 
-    const proteomeIdsInRange = await proteomeCommunicator.getProteomeRange(
-        (page - 1) * itemsPerPage,
-        page * itemsPerPage,
-        filterValue.value,
-        sortByColumn,
-        sortDesc
+const loadProteomes = async (params: LoadItemsParams) => {
+    await loadProteomesForBrowser(
+        params,
+        updateProteomeOntology,
+        proteomeOntology,
+        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => proteomeCommunicator.getProteomeRange(start, end, filter, sortByColumn as any, sortDesc),
+        (filter) => proteomeCommunicator.getProteomeCount(filter)
     )
-
-    await updateProteomeOntology(proteomeIdsInRange);
-
-    proteomes.value = [];
-    for (const proteomeId of proteomeIdsInRange) {
-        proteomes.value.push(proteomeOntology.get(proteomeId)!);
-    }
-
-    proteomesLoading.value = false;
 }
-
-const clearSearch = () => filterValue.value = "";
 
 // Uploading and processing reference proteomes from file
 const processUploadedProteomes = async (file: File, callback: () => void) => {
@@ -219,10 +194,3 @@ const computeTaxaCount = async () => {
     return new Set(selectedItems.value.map(proteome => proteome.taxonId)).size;
 }
 </script>
-
-<style scoped>
-.settings-text {
-    font-size: 14px;
-    color: rgba(0,0,0,.6);
-}
-</style>

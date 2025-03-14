@@ -4,12 +4,9 @@ import { ref, Ref, computed, watch } from "vue";
  * This is a composable that contains logic that is shared between the different Browser components (such as
  * TaxaBrowser or ReferenceProteomeBrowser).
  *
- * @param initialSelected Optional, a list of items that are already selected when the browser opens.
+ * @param selectedItems A reference to the list of all selected items.
  */
-export default function useBrowserSelection<IdType, T extends { id: IdType }>(initialSelected: T[] = []) {
-    // List of items that are currently selected in the browser. We need to perform a type cast here since Vue does not
-    // correctly recognize the type extension of the template parameter T here.
-    const selectedItems = ref<T[]>(initialSelected) as Ref<T[]>;
+export default function useDatabaseSummary<IdType, T extends { id: IdType }>(selectedItems: Ref<T[]>) {
     // IDs of items that were uploaded in bulk through a file, but that are not a valid identifier for the ontology
     // that's presented by the current browser.
     const invalidItems = ref<string[]>([]);
