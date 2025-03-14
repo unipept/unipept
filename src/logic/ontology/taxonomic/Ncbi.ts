@@ -2,7 +2,7 @@ export type NcbiId = number;
 
 export class NcbiTaxon {
     constructor(
-        public readonly id: NcbiId,
+        public readonly id: number,
         public readonly name: string,
         public readonly rank: string,
         public readonly lineage: NcbiId[]

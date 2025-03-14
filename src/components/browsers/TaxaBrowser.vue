@@ -1,107 +1,19 @@
 <template>
     <div>
-        <v-card style="width: 100%;" class="mb-2">
-            <v-card-text>
-                <h3 class="mb-2">Database summary</h3>
-
-                <div class="d-flex">
-                    <v-col cols="8" :class="invalidTaxaIds.length !== 0 ? 'pt-0' : ''">
-                        <v-alert
-                            v-if="invalidTaxaIds.length !== 0"
-                            class="mb-2"
-                            type="error"
-                            variant="outlined"
-                            :text="`Some taxon IDs from the file you've uploaded are invalid: ${invalidTaxaIds.join(', ')}. Please check and correct any mistakes.`"
-                        />
-
-                        <h4>Selected taxa</h4>
-                        <div class="text-caption">
-                            This is a summary of all taxa that have been selected for inclusion in your database.
-                            Proteins from UniProtKB that are associated to any of these taxa, or their descendants will be included in the final database.
-                            If no taxa are selected here, the final database will contain all UniProtKB proteins (TrEMBL + SwissProt).
-                        </div>
-                        <div class="d-flex align-center mt-4">
-                            <div
-                                v-if="selectedItems.length === 0"
-                                class="flex-grow-1 settings-text"
-                            >
-                                No taxa selected yet. No filtering will be applied. Select taxa from the table below.
-                            </div>
-                            <v-chip-group
-                                v-else
-                                column
-                                class="flex-grow-1 d-flex"
-                            >
-                                <v-chip
-                                    v-for="taxon in selectedItems"
-                                    :key="taxon.id"
-                                    :class="`bg-${getRankColor(taxon.rank)}`"
-                                    closable
-                                    variant="flat"
-                                    @click:close="selectItem(taxon)"
-                                >
-                                    {{ taxon.name }}
-                                </v-chip>
-                            </v-chip-group>
-                            <v-tooltip
-                                location="bottom"
-                                open-delay="500"
-                            >
-                                <template #activator="{ props }">
-                                    <file-upload-button
-                                        v-bind="props"
-                                        class="mr-2"
-                                        style="align-self: start;"
-                                        color="primary"
-                                        :loading="processingUploadedTaxa"
-                                        @upload="uploadTaxaFromFile"
-                                        prepend-icon="mdi-file-upload"
-                                    >
-                                        Upload from file
-                                    </file-upload-button>
-                                </template>
-                                <span>Select taxa from a file containing taxa IDs (one per line).</span>
-                            </v-tooltip>
-                            <v-tooltip
-                                location="bottom"
-                                open-delay="500"
-                            >
-                                <template #activator="{ props }">
-                                    <v-btn
-                                        v-bind="props"
-                                        variant="outlined"
-                                        style="align-self: start;"
-                                        color="error"
-                                        @click="clearSelection"
-                                        :disabled="selectedItems.length === 0"
-                                    >
-                                        Clear all
-                                    </v-btn>
-                                </template>
-                                <span>Clear selection</span>
-                            </v-tooltip>
-                        </div>
-                    </v-col>
-
-                    <v-col cols="4">
-                        <h4>Statistics</h4>
-                        <div class="text-caption">
-                            Final database composition statistics
-                        </div>
-                        <div class="d-flex align-center mt-2">
-                            <v-icon class="mr-2">mdi-database</v-icon>
-                            <span v-if="isExecuting">Computing protein count...</span>
-                            <span v-else>~ {{ formattedUniprotRecordsCount }} proteins</span>
-                        </div>
-                        <div class="d-flex align-center">
-                            <v-icon class="mr-2">mdi-bacteria</v-icon>
-                            <span v-if="isExecuting">Computing taxon count...</span>
-                            <span v-else>xxx different taxa</span>
-                        </div>
-                    </v-col>
-                </div>
-            </v-card-text>
-        </v-card>
+        <database-summary
+            title="Selected taxa"
+            description="This is a summary of all taxa that have been selected for inclusion in your database. Proteins from UniProtKB that are associated to any of these taxa, or their descendants will be included in the final database. If no taxa are selected here, the final database will contain all UniProtKB proteins (TrEMBL + SwissProt)."
+            empty-placeholder="No taxa selected yet. No filtering will be applied. Select taxa from the table below."
+            v-model:selected-items="selectedItems"
+            v-model:invalid-items="invalidItems"
+            :compute-protein-count="computeProteinCount"
+            :compute-taxon-count="async (items) => 0"
+            :chip-background-color="getRankColor"
+            :item-display-name="(taxon: NcbiTaxon) => taxon.name"
+            @clear-selection="clearSelection"
+            @upload-file="processUploadedTaxa"
+            class="mb-2"
+        />
 
         <v-card style="width: 100%;">
             <v-card-text>
@@ -136,7 +48,7 @@
                         <div class="d-flex align-center">
                             <div
                                 style="height: 10px; width: 10px; border-radius: 50%;"
-                                :class="`mr-2 bg-${getRankColor(item.rank)}`"
+                                :class="`mr-2 bg-${getRankColor(item)}`"
                             />
                             <div>{{ item.rank }}</div>
                         </div>
@@ -176,14 +88,14 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
+import {ref} from "vue";
 import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
-import useAsync from "@/composables/useAsync";
 import {NcbiTaxon, NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
-import FileUploadButton from "@/components/filesystem/FileUploadButton.vue";
+import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
+import useBrowserSelection from "@/components/browsers/useBrowserSelection";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -250,32 +162,74 @@ const rankColors: string[] = [
     "deep-orange-darken-4"
 ];
 
+// Commonly reused logic and values extracted from composable
+const {
+    uploadFile: uploadTaxonFile,
+    selectedItems,
+    invalidItems,
+    selectItem,
+    clearSelection,
+    itemSelected
+} = useBrowserSelection<number, NcbiTaxon>();
 
-// Values that define UI behaviour of the component
-const selectedItems = defineModel<NcbiTaxon[]>({default: []});
+const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
+const {ontology: ncbiOntology, update: updateNcbiOntology} = useNcbiOntology();
 
-const selectItem = (item: NcbiTaxon) => {
-    const idx = selectedItems.value.findIndex(element => element.id === item.id);
-    if (idx === -1) {
-        selectedItems.value.push(item)
-    } else {
-        selectedItems.value.splice(idx, 1);
-    }
-    selectedItems.value = [ ...selectedItems.value ];
-}
 
-const clearSelection = () => {
-    selectedItems.value = [];
-    invalidTaxaIds.value = [];
-}
-
-const itemSelected = (item: NcbiTaxon) => selectedItems.value.some(i => i.id === item.id);
-
-const getRankColor = (rank: string): string => {
-    const idx = Object.values(NcbiRank).findIndex(r => r === rank);
+// Start of logic that handles presentation and UI of the component
+/**
+ * Determines the color of a taxon based by its rank. Taxa with equal ranks have equal colors.
+ *
+ * @param taxon taxon node for which the color needs to be determined.
+ */
+const getRankColor = (taxon: NcbiTaxon): string => {
+    const idx = Object.values(NcbiRank).findIndex(r => r === taxon.rank);
     return rankColors[idx % rankColors.length];
 }
 
+// TODO switch to model for selected items
+// const selectedItems = defineModel<NcbiTaxon[]>({default: []});
+
+// Start of logic for processing the uploaded taxon file
+const processUploadedTaxa = async (file: File, callback: () => void) => {
+    await uploadTaxonFile(
+        file,
+        ncbiOntology,
+        updateNcbiOntology,
+        async (ids: string[]) => {
+            // A provided taxon ID is valid if the string is an integer, and is known by the NCBI taxonomy.
+            const validIds: number[] = [];
+            const invalidIds: string[] = [];
+
+            // First check if the ID is a valid integer.
+            const parsedIds: number[] = []
+            for (const id of ids) {
+                const parsedId = parseInt(id);
+                if (isNaN(parsedId)) {
+                    invalidIds.push(id);
+                } else {
+                    parsedIds.push(parsedId);
+                }
+            }
+
+            // Then check if the ID represents a valid NCBI identifier.
+            await updateNcbiOntology(parsedIds, false);
+
+            for (const parsedId of parsedIds) {
+                if (ncbiOntology.has(parsedId)) {
+                    validIds.push(parsedId);
+                } else {
+                    invalidIds.push(parsedId.toString());
+                }
+            }
+
+            return [validIds, invalidIds];
+        }
+    );
+
+    // File has been processed, inform component that we're done
+    callback();
+}
 
 // Logic for loading taxa and showing them in the browser table
 interface LoadItemsParams {
@@ -290,9 +244,6 @@ const taxaLength = ref<number>(0);
 
 // value that's used to filter the names of taxa by
 const filterValue = ref("");
-
-const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
-const { ontology: ncbiOntology, update: updateNcbiOntology } = useNcbiOntology();
 
 const loadTaxa = async function({ page, itemsPerPage, sortBy }: LoadItemsParams) {
     taxaLoading.value = true;
@@ -326,88 +277,13 @@ const loadTaxa = async function({ page, itemsPerPage, sortBy }: LoadItemsParams)
 
 const clearSearch = () => filterValue.value = "";
 
-// Bulk insert taxa through uploaded file
-const processingUploadedTaxa = ref<boolean>(false);
-
-const invalidTaxaIds = ref<string[]>([]);
-
-const uploadTaxaFromFile = async (file: File) => {
-    processingUploadedTaxa.value = true;
-    invalidTaxaIds.value = [];
-
-    const taxaIds = await file.text().then(t => t.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0));
-
-    // First, try to convert the taxon IDs to integers
-    const parsedTaxaIds: number[] = [];
-    for (const taxonId of taxaIds) {
-        const parsedTaxonId = parseInt(taxonId);
-        if (isNaN(parsedTaxonId)) {
-            invalidTaxaIds.value.push(taxonId);
-        } else {
-            parsedTaxaIds.push(parsedTaxonId);
-        }
-    }
-
-    const {ontology: ncbiOntology, update: updateNcbiOntology} = useNcbiOntology();
-
-    await updateNcbiOntology(parsedTaxaIds, false);
-
-    // Then, add to the selected taxa, and check if these are actually valid taxon IDs
-    for (const taxonId of parsedTaxaIds) {
-        if (ncbiOntology.has(taxonId)) {
-            if (!selectedItems.value.some(t => t.id === taxonId)) {
-                selectItem(ncbiOntology.get(taxonId)!);
-            }
-        } else {
-            invalidTaxaIds.value.push(taxonId.toString());
-        }
-    }
-
-    processingUploadedTaxa.value = false;
-}
-
 // Logic responsible for computing the amount of UniProt proteins associated with the selected taxa
-const { isExecuting, performIfLast } = useAsync<number>();
-
-const uniprotRecordCount = ref(0);
-const formattedUniprotRecordsCount = computed(() =>
-    uniprotRecordCount.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-);
-
-const computeUniprotRecordsCount = () => {
-    performIfLast(
-        () => UniprotCommunicator.getRecordCount(
-            selectedItems.value.map(taxon => taxon.id)
-        ),
-        (count) => {
-            uniprotRecordCount.value = count;
-        }
+const computeProteinCount = async () => {
+    return await UniprotCommunicator.getRecordCount(
+        selectedItems.value.map(taxon => taxon.id)
     );
 };
-
-const taxaCount = ref(0);
-const formattedTaxaCount = computed(() =>
-    taxaCount.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-);
-
-// const computeTaxaCount = () => {
-//     performIfLast(
-//
-//     )
-// }
-
-watch(selectedItems, () => {
-    computeUniprotRecordsCount();
-});
-
-onMounted(() => {
-    computeUniprotRecordsCount();
-});
 </script>
 
 <style scoped>
-.settings-text {
-    font-size: 14px;
-    color: rgba(0,0,0,.6);
-}
 </style>
