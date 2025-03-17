@@ -66,7 +66,7 @@
             </template>
         </v-app-bar>
 
-        <v-main class="d-flex flex-column test">
+        <v-main class="d-flex flex-column bg-mainBody">
             <v-container
                 class="main-container flex-grow-1"
                 style="max-width: 1400px;"
@@ -217,10 +217,6 @@ const navigateToPage = async function(navItem: NavItem) {
 <style lang="scss">
 body {
     font-size: 16px;
-}
-
-.test {
-    background-color: #F9FAFC;
 }
 
 .homepage-title {

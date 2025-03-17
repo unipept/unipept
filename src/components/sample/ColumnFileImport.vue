@@ -15,7 +15,7 @@
 
         <v-container
             v-else
-            class="px-0 py-2"
+            fluid
         >
             <v-form v-model="validForm">
                 <v-row>

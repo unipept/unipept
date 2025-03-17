@@ -8,7 +8,7 @@
         :loading="false"
         density="compact"
         hide-default-footer
-        class="sample-table"
+        class="sample-table bg-transparent"
     >
         <template #no-data>
             <v-alert

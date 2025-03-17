@@ -3,7 +3,7 @@
         v-model="dialogOpen"
         max-width="80%"
     >
-        <v-unipept-card>
+        <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex align-center">
                 <h2>Create custom database</h2>
                 <v-spacer />
@@ -21,6 +21,7 @@
             <v-card-text class="mt-2">
                 <v-stepper-vertical
                     color="primary"
+                    bg-color="mainBody"
                     flat
                 >
                     <template #default="{ step, next, prev }">

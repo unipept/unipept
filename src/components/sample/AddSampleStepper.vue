@@ -1,7 +1,7 @@
 <template>
     <v-card
         variant="flat"
-        class="d-flex flex-column"
+        class="d-flex flex-column bg-mainBody pa-0"
     >
         <v-card-title class="text-h5 font-weight-regular justify-space-between">
             <h2>Create sample</h2>
@@ -14,20 +14,19 @@
             <v-window v-model="currentStep">
                 <!-- Step 1: Select input data source type -->
                 <v-window-item :value="1">
-                    <v-container class="mb-2">
+                    <v-container fluid class="mb-2">
                         <v-row>
                             <v-col :cols="4">
                                 <v-unipept-card
                                     class="d-flex flex-row align-center"
                                     @click="navigateToPaste"
                                     style="min-height: 100%;"
-                                    variant="outlined"
                                 >
-                                    <v-icon class="ml-4">
+                                    <v-icon class="ml-4" color="primary">
                                         mdi-content-paste
                                     </v-icon>
                                     <div>
-                                        <v-card-title>
+                                        <v-card-title class="text-primary">
                                             Paste Peptides Directly
                                         </v-card-title>
                                         <v-card-text style="padding-top: 0 !important;">
@@ -42,13 +41,12 @@
                                     class="d-flex flex-row align-center"
                                     @click="navigateToImportWizard"
                                     style="min-height: 100%;"
-                                    variant="outlined"
                                 >
-                                    <v-icon class="ml-4">
+                                    <v-icon class="ml-4" color="primary">
                                         mdi-file
                                     </v-icon>
                                     <div>
-                                        <v-card-title>
+                                        <v-card-title class="text-primary">
                                             Import via File Wizard
                                         </v-card-title>
                                         <v-card-text style="padding-top: 0 !important;">
@@ -63,13 +61,12 @@
                                     class="d-flex flex-row align-center"
                                     @click="navigateToBulkUpload"
                                     style="min-height: 100%;"
-                                    variant="outlined"
                                 >
-                                    <v-icon class="ml-4">
+                                    <v-icon class="ml-4" color="primary">
                                         mdi-file-multiple
                                     </v-icon>
                                     <div>
-                                        <v-card-title>
+                                        <v-card-title class="text-primary">
                                             Bulk Import Multiple Files
                                         </v-card-title>
                                         <v-card-text style="padding-top: 0 !important;">
@@ -218,7 +215,6 @@
                         />
 
                         <v-spacer />
-                        <v-divider />
 
                         <v-card-actions>
                             <v-btn
@@ -259,6 +255,7 @@ import {v4 as uuidv4} from "uuid";
 import FileUpload from "@/components/filesystem/FileUpload.vue";
 import ColumnFileImport from "@/components/sample/ColumnFileImport.vue";
 import useFileParser from "@/composables/useFileParser";
+import {DEFAULT_NEW_GROUP_NAME} from "@/store/new/GroupAnalysisStore";
 
 const emits = defineEmits<{
     (e: 'confirm', samples: SampleTableItem[]): void;

@@ -4,7 +4,7 @@
         max-width="85%"
         :persistent="!isValid"
     >
-        <v-unipept-card v-if="addingSample">
+        <v-unipept-card v-if="addingSample" class="bg-mainBody">
             <add-sample-stepper
                 :is-unique="isUnique"
                 @cancel="addingSample = false"
@@ -15,6 +15,7 @@
         <v-unipept-card
             v-else
             min-height="500px"
+            class="bg-mainBody"
         >
             <v-card-title class="d-flex align-center">
                 <h2>Manage group</h2>
