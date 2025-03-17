@@ -4,15 +4,15 @@
         max-width="85%"
         :persistent="!isValid"
     >
-        <v-card v-if="addingSample">
+        <v-unipept-card v-if="addingSample">
             <add-sample-stepper
                 :is-unique="isUnique"
                 @cancel="addingSample = false"
                 @confirm="addSamples"
             />
-        </v-card>
+        </v-unipept-card>
 
-        <v-card
+        <v-unipept-card
             v-else
             min-height="500px"
         >
@@ -101,7 +101,7 @@
                     @confirm="undoChanges"
                 />
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 

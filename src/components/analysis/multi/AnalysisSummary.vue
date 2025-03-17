@@ -1,5 +1,5 @@
 <template>
-    <v-card flat>
+    <v-unipept-card>
         <v-card-title>
             <span class="text-h4">{{ analysis.name }} ({{ group.name }})</span>
         </v-card-title>
@@ -125,7 +125,7 @@
             v-model="showMissingPeptides"
             :peptides="missedPeptides"
         />
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

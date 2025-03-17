@@ -1,7 +1,6 @@
 <template>
     <v-card
-        variant="elevated"
-        elevation="3"
+        variant="flat"
         class="d-flex flex-column"
     >
         <v-card-title class="text-h5 font-weight-regular justify-space-between">
@@ -18,10 +17,11 @@
                     <v-container class="mb-2">
                         <v-row>
                             <v-col :cols="4">
-                                <v-card
-                                    class="d-flex align-center"
+                                <v-unipept-card
+                                    class="d-flex flex-row align-center"
                                     @click="navigateToPaste"
                                     style="min-height: 100%;"
+                                    variant="outlined"
                                 >
                                     <v-icon class="ml-4">
                                         mdi-content-paste
@@ -34,14 +34,15 @@
                                             Paste a list of peptides directly into a text field to create a new sample without uploading a file.
                                         </v-card-text>
                                     </div>
-                                </v-card>
+                                </v-unipept-card>
                             </v-col>
 
                             <v-col :cols="4">
-                                <v-card
-                                    class="d-flex align-center"
+                                <v-unipept-card
+                                    class="d-flex flex-row align-center"
                                     @click="navigateToImportWizard"
                                     style="min-height: 100%;"
+                                    variant="outlined"
                                 >
                                     <v-icon class="ml-4">
                                         mdi-file
@@ -54,14 +55,15 @@
                                             Select a file from your computer and use the wizard to map columns from a TSV or CSV file for import.
                                         </v-card-text>
                                     </div>
-                                </v-card>
+                                </v-unipept-card>
                             </v-col>
 
                             <v-col :cols="4">
-                                <v-card
-                                    class="d-flex align-center"
+                                <v-unipept-card
+                                    class="d-flex flex-row align-center"
                                     @click="navigateToBulkUpload"
                                     style="min-height: 100%;"
+                                    variant="outlined"
                                 >
                                     <v-icon class="ml-4">
                                         mdi-file-multiple
@@ -74,7 +76,7 @@
                                             Upload multiple files containing peptides and import them all at once.
                                         </v-card-text>
                                     </div>
-                                </v-card>
+                                </v-unipept-card>
                             </v-col>
                         </v-row>
                     </v-container>

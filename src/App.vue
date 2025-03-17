@@ -220,7 +220,7 @@ body {
 }
 
 .test {
-    background-color: rgba(249, 250, 252, 0.93);
+    background-color: #F9FAFC;
 }
 
 .homepage-title {

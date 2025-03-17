@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card class="pa-0">
         <v-tabs
             v-model="currentTab"
             bg-color="primary"
@@ -73,7 +73,7 @@
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

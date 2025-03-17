@@ -11,7 +11,7 @@
 
             <v-row class="mt-5" justify="center">
                 <v-col cols="12" md="4" >
-                    <v-card class="step-card">
+                    <v-unipept-card class="step-card">
                         <v-card-title class="step-title">
                             <v-icon color="primary" class="mr-2">mdi-folder-plus</v-icon>
                             Step 1: Create a new group
@@ -32,11 +32,11 @@
                                 />
                             </div>
                         </v-card-text>
-                    </v-card>
+                    </v-unipept-card>
                 </v-col>
 
                 <v-col cols="12" md="4">
-                    <v-card class="step-card">
+                    <v-unipept-card class="step-card">
                         <v-card-title class="step-title">
                             <v-icon color="secondary" class="mr-2">mdi-flask</v-icon>
                             Step 2: Add Samples
@@ -49,11 +49,11 @@
                                 <v-icon size="small" color="secondary">mdi-pencil</v-icon> next to your group in the sidebar.
                             </p>
                         </v-card-text>
-                    </v-card>
+                    </v-unipept-card>
                 </v-col>
 
                 <v-col cols="12" md="4">
-                    <v-card class="step-card">
+                    <v-unipept-card class="step-card">
                         <v-card-title class="step-title">
                             <v-icon color="success" class="mr-2">mdi-chart-line</v-icon>
                             Step 3: Start Analyzing
@@ -65,7 +65,7 @@
                                 results will be displayed here.
                             </p>
                         </v-card-text>
-                    </v-card>
+                    </v-unipept-card>
                 </v-col>
             </v-row>
         </v-card-text>
@@ -105,21 +105,15 @@ const addGroup = (name: string) => {
     margin: 0 auto;
 }
 
-.step-card {
-    border-radius: 12px;
-    padding: 16px;
-    text-align: left;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    background: white;
-    display: flex;
-    flex-direction: column;
-    min-height: 100%; /* Ensures all cards are the same height */
-}
-
 .step-title {
     font-size: 18px;
     font-weight: 600;
     display: flex;
     align-items: center;
+}
+
+.step-card {
+    padding: 16px !important;
+    min-height: 100%;
 }
 </style>

@@ -3,7 +3,7 @@
         v-model="dialogOpen"
         max-width="80%"
     >
-        <v-card>
+        <v-unipept-card>
             <v-card-title class="d-flex align-center">
                 <h2>Create custom database</h2>
                 <v-spacer />
@@ -221,7 +221,7 @@
                     </template>
                 </v-stepper-vertical>
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 
