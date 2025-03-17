@@ -199,7 +199,7 @@
                             subtitle="Decide on a set of proteins that should be present in the database"
                             value="3"
                         >
-                            <protein-browser v-model="selectedProteins" />
+                            <protein-browser v-model="selectedProteins" class="mb-4" />
 
                             <template #prev>
                                 <v-btn
@@ -230,10 +230,9 @@
 import {ref, watch} from "vue";
 import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
 import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
-import ProteinBrowser from "@/components/proteins/ProteinBrowser.vue";
 import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
+import ProteinBrowser from "@/components/browsers/ProteinBrowser.vue";
 
 const customFilterStore = useCustomFilterStore();
 
