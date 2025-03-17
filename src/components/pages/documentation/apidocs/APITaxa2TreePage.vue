@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            <initialism>POST</initialism> /api/v1/taxa2tree
+            <initialism>POST</initialism> /api/v2/taxa2tree
         </h1>
         <h3 class="font-weight-light">
             Returns the taxonomic tree for a given list of taxon identifiers.
@@ -19,7 +19,7 @@
             title="Request"
         >
             <p>
-                The taxa2tree method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/taxa2tree</inline-code>.
+                The taxa2tree method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v2/taxa2tree</inline-code>.
                 <r-link
                     to="#parameters"
                     router
@@ -233,10 +233,10 @@
                 </r-link>).
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2tree -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2tree -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2tree.json?input[]=817&input[]=329854&input[]=1099853
+                https://api.unipept.ugent.be/api/v2/taxa2tree.json?input[]=817&input[]=329854&input[]=1099853
             </template>
         </example-card>
 
@@ -255,7 +255,7 @@
                 </r-link>).
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2tree --data '{"counts": {"817": 3, "329854": 5, "1099853": 7}}'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2tree --data '{"counts": {"817": 3, "329854": 5, "1099853": 7}}'
             </template>
             <template #get>
                 Can only be performed with a POST-request
@@ -277,10 +277,10 @@
                 </r-link>) and returns a GitHub gist link.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2tree -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'link=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2tree -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'link=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2tree.json?input[]=817&input[]=329854&input[]=1099853&link=true
+                https://api.unipept.ugent.be/api/v2/taxa2tree.json?input[]=817&input[]=329854&input[]=1099853&link=true
             </template>
         </example-card>
 

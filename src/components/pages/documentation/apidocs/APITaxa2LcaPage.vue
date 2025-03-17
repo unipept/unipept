@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            <initialism>POST</initialism> /api/v1/taxa2lca
+            <initialism>POST</initialism> /api/v2/taxa2lca
         </h1>
         <h3 class="font-weight-light">
             Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.
@@ -20,7 +20,7 @@
             large-title
         >
             <p>
-                The taxa2lca method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/taxa2lca</inline-code>.
+                The taxa2lca method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v2/taxa2lca</inline-code>.
                 <r-link
                     to="#parameters"
                     router
@@ -271,10 +271,10 @@
                 </r-link>).
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853
+                https://api.unipept.ugent.be/api/v2/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853
             </template>
         </example-card>
 
@@ -293,10 +293,10 @@
                 </r-link>), including its complete lineage.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true
+                https://api.unipept.ugent.be/api/v2/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true
             </template>
         </example-card>
 
@@ -315,10 +315,10 @@
                 </r-link>), including its complete lineage with names.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true' -d 'names=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true' -d 'names=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true&names=true
+                https://api.unipept.ugent.be/api/v2/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true&names=true
             </template>
         </example-card>
 

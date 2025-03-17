@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            <initialism>POST</initialism> /api/v1/pept2taxa
+            <initialism>POST</initialism> /api/v2/pept2taxa
         </h1>
         <h3 class="font-weight-light">
             Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide.
@@ -26,7 +26,7 @@
             large-title
         >
             <p>
-                The pept2taxa method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/pept2taxa</inline-code>.
+                The pept2taxa method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v2/pept2taxa</inline-code>.
                 <r-link
                     to="#parameters"
                     router
@@ -304,10 +304,10 @@
                 The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR
+                https://api.unipept.ugent.be/api/v2/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR
             </template>
         </example-card>
 
@@ -322,10 +322,10 @@
                 The result is the same as the combination of this search and this search with the Tryptic Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK
+                https://api.unipept.ugent.be/api/v2/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK
             </template>
         </example-card>
 
@@ -340,10 +340,10 @@
                 The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=APVISDSSCK' -d 'equate_il=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=APVISDSSCK' -d 'equate_il=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=APVISDSSCK&equate_il=true
+                https://api.unipept.ugent.be/api/v2/pept2taxa.json?input[]=APVISDSSCK&equate_il=true
             </template>
         </example-card>
 
@@ -357,10 +357,10 @@
                 The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true
+                https://api.unipept.ugent.be/api/v2/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true
             </template>
         </example-card>
 
@@ -374,10 +374,10 @@
                 The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true' -d 'names=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true' -d 'names=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true&names=true
+                https://api.unipept.ugent.be/api/v2/pept2taxa.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true&names=true
             </template>
         </example-card>
 

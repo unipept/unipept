@@ -1,4 +1,4 @@
-const base = "https://api.unipept.ugent.be/api/v1/";
+const base = "https://api.unipept.ugent.be/api/v2/";
 const privateBase = "https://api.unipept.ugent.be/private_api/"
 
 export default class UnipeptCommunicator {
