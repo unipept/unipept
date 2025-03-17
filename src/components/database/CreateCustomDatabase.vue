@@ -28,7 +28,6 @@
                             :complete="step as number > 1"
                             :editable="step as number > 1"
                             title="Database name"
-                            subtitle="Provide basic construction details"
                             value="1"
                         >
                             <v-form v-model="isValidDatabaseName">
@@ -75,46 +74,53 @@
                         >
                             <v-container fluid>
                                 <v-row>
-                                    <v-col cols="6" class="d-flex flex-column">
+                                    <v-col cols="4">
                                         <span>
-                                            Manually select which UniProt sources (e.g. TrEMBL and SwissProt) should be
-                                            used for the database construction and which proteins should be included
-                                            based on a given set of taxa.
+                                            Provide a list of <b>NCBI taxa</b> that should be used as the
+                                            basis for a custom protein reference database. All available UniProt sources
+                                            (both TrEMBL and SwissProt) will be consulted in this case.
                                         </span>
+                                    </v-col>
+
+                                    <v-col cols="4">
+                                        <span>
+                                            Provide a list of <b>UniProtKB reference proteomes</b> that should be used as the
+                                            basis for a custom protein reference database. All available UniProt sources
+                                            (both TrEMBL and SwissProt) will be consulted in this case.
+                                        </span>
+                                    </v-col>
+
+                                    <v-col cols="4">
+                                        <span>
+                                            Provide a list of <b>UniProtKB proteins</b> that should be used as the
+                                            basis for a custom protein reference database. All available UniProt sources
+                                            (both TrEMBL and SwissProt) will be consulted in this case.
+                                        </span>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="4" class="d-flex flex-column">
                                         <v-btn
-                                            class="mt-3"
                                             color="primary"
-                                            text="Manually filter database"
+                                            text="By taxa"
                                             variant="tonal"
                                             @click="() => { filterSelection = FilterSelection.Manually; next(); }"
                                         />
                                     </v-col>
 
-                                    <v-col cols="6" class="d-flex flex-column">
-                                        <span>
-                                            Provide a list of UniProt reference proteomes that should be used as the
-                                            basis for a custom protein reference database. All available UniProt sources
-                                            (both TrEMBL and SwissProt) will be consulted in this case.
-                                        </span>
+                                    <v-col cols="4" class="d-flex flex-column">
                                         <v-btn
-                                            class="mt-3"
                                             color="primary"
-                                            text="Construct from reference proteomes"
+                                            text="By reference proteomes"
                                             variant="tonal"
                                             @click="() => { filterSelection = FilterSelection.ReferenceProteomes; next(); }"
                                         />
                                     </v-col>
 
-                                    <v-col cols="6" class="d-flex flex-column">
-                                        <span>
-                                            Provide a list of UniProt protein identifiers that should be used as the
-                                            basis for a custom protein reference database. All available UniProt sources
-                                            (both TrEMBL and SwissProt) will be consulted in this case.
-                                        </span>
+                                    <v-col cols="4" class="d-flex flex-column">
                                         <v-btn
-                                            class="mt-3"
                                             color="primary"
-                                            text="Construct from UniProt proteins"
+                                            text="By proteins"
                                             variant="tonal"
                                             @click="() => { filterSelection = FilterSelection.Proteins; next(); }"
                                         />
