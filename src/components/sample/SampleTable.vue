@@ -106,13 +106,33 @@
         </template>
 
         <template #item.action="{ index }">
-            <v-btn
-                color="error"
-                density="compact"
-                variant="text"
-                icon="mdi-delete"
-                @click="removeSample(index)"
-            />
+            <v-tooltip text="Remove">
+                <template #activator="{ props }">
+                    <v-btn
+                        v-bind="props"
+                        color="error"
+                        density="compact"
+                        variant="text"
+                        icon="mdi-delete-outline"
+                        @click="removeSample(index)"
+                    />
+                </template>
+            </v-tooltip>
+        </template>
+
+        <template #item.duplicate="{ index }">
+            <v-tooltip text="Duplicate">
+                <template #activator="{ props }">
+                    <v-btn
+                        v-bind="props"
+                        color="grey-darken-2"
+                        density="compact"
+                        variant="text"
+                        icon="mdi-content-duplicate"
+                        @click="duplicateSample(index)"
+                    />
+                </template>
+            </v-tooltip>
         </template>
 
         <template #expanded-row="{ columns, item }">
@@ -132,11 +152,11 @@
 import {ref} from "vue";
 import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import SampleContentTable from "@/components/sample/SampleContentTable.vue";
+import {v4 as uuidv4} from "uuid"
 
-const samples = defineModel<SampleTableItem[]>();
+const samples = defineModel<SampleTableItem[]>({ required: true });
 
 const expanded = ref<string[]>([]);
-const addingSample = ref(false);
 
 const isUnique = (item: SampleTableItem) => {
     return samples.value!.filter(s => s.id !== item?.id && s.name === item.name).length === 0
@@ -146,19 +166,25 @@ const expandItem = (item: SampleTableItem) => {
     expanded.value = expanded.value.includes(item.id) ? [] : [ item.id ];
 };
 
-const openAddSample = () => {
-    addingSample.value = true;
-    expanded.value = [];
-};
-
-const addSample = (sample: SampleTableItem) => {
-    samples.value = [ ...samples.value!, sample ];
-    addingSample.value = false;
-};
-
 const removeSample = (index: number) => {
-    samples.value!.splice(index, 1);
-    samples.value = [ ...samples.value! ];
+    samples.value.splice(index, 1);
+    samples.value = [ ...samples.value ];
+}
+
+const duplicateSample = (index: number) => {
+    const sample = samples.value[index];
+
+    let counter = 1;
+    while (samples.value.find(s => s.name === `${sample.name} - copy ${counter}`)) {
+        counter++;
+    }
+
+    const newSample = {
+        ...sample,
+        id: uuidv4(),
+        name: `${sample.name} - copy ${counter}`
+    };
+    samples.value = [ ...samples.value, newSample ];
 }
 
 // @ts-ignore need to annotate headers until Vuetify 3 correctly exposes type of headers
@@ -197,7 +223,14 @@ const headers: any = [
         title: "",
         align: "left",
         value: "action",
-        width: "2%",
+        width: "3%",
+        sortable: false
+    },
+    {
+        title: "",
+        align: "left",
+        value: "duplicate",
+        width: "3%",
         sortable: false
     }
 ];
