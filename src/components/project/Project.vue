@@ -144,6 +144,7 @@ const addSample = (groupId: string, sample: SampleTableItem) => {
 
 const removeSample = (groupId: string, analysisId: string) => {
     emits('sample:remove', groupId, analysisId);
+    selectFirstAnalysis();
 }
 
 const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
@@ -160,6 +161,7 @@ const updateGroup = (groupId: string, updatedName: string) => {
 
 const removeGroup = (groupId: string) => {
     emits('group:remove', groupId);
+    selectFirstAnalysis();
 }
 
 const resetTaxonomicFilter = () => {
@@ -185,16 +187,19 @@ function detectSafari(): boolean {
     );
 }
 
-onMounted(() => {
-    isSafari.value = detectSafari();
-
-    const group = project.getFirstGroup();
+const selectFirstAnalysis = () => {
+    const group = project.getFirstNonEmptyGroup();
     if (group) {
         const analysis = group.getFirstAnalysis();
         if (analysis) {
             selectAnalysis(group.id, analysis.id);
         }
     }
+}
+
+onMounted(() => {
+    isSafari.value = detectSafari();
+    selectFirstAnalysis();
 });
 </script>
 

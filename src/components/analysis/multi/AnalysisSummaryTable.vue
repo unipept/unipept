@@ -5,6 +5,7 @@
         :items-per-page="5"
         :loading="false"
         density="compact"
+        style="background-color: transparent"
     >
         <template #no-data>
             <v-alert
