@@ -95,9 +95,25 @@
                 <inline-code>domains</inline-code> is an optional parameter that can be used to order the <initialism>GO</initialism>-terms in groups according to their namespace (cellular component, molecular function, biological process).
             </p>
 
+            <h3 class="font-weight-medium">
+                names
+            </h3>
+            <p>
+                <inline-code>names</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                When both <inline-code>names</inline-code> and <inline-code>extra</inline-code> are set to <inline-code>true</inline-code>, Unipept will return the names of all ranks in the lineage of each organism.
+                Setting only <inline-code>names</inline-code> to <inline-code>true</inline-code> will not result in additional information fields being returned.
+                See the <r-link
+                    to="#response"
+                    router
+                >
+                    response
+                </r-link> section for an overview of the information fields returned.
+            </p>
+
             <static-alert title="Performance penalty">
                 <p>
-                    Setting <inline-code>extra</inline-code> or <inline-code>domains</inline-code> to <inline-code>true</inline-code> has a performance penalty inferred from additional database queries.
+                    Setting <inline-code>extra</inline-code>, <inline-code>domains</inline-code> or <inline-code>names</inline-code> to <inline-code>true</inline-code> has a performance penalty inferred from additional database queries.
                     Do not use this parameter unless the extra information fields are needed.
                 </p>
             </static-alert>
@@ -206,11 +222,51 @@
                 <li><inline-code>forma_id</inline-code></li>
             </ul>
 
-            The <inline-code>name</inline-code> associated with a <initialism>GO</initialism>-term and an <initialism>EC</initialism>-number, and the name and type of an InterPro
-            entry, are also provided when the extra parameter is set to true.
-            <br class="mb-3">
-            When the <inline-code>domains</inline-code> parameter is set to <inline-code>true</inline-code>, objects are placed in a group corresponding to their namespace and the objects
-            are nested in an additional object. See the examples for more information on how to use this.
+            <p>
+                The <inline-code>name</inline-code> associated with a <initialism>GO</initialism>-term and an <initialism>EC</initialism>-number, and the name and type of an InterPro
+                entry, are also provided when the extra parameter is set to true.
+            </p>
+
+            <p>
+                When both the <inline-code>names</inline-code> and <inline-code>extra</inline-code> parameters are set to <inline-code>true</inline-code>, objects also contain the names for each rank in
+                the lineage using the following information fields:
+            </p>
+
+            <ul class="multi-column mt-3">
+                <li><inline-code>superkingdom_name</inline-code></li>
+                <li><inline-code>kingdom_name</inline-code></li>
+                <li><inline-code>subkingdom_name</inline-code></li>
+                <li><inline-code>superphylum_name</inline-code></li>
+                <li><inline-code>phylum_name</inline-code></li>
+                <li><inline-code>subphylum_name</inline-code></li>
+                <li><inline-code>superclass_name</inline-code></li>
+                <li><inline-code>class_name</inline-code></li>
+                <li><inline-code>subclass_name</inline-code></li>
+                <li><inline-code>infraclass_name</inline-code></li>
+                <li><inline-code>superorder_name</inline-code></li>
+                <li><inline-code>order_name</inline-code></li>
+                <li><inline-code>suborder_name</inline-code></li>
+                <li><inline-code>infraorder_name</inline-code></li>
+                <li><inline-code>parvorder_name</inline-code></li>
+                <li><inline-code>superfamily_name</inline-code></li>
+                <li><inline-code>family_name</inline-code></li>
+                <li><inline-code>subfamily_name</inline-code></li>
+                <li><inline-code>tribe_name</inline-code></li>
+                <li><inline-code>subtribe_name</inline-code></li>
+                <li><inline-code>genus_name</inline-code></li>
+                <li><inline-code>subgenus_name</inline-code></li>
+                <li><inline-code>species_group_name</inline-code></li>
+                <li><inline-code>species_subgroup_name</inline-code></li>
+                <li><inline-code>species_name</inline-code></li>
+                <li><inline-code>subspecies_name</inline-code></li>
+                <li><inline-code>varietas_name</inline-code></li>
+                <li><inline-code>forma_name</inline-code></li>
+            </ul>
+
+            <p class="mt-3">
+                When the <inline-code>domains</inline-code> parameter is set to <inline-code>true</inline-code>, objects are placed in a group corresponding to their namespace and the objects
+                are nested in an additional object. See the examples for more information on how to use this.
+            </p>
         </header-body-card>
 
         <!-- Parameters Card -->
@@ -292,6 +348,23 @@
                         <td class="py-3">
                             Separates <initialism>GO</initialism>-namespaces and InterPro types and places objects in group associated with current namespace or
                             type when <inline-code>true</inline-code>.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>names</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return names of ranks in the lineage if <inline-code>true</inline-code>.
                             <br>
                             <div
                                 class="mt-3"
@@ -398,6 +471,23 @@
             </template>
         </example-card>
 
+        <example-card
+            class="mt-5"
+            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with a single peptide, including the names of all ranks in the lineage"
+            :response="response6"
+        >
+            <template #description>
+                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the peptide <i><initialism>APVLSDSSCK</initialism></i> including the names of all ranks in the lineage.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
+            </template>
+            <template #post>
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/peptinfo -d 'input[]=APVLSDSSCK' -d 'domains=true' -d 'names=true'
+            </template>
+            <template #get>
+                https://api.unipept.ugent.be/api/v2/peptinfo.json?input[]=APVLSDSSCK&domains=true&names=true
+            </template>
+        </example-card>
+
         <try-it-card
             id="try"
             class="mt-5"
@@ -427,14 +517,6 @@
                         Parameters
                     </h3>
                     <v-switch
-                        v-model="extra"
-                        color="primary"
-                        inset
-                        label="extra"
-                        density="compact"
-                        hide-details
-                    />
-                    <v-switch
                         v-model="equate_il"
                         color="primary"
                         inset
@@ -443,10 +525,26 @@
                         hide-details
                     />
                     <v-switch
+                        v-model="extra"
+                        color="primary"
+                        inset
+                        label="extra"
+                        density="compact"
+                        hide-details
+                    />
+                    <v-switch
                         v-model="domains"
                         color="primary"
                         inset
                         label="domains"
+                        density="compact"
+                        hide-details
+                    />
+                    <v-switch
+                        v-model="names"
+                        color="primary"
+                        inset
+                        label="names"
                         density="compact"
                         hide-details
                     />
@@ -485,11 +583,13 @@ const response2 = ref({});
 const response3 = ref({});
 const response4 = ref({});
 const response5 = ref({});
+const response6 = ref({});
 
 const input = ref("");
 const equate_il = ref(false);
 const extra = ref(false);
 const domains = ref(false);
+const names = ref(false);
 
 const tryItResponse = ref({});
 
@@ -503,6 +603,7 @@ onBeforeMount(async () => {
     response3.value = await unipeptCommunicator.peptinfo(["APVLSDSSCK"], true, undefined, undefined);
     response4.value = await unipeptCommunicator.peptinfo(["AIPQLEVARPADAYETAEAYR"], undefined, true, undefined);
     response5.value = await unipeptCommunicator.peptinfo(["APVLSDSSCK"], undefined, undefined, true);
+    response6.value = await unipeptCommunicator.peptinfo(["APVLSDSSCK"], undefined, true, undefined, true);
 })
 </script>
 
