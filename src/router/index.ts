@@ -82,6 +82,7 @@ const routes = [
             { path: "pept2interpro", component: () => import("@/components/pages/documentation/apidocs/APIPept2InterproPage.vue"), meta: apidocsMeta },
             { path: "pept2funct", component: () => import("@/components/pages/documentation/apidocs/APIPept2FunctPage.vue"), meta: apidocsMeta },
             { path: "peptinfo", component: () => import("@/components/pages/documentation/apidocs/APIPeptInfoPage.vue"), meta: apidocsMeta },
+            { path: "protinfo", component: () => import("@/components/pages/documentation/apidocs/APIProtInfoPage.vue"), meta: apidocsMeta },
             { path: "taxa2lca", component: () => import("@/components/pages/documentation/apidocs/APITaxa2LcaPage.vue"), meta: apidocsMeta },
             { path: "taxa2tree", component: () => import("@/components/pages/documentation/apidocs/APITaxa2TreePage.vue"), meta: apidocsMeta },
             { path: "taxonomy", component: () => import("@/components/pages/documentation/apidocs/APITaxonomyPage.vue"), meta: apidocsMeta },
