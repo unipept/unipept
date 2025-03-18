@@ -58,8 +58,8 @@ import { computed, ref, ComputedRef, Ref } from 'vue';
 import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
 import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import useOntologyStore from "@/store/new/OntologyStore";
-import {ProteinResponse} from "@/logic/communicators/unipept/protein/ProteinResponseCommunicator";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import Protein from "@/logic/ontology/proteins/Protein";
 
 export interface Props {
     assay: PeptideAnalysisStore
@@ -88,8 +88,8 @@ const items: ComputedRef<{ definition: NcbiTaxon, lineage: (NcbiTaxon | undefine
     const ontologyStore = useOntologyStore();
     const results: { definition: NcbiTaxon, lineage: (NcbiTaxon | undefined)[] }[] = [];
 
-    props.assay.proteins.forEach((p: ProteinResponse) => {
-        const def = ontologyStore.getNcbiDefinition(p.organism);
+    props.assay.proteins.forEach((p: Protein) => {
+        const def = ontologyStore.getNcbiDefinition(p.taxonId);
 
         if (def) {
             results.push({

@@ -21,7 +21,10 @@ export default function useProteinOntology(
                 id: response.uniprot_accession_id,
                 name: response.name,
                 databaseType: response.db_type,
-                taxonId: response.taxon_id
+                taxonId: response.taxon_id,
+                ecReferences: [],
+                goReferences: [],
+                interproReferences: []
             });
         }
     }

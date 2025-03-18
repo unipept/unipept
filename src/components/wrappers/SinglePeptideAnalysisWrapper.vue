@@ -23,7 +23,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useFullscreen } from '@vueuse/core';
 import usePeptideAnalysisStore from "@/store/new/PeptideAnalysisStore";
 import {v4 as uuidv4} from "uuid";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
