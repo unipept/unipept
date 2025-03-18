@@ -94,6 +94,24 @@
                         Do not use this parameter unless the extra information fields are needed.
                     </p>
                 </static-alert>
+
+                <h3 class="font-weight-medium">
+                    cutoff
+                </h3>
+                <p>
+                    <inline-code>cutoff</inline-code> is an optional parameter and can only be a <inline-code>natural number (>0)</inline-code>.
+                    When not set explicitly, the parameter defaults to <inline-code>10000</inline-code>. When an input peptide matches more than
+                    <inline-code>cutoff</inline-code> UniProt entries, the response will be truncated.
+                </p>
+
+                <h3 class="font-weight-medium">
+                    tryptic
+                </h3>
+                <p>
+                    <inline-code>tryptic</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                    When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                    When the parameter is set to <inline-code>true</inline-code>, Unipept will only return tryptic matches.
+                </p>
             </v-card-text>
         </header-body-card>
 
@@ -187,6 +205,40 @@
                         </td>
                         <td class="py-3">
                             Return additional information fields if <inline-code>true</inline-code>.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>cutoff</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Sets a limit on the amount of matched proteins that are used for the response.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be a <inline-code>natural number (>0)</inline-code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>tryptic</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return only tryptic matches if <inline-code>true</inline-code>.
                             <br>
                             <div
                                 class="mt-3"

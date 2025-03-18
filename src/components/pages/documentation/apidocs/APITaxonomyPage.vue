@@ -88,6 +88,54 @@
                     Do not use this parameter unless the extra information fields are needed.
                 </p>
             </static-alert>
+
+            <h3 class="font-weight-medium">
+                descendants
+            </h3>
+            <p>
+                <inline-code>descendants</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                When the parameter is set to <inline-code>true</inline-code>, Unipept will also return all the descendants for each taxon.
+            </p>
+
+            <h3 class="font-weight-medium">
+                descendants_ranks
+            </h3>
+            <p>
+                <inline-code>descendants_ranks</inline-code> is an optional parameter and should be a list of NCBI ranks. Possible values are listed below.
+                When not set explicitly, the parameter defaults to <inline-code>[ "species" ]</inline-code>. When the parameter is set to a non-empty list
+                of ranks, Unipept will only return the descendants of the given ranks for each taxon.
+            </p>
+            <ul class="multi-column my-3">
+                <li><inline-code>superkingdom</inline-code></li>
+                <li><inline-code>kingdom</inline-code></li>
+                <li><inline-code>subkingdom</inline-code></li>
+                <li><inline-code>superphylum</inline-code></li>
+                <li><inline-code>phylum</inline-code></li>
+                <li><inline-code>subphylum</inline-code></li>
+                <li><inline-code>superclass</inline-code></li>
+                <li><inline-code>class</inline-code></li>
+                <li><inline-code>subclass</inline-code></li>
+                <li><inline-code>infraclass</inline-code></li>
+                <li><inline-code>superorder</inline-code></li>
+                <li><inline-code>order</inline-code></li>
+                <li><inline-code>suborder</inline-code></li>
+                <li><inline-code>infraorder</inline-code></li>
+                <li><inline-code>parvorder</inline-code></li>
+                <li><inline-code>superfamily</inline-code></li>
+                <li><inline-code>family</inline-code></li>
+                <li><inline-code>subfamily</inline-code></li>
+                <li><inline-code>tribe</inline-code></li>
+                <li><inline-code>subtribe</inline-code></li>
+                <li><inline-code>genus</inline-code></li>
+                <li><inline-code>subgenus</inline-code></li>
+                <li><inline-code>species_group</inline-code></li>
+                <li><inline-code>species_subgroup</inline-code></li>
+                <li><inline-code>species</inline-code></li>
+                <li><inline-code>subspecies</inline-code></li>
+                <li><inline-code>varietas</inline-code></li>
+                <li><inline-code>forma</inline-code></li>
+            </ul>
         </header-body-card>
 
         <!-- Response Card -->
@@ -241,6 +289,43 @@
                                 style="font-size: 85%;"
                             >
                                 Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>descendants</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return all descendants for each input taxon.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>descendants_ranks</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return only descendants of the given ranks for each input taxon. <inline-code>[ "species" ]</inline-code> (default)
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be a valid list of NCBI ranks, see <r-link
+                                    to="#request"
+                                    router
+                                >request</r-link>
                             </div>
                         </td>
                     </tr>

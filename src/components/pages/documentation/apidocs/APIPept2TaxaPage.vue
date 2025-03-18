@@ -110,6 +110,25 @@
                     Do not use this parameter unless the extra information fields are needed.
                 </p>
             </static-alert>
+
+            <h3 class="font-weight-medium">
+                compact
+            </h3>
+            <p>
+                <inline-code>compact</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                When the parameter is set to <inline-code>true</inline-code>, Unipept will only return the list of taxon identifiers, rather than the name, rank
+                and identifier of each taxon.
+            </p>
+
+            <h3 class="font-weight-medium">
+                tryptic
+            </h3>
+            <p>
+                <inline-code>tryptic</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                When the parameter is set to <inline-code>true</inline-code>, Unipept will only return tryptic matches.
+            </p>
         </header-body-card>
 
         <!-- Response Card -->
@@ -275,6 +294,40 @@
                         </td>
                         <td class="py-3">
                             Return names of ranks in the lineage if <inline-code>true</inline-code>.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>compact</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Returns a compact version of the taxa
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>tryptic</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return only tryptic matches if <inline-code>true</inline-code>.
                             <br>
                             <div
                                 class="mt-3"

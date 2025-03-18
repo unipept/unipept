@@ -50,21 +50,6 @@
                     When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
                 </p>
             </static-alert>
-
-            <h3 class="font-weight-medium">
-                link
-            </h3>
-            <p>
-                <inline-code>link</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
-                When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
-                When the parameter is set to <inline-code>true</inline-code>, Unipept will return an <initialism>URL</initialism> that points to a GitHub gist in which the visualization code for this sample is stored.
-                See the <r-link
-                    to="#response"
-                    router
-                >
-                    response
-                </r-link> section for an overview of the information fields returned.
-            </p>
         </header-body-card>
 
         <!-- Response Card -->
@@ -134,23 +119,6 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <b>link</b>
-                            <br>
-                            <i style="font-size: 85%;">optional</i>
-                        </td>
-                        <td class="py-3">
-                            Return an URL that points to a GitHub gist in which the visualization code for this sample is stored if <inline-code>true</inline-code>.
-                            <br>
-                            <div
-                                class="mt-3"
-                                style="font-size: 85%;"
-                            >
-                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
-                            </div>
-                        </td>
-                    </tr>
                 </tbody>
             </v-table>
         </header-body-card>
@@ -187,23 +155,6 @@
                                 style="font-size: 85%;"
                             >
                                 Value: Object
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>link</b>
-                            <br>
-                            <i style="font-size: 85%;">optional</i>
-                        </td>
-                        <td class="py-3">
-                            Return an URL that points to a GitHub gist in which the visualization code for this sample is stored if <inline-code>true</inline-code>.
-                            <br>
-                            <div
-                                class="mt-3"
-                                style="font-size: 85%;"
-                            >
-                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
                             </div>
                         </td>
                     </tr>
@@ -262,28 +213,6 @@
             </template>
         </example-card>
 
-        <example-card
-            class="mt-5"
-            title="Retrieve the taxonomic tree and its lineage for a given list of taxon identifiers"
-            :response="response2"
-        >
-            <template #description>
-                This example calculates and retrieves the taxonomic tree of <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
-                    817
-                </r-link>), <i>Bacteroides intestinalis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=329854">
-                    329854
-                </r-link>), <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">
-                    1099853
-                </r-link>) and returns a GitHub gist link.
-            </template>
-            <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2tree -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'link=true'
-            </template>
-            <template #get>
-                https://api.unipept.ugent.be/api/v2/taxa2tree.json?input[]=817&input[]=329854&input[]=1099853&link=true
-            </template>
-        </example-card>
-
         <try-it-card
             id="try"
             class="mt-5"
@@ -305,22 +234,6 @@
                     />
                 </v-col>
 
-                <v-col
-                    cols="12"
-                    class="dark-label"
-                >
-                    <h3 class="font-weight-medium">
-                        Parameters
-                    </h3>
-                    <v-switch
-                        v-model="link"
-                        color="primary"
-                        inset
-                        label="link"
-                        density="compact"
-                        hide-details
-                    />
-                </v-col>
                 <v-col cols="12">
                     <v-btn
                         class="col-12 col-sm-2 float-end"
