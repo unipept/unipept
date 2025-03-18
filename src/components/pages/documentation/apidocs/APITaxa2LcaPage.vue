@@ -27,7 +27,7 @@
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
             </p>
 
             <h3 class="font-weight-medium">
@@ -302,7 +302,7 @@
 
         <example-card
             class="mt-5"
-            title="Retrieve all UniProt entries containing a single tryptic peptide, while equating I and L"
+            title="Retrieve all UniProt entries containing a single peptide, while equating I and L"
             :response="response3"
         >
             <template #description>

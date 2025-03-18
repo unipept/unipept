@@ -27,7 +27,7 @@
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
             </p>
 
             <h3 class="font-weight-medium">

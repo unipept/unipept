@@ -68,42 +68,42 @@ const { navigate } = useNavigation();
 const functions = [
     {
         resource: "POST /api/v2/pept2prot",
-        description: "Returns the set of UniProt entries containing a given tryptic peptide.",
+        description: "Returns the set of UniProt entries containing a given peptide.",
         link: "/apidocs/pept2prot"
     },
     {
         resource: "POST /api/v2/pept2taxa",
-        description: "Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide.",
+        description: "Returns the set of taxa extracted from the UniProt entries containing a given peptide.",
         link: "/apidocs/pept2taxa"
     },
     {
         resource: "POST /api/v2/pept2lca",
-        description: "Returns the taxonomic lowest common ancestor for a given tryptic peptide.",
+        description: "Returns the taxonomic lowest common ancestor for a given peptide.",
         link: "/apidocs/pept2lca"
     },
     {
         resource: "POST /api/v2/pept2ec",
-        description: "Returns the functional EC-numbers associated with a given tryptic peptide.",
+        description: "Returns the functional EC-numbers associated with a given peptide.",
         link: "/apidocs/pept2ec"
     },
     {
         resource: "POST /api/v2/pept2go",
-        description: "Returns the functional GO-terms associated with a given tryptic peptide.",
+        description: "Returns the functional GO-terms associated with a given peptide.",
         link: "/apidocs/pept2go"
     },
     {
         resource: "POST /api/v2/pept2interpro",
-        description: "Returns the functional InterPro entries associated with a given tryptic peptide.",
+        description: "Returns the functional InterPro entries associated with a given peptide.",
         link: "/apidocs/pept2interpro"
     },
     {
         resource: "POST /api/v2/pept2funct",
-        description: "Returns the functional EC-numbers, GO-terms and InterPro entries associated with a given tryptic peptide.",
+        description: "Returns the functional EC-numbers, GO-terms and InterPro entries associated with a given peptide.",
         link: "/apidocs/pept2funct"
     },
     {
         resource: "POST /api/v2/peptinfo",
-        description: "Returns functional information and the lowest common ancestor for a given tryptic peptide.",
+        description: "Returns functional information and the lowest common ancestor for a given peptide.",
         link: "/apidocs/peptinfo"
     },
     {

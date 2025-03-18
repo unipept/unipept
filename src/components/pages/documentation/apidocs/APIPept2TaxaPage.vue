@@ -4,18 +4,18 @@
             <initialism>POST</initialism> /api/v2/pept2taxa
         </h1>
         <h3 class="font-weight-light">
-            Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide.
+            Returns the set of taxa extracted from the UniProt entries containing a given peptide.
         </h3>
 
         <v-divider class="my-2" />
 
         <p>
-            This method returns the set of organisms associated with the UniProt entries containing a given tryptic peptide.
+            This method returns the set of organisms associated with the UniProt entries containing a given peptide.
             This is the same information as provided on the <i>Lineage table</i> tab when performing a search with the <r-link
                 to="/tpa"
                 router
             >
-                Tryptic Peptide Analysis
+                Single Peptide Analysis
             </r-link> in the web interface.
         </p>
 
@@ -33,14 +33,14 @@
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
             </p>
 
             <h3 class="font-weight-medium">
                 input
             </h3>
             <p>
-                <inline-code>input[]</inline-code> is a required parameter that takes one or more tryptic peptides.
+                <inline-code>input[]</inline-code> is a required parameter that takes one or more peptides.
                 Unipept will return the set of organisms associated with the UniProt entries that contain any of the <inline-code>input[]</inline-code> peptides in their protein sequence.
                 To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
                     to="#example2"
@@ -69,7 +69,7 @@
                     to="/tpa"
                     router
                 >
-                    Tryptic Peptide Analysis
+                    Single Peptide Analysis
                 </r-link> in the web interface.
             </p>
 
@@ -242,7 +242,7 @@
                             <i style="font-size: 85%;">required</i>
                         </td>
                         <td class="py-3">
-                            Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.
+                            Peptide to search for. Add multiple parameters to search for multiple peptides.
                             <br>
                             <div
                                 class="mt-3"
@@ -349,12 +349,12 @@
         </h2>
 
         <example-card
-            title="Retrieve all organisms associated with the UniProt entries containing a given tryptic peptide"
+            title="Retrieve all organisms associated with the UniProt entries containing a given peptide"
             :response="response1"
         >
             <template #description>
                 This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR'
@@ -367,12 +367,12 @@
         <example-card
             id="example2"
             class="mt-5"
-            title="Retrieve all organisms associated with the UniProt entries containing any of multiple tryptic peptides"
+            title="Retrieve all organisms associated with the UniProt entries containing any of multiple peptides"
             :response="response2"
         >
             <template #description>
                 This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> or <i><initialism>APVLSDSSCK</initialism></i>.
-                The result is the same as the combination of this search and this search with the Tryptic Peptide Analysis in the web interface.
+                The result is the same as the combination of this search and this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
@@ -384,13 +384,13 @@
 
         <example-card
             class="mt-5"
-            title="Retrieve all organisms associated with the UniProt entries containing a single tryptic peptide, while equating I and L"
+            title="Retrieve all organisms associated with the UniProt entries containing a single peptide, while equating I and L"
             :response="response3"
         >
             <template #description>
                 This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>APVLSDSSCK</initialism></i>.
                 In searching, isoleucine (I) and leucine (L) are considered equal.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=APVISDSSCK' -d 'equate_il=true'
@@ -402,12 +402,12 @@
 
         <example-card
             class="mt-5"
-            title="Retrieve all organisms and lineage associated with the UniProt entries containing a single tryptic peptide"
+            title="Retrieve all organisms and lineage associated with the UniProt entries containing a single peptide"
             :response="response4"
         >
             <template #description>
                 This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> including the complete lineage of these organisms.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
@@ -419,12 +419,12 @@
 
         <example-card
             class="mt-5"
-            title="Retrieve all organisms and lineage names associated with the UniProt entries containing a single tryptic peptide"
+            title="Retrieve all organisms and lineage names associated with the UniProt entries containing a single peptide"
             :response="response5"
         >
             <template #description>
                 This example retrieves all organisms associated with the UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>, including the complete lineage of these organisms with the names of all ranks.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2taxa -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true' -d 'names=true'

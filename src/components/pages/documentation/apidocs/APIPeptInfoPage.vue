@@ -4,18 +4,18 @@
             <initialism>POST</initialism> /api/v2/peptinfo
         </h1>
         <h3 class="font-weight-light">
-            Returns functional information and the lowest common ancestor for a given tryptic peptide.
+            Returns functional information and the lowest common ancestor for a given peptide.
         </h3>
 
         <v-divider class="my-2" />
 
         <p>
-            This method returns functional information and the lowest common ancestor a given tryptic peptide.
+            This method returns functional information and the lowest common ancestor a given peptide.
             This is the same information as provided when performing a search with the <r-link
                 to="/tpa"
                 router
             >
-                Tryptic Peptide Analysis
+                Single Peptide Analysis
             </r-link> in the web interface.
         </p>
 
@@ -33,14 +33,14 @@
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
             </p>
 
             <h3 class="font-weight-medium">
                 input
             </h3>
             <p>
-                <inline-code>input[]</inline-code> is a required parameter that takes one or more tryptic peptides.
+                <inline-code>input[]</inline-code> is a required parameter that takes one or more peptides.
                 Unipept will return the functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms and InterPro entries associated with each of the <inline-code>input[]</inline-code> peptides based on their occurrence in UniProt entries.
                 To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
                     to="#example2"
@@ -64,12 +64,12 @@
             <p>
                 <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
-                When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries.
+                When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching peptides to UniProt entries.
                 This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
                     to="/tpa"
                     router
                 >
-                    Tryptic Peptide Analysis
+                    Single Peptide Analysis
                 </r-link> in the web interface.
             </p>
 
@@ -118,12 +118,12 @@
                 <li>
                     <inline-code>ec</inline-code>:
                     A list of <initialism>JSON</initialism> objects that each represent an <initialism>EC</initialism>-number associated with
-                    the current tryptic peptide.
+                    the current peptide.
                     <ul>
-                        <li><inline-code>ec_number</inline-code>: <initialism>EC</initialism>-number associated with the current tryptic peptide.</li>
+                        <li><inline-code>ec_number</inline-code>: <initialism>EC</initialism>-number associated with the current peptide.</li>
                         <li>
                             <inline-code>protein_count</inline-code>:
-                            amount of proteins matched with the given tryptic peptide that are labeled with the current <initialism>EC</initialism>-number.
+                            amount of proteins matched with the given peptide that are labeled with the current <initialism>EC</initialism>-number.
                         </li>
                         <li>
                             <inline-code>name</inline-code>:
@@ -134,12 +134,12 @@
                 <li>
                     <inline-code>go</inline-code>:
                     A list of <initialism>JSON</initialism> objects that each represent a <initialism>GO</initialism>-term associated with
-                    the current tryptic peptide.
+                    the current peptide.
                     <ul>
-                        <li><inline-code>go_term</inline-code>: <initialism>GO</initialism>-term associated with the current tryptic peptide.</li>
+                        <li><inline-code>go_term</inline-code>: <initialism>GO</initialism>-term associated with the current peptide.</li>
                         <li>
                             <inline-code>protein_count</inline-code>:
-                            amount of proteins matched with the given tryptic peptide that are labeled with the current <initialism>GO</initialism>-term.
+                            amount of proteins matched with the given peptide that are labeled with the current <initialism>GO</initialism>-term.
                         </li>
                         <li>
                             <inline-code>name</inline-code>:
@@ -150,12 +150,12 @@
                 <li>
                     <inline-code>ipr</inline-code>:
                     A list of <initialism>JSON</initialism> objects that each represent an InterPro entry associated with
-                    the current tryptic peptide.
+                    the current peptide.
                     <ul>
-                        <li><inline-code>code</inline-code>: InterPro entry code associated with the current tryptic peptide.</li>
+                        <li><inline-code>code</inline-code>: InterPro entry code associated with the current peptide.</li>
                         <li>
                             <inline-code>protein_count</inline-code>:
-                            amount of proteins matched with the given tryptic peptide that are labeled with the current InterPro code.
+                            amount of proteins matched with the given peptide that are labeled with the current InterPro code.
                         </li>
                         <li>
                             <inline-code>name</inline-code>:
@@ -239,7 +239,7 @@
                             <i style="font-size: 85%;">required</i>
                         </td>
                         <td class="py-3">
-                            Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.
+                            Peptide to search for. Add multiple parameters to search for multiple peptides.
                             <br>
                             <div
                                 class="mt-3"
@@ -313,12 +313,12 @@
         </h2>
 
         <example-card
-            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with a given tryptic peptide"
+            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with a given peptide"
             :response="response1"
         >
             <template #description>
-                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the tryptic peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/peptinfo -d 'input[]=AIPQLEVARPADAYETAEAYR'
@@ -331,12 +331,12 @@
         <example-card
             id="example2"
             class="mt-5"
-            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with each of multiple tryptic peptides"
+            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with each of multiple peptides"
             :response="response2"
         >
             <template #description>
-                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor for both the tryptic peptides <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> and <i><initialism>APVLSDSSCK</initialism></i>.
-                The result is the same as the combination of this search and this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor for both the peptides <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> and <i><initialism>APVLSDSSCK</initialism></i>.
+                The result is the same as the combination of this search and this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/peptinfo -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
@@ -348,13 +348,13 @@
 
         <example-card
             class="mt-5"
-            title="Retrieve the functional ec-numbers, go-terms, InterPro Entries and lowest common ancestor associated with a single tryptic peptide, while equating I and L"
+            title="Retrieve the functional ec-numbers, go-terms, InterPro Entries and lowest common ancestor associated with a single peptide, while equating I and L"
             :response="response3"
         >
             <template #description>
-                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the tryptic peptide <i><initialism>APVLSDSSCK</initialism></i>.
+                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the peptide <i><initialism>APVLSDSSCK</initialism></i>.
                 In searching, isoleucine (I) and leucinge (L) are considered equal.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/peptinfo -d 'input[]=APVISDSSCK' -d 'equate_il=true'
@@ -366,12 +366,12 @@
 
         <example-card
             class="mt-5"
-            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with a single tryptic peptide"
+            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with a single peptide"
             :response="response4"
         >
             <template #description>
-                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the tryptic peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> including the name of each <initialism>EC</initialism>-number, <initialism>GO</initialism>-term, the name and type of each InterPro entry, and its complete lineage.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> including the name of each <initialism>EC</initialism>-number, <initialism>GO</initialism>-term, the name and type of each InterPro entry, and its complete lineage.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/peptinfo -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
@@ -383,12 +383,12 @@
 
         <example-card
             class="mt-5"
-            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with a single tryptic peptide, making a distinction between different go-domains and InterPro types"
+            title="Retrieve the functional ec-numbers, go-terms, InterPro entries and lowest common ancestor associated with a single peptide, making a distinction between different go-domains and InterPro types"
             :response="response5"
         >
             <template #description>
-                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the tryptic peptide <i><initialism>APVLSDSSCK</initialism></i> distributed over the distinct <initialism>GO</initialism>-domains and InterPro types.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the peptide <i><initialism>APVLSDSSCK</initialism></i> distributed over the distinct <initialism>GO</initialism>-domains and InterPro types.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
                 curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/peptinfo -d 'input[]=APVLSDSSCK' -d 'domains=true'
