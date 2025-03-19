@@ -1,7 +1,7 @@
 <template>
     <v-dialog
         v-model="dialogOpen"
-        max-width="80%"
+        max-width="1800px"
     >
         <v-card>
             <v-card-title class="d-flex align-center">
@@ -18,7 +18,7 @@
 
             <v-divider />
 
-            <v-card-text class="mt-2">
+            <v-card-text class="pa-0">
                 <v-stepper-vertical
                     color="primary"
                     flat
@@ -145,8 +145,9 @@
                             title="Filter organisms"
                             subtitle="Select which organisms will be present in the output database"
                             value="3"
+                            class="pa-0"
                         >
-                            <taxa-browser v-model="selectedTaxa" />
+                            <taxa-browser v-model="selectedTaxa" class="mb-4" />
 
                             <template #prev>
                                 <v-btn 
@@ -175,7 +176,7 @@
                             subtitle="Decide on a set of reference proteomes that should be present in the database"
                             value="3"
                         >
-                            <proteome-browser v-model="selectedProteomes" />
+                            <reference-proteome-browser v-model="selectedProteomes" class="mb-4" />
 
                             <template #prev>
                                 <v-btn
@@ -204,7 +205,7 @@
                             subtitle="Decide on a set of proteins that should be present in the database"
                             value="3"
                         >
-                            <protein-browser v-model="selectedProteins" />
+                            <protein-browser v-model="selectedProteins" class="mb-4" />
 
                             <template #prev>
                                 <v-btn
@@ -233,11 +234,11 @@
 
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
+import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
 import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
-import ProteinBrowser from "@/components/proteins/ProteinBrowser.vue";
+import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
+import ProteinBrowser from "@/components/browsers/ProteinBrowser.vue";
 
 const customFilterStore = useCustomFilterStore();
 

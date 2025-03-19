@@ -22,11 +22,10 @@ export default class NcbiResponseCommunicator {
         }
 
         NcbiResponseCommunicator.inProgress = this.doProcess(codes);
-        const result: NcbiResponse[] = [];
+        let result: NcbiResponse[];
 
         try {
-            const data: NcbiResponse[] = await NcbiResponseCommunicator.inProgress;
-            result.push(...data);
+            result = await NcbiResponseCommunicator.inProgress;
         } finally {
             NcbiResponseCommunicator.inProgress = undefined;
         }

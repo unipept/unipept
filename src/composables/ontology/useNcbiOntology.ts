@@ -12,7 +12,7 @@ export default function useNcbiOntology(
         ids: number[],
         withLineages = true
     ) => {
-        ids = ids.filter(id => !ontology.has(id));
+        ids = ids.filter(id => !ontology.has(id) && id !== null);
 
         const ncbiCommunicator = new NcbiResponseCommunicator(baseUrl, batchSize);
         const responses = await ncbiCommunicator.getResponses(ids);

@@ -270,14 +270,14 @@ const items: Ref<MatchedProtein[]> = ref([]);
 const computeItems = async () => {
     const ontologyStore = useOntologyStore();
     items.value = props.assay.proteins.map(p => {
-        const organism = ontologyStore.getNcbiDefinition(p.organism);
+        const organism = ontologyStore.getNcbiDefinition(p.taxonId);
 
-        const goTerms = p.goTerms.map((term: string) => ontologyStore.getGoDefinition(term)).filter(e => e);
-        const ecTerms = p.ecNumbers.map((term: string) => ontologyStore.getEcDefinition(`EC:${term}`)).filter(e => e);
-        const iprTerms = p.interproEntries.map((term: string) => ontologyStore.getIprDefinition(`IPR:${term}`)).filter(e => e);
+        const goTerms = p.goReferences.map((term: string) => ontologyStore.getGoDefinition(term)).filter(e => e);
+        const ecTerms = p.ecReferences.map((term: string) => ontologyStore.getEcDefinition(`EC:${term}`)).filter(e => e);
+        const iprTerms = p.interproReferences.map((term: string) => ontologyStore.getIprDefinition(`IPR:${term}`)).filter(e => e);
 
         return {
-            uniprotAccessionId: p.uniprotAccessionId,
+            uniprotAccessionId: p.id,
             name: p.name,
             organism: organism ? organism.name : "",
             functionalAnnotations: {
