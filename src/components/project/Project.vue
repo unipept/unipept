@@ -139,7 +139,12 @@ const selectedAnalysisFiltered = computed(() => {
 });
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
-    emits('sample:add', groupId, sample);
+    if (project.empty) {
+        emits('sample:add', groupId, sample);
+        selectFirstAnalysis();
+    } else {
+        emits('sample:add', groupId, sample);
+    }
 }
 
 const removeSample = (groupId: string, analysisId: string) => {
