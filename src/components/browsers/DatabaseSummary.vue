@@ -1,5 +1,5 @@
 <template>
-    <v-card style="width: 100%;" class="mb-2">
+    <v-unipept-card style="width: 100%;" class="mb-2">
         <v-card-text>
             <h3 class="mb-2">Database summary</h3>
 
@@ -97,7 +97,7 @@
                 </v-col>
             </div>
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts" generic="T extends { id: number | string }">

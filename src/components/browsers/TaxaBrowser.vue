@@ -14,7 +14,7 @@
             class="mb-2"
         />
 
-        <v-card style="width: 100%;">
+        <v-unipept-card style="width: 100%;">
             <v-card-text>
                 <h3>Taxon browser</h3>
 
@@ -81,7 +81,7 @@
                     enter a keyword to search for taxa. You can search by name, NCBI identifier or rank.
                 </div>
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
 
     </div>
 </template>

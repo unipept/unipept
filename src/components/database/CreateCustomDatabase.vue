@@ -8,6 +8,7 @@
                 <h2>Create custom database</h2>
                 <v-spacer />
                 <v-btn
+                    color="transparent"
                     icon
                     flat
                     @click="dialogOpen = false"

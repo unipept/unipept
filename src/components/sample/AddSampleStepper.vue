@@ -214,7 +214,7 @@
                             class="mb-4"
                         />
 
-                        <v-spacer />
+                        <v-divider />
 
                         <v-card-actions>
                             <v-btn
