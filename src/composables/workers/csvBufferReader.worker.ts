@@ -1,8 +1,10 @@
+import {CsvBufferReaderWorkerOutput} from "@/composables/useCsvBufferReader";
+
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
 
-const process = async (file: File) => {
+const process = async (file: File): Promise<CsvBufferReaderWorkerOutput> => {
     const content = await file.text();
     const delimiter = detectDelimiter(content);
 
