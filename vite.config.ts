@@ -1,3 +1,5 @@
+/// <reference types="vitest/config" />
+
 // Plugins
 import vue from "@vitejs/plugin-vue"
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"

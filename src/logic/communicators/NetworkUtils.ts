@@ -24,8 +24,7 @@ export default class NetworkUtils {
     }
 
     /**
-     * This method should be used when a specific URL should be opened in a new browser window. The method automatically
-     * decides whether Electron or a default redirection should take place.
+     * This method should be used when a specific URL should be opened in a new browser window or tab.
      *
      * @param url The full url to which navigation should take place.
      */
