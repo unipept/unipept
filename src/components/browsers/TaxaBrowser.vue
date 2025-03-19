@@ -10,7 +10,6 @@
             :compute-taxon-count="async (items) => 0"
             :chip-background-color="getRankColor"
             :item-display-name="(taxon: NcbiTaxon) => taxon.name"
-            @clear-selection="clearSelection"
             @upload-file="processUploadedTaxa"
             class="mb-2"
         />

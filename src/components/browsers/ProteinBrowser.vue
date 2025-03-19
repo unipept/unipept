@@ -10,7 +10,6 @@
             :item-display-name="(protein: Protein) => protein.id"
             :compute-protein-count="computeProteinCount"
             :compute-taxon-count="computeTaxonCount"
-            @clear-selection="clearSelection"
             @upload-file="processUploadedProteins"
             class="mb-2"
         />

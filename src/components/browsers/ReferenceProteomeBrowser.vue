@@ -10,7 +10,6 @@
             :compute-taxon-count="computeTaxaCount"
             :chip-background-color="(_item: ReferenceProteome) => 'primary'"
             :item-display-name="(item: ReferenceProteome) => item.id"
-            @clear-selection="clearSelection"
             @upload-file="processUploadedProteomes"
             class="mb-2"
         />

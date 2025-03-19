@@ -122,8 +122,6 @@ const invalidItems = defineModel<string[]>("invalidItems", {default: []});
 
 const emit = defineEmits<{
     (e: 'uploadFile', file: File, callback: () => void): void,
-    (e: 'clearSelection'): void,
-    (e: 'removeItem', item: T): void,
 }>();
 
 // Start of logic for UI and presentation
@@ -140,11 +138,12 @@ const onUploadFile = async (file: File) => {
 
 // Start of logic for selection manipulation
 const onClearSelection = () => {
-    emit("clearSelection");
+    selectedItems.value = [];
 };
 
 const handleRemoveItem = (item: T) => {
-    emit("removeItem", item);
+    const idx = selectedItems.value.findIndex((element) => element.id === item.id);
+    selectedItems.value.splice(idx, 1);
 };
 
 // Start of logic for computing the protein counts
