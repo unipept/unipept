@@ -3,6 +3,7 @@
         <v-btn
             text="Upload file"
             prepend-icon="mdi-upload"
+            variant="outlined"
             color="primary"
             :loading="loading"
             @click="triggerFileInput"

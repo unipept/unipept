@@ -1,7 +1,7 @@
 <template>
     <v-dialog
         v-model="dialogOpen"
-        max-width="80%"
+        max-width="1800px"
     >
         <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex align-center">
@@ -18,7 +18,7 @@
 
             <v-divider />
 
-            <v-card-text class="mt-2">
+            <v-card-text class="pa-0">
                 <v-stepper-vertical
                     color="primary"
                     bg-color="mainBody"
@@ -29,7 +29,6 @@
                             :complete="step as number > 1"
                             :editable="step as number > 1"
                             title="Database name"
-                            subtitle="Provide basic construction details"
                             value="1"
                         >
                             <v-form v-model="isValidDatabaseName">
@@ -76,46 +75,53 @@
                         >
                             <v-container fluid>
                                 <v-row>
-                                    <v-col cols="6" class="d-flex flex-column">
+                                    <v-col cols="4">
                                         <span>
-                                            Manually select which UniProt sources (e.g. TrEMBL and SwissProt) should be
-                                            used for the database construction and which proteins should be included
-                                            based on a given set of taxa.
+                                            Provide a list of <b>NCBI taxa</b> that should be used as the
+                                            basis for a custom protein reference database. All available UniProt sources
+                                            (both TrEMBL and SwissProt) will be consulted in this case.
                                         </span>
+                                    </v-col>
+
+                                    <v-col cols="4">
+                                        <span>
+                                            Provide a list of <b>UniProtKB reference proteomes</b> that should be used as the
+                                            basis for a custom protein reference database. All available UniProt sources
+                                            (both TrEMBL and SwissProt) will be consulted in this case.
+                                        </span>
+                                    </v-col>
+
+                                    <v-col cols="4">
+                                        <span>
+                                            Provide a list of <b>UniProtKB proteins</b> that should be used as the
+                                            basis for a custom protein reference database. All available UniProt sources
+                                            (both TrEMBL and SwissProt) will be consulted in this case.
+                                        </span>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="4" class="d-flex flex-column">
                                         <v-btn
-                                            class="mt-3"
                                             color="primary"
-                                            text="Manually filter database"
+                                            text="By taxa"
                                             variant="tonal"
                                             @click="() => { filterSelection = FilterSelection.Manually; next(); }"
                                         />
                                     </v-col>
 
-                                    <v-col cols="6" class="d-flex flex-column">
-                                        <span>
-                                            Provide a list of UniProt reference proteomes that should be used as the
-                                            basis for a custom protein reference database. All available UniProt sources
-                                            (both TrEMBL and SwissProt) will be consulted in this case.
-                                        </span>
+                                    <v-col cols="4" class="d-flex flex-column">
                                         <v-btn
-                                            class="mt-3"
                                             color="primary"
-                                            text="Construct from reference proteomes"
+                                            text="By reference proteomes"
                                             variant="tonal"
                                             @click="() => { filterSelection = FilterSelection.ReferenceProteomes; next(); }"
                                         />
                                     </v-col>
 
-                                    <v-col cols="6" class="d-flex flex-column">
-                                        <span>
-                                            Provide a list of UniProt protein identifiers that should be used as the
-                                            basis for a custom protein reference database. All available UniProt sources
-                                            (both TrEMBL and SwissProt) will be consulted in this case.
-                                        </span>
+                                    <v-col cols="4" class="d-flex flex-column">
                                         <v-btn
-                                            class="mt-3"
                                             color="primary"
-                                            text="Construct from UniProt proteins"
+                                            text="By proteins"
                                             variant="tonal"
                                             @click="() => { filterSelection = FilterSelection.Proteins; next(); }"
                                         />
@@ -140,8 +146,9 @@
                             title="Filter organisms"
                             subtitle="Select which organisms will be present in the output database"
                             value="3"
+                            class="pa-0"
                         >
-                            <taxa-browser v-model="selectedTaxa" />
+                            <taxa-browser v-model="selectedTaxa" class="mb-4" />
 
                             <template #prev>
                                 <v-btn 
@@ -170,7 +177,7 @@
                             subtitle="Decide on a set of reference proteomes that should be present in the database"
                             value="3"
                         >
-                            <proteome-browser v-model="selectedProteomes" />
+                            <reference-proteome-browser v-model="selectedProteomes" class="mb-4" />
 
                             <template #prev>
                                 <v-btn
@@ -199,7 +206,7 @@
                             subtitle="Decide on a set of proteins that should be present in the database"
                             value="3"
                         >
-                            <protein-browser v-model="selectedProteins" />
+                            <protein-browser v-model="selectedProteins" class="mb-4" />
 
                             <template #prev>
                                 <v-btn
@@ -228,11 +235,11 @@
 
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
+import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import ProteomeBrowser from "@/components/proteomes/ProteomeBrowser.vue";
 import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
-import ProteinBrowser from "@/components/proteins/ProteinBrowser.vue";
+import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
+import ProteinBrowser from "@/components/browsers/ProteinBrowser.vue";
 
 const customFilterStore = useCustomFilterStore();
 
