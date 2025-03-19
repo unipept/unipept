@@ -4,7 +4,7 @@
         max-width="60%"
         @click:outside="undoChanges"
     >
-        <v-card>
+        <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex">
                 Filter
                 <v-spacer />
@@ -70,7 +70,7 @@
                     Set threshold
                 </v-btn>
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 

@@ -3,7 +3,7 @@
         v-model="dialogOpen"
         max-width="60%"
     >
-        <v-card>
+        <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex">
                 Sorting functional annotations
                 <v-spacer />
@@ -47,7 +47,7 @@
                     I understand
                 </v-btn>
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 

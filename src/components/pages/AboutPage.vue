@@ -158,7 +158,7 @@
                 sm="6"
                 md="4"
             >
-                <v-card>
+                <v-unipept-card>
                     <v-card-text>
                         <v-img
                             :src="supporter.imgUrl"
@@ -166,7 +166,7 @@
                             contain
                         />
                     </v-card-text>
-                </v-card>
+                </v-unipept-card>
             </v-col>
         </v-row>
 
