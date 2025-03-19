@@ -253,8 +253,8 @@ import {computed, Ref, ref} from "vue";
 import AddSampleCard from "@/components/sample/AddSampleCard.vue";
 import {v4 as uuidv4} from "uuid";
 import FileUpload from "@/components/filesystem/FileUpload.vue";
-import ColumnFileImport from "@/components/sample/ColumnFileImport.vue";
-import useFileParser from "@/composables/useFileParser";
+import ColumnFileImport from "@/components/sample/upload/ColumnFileImport.vue";
+import useCsvBufferReader from "@/composables/useCsvBufferReader";
 import {DEFAULT_NEW_GROUP_NAME} from "@/store/new/GroupAnalysisStore";
 
 const emits = defineEmits<{
@@ -334,7 +334,7 @@ const uploadIntensitiesFile = () => {
 const bulkFiles = ref<File[]>([]);
 
 const uploadFilesInBulk = async function() {
-    const fileParser = useFileParser();
+    const fileParser = useCsvBufferReader();
 
     const newSamples: SampleTableItem[] = [];
 
