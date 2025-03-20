@@ -118,10 +118,8 @@
                     />
                 </template>
             </v-tooltip>
-        </template>
 
-        <template #item.duplicate="{ index }">
-            <v-tooltip text="Duplicate">
+            <v-tooltip text="Duplicate" class="ml-2">
                 <template #activator="{ props }">
                     <v-btn
                         v-bind="props"
@@ -221,16 +219,9 @@ const headers: any = [
     },
     {
         title: "",
-        align: "left",
+        align: "center",
         value: "action",
-        width: "3%",
-        sortable: false
-    },
-    {
-        title: "",
-        align: "left",
-        value: "duplicate",
-        width: "3%",
+        width: "10%",
         sortable: false
     }
 ];
