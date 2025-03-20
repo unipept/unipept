@@ -1,38 +1,38 @@
 <template>
     <v-dialog
         v-model="dialogOpen"
-        max-width="50%"
+        max-width="450px"
     >
-        <v-card>
-            <v-alert
-                type="error"
-                icon="mdi-alert"
-                variant="tonal"
-            >
-                Are you sure you want to remove the group <b>{{ group.name }}</b>? This action is irreversible. All samples and analyses will be lost.
-                <div class="d-flex justify-end">
-                    <v-btn
-                        class="me-3"
-                        variant="text"
-                        @click="dialogOpen = false"
-                    >
-                        Cancel
-                    </v-btn>
+        <v-unipept-card>
+            <v-card-text class="pa-4">
+                <v-alert type="error" variant="tonal" density="compact">
+                    Are you sure you want to remove the group <b>{{ group.name }}</b>? This action is
+                    <strong>irreversible</strong>. All associated samples and analyses will be permanently lost.
+                </v-alert>
+            </v-card-text>
 
-                    <v-btn
-                        color="error"
-                        @click="confirm"
-                    >
-                        Remove
-                    </v-btn>
-                </div>
-            </v-alert>
-        </v-card>
+            <v-card-actions class="d-flex justify-end">
+                <v-btn
+                    variant="text"
+                    @click="dialogOpen = false"
+                >
+                    Cancel
+                </v-btn>
+
+                <v-btn
+                    color="error"
+                    variant="flat"
+                    @click="confirm"
+                >
+                    Remove
+                </v-btn>
+            </v-card-actions>
+        </v-unipept-card>
     </v-dialog>
 </template>
 
 <script setup lang="ts">
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import { MultiAnalysisStore } from "@/store/new/MultiAnalysisStore";
 
 const dialogOpen = defineModel<boolean>();
 
@@ -51,5 +51,7 @@ const confirm = () => {
 </script>
 
 <style scoped>
-
+.v-card {
+    border-radius: 12px;
+}
 </style>

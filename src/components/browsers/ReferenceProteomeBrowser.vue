@@ -14,7 +14,7 @@
             class="mb-2"
         />
 
-        <v-card style="width: 100%;">
+        <v-unipept-card style="width: 100%;">
             <v-card-text>
                 <h3>Reference proteome browser</h3>
 
@@ -74,7 +74,7 @@
                     enter a keyword to search for proteomes. You can search by reference proteome ID or organism name.
                 </div>
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card class="pa-0">
         <v-card-title
             class="pa-4 bg-primary text-white"
             :class="{ 'large-title': largeTitle }"
@@ -12,7 +12,7 @@
         </v-card-text>
 
         <slot name="extension" />
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

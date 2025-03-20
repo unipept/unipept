@@ -14,7 +14,7 @@
             class="mb-2"
         />
 
-        <v-card style="width: 100%;">
+        <v-unipept-card style="width: 100%;">
             <v-card-text>
                 <h3>Protein browser</h3>
 
@@ -72,7 +72,7 @@
                     enter a keyword to search for proteins. You can search by name, accession ID, organism ID or database type.
                 </div>
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </div>
 </template>
 

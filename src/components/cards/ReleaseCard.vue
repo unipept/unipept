@@ -1,10 +1,10 @@
 <template>
     <div v-if="changelog">
-        <v-card v-if="!release.tag_name">
+        <v-unipept-card v-if="!release.tag_name">
             <v-card-title class="bg-blue text-white pa-4 ">
                 This application has not yet been released
             </v-card-title>
-        </v-card>
+        </v-unipept-card>
 
         <a
             v-else
@@ -12,9 +12,10 @@
             target="_blank"
         >
             <v-hover v-slot="{ isHovering, props }">
-                <v-card
+                <v-unipept-card
                     :hover="!!isHovering"
                     v-bind="props"
+                    class="pa-0"
                 >
                     <v-card-title class="bg-blue text-white pa-4 ">
                         Unipept {{ release.tag_name.replace(/^v/, "") }}
@@ -61,7 +62,7 @@
                     </v-card-text>
 
                     <slot name="extension" />
-                </v-card>
+                </v-unipept-card>
             </v-hover>
         </a>
     </div>
