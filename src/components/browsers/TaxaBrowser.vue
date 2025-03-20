@@ -64,6 +64,25 @@
                             Remove
                         </v-btn>
 
+                        <v-tooltip
+                            v-else-if="ancestorSelected(item)"
+                            text="This taxon is already included because of an ancestor"
+                        >
+                            <template #activator="{ props }">
+                                <div v-bind="props" class="d-inline-block">
+                                    <v-btn
+                                        color="primary"
+                                        density="compact"
+                                        variant="text"
+                                        prepend-icon="mdi-plus"
+                                        disabled
+                                    >
+                                        Select
+                                    </v-btn>
+                                </div>
+                            </template>
+                        </v-tooltip>
+
                         <v-btn
                             v-else
                             color="primary"
@@ -174,6 +193,9 @@ const {
 
 const {ontology: ncbiOntology, update: updateNcbiOntology} = useNcbiOntology();
 
+const ancestorSelected = (taxon: NcbiTaxon) => {
+    return selectedItems.value.some((selected: NcbiTaxon) => taxon.lineage.includes(selected.id));
+};
 
 // Start of logic that handles presentation and UI of the component
 /**
