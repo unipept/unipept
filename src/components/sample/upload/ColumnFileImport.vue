@@ -2,7 +2,8 @@
     <div style="min-height: 500px;">
         <div
             v-if="loading"
-            class="d-flex flex-column align-center"
+            class="d-flex flex-column h-100 align-center justify-center"
+            style="min-height: inherit"
         >
             <v-progress-circular
                 color="primary"
@@ -30,6 +31,7 @@
                             hint="Name by which you can uniquely identify this specific sample."
                             persistent-hint
                             class="mb-2"
+                            :disabled="disabledInputs"
                         />
                         <v-select
                             v-model="delimiter"
@@ -39,6 +41,7 @@
                             item-title="name"
                             item-value="character"
                             persistent-hint
+                            :disabled="disabledInputs"
                         />
                     </div>
 
@@ -51,6 +54,7 @@
                             persistent-hint
                             color="primary"
                             class="pb-3"
+                            :disabled="disabledInputs"
                         />
                         <v-checkbox
                             v-model="sanitizeSequenceColumn"
@@ -59,6 +63,7 @@
                             hint="Enable this option to automatically clean the peptide sequences by removing charge states, post-translational modification annotations, and other non-sequence information."
                             persistent-hint
                             color="primary"
+                            :disabled="disabledInputs"
                         />
                     </div>
                 </v-row>
@@ -81,6 +86,7 @@
                             hint="Please indicate which column contains the peptide sequences. Use the file preview below to verify your selection."
                             persistent-hint
                             :rules="[ value => !!value || 'You must always select a column for the peptide sequence.']"
+                            :disabled="disabledInputs"
                         />
                     </div>
                     <div class="v-col-md-6">
@@ -99,19 +105,26 @@
                             v-model="selectedIntensitiesColumn"
                             :items="columns"
                             density="comfortable"
-                            clearable
+                            :clearable="selectedIntensitiesColumn !== ''"
                             hint="Please indicate which column contains the peptide intensities. The intensity values are optional. If provided, they are used by the Peptonizer module and drastically improves its accuracy."
                             persistent-hint
                             persistent-clear
+                            :disabled="disabledInputs"
                         />
                     </div>
                 </v-row>
                 <v-row>
                     <div class="v-col-md-12">
                         <h4>Import preview</h4>
+                        <v-progress-linear
+                            class="mt-2"
+                            :indeterminate="loadingPreview"
+                            :color="loadingPreview ? 'primary' : 'transparent'"
+                        />
                         <v-table
                             density="compact"
                             class="column-table"
+                            :class="loadingPreview ? 'opacity-40' : ''"
                         >
                             <thead>
                                 <tr>
@@ -124,7 +137,7 @@
                                         <div class="d-flex justify-space-between">
                                             {{ column }}
                                             <div
-                                                v-if="(column === selectedSequenceColumn && !validPeptides) || (column === selectedIntensitiesColumn && !validIntensities)"
+                                                v-if="!loadingPreview && (column === selectedSequenceColumn && !validPeptides) || (column === selectedIntensitiesColumn && !validIntensities)"
                                                 class="float-right pl-2"
                                             >
                                                 <v-icon
@@ -139,7 +152,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="[row_idx, row] of rows.slice(rowStart, rowStart + 5).entries()">
+                                <tr v-for="[row_idx, row] of rows.entries()">
                                     <td class="bg-grey-lighten-4 first-column text-right font-weight-bold">
                                         {{ row_idx + 1 }}
                                     </td>
@@ -177,7 +190,8 @@
 <script setup lang="ts">
 import {computed, onMounted, ref, Ref, toRef, watch} from "vue";
 import { SampleTableItem } from "@/components/sample/SampleTable.vue";
-import useFileParser from "@/composables/useFileParser";
+import useCsvBufferReader from "@/composables/useCsvBufferReader";
+import useColumnFileParser from "@/components/sample/upload/useColumnFileParser";
 
 interface DelimiterType {
     character: string,
@@ -189,13 +203,23 @@ const props = defineProps<{
     columnFile: File;
 }>();
 
+const {
+    disabledInputs,
+    loadingPreview,
+    columns,
+    rows,
+    validPeptides,
+    validIntensities,
+
+    parse
+} = useColumnFileParser();
+
 const columnFileRef = toRef(props, 'columnFile');
 
 const valid = defineModel<boolean>();
 
+const loading: Ref<boolean> = ref(false);
 const validForm: Ref<boolean> = ref(false);
-const validPeptides: Ref<boolean> = ref(true);
-const validIntensities: Ref<boolean> = ref(true);
 
 // Compute the combined validity
 const combinedValid = computed(() => validForm.value && validPeptides.value && validIntensities.value);
@@ -204,9 +228,6 @@ watch(combinedValid, (newValue) => {
     valid.value = newValue;
 });
 
-// Read the contents from the file and render a simple preview
-const columns: Ref<string[]> = ref([]);
-const rows: Ref<string[][]> = ref([]);
 const delimiterOptions: Ref<DelimiterType[]> = ref([
     {
         character: ",",
@@ -222,7 +243,6 @@ const delimiterOptions: Ref<DelimiterType[]> = ref([
     }
 ]);
 const delimiter: Ref<string> = ref(",");
-const loading: Ref<boolean> = ref(true);
 
 const selectedSequenceColumn: Ref<string> = ref("");
 const selectedIntensitiesColumn: Ref<string> = ref("");
@@ -230,9 +250,7 @@ const selectedIntensitiesColumn: Ref<string> = ref("");
 const sanitizeSequenceColumn: Ref<boolean> = ref(true);
 const useFirstRowAsHeader: Ref<boolean> = ref(true);
 
-const rowStart: Ref<number> = ref(1);
-
-let lines: string[] = [];
+let linesBuffer: Uint8Array = new Uint8Array();
 
 const getColumnHeaderColor = function(columnName: string): string {
     if (selectedSequenceColumn.value === columnName) {
@@ -254,13 +272,13 @@ const getColumnHeaderColor = function(columnName: string): string {
 
 const getColumnCellColor = function(columnIdx: number): string {
     const currentCol = columns.value[columnIdx];
-    if (selectedSequenceColumn.value === currentCol) {
+    if (!loadingPreview.value && selectedSequenceColumn.value === currentCol) {
         if (validPeptides.value) {
             return 'bg-blue-lighten-5';
         } else {
             return 'bg-red-lighten-5';
         }
-    } else if (selectedIntensitiesColumn.value === currentCol) {
+    } else if (!loadingPreview.value && selectedIntensitiesColumn.value === currentCol) {
         if (validIntensities.value) {
             return 'bg-orange-lighten-5';
         } else {
@@ -274,104 +292,38 @@ const getColumnCellColor = function(columnIdx: number): string {
 const readFile = async function() {
     loading.value = true;
 
-    const fileParser = useFileParser();
-    lines = (await fileParser.parseFile(props.columnFile)).split(/\r?\n/);
+    const {
+        buffer,
+        delimiter: detectedDelimiter
+    } = await useCsvBufferReader().readCsvFile(props.columnFile);
 
-    props.sample.name = props.columnFile.name;
-
-    // Try to automatically check which delimiter was used.
-    const detectedDelimiter = fileParser.detectDelimiter(lines[0]);
+    linesBuffer = buffer;
     if (detectedDelimiter) {
         delimiter.value = detectedDelimiter;
     }
 
+    props.sample.name = props.columnFile.name;
+
+    await parseContent();
+
     loading.value = false;
-}
-
-const stripPeptideSequence = function(peptide: string): string {
-    // Regular expression to match PTMs (e.g., [modification]) and charge states (e.g., +2, -3, /+2, /-3)
-    return peptide.replace(/\[.*?\]|\/?[+-]?\d+/g, '');
-}
-
-const isValidPeptide = function(sequence: string): boolean {
-    // Regular expression to check if the string contains only letters
-    return /^[A-Za-z]+$/.test(sequence);
 }
 
 const parseContent = async function() {
-    loading.value = true;
+    const {
+        rawPeptides,
+        intensities
+    } = await parse(
+        linesBuffer,
+        useFirstRowAsHeader.value,
+        sanitizeSequenceColumn.value,
+        selectedSequenceColumn.value,
+        selectedIntensitiesColumn.value,
+        delimiter.value
+    );
 
-    rowStart.value = 1;
-
-    // First parse the header
-    if (useFirstRowAsHeader.value) {
-        columns.value = lines[0].split(delimiter.value);
-    } else {
-        rowStart.value = 0;
-        const columnCount = lines[0].split(delimiter.value).length;
-        columns.value = [];
-        for (let i = 0; i < columnCount; i++) {
-            columns.value.push(`Column ${i + 1}`);
-        }
-    }
-
-    // Reset rows
-    rows.value = [];
-    for (const line of lines.slice(rowStart.value)) {
-        if (line.trim() !== "") {
-            rows.value.push(line.trim().split(delimiter.value));
-        }
-    }
-
-    // Figure out which column index has been selected by the user for the peptide sequences.
-    const selectedSeqColIdx = columns.value.indexOf(selectedSequenceColumn.value);
-    validPeptides.value = true;
-
-    if (selectedSeqColIdx >= 0 && selectedSeqColIdx < columns.value.length) {
-        if (sanitizeSequenceColumn.value) {
-            for (const row of rows.value) {
-                row[selectedSeqColIdx] = stripPeptideSequence(row[selectedSeqColIdx]);
-            }
-        }
-
-        // Test if all peptides are valid sequences
-        let rowIdx = rowStart.value;
-        while (rowIdx < rows.value.length && validPeptides.value) {
-            const row = rows.value[rowIdx];
-            validPeptides.value = validPeptides.value && isValidPeptide(row[selectedSeqColIdx]);
-            rowIdx++;
-        }
-    } else {
-        validPeptides.value = false;
-    }
-
-    const selectedIntensitiesColIdx = columns.value.indexOf(selectedIntensitiesColumn.value);
-    validIntensities.value = true;
-
-    if (selectedIntensitiesColIdx >= 0 && selectedIntensitiesColIdx < columns.value.length) {
-        // Test if all intensities are valid
-        let rowIdx = rowStart.value;
-        while (rowIdx < rows.value.length) {
-            const row = rows.value[rowIdx];
-            validIntensities.value = validIntensities.value && !isNaN(parseFloat(row[selectedIntensitiesColIdx]));
-            rowIdx++;
-        }
-    }
-
-    if (validPeptides.value) {
-        props.sample.rawPeptides = rows.value.slice(rowStart.value).map((row) => row[selectedSeqColIdx]).join("\n");
-    }
-
-    if (selectedIntensitiesColumn.value !== "" && validIntensities.value) {
-        props.sample.intensities = new Map<string, number>(
-            rows.value.slice(rowStart.value).map((row) => [row[selectedSeqColIdx], parseFloat(row[selectedIntensitiesColIdx])])
-        );
-    } else {
-        // The user did not select any intensities, thus we use the default value
-        props.sample.intensities = undefined;
-    }
-
-    loading.value = false;
+    props.sample.rawPeptides = rawPeptides;
+    props.sample.intensities = intensities;
 }
 
 const initialize = async function() {
@@ -383,14 +335,23 @@ const initialize = async function() {
     useFirstRowAsHeader.value = true;
 
     await readFile();
-    await parseContent();
 }
 
 watch(delimiter, parseContent);
-watch(selectedSequenceColumn, parseContent);
 watch(sanitizeSequenceColumn, parseContent);
 watch(useFirstRowAsHeader, parseContent);
-watch(selectedIntensitiesColumn, parseContent);
+watch(selectedSequenceColumn, async () => {
+    if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
+        selectedIntensitiesColumn.value = "";
+    }
+    await parseContent();
+});
+watch(selectedIntensitiesColumn, async () => {
+    if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
+        selectedSequenceColumn.value = "";
+    }
+    await parseContent();
+});
 
 watch(columnFileRef, initialize);
 onMounted(initialize);

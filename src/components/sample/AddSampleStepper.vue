@@ -253,9 +253,8 @@ import {computed, Ref, ref} from "vue";
 import AddSampleCard from "@/components/sample/AddSampleCard.vue";
 import {v4 as uuidv4} from "uuid";
 import FileUpload from "@/components/filesystem/FileUpload.vue";
-import ColumnFileImport from "@/components/sample/ColumnFileImport.vue";
-import useFileParser from "@/composables/useFileParser";
-import {DEFAULT_NEW_GROUP_NAME} from "@/store/new/GroupAnalysisStore";
+import ColumnFileImport from "@/components/sample/upload/ColumnFileImport.vue";
+import useFileReader from "@/composables/useFileReader";
 
 const emits = defineEmits<{
     (e: 'confirm', samples: SampleTableItem[]): void;
@@ -334,12 +333,12 @@ const uploadIntensitiesFile = () => {
 const bulkFiles = ref<File[]>([]);
 
 const uploadFilesInBulk = async function() {
-    const fileParser = useFileParser();
+    const fileReader = useFileReader();
 
     const newSamples: SampleTableItem[] = [];
 
     for (const file of bulkFiles.value) {
-        const peptides = await fileParser.parseFile(file);
+        const peptides = await fileReader.readFile(file);
         const sampleName = file.name;
 
         const sample: SampleTableItem = {
