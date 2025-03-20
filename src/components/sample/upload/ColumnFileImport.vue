@@ -81,7 +81,7 @@
                         </div>
                         <v-select
                             v-model="selectedSequenceColumn"
-                            :items="columns.filter(col => col !== selectedIntensitiesColumn)"
+                            :items="columns.filter(col => col !== selectedSequenceColumn)"
                             density="comfortable"
                             hint="Please indicate which column contains the peptide sequences. Use the file preview below to verify your selection."
                             persistent-hint
@@ -103,7 +103,7 @@
                         </div>
                         <v-select
                             v-model="selectedIntensitiesColumn"
-                            :items="columns.filter(col => col !== selectedSequenceColumn)"
+                            :items="columns.filter(col => col !== selectedIntensitiesColumn)"
                             density="comfortable"
                             :clearable="selectedIntensitiesColumn !== ''"
                             hint="Please indicate which column contains the peptide intensities. The intensity values are optional. If provided, they are used by the Peptonizer module and drastically improves its accuracy."
@@ -117,15 +117,14 @@
                     <div class="v-col-md-12">
                         <h4>Import preview</h4>
                         <v-progress-linear
-                            v-if="loadingPreview"
-                            class="mt-3"
-                            indeterminate
-                            color="primary"
+                            class="mt-2"
+                            :indeterminate="loadingPreview"
+                            :color="loadingPreview ? 'primary' : 'transparent'"
                         />
                         <v-table
                             density="compact"
                             class="column-table"
-                            :class="loadingPreview ? 'opacity-40' : 'mt-3'"
+                            :class="loadingPreview ? 'opacity-40' : ''"
                         >
                             <thead>
                                 <tr>
@@ -338,10 +337,20 @@ const initialize = async function() {
 }
 
 watch(delimiter, parseContent);
-watch(selectedSequenceColumn, parseContent);
 watch(sanitizeSequenceColumn, parseContent);
 watch(useFirstRowAsHeader, parseContent);
-watch(selectedIntensitiesColumn, parseContent);
+watch(selectedSequenceColumn, async () => {
+    if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
+        selectedIntensitiesColumn.value = "";
+    }
+    await parseContent();
+});
+watch(selectedIntensitiesColumn, async () => {
+    if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
+        selectedSequenceColumn.value = "";
+    }
+    await parseContent();
+});
 
 watch(columnFileRef, initialize);
 onMounted(initialize);

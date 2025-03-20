@@ -1,7 +1,6 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import ColumnFileParserWebWorker from "./workers/columnFileParser.worker?worker";
 import {ref, Ref} from "vue";
-import { refDebounced } from '@vueuse/core'
 
 export interface ColumnFileParserData {
     linesBuffer: Uint8Array
@@ -30,8 +29,6 @@ export default function useColumnFileParser() {
 
     const loading = ref(false);
 
-    const debouncedLoading: Ref<boolean> = refDebounced(loading, 500);
-
     const { post } = useAsyncWebWorker<ColumnFileParserData, ColumnFileParserWorkerOutput>(
         () => new ColumnFileParserWebWorker()
     );
@@ -44,7 +41,7 @@ export default function useColumnFileParser() {
         selectedIntensitiesColumn: string,
         delimiter: string
     ) => {
-        debouncedLoading.value = true;
+        loading.value = true;
 
         const processed = await post({
             linesBuffer,
@@ -60,7 +57,7 @@ export default function useColumnFileParser() {
         validPeptides.value = processed.validPeptides;
         validIntensities.value = processed.validIntensities;
 
-        debouncedLoading.value = false;
+        loading.value = false;
 
         return {
             rawPeptides: processed.rawPeptides,
