@@ -154,8 +154,8 @@
                             <template #prev>
                                 <v-btn 
                                     color="primary" 
-                                    variant="tonal" 
-                                    text="Build database" 
+                                    variant="tonal"
+                                    text="Create database"
                                     @click="buildTaxonDatabase" 
                                 />
                             </template>
@@ -184,7 +184,7 @@
                                 <v-btn
                                     color="primary"
                                     variant="tonal"
-                                    text="Build database"
+                                    text="Create database"
                                     @click="buildProteomeDatabase"
                                 />
                             </template>
@@ -213,7 +213,7 @@
                                 <v-btn
                                     color="primary"
                                     variant="tonal"
-                                    text="Build database"
+                                    text="Create database"
                                     @click="buildProteinDatabase"
                                 />
                             </template>
