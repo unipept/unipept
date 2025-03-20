@@ -81,7 +81,7 @@
                         </div>
                         <v-select
                             v-model="selectedSequenceColumn"
-                            :items="columns.filter(col => col !== selectedSequenceColumn)"
+                            :items="columns"
                             density="comfortable"
                             hint="Please indicate which column contains the peptide sequences. Use the file preview below to verify your selection."
                             persistent-hint
@@ -103,7 +103,7 @@
                         </div>
                         <v-select
                             v-model="selectedIntensitiesColumn"
-                            :items="columns.filter(col => col !== selectedIntensitiesColumn)"
+                            :items="columns"
                             density="comfortable"
                             :clearable="selectedIntensitiesColumn !== ''"
                             hint="Please indicate which column contains the peptide intensities. The intensity values are optional. If provided, they are used by the Peptonizer module and drastically improves its accuracy."
