@@ -31,7 +31,7 @@
                             hint="Name by which you can uniquely identify this specific sample."
                             persistent-hint
                             class="mb-2"
-                            :disabled="loadingPreview"
+                            :disabled="disabledInputs"
                         />
                         <v-select
                             v-model="delimiter"
@@ -41,7 +41,7 @@
                             item-title="name"
                             item-value="character"
                             persistent-hint
-                            :disabled="loadingPreview"
+                            :disabled="disabledInputs"
                         />
                     </div>
 
@@ -54,7 +54,7 @@
                             persistent-hint
                             color="primary"
                             class="pb-3"
-                            :disabled="loadingPreview"
+                            :disabled="disabledInputs"
                         />
                         <v-checkbox
                             v-model="sanitizeSequenceColumn"
@@ -63,7 +63,7 @@
                             hint="Enable this option to automatically clean the peptide sequences by removing charge states, post-translational modification annotations, and other non-sequence information."
                             persistent-hint
                             color="primary"
-                            :disabled="loadingPreview"
+                            :disabled="disabledInputs"
                         />
                     </div>
                 </v-row>
@@ -86,7 +86,7 @@
                             hint="Please indicate which column contains the peptide sequences. Use the file preview below to verify your selection."
                             persistent-hint
                             :rules="[ value => !!value || 'You must always select a column for the peptide sequence.']"
-                            :disabled="loadingPreview"
+                            :disabled="disabledInputs"
                         />
                     </div>
                     <div class="v-col-md-6">
@@ -109,7 +109,7 @@
                             hint="Please indicate which column contains the peptide intensities. The intensity values are optional. If provided, they are used by the Peptonizer module and drastically improves its accuracy."
                             persistent-hint
                             persistent-clear
-                            :disabled="loadingPreview"
+                            :disabled="disabledInputs"
                         />
                     </div>
                 </v-row>
@@ -168,13 +168,13 @@
                         </v-table>
                         <div class="mt-2">
                             <div
-                                v-if="!loadingPreview && selectedSequenceColumn !== '' && !validPeptides"
+                                v-if="selectedSequenceColumn !== '' && !validPeptides"
                                 class="text-red"
                             >
                                 <span class="font-weight-bold">Invalid peptide sequences:</span> sequences are only allowed to consist of letters. Check the "sanitize sequences" option to perform an autoclean on this column.
                             </div>
                             <div
-                                v-if="!loadingPreview && !validIntensities"
+                                v-if="!validIntensities"
                                 class="text-red"
                             >
                                 <span class="font-weight-bold">Invalid intensities:</span> all intensities must be a valid numeric value.
@@ -204,7 +204,8 @@ const props = defineProps<{
 }>();
 
 const {
-    loading: loadingPreview,
+    disabledInputs,
+    loadingPreview,
     columns,
     rows,
     validPeptides,
@@ -252,13 +253,13 @@ const useFirstRowAsHeader: Ref<boolean> = ref(true);
 let linesBuffer: Uint8Array = new Uint8Array();
 
 const getColumnHeaderColor = function(columnName: string): string {
-    if (!loadingPreview.value && selectedSequenceColumn.value === columnName) {
+    if (selectedSequenceColumn.value === columnName) {
         if (validPeptides.value) {
             return 'bg-blue-lighten-4';
         } else {
             return 'bg-red-lighten-4';
         }
-    } else if (!loadingPreview.value && selectedIntensitiesColumn.value === columnName) {
+    } else if (selectedIntensitiesColumn.value === columnName) {
         if (validIntensities.value) {
             return 'bg-orange-lighten-4';
         } else {

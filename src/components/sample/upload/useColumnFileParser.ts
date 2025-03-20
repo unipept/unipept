@@ -28,9 +28,15 @@ export default function useColumnFileParser() {
     const validPeptides: Ref<boolean> = ref(true);
     const validIntensities: Ref<boolean> = ref(true);
 
+    const disabledInputs = ref(false);
+
     const loading = ref(false);
 
-    const debouncedLoading: Ref<boolean> = refDebounced(loading, 100);
+    const debounceMs: number = 300;
+
+    const debouncedDisabledInputs: Ref<boolean> = refDebounced(disabledInputs, debounceMs);
+    const debouncedValidPeptides: Ref<boolean> = refDebounced(validPeptides, debounceMs);
+    const debouncedValidIntensities: Ref<boolean> = refDebounced(validIntensities, debounceMs);
 
     const { post } = useAsyncWebWorker<ColumnFileParserData, ColumnFileParserWorkerOutput>(
         () => new ColumnFileParserWebWorker()
@@ -44,9 +50,8 @@ export default function useColumnFileParser() {
         selectedIntensitiesColumn: string,
         delimiter: string
     ) => {
-        debouncedLoading.value = true;
-        validPeptides.value = true;
-        validIntensities.value = true;
+        disabledInputs.value = true
+        loading.value = true;
 
         const processed = await post({
             linesBuffer,
@@ -62,7 +67,8 @@ export default function useColumnFileParser() {
         validPeptides.value = processed.validPeptides;
         validIntensities.value = processed.validIntensities;
 
-        debouncedLoading.value = false;
+        loading.value = false;
+        disabledInputs.value = false;
 
         return {
             rawPeptides: processed.rawPeptides,
@@ -71,7 +77,8 @@ export default function useColumnFileParser() {
     }
 
     return {
-        loading,
+        disabledInputs: debouncedDisabledInputs,
+        loadingPreview: loading,
         columns,
         rows,
         validPeptides,
