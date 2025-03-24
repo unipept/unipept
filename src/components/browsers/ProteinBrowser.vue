@@ -24,8 +24,9 @@
                     :items-length="proteinsLength"
                     :items-per-page="5"
                     :loading="proteinsLoading"
-                    :search="filterValue"
+                    :search="debouncedFilterValue"
                     density="compact"
+                    color="primary"
                     @update:options="loadProteins"
                 >
                     <template #footer.prepend>
@@ -84,6 +85,7 @@ import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowse
 import ProteinResponseCommunicator from "@/logic/communicators/unipept/protein/ProteinResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
+import {refDebounced} from "@vueuse/core";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -174,6 +176,8 @@ const {
     filterValue,
     clearSearch
 } = useBrowserLoader<string, Protein>();
+
+const debouncedFilterValue = refDebounced(filterValue, 300);
 
 const proteinCommunicator = new ProteinResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 
