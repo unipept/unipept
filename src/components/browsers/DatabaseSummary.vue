@@ -32,8 +32,8 @@
                                 v-for="item in selectedItems"
                                 :key="itemDisplayName(item)"
                                 :class="`bg-${chipBackgroundColor(item)}`"
+                                :variant="chipVariant(item)"
                                 closable
-                                variant="flat"
                                 @click:close="handleRemoveItem(item)"
                             >
                                 {{ itemDisplayName(item) }}
@@ -111,6 +111,7 @@ const props = defineProps<{
     description: string;
     emptyPlaceholder: string;
     chipBackgroundColor: (item: T) => string;
+    chipVariant: (item: T) => string;
     itemDisplayName: (item: T) => string;
     invalidItems: string[];
     computeProteinCount: (items: T[]) => Promise<number>;

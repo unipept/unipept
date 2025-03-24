@@ -9,6 +9,7 @@
             :compute-protein-count="computeProteinCount"
             :compute-taxon-count="async (items) => 0"
             :chip-background-color="getRankColor"
+            :chip-variant="getRankState"
             :item-display-name="(taxon: NcbiTaxon) => taxon.name"
             @upload-file="processUploadedTaxa"
             class="mb-2"
@@ -194,7 +195,7 @@ const {
 const {ontology: ncbiOntology, update: updateNcbiOntology} = useNcbiOntology();
 
 const ancestorSelected = (taxon: NcbiTaxon) => {
-    return selectedItems.value.some((selected: NcbiTaxon) => taxon.lineage.includes(selected.id));
+    return selectedItems.value.some((selected: NcbiTaxon) => taxon.id != selected.id && taxon.lineage.includes(selected.id));
 };
 
 // Start of logic that handles presentation and UI of the component
@@ -208,6 +209,12 @@ const getRankColor = (taxon: NcbiTaxon): string => {
     return rankColors[idx % rankColors.length];
 }
 
+const getRankState = (taxon: NcbiTaxon): string => {
+    if (ancestorSelected(taxon)) {
+        return "plain";
+    }
+    return "flat";
+}
 
 // Start of logic for processing the uploaded taxon file
 const processUploadedTaxa = async (file: File, callback: () => void) => {
