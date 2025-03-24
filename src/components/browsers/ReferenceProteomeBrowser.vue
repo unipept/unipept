@@ -9,6 +9,7 @@
             :compute-protein-count="computeProteinCount"
             :compute-taxon-count="computeTaxaCount"
             :chip-background-color="(_item: ReferenceProteome) => 'primary'"
+            :chip-variant="() => 'flat'"
             :item-display-name="(item: ReferenceProteome) => item.id"
             @upload-file="processUploadedProteomes"
             class="mb-2"
