@@ -280,7 +280,7 @@ const sample = ref<SampleTableItem>({
         missed: true,
         database: "UniProtKB"
     },
-    intensities: new Map<string, number>()
+    intensities: undefined
 });
 
 const currentStepTitle = computed(() => {
