@@ -180,7 +180,7 @@ const countTaxa = async () => {
 watch(selectedItems, () => {
     countProteins();
     countTaxa();
-});
+}, { deep: true });
 
 onMounted(() => {
     countProteins();
