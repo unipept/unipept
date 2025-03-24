@@ -1,5 +1,5 @@
 <template>
-    <v-card variant="flat">
+    <v-card class="bg-transparent" variant="flat">
         <v-card-title>
             <h2>New here? Try a sample dataset</h2>
         </v-card-title>
@@ -10,10 +10,10 @@
                 project and discover what this application can do for you.
             </p>
 
-            <v-card
+            <v-unipept-card
                 v-for="item in samples"
                 :key="item.id"
-                class="mt-3"
+                class="mt-3 pa-0"
             >
                 <v-card-text>
                     <div
@@ -38,7 +38,7 @@
                         @click="() => emits('select', item)"
                     />
                 </v-card-text>
-            </v-card>
+            </v-unipept-card>
         </v-card-text>
     </v-card>
 </template>

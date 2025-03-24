@@ -72,7 +72,7 @@
                 </div>
                 <div v-if="assay.goTrust">
                     <span class="font-weight-bold">{{ assay.goTrust.annotatedItems }} proteins</span>
-                    ({{ displayPercentage(assay.goTrust.annotatedItems / assay.goTrust.totalItems) }})
+                    ({{ assay.goTrust.totalItems > 0 ? displayPercentage(assay.goTrust.annotatedItems / assay.goTrust.totalItems) : '0%' }})
                     have at least one
                     <span
                         v-if="goLink"
@@ -95,7 +95,7 @@
 
                 <div v-if="assay.ecTrust">
                     <span class="font-weight-bold">{{ assay.ecTrust.annotatedItems }} proteins</span>
-                    ({{ displayPercentage(assay.ecTrust.annotatedItems / assay.ecTrust.totalItems) }})
+                    ({{ assay.ecTrust.totalItems > 0 ? displayPercentage(assay.ecTrust.annotatedItems / assay.ecTrust.totalItems) : '0%' }})
                     have at least one
                     <span
                         v-if="ecLink"
@@ -120,7 +120,7 @@
                     <span class="font-weight-bold">
                         {{ assay.iprTrust.annotatedItems }} proteins
                     </span>
-                    ({{ displayPercentage(assay.iprTrust.annotatedItems / assay.iprTrust.totalItems) }})
+                    ({{ assay.iprTrust.totalItems > 0 ? displayPercentage(assay.iprTrust.annotatedItems / assay.iprTrust.totalItems) : '0%' }})
                     have at least one
                     <span
                         v-if="interproLink"

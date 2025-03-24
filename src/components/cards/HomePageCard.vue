@@ -1,7 +1,7 @@
 <template>
-    <v-card
+    <v-unipept-card
         :elevation="hover ? 6 : 2"
-        class="equal"
+        class="equal pa-0"
     >
         <v-img
             height="300"
@@ -17,7 +17,7 @@
         <v-card-text class="mt-4">
             <slot />
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

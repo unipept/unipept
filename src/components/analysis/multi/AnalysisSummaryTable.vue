@@ -5,6 +5,7 @@
         :items-per-page="5"
         :loading="false"
         density="compact"
+        style="background-color: transparent"
     >
         <template #no-data>
             <v-alert
@@ -32,6 +33,7 @@
                         v-bind="props"
                         size="30"
                         :color="item.faCounts.go > 0 ? 'amber' : 'amber-lighten-4'"
+                        class="me-1"
                     >
                         <span
                             :class="[ item.faCounts.go > 0 ? 'dark--text' : 'gray--text', 'headline']"
@@ -60,6 +62,7 @@
                         v-bind="props"
                         size="30"
                         :color="item.faCounts.ec > 0 ? 'indigo' : 'indigo-lighten-4'"
+                        class="me-1"
                     >
                         <span
                             class="text-white"

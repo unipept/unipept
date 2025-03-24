@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card class="pa-0">
         <v-tabs
             v-model="currentTab"
             bg-color="primary"
@@ -64,6 +64,7 @@
                     <peptonizer-analysis
                         :sample-name="analysis.name"
                         :uses-default-scores="analysis.intensities === undefined"
+                        :peptide-data="analysis.peptideToData!"
                         :peptide-count-table="analysis.peptidesTable!"
                         :peptide-intensities="analysis.intensities!"
                         :equate-il="analysis.config.equate"
@@ -72,7 +73,7 @@
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

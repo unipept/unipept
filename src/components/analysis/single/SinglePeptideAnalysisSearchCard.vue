@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card class="pa-0">
         <v-tabs
             style="pointer-events: none;"
             slider-color="primary"
@@ -11,7 +11,7 @@
             </v-tab>
         </v-tabs>
 
-        <v-card-text>
+        <v-card-text class="pb-0">
             <v-form
                 ref="form"
                 v-model="validForm"
@@ -84,7 +84,7 @@
                 </v-row>
             </v-form>
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

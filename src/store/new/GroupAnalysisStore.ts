@@ -3,6 +3,7 @@ import useMultiAnalysisStore, {MultiAnalysisStore} from "@/store/new/MultiAnalys
 import {computed, ref} from "vue";
 import {v4 as uuidv4} from "uuid";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import useCustomFilterStore from "@/store/new/CustomFilterStore";
 
 export const DEFAULT_NEW_GROUP_NAME = "Group";
 
@@ -35,6 +36,10 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
 
     const getFirstGroup = (): MultiAnalysisStore | undefined => {
         return groups.value[0];
+    }
+
+    const getFirstNonEmptyGroup = (): MultiAnalysisStore | undefined => {
+        return groups.value.find(group => !group.empty);
     }
 
     const addGroup = (name: string): string => {
@@ -78,6 +83,7 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
 
         getGroup,
         getFirstGroup,
+        getFirstNonEmptyGroup,
         addGroup,
         removeGroup,
         addAnalysis,

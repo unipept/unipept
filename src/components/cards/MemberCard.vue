@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card>
         <v-card-text class="pa-2">
             <v-list-item
                 class="grow"
@@ -36,7 +36,7 @@
                 </v-list-item-title>
             </v-list-item>
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

@@ -19,7 +19,7 @@
             v-model="showModal"
             max-width="90%"
         >
-            <v-card>
+            <v-unipept-card>
                 <v-card-title>
                     QuickGo {{ namespace.toString() }}
                 </v-card-title>
@@ -50,7 +50,7 @@
                 <v-card-text v-else>
                     No GO terms for this domain were found.
                 </v-card-text>
-            </v-card>
+            </v-unipept-card>
         </v-dialog>
     </div>
 </template>

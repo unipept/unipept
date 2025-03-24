@@ -24,57 +24,74 @@
         </template>
     </v-navigation-drawer>
 
-    <v-container fluid>
+    <v-container fluid class="h-100">
         <new-project
             v-if="project.empty"
             @group:add="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
         />
 
+        <div
+            v-else-if="!selectedAnalysisFinished"
+            class="d-flex align-center justify-center h-100"
+        >
+            <analysis-summary-progress />
+        </div>
+
         <div v-else>
-            <analysis-summary-progress v-if="!selectedAnalysisFinished" />
-            <div v-else>
-                <div
-                    v-if="selectedAnalysisFiltered"
-                    class="position-sticky bg-white py-5 mt-n5 mx-n2"
-                    style="width: inherit; z-index: 1000; top: 110px"
+            <div
+                v-if="selectedAnalysisFiltered"
+                class="position-sticky bg-white py-5 mt-n5 mx-n2"
+                style="width: inherit; z-index: 1000; top: 110px"
+            >
+                <v-alert
+                    variant="tonal"
+                    type="info"
                 >
-                    <v-alert
-                        variant="tonal"
-                        type="info"
+                    <div
+                        class="d-flex justify-space-between align-center"
+                        style="width: inherit"
                     >
-                        <div
-                            class="d-flex justify-space-between align-center"
-                            style="width: inherit"
-                        >
-                            <span>
-                                <b>Filtered results:</b> these results are limited to the all peptides specific
-                                to <b>{{ selectedAnalysis.filteredOrganism!.name }} ({{ selectedAnalysis.filteredOrganism!.extra.rank }})</b>
-                            </span>
-                            <v-btn
-                                text="Reset filter"
-                                variant="outlined"
-                                size="small"
-                                @click="resetTaxonomicFilter"
-                            />
-                        </div>
-                    </v-alert>
-                </div>
-
-                <analysis-summary
-                    :analysis="selectedAnalysis"
-                    :group-name="selectedGroupName!"
-                />
-
-                <taxonomic-results
-                    class="mt-5"
-                    :analysis="selectedAnalysis"
-                />
-
-                <mpa-functional-results
-                    class="mt-5"
-                    :analysis="selectedAnalysis"
-                />
+                        <span>
+                            <b>Filtered results:</b> these results are limited to the all peptides specific
+                            to <b>{{ selectedAnalysis.filteredOrganism!.name }} ({{ selectedAnalysis.filteredOrganism!.extra.rank }})</b>
+                        </span>
+                        <v-btn
+                            text="Reset filter"
+                            variant="outlined"
+                            size="small"
+                            @click="resetTaxonomicFilter"
+                        />
+                    </div>
+                </v-alert>
             </div>
+
+            <analysis-summary
+                v-if="selectedGroup"
+                :analysis="selectedAnalysis"
+                :group="selectedGroup"
+                @edit="manageSamplesDialogOpen = true"
+            />
+
+            <taxonomic-results
+                class="mt-5"
+                :analysis="selectedAnalysis"
+            />
+
+            <mpa-functional-results
+                class="mt-5"
+                :analysis="selectedAnalysis"
+            />
+
+            <manage-sample-group
+                v-if="selectedGroup"
+                v-model="manageSamplesDialogOpen"
+                :group="selectedGroup"
+                @sample:add="addSample"
+                @sample:update="updateSample"
+                @sample:remove="removeSample"
+                @group:update="updateGroup"
+                @group:remove="removeGroup"
+            />
         </div>
     </v-container>
 </template>
@@ -91,6 +108,8 @@ import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
 import {DEFAULT_NEW_GROUP_NAME, GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
 import NewProject from "@/components/project/NewProject.vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
 
 const { project } = defineProps<{
     project: GroupAnalysisStore;
@@ -105,8 +124,9 @@ const emits = defineEmits<{
     (e: 'group:remove', groupId: string):  void;
 }>();
 
-const selectedGroupName = ref<string>();
+const manageSamplesDialogOpen = ref(false);
 const selectedAnalyses: Ref = ref<SingleAnalysisStore[]>([]);
+const selectedGroup = ref<MultiAnalysisStore | undefined>();
 
 const selectedAnalysis: ComputedRef = computed(() => selectedAnalyses.value?.[0]);
 
@@ -119,11 +139,17 @@ const selectedAnalysisFiltered = computed(() => {
 });
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
-    emits('sample:add', groupId, sample);
+    if (project.empty) {
+        emits('sample:add', groupId, sample);
+        selectFirstAnalysis();
+    } else {
+        emits('sample:add', groupId, sample);
+    }
 }
 
 const removeSample = (groupId: string, analysisId: string) => {
     emits('sample:remove', groupId, analysisId);
+    selectFirstAnalysis();
 }
 
 const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
@@ -140,6 +166,7 @@ const updateGroup = (groupId: string, updatedName: string) => {
 
 const removeGroup = (groupId: string) => {
     emits('group:remove', groupId);
+    selectFirstAnalysis();
 }
 
 const resetTaxonomicFilter = () => {
@@ -150,8 +177,8 @@ const selectAnalysis = (groupId: string | undefined, analysisId: string | undefi
     if (groupId && analysisId) {
         const analysis = project.getGroup(groupId)?.getAnalysis(analysisId);
         selectedAnalyses.value = analysis ? [ analysis ] : [];
+        selectedGroup.value = project.getGroup(groupId);
     }
-    selectedGroupName.value = groupId ? project.getGroup(groupId)?.name : undefined;
 }
 
 const isSafari = ref(false);
@@ -165,16 +192,19 @@ function detectSafari(): boolean {
     );
 }
 
-onMounted(() => {
-    isSafari.value = detectSafari();
-
-    const group = project.getFirstGroup();
+const selectFirstAnalysis = () => {
+    const group = project.getFirstNonEmptyGroup();
     if (group) {
         const analysis = group.getFirstAnalysis();
         if (analysis) {
             selectAnalysis(group.id, analysis.id);
         }
     }
+}
+
+onMounted(() => {
+    isSafari.value = detectSafari();
+    selectFirstAnalysis();
 });
 </script>
 

@@ -5,10 +5,7 @@
                 <quick-analysis-card
                     @analyze="quickAnalyze"
                 />
-                <v-card
-                    class="mt-5"
-                    elevation="2"
-                >
+                <v-unipept-card class="mt-5">
                     <v-card-title>
                         <h2>Advanced analysis</h2>
                     </v-card-title>
@@ -23,7 +20,7 @@
                             @click="advancedAnalyze"
                         />
                     </v-card-text>
-                </v-card>
+                </v-unipept-card>
             </v-col>
 
             <v-col cols="6">

@@ -1,8 +1,5 @@
 <template>
-    <v-card
-        elevation="2"
-        variant="flat"
-    >
+    <v-unipept-card>
         <v-card-title>
             <h2>Quick analysis</h2>
         </v-card-title>
@@ -76,7 +73,7 @@
                 @click="analyze"
             />
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

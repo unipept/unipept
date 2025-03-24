@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card class="pa-0">
         <v-tabs
             v-model="currentTab"
             slider-color="secondary"
@@ -97,7 +97,7 @@
                 </v-card-text>
             </v-window-item>
         </v-window>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

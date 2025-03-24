@@ -3,7 +3,7 @@
         v-model="dialogOpen"
         width="80%"
     >
-        <v-card>
+        <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex align-center">
                 <h2>Export image</h2>
                 <v-spacer />
@@ -65,7 +65,7 @@
                     @click="download"
                 />
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 

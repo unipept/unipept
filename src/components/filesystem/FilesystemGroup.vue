@@ -46,8 +46,24 @@
             :title="analysis.name"
             color="primary"
             density="compact"
-            :prepend-icon="analysis.intensities ? 'unipept:file-lightning-outline' : 'mdi-file-document-outline'"
         >
+            <template #prepend>
+                <v-tooltip
+                    v-if="analysis.intensities"
+                    text="Custom intensity scores for Peptonizer provided">
+                    <template #activator="{ props }">
+                        <v-icon
+                            v-bind="props"
+                            icon="unipept:file-lightning-outline"
+                        />
+                    </template>
+                </v-tooltip>
+
+                <v-icon
+                    v-else
+                    icon="mdi-file-document-outline"
+                />
+            </template>
             <template #append>
                 <v-icon
                     v-if="analysis.status === AnalysisStatus.Pending"
@@ -93,9 +109,10 @@ import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import {ref} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {CustomFilterStore} from "@/store/new/CustomFilterStore";
 
 defineProps<{
-    group: MultiAnalysisStore;
+    group: MultiAnalysisStore
 }>();
 
 const emits = defineEmits<{
