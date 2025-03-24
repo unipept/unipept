@@ -111,7 +111,7 @@ const props = defineProps<{
     description: string;
     emptyPlaceholder: string;
     chipBackgroundColor: (item: T) => string;
-    chipVariant: (item: T) => string;
+    chipVariant: (item: T) => 'flat' | 'plain';
     itemDisplayName: (item: T) => string;
     invalidItems: string[];
     computeProteinCount: (items: T[]) => Promise<number>;

@@ -210,7 +210,7 @@ const getRankColor = (taxon: NcbiTaxon): string => {
     return rankColors[idx % rankColors.length];
 }
 
-const getRankState = (taxon: NcbiTaxon): string => {
+const getRankState = (taxon: NcbiTaxon): 'flat' | 'plain' => {
     if (ancestorSelected(taxon)) {
         return "plain";
     }
