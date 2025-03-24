@@ -3,17 +3,15 @@
         <v-alert
             type="warning"
             class="mb-5"
-            style="font-size: 105%"
         >
-            Recently, NCBI has introduced changes to their taxonomy classifications (
-            <a href="https://ncbiinsights.ncbi.nlm.nih.gov/2024/06/04/changes-ncbi-taxonomy-classifications/"><b>see announcement</b></a>).
-            In response to this update, we have aligned Unipept’s taxonomic data accordingly.
+            Recently, NCBI has introduced changes to their taxonomy classifications (<a href="https://ncbiinsights.ncbi.nlm.nih.gov/2024/06/04/changes-ncbi-taxonomy-classifications/" style="text-decoration: underline; color: white;"><b>see announcement</b></a>).
+            In response to this update, we have aligned Unipept’s taxonomic data accordingly. Since the rank "superkingdom" no longer exists in the NCBI taxonomy, we are unable to provide support for this rank in our API.
             <br>
             <br>
-            🔁 <b>As a result, the V1 and V2 endpoints of the Unipept API now produce identical taxonomic results.</b>
+            🔁 <b>As a result, the V1 and V2 endpoints of the Unipept API now produce identical taxonomic results, and can be used interchangeably. The rank "superkingdom" is no longer available, and the ranks "domain" and "realm" have been introduced.</b>
             <br>
             <br>
-            There is no longer any difference between the two versions in terms of taxonomic resolution.
+            Support for V1 of the Unipept API has been dropped, and all requests to V1 will automatically be redirected to V2.
         </v-alert>
 
         <h1 class="font-weight-light">
