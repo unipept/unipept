@@ -7,6 +7,7 @@
             v-model:selected-items="selectedItems"
             v-model:invalid-items="invalidItems"
             :chip-background-color="(_item: Protein) => 'primary'"
+            :chip-variant="() => 'flat'"
             :item-display-name="(protein: Protein) => protein.id"
             :compute-protein-count="computeProteinCount"
             :compute-taxon-count="computeTaxonCount"
