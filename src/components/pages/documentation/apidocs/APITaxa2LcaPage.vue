@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            <initialism>POST</initialism> /api/v1/taxa2lca
+            <initialism>POST</initialism> /api/v2/taxa2lca
         </h1>
         <h3 class="font-weight-light">
             Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.
@@ -20,14 +20,14 @@
             large-title
         >
             <p>
-                The taxa2lca method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/taxa2lca</inline-code>.
+                The taxa2lca method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v2/taxa2lca</inline-code>.
                 <r-link
                     to="#parameters"
                     router
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
             </p>
 
             <h3 class="font-weight-medium">
@@ -111,7 +111,8 @@
             The taxon id of each rank in the lineage is specified using the following information fields:
 
             <ul class="multi-column my-3">
-                <li><inline-code>superkingdom_id</inline-code></li>
+                <li><inline-code>domain_id</inline-code></li>
+                <li><inline-code>realm_id</inline-code></li>
                 <li><inline-code>kingdom_id</inline-code></li>
                 <li><inline-code>subkingdom_id</inline-code></li>
                 <li><inline-code>superphylum_id</inline-code></li>
@@ -144,7 +145,8 @@
             When both the <inline-code>names</inline-code> and <inline-code>extra</inline-code> parameters are set to <inline-code>true</inline-code>, objects also contain the names for each rank in the lineage using the following information fields:
 
             <ul class="multi-column mt-3">
-                <li><inline-code>superkingdom_name</inline-code></li>
+                <li><inline-code>domain_name</inline-code></li>
+                <li><inline-code>realm_name</inline-code></li>
                 <li><inline-code>kingdom_name</inline-code></li>
                 <li><inline-code>subkingdom_name</inline-code></li>
                 <li><inline-code>superphylum_name</inline-code></li>
@@ -271,10 +273,10 @@
                 </r-link>).
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853
+                https://api.unipept.ugent.be/api/v2/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853
             </template>
         </example-card>
 
@@ -293,16 +295,16 @@
                 </r-link>), including its complete lineage.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true
+                https://api.unipept.ugent.be/api/v2/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true
             </template>
         </example-card>
 
         <example-card
             class="mt-5"
-            title="Retrieve all UniProt entries containing a single tryptic peptide, while equating I and L"
+            title="Retrieve all UniProt entries containing a single peptide, while equating I and L"
             :response="response3"
         >
             <template #description>
@@ -315,10 +317,10 @@
                 </r-link>), including its complete lineage with names.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true' -d 'names=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2lca -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853' -d 'extra=true' -d 'names=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true&names=true
+                https://api.unipept.ugent.be/api/v2/taxa2lca.json?input[]=817&input[]=329854&input[]=1099853&extra=true&names=true
             </template>
         </example-card>
 

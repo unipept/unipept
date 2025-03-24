@@ -1,5 +1,19 @@
 <template>
     <v-container>
+        <v-alert
+            type="warning"
+            class="mb-5"
+        >
+            Recently, NCBI has introduced changes to their taxonomy classifications (<a href="https://ncbiinsights.ncbi.nlm.nih.gov/2024/06/04/changes-ncbi-taxonomy-classifications/" style="text-decoration: underline; color: white;"><b>see announcement</b></a>).
+            In response to this update, we have aligned Unipept’s taxonomic data accordingly. Since the rank "superkingdom" no longer exists in the NCBI taxonomy, we are unable to provide support for this rank in our API.
+            <br>
+            <br>
+            🔁 <b>As a result, the V1 and V2 endpoints of the Unipept API now produce identical taxonomic results, and can be used interchangeably. The rank "superkingdom" is no longer available, and the ranks "domain" and "realm" have been introduced.</b>
+            <br>
+            <br>
+            Support for V1 of the Unipept API has been dropped, and all requests to V1 will automatically be redirected to V2.
+        </v-alert>
+
         <h1 class="font-weight-light">
             Unipept <initialism>API</initialism> documentation <small>v2.0</small>
         </h1>
@@ -10,7 +24,7 @@
 
         <p class="mt-5">
             The Unipept API is HTTP-based and always returns JSON objects as response. The current version of the <initialism>API</initialism> provides
-            11 endpoints.
+            12 endpoints.
         </p>
 
         <p class="mt-3">
@@ -67,57 +81,62 @@ const { navigate } = useNavigation();
 
 const functions = [
     {
-        resource: "POST /api/v1/pept2prot",
-        description: "Returns the set of UniProt entries containing a given tryptic peptide.",
+        resource: "POST /api/v2/pept2prot",
+        description: "Returns the set of UniProt entries containing a given peptide.",
         link: "/apidocs/pept2prot"
     },
     {
-        resource: "POST /api/v1/pept2taxa",
-        description: "Returns the set of taxa extracted from the UniProt entries containing a given tryptic peptide.",
+        resource: "POST /api/v2/pept2taxa",
+        description: "Returns the set of taxa extracted from the UniProt entries containing a given peptide.",
         link: "/apidocs/pept2taxa"
     },
     {
-        resource: "POST /api/v1/pept2lca",
-        description: "Returns the taxonomic lowest common ancestor for a given tryptic peptide.",
+        resource: "POST /api/v2/pept2lca",
+        description: "Returns the taxonomic lowest common ancestor for a given peptide.",
         link: "/apidocs/pept2lca"
     },
     {
-        resource: "POST /api/v1/pept2ec",
-        description: "Returns the functional EC-numbers associated with a given tryptic peptide.",
+        resource: "POST /api/v2/pept2ec",
+        description: "Returns the functional EC-numbers associated with a given peptide.",
         link: "/apidocs/pept2ec"
     },
     {
-        resource: "POST /api/v1/pept2go",
-        description: "Returns the functional GO-terms associated with a given tryptic peptide.",
+        resource: "POST /api/v2/pept2go",
+        description: "Returns the functional GO-terms associated with a given peptide.",
         link: "/apidocs/pept2go"
     },
     {
-        resource: "POST /api/v1/pept2interpro",
-        description: "Returns the functional InterPro entries associated with a given tryptic peptide.",
+        resource: "POST /api/v2/pept2interpro",
+        description: "Returns the functional InterPro entries associated with a given peptide.",
         link: "/apidocs/pept2interpro"
     },
     {
-        resource: "POST /api/v1/pept2funct",
-        description: "Returns the functional EC-numbers, GO-terms and InterPro entries associated with a given tryptic peptide.",
+        resource: "POST /api/v2/pept2funct",
+        description: "Returns the functional EC-numbers, GO-terms and InterPro entries associated with a given peptide.",
         link: "/apidocs/pept2funct"
     },
     {
-        resource: "POST /api/v1/peptinfo",
-        description: "Returns functional information and the lowest common ancestor for a given tryptic peptide.",
+        resource: "POST /api/v2/peptinfo",
+        description: "Returns functional information and the lowest common ancestor for a given peptide.",
         link: "/apidocs/peptinfo"
     },
     {
-        resource: "POST /api/v1/taxa2lca",
+        resource: "POST /api/v2/protinfo",
+        description: "Returns functional information and the lowest common ancestor for a given UniProtKB protein.",
+        link: "/apidocs/protinfo"
+    },
+    {
+        resource: "POST /api/v2/taxa2lca",
         description: "Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.",
         link: "/apidocs/taxa2lca"
     },
     {
-        resource: "POST /api/v1/taxa2tree",
+        resource: "POST /api/v2/taxa2tree",
         description: "Returns the taxonomic tree for a given list of taxon identifiers.",
         link: "/apidocs/taxa2tree"
     },
     {
-        resource: "POST /api/v1/taxonomy",
+        resource: "POST /api/v2/taxonomy",
         description: "Returns the taxonomic information for a given taxon identifier.",
         link: "/apidocs/taxonomy"
     }

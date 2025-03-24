@@ -2,21 +2,21 @@
     <v-container>
         <h1 class="font-weight-light">
             <initialism>POST</initialism>
-            /api/v1/pept2ec
+            /api/v2/pept2ec
         </h1>
         <h3 class="font-weight-light">
-            Returns the functional <initialism>EC</initialism>-numbers associated with a given tryptic peptide.
+            Returns the functional <initialism>EC</initialism>-numbers associated with a given peptide.
         </h3>
 
         <v-divider class="my-2" />
 
         <p>
-            This method returns the functional <initialism>EC</initialism>-numbers associated with a given tryptic peptide.
+            This method returns the functional <initialism>EC</initialism>-numbers associated with a given peptide.
             This is the same information as provided when performing a search with the <r-link
                 to="/tpa"
                 router
             >
-                Tryptic Peptide Analysis
+                Single Peptide Analysis
             </r-link> in the web interface.
         </p>
 
@@ -27,21 +27,21 @@
             large-title
         >
             <p>
-                The pept2ec method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/pept2ec</inline-code>.
+                The pept2ec method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v2/pept2ec</inline-code>.
                 <r-link
                     to="#parameters"
                     router
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
             </p>
 
             <h3 class="font-weight-medium">
                 input
             </h3>
             <p>
-                <inline-code>input[]</inline-code> is a required parameter that takes one or more tryptic peptides.
+                <inline-code>input[]</inline-code> is a required parameter that takes one or more peptides.
                 Unipept will return the functional <initialism>EC</initialism>-numbers associated with each of the <inline-code>input[]</inline-code> peptides based on their occurrence in UniProt entries.
                 To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
                     to="#example2"
@@ -65,12 +65,12 @@
             <p>
                 <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                 When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
-                When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries.
+                When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching peptides to UniProt entries.
                 This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
                     to="/tpa"
                     router
                 >
-                    Tryptic Peptide Analysis
+                    Single Peptide Analysis
                 </r-link> in the web interface.
             </p>
 
@@ -116,13 +116,13 @@
                     <inline-code>total_protein_count</inline-code>: total amount of proteins matched with the given peptide.
                 </li>
                 <li>
-                    <inline-code>ec</inline-code>: A list of <initialism>JSON</initialism> objects that each represent an <initialism>EC</initialism>-number associated with the current tryptic peptide.
+                    <inline-code>ec</inline-code>: A list of <initialism>JSON</initialism> objects that each represent an <initialism>EC</initialism>-number associated with the current peptide.
                     <ul>
                         <li>
-                            <inline-code>ec_number</inline-code>: <initialism>EC</initialism>-number associated with the current tryptic peptide.
+                            <inline-code>ec_number</inline-code>: <initialism>EC</initialism>-number associated with the current peptide.
                         </li>
                         <li>
-                            <inline-code>protein_count</inline-code>: amount of proteins matched with the given tryptic peptide that are labeled with the current<initialism>EC</initialism>-number.
+                            <inline-code>protein_count</inline-code>: amount of proteins matched with the given peptide that are labeled with the current<initialism>EC</initialism>-number.
                         </li>
                         <li>
                             <inline-code>name</inline-code>: optional, name of the <initialism>EC</initialism>-number.
@@ -159,7 +159,7 @@
                             <i style="font-size: 85%;">required</i>
                         </td>
                         <td class="py-3">
-                            Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.
+                            Peptide to search for. Add multiple parameters to search for multiple peptides.
                             <br>
                             <div
                                 class="mt-3"
@@ -215,69 +215,69 @@
         </h2>
 
         <example-card
-            title="Retrieve the functional ec-numbers associated with a given tryptic peptide"
+            title="Retrieve the functional ec-numbers associated with a given peptide"
             :response="response1"
         >
             <template #description>
-                This example retrieves all functional <initialism>EC</initialism>-numbers associated with the tryptic peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves all functional <initialism>EC</initialism>-numbers associated with the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2ec -d 'input[]=AIPQLEVARPADAYETAEAYR'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2ec -d 'input[]=AIPQLEVARPADAYETAEAYR'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2ec.json?input[]=AIPQLEVARPADAYETAEAYR
+                https://api.unipept.ugent.be/api/v2/pept2ec.json?input[]=AIPQLEVARPADAYETAEAYR
             </template>
         </example-card>
 
         <example-card
             id="example2"
             class="mt-5"
-            title="Retrieve the functional ec-numbers associated with each of multiple tryptic peptides"
+            title="Retrieve the functional ec-numbers associated with each of multiple peptides"
             :response="response2"
         >
             <template #description>
-                This example retrieves the functional <initialism>EC</initialism>-numbers for both the tryptic peptides <i><initialism>AIPQLEVARPADAYETAEAYR</initialism> </i> and <i><initialism>APVLSDSSCK</initialism></i>. The result is the same as the combination of this search and this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves the functional <initialism>EC</initialism>-numbers for both the peptides <i><initialism>AIPQLEVARPADAYETAEAYR</initialism> </i> and <i><initialism>APVLSDSSCK</initialism></i>. The result is the same as the combination of this search and this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2ec -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2ec -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2ec.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK
+                https://api.unipept.ugent.be/api/v2/pept2ec.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK
             </template>
         </example-card>
 
         <example-card
             class="mt-5"
-            title="Retrieve the functional ec-numbers associated with a single tryptic peptide, while equating I and L"
+            title="Retrieve the functional ec-numbers associated with a single peptide, while equating I and L"
             :response="response3"
         >
             <template #description>
-                This example retrieves the functional <initialism>EC</initialism>-numbers associated with the tryptic peptide <i><initialism>APVLSDSSCK</initialism></i>.
-                In searching, isoleucine (I) and leucinge (L) are considered equal. The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves the functional <initialism>EC</initialism>-numbers associated with the peptide <i><initialism>APVLSDSSCK</initialism></i>.
+                In searching, isoleucine (I) and leucinge (L) are considered equal. The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2ec -d 'input[]=APVISDSSCK' -d 'equate_il=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2ec -d 'input[]=APVISDSSCK' -d 'equate_il=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2ec.json?input[]=APVISDSSCK&equate_il=true
+                https://api.unipept.ugent.be/api/v2/pept2ec.json?input[]=APVISDSSCK&equate_il=true
             </template>
         </example-card>
 
         <example-card
             class="mt-5"
-            title="Retrieve the functional ec-numbers associated with a single tryptic peptide, with extra information enabled"
+            title="Retrieve the functional ec-numbers associated with a single peptide, with extra information enabled"
             :response="response4"
         >
             <template #description>
-                This example retrieves the functional <initialism>EC</initialism>-numbers associated with the tryptic peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> including the name of each <initialism>EC</initialism>-number.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves the functional <initialism>EC</initialism>-numbers associated with the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> including the name of each <initialism>EC</initialism>-number.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2ec -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2ec -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2ec.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true
+                https://api.unipept.ugent.be/api/v2/pept2ec.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true
             </template>
         </example-card>
 
