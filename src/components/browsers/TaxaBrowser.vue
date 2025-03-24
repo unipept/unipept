@@ -25,8 +25,9 @@
                     :items-length="taxaLength"
                     :items-per-page="5"
                     :loading="taxaLoading"
-                    :search="filterValue"
+                    :search="debouncedFilterValue"
                     density="compact"
+                    color="primary"
                     @update:options="loadTaxa"
                 >
                     <template #footer.prepend>
@@ -116,6 +117,7 @@ import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
 import useDatabaseSummary from "@/components/browsers/useDatabaseSummary";
 import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowserLoader";
 import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomic/TaxonomyResponseCommunicator";
+import {refDebounced} from "@vueuse/core";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -267,6 +269,8 @@ const {
     filterValue,
     clearSearch
 } = useBrowserLoader<number, NcbiTaxon>();
+
+const debouncedFilterValue = refDebounced(filterValue, 300);
 
 const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 const taxonomyCommunicator = new TaxonomyResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
