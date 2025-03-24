@@ -7,7 +7,7 @@
             v-model:selected-items="selectedItems"
             v-model:invalid-items="invalidItems"
             :compute-protein-count="computeProteinCount"
-            :compute-taxon-count="async (items) => 0"
+            :compute-taxon-count="computeTaxonCount"
             :chip-background-color="getRankColor"
             :chip-variant="getRankState"
             :item-display-name="(taxon: NcbiTaxon) => taxon.name"
@@ -115,6 +115,7 @@ import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
 import useDatabaseSummary from "@/components/browsers/useDatabaseSummary";
 import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowserLoader";
+import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomic/TaxonomyResponseCommunicator";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -268,6 +269,7 @@ const {
 } = useBrowserLoader<number, NcbiTaxon>();
 
 const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
+const taxonomyCommunicator = new TaxonomyResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 
 const loadTaxa = async (params: LoadItemsParams) => {
     await loadTaxaForBrowser(
@@ -284,5 +286,11 @@ const computeProteinCount = async () => {
     return await UniprotCommunicator.getRecordCount(
         selectedItems.value.map(taxon => taxon.id)
     );
+};
+
+const computeTaxonCount = async () => {
+    const items = selectedItems.value.filter(taxon => !ancestorSelected(taxon));
+    const taxonomies = await taxonomyCommunicator.getResponses(items.map(taxon => taxon.id));
+    return taxonomies.reduce((acc, taxonomy) => acc + taxonomy.descendants.length, 0);
 };
 </script>
