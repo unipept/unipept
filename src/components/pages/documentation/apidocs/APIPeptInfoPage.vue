@@ -192,7 +192,8 @@
             The taxon id of each rank in the lineage is specified using the following information fields:
 
             <ul class="multi-column my-3">
-                <li><inline-code>superkingdom_id</inline-code></li>
+                <li><inline-code>domain_id</inline-code></li>
+                <li><inline-code>realm_id</inline-code></li>
                 <li><inline-code>kingdom_id</inline-code></li>
                 <li><inline-code>subkingdom_id</inline-code></li>
                 <li><inline-code>superphylum_id</inline-code></li>
@@ -233,7 +234,8 @@
             </p>
 
             <ul class="multi-column mt-3">
-                <li><inline-code>superkingdom_name</inline-code></li>
+                <li><inline-code>domain_name</inline-code></li>
+                <li><inline-code>realm_name</inline-code></li>
                 <li><inline-code>kingdom_name</inline-code></li>
                 <li><inline-code>subkingdom_name</inline-code></li>
                 <li><inline-code>superphylum_name</inline-code></li>

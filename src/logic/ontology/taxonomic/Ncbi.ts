@@ -10,7 +10,8 @@ export class NcbiTaxon {
 }
 
 export enum NcbiRank {
-    Superkingdom = "superkingdom",
+    Domain = "domain",
+    Realm = "realm",
     Kingdom = "kingdom",
     Subkingdom = "subkingdom",
     Superphylum = "superphylum",

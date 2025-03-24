@@ -6,7 +6,7 @@
                     This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries
                     whose protein sequence contains the tryptic peptide. The first column contains the taxon name
                     extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from
-                    superkingdom on the left to forma on the right.
+                    domain on the left to forma on the right.
                 </p>
 
                 <v-data-table
