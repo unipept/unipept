@@ -7,8 +7,9 @@
             v-model:selected-items="selectedItems"
             v-model:invalid-items="invalidItems"
             :compute-protein-count="computeProteinCount"
-            :compute-taxon-count="async (items) => 0"
+            :compute-taxon-count="computeTaxonCount"
             :chip-background-color="getRankColor"
+            :chip-variant="getRankState"
             :item-display-name="(taxon: NcbiTaxon) => taxon.name"
             @upload-file="processUploadedTaxa"
             class="mb-2"
@@ -64,6 +65,25 @@
                             Remove
                         </v-btn>
 
+                        <v-tooltip
+                            v-else-if="ancestorSelected(item)"
+                            text="This taxon is already included because of an ancestor"
+                        >
+                            <template #activator="{ props }">
+                                <div v-bind="props" class="d-inline-block">
+                                    <v-btn
+                                        color="primary"
+                                        density="compact"
+                                        variant="text"
+                                        prepend-icon="mdi-plus"
+                                        disabled
+                                    >
+                                        Select
+                                    </v-btn>
+                                </div>
+                            </template>
+                        </v-tooltip>
+
                         <v-btn
                             v-else
                             color="primary"
@@ -95,6 +115,7 @@ import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
 import useDatabaseSummary from "@/components/browsers/useDatabaseSummary";
 import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowserLoader";
+import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomic/TaxonomyResponseCommunicator";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -174,6 +195,9 @@ const {
 
 const {ontology: ncbiOntology, update: updateNcbiOntology} = useNcbiOntology();
 
+const ancestorSelected = (taxon: NcbiTaxon) => {
+    return selectedItems.value.some((selected: NcbiTaxon) => taxon.id != selected.id && taxon.lineage.includes(selected.id));
+};
 
 // Start of logic that handles presentation and UI of the component
 /**
@@ -186,6 +210,12 @@ const getRankColor = (taxon: NcbiTaxon): string => {
     return rankColors[idx % rankColors.length];
 }
 
+const getRankState = (taxon: NcbiTaxon): 'flat' | 'plain' => {
+    if (ancestorSelected(taxon)) {
+        return "plain";
+    }
+    return "flat";
+}
 
 // Start of logic for processing the uploaded taxon file
 const processUploadedTaxa = async (file: File, callback: () => void) => {
@@ -239,6 +269,7 @@ const {
 } = useBrowserLoader<number, NcbiTaxon>();
 
 const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
+const taxonomyCommunicator = new TaxonomyResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 
 const loadTaxa = async (params: LoadItemsParams) => {
     await loadTaxaForBrowser(
@@ -255,5 +286,11 @@ const computeProteinCount = async () => {
     return await UniprotCommunicator.getRecordCount(
         selectedItems.value.map(taxon => taxon.id)
     );
+};
+
+const computeTaxonCount = async () => {
+    const items = selectedItems.value.filter(taxon => !ancestorSelected(taxon));
+    const taxonomies = await taxonomyCommunicator.getResponses(items.map(taxon => taxon.id));
+    return taxonomies.reduce((acc, taxonomy) => acc + taxonomy.descendants.length, 0);
 };
 </script>
