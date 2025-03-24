@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex flex-column align-center">
+    <div class="d-flex flex-column align-center justify-center">
         <v-progress-circular
             color="primary"
             size="50"

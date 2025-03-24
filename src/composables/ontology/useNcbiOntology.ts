@@ -1,4 +1,3 @@
-import {ref} from "vue";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
@@ -13,7 +12,7 @@ export default function useNcbiOntology(
         ids: number[],
         withLineages = true
     ) => {
-        ids = ids.filter(id => !ontology.has(id));
+        ids = ids.filter(id => !ontology.has(id) && id !== null);
 
         const ncbiCommunicator = new NcbiResponseCommunicator(baseUrl, batchSize);
         const responses = await ncbiCommunicator.getResponses(ids);

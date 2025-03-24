@@ -3,7 +3,7 @@
         v-model="dialogOpen"
         width="50%"
     >
-        <v-card>
+        <v-unipept-card>
             <v-card-title class="d-flex align-center">
                 <h1>{{ peptides.length }} missed peptides</h1>
                 <v-spacer />
@@ -53,7 +53,7 @@
                     </template>
                 </v-data-table-virtual>
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 

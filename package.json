@@ -18,7 +18,7 @@
     "highcharts": "^12.1.2",
     "highcharts-vue": "^2.0.1",
     "html-to-image": "^1.11.11",
-    "peptonizer": "file:./peptonizer-v0.0.27.tgz",
+    "peptonizer": "file:./peptonizer-v0.0.30.tgz",
     "marked": "^15.0.7",
     "pinia": "^3.0.1",
     "roboto-fontface": "*",

@@ -29,6 +29,26 @@ export default class PeptideData {
     public static readonly FA_IPR_INDEX_OFFSET = PeptideData.FA_GO_INDEX_OFFSET + PeptideData.FA_POINTER_SIZE;
     public static readonly FA_DATA_START = PeptideData.FA_IPR_INDEX_OFFSET + PeptideData.FA_POINTER_SIZE;
 
+    // How many bytes do we reserve to keep track of the length of the taxon array?
+    public static readonly TAXON_COUNT_SIZE = 4;
+
+    // How many bytes do we reserve to represent each taxon ID?
+    public static readonly TAXON_SIZE = 4;
+
+    public get TAXA_START() {
+        let goStart = this.dataView.getUint32(PeptideData.FA_GO_INDEX_OFFSET);
+        const goLength = this.dataView.getUint32(goStart);
+
+        let ecStart = this.dataView.getUint32(PeptideData.FA_EC_INDEX_OFFSET);
+        const ecLength = this.dataView.getUint32(ecStart);
+
+        let iprStart = this.dataView.getUint32(PeptideData.FA_IPR_INDEX_OFFSET);
+        const iprLength = this.dataView.getUint32(iprStart);
+
+        const faDataLength = 12 + goLength * 8 + iprLength * 8 + ecLength * 20;
+        return PeptideData.FA_DATA_START + faDataLength;
+    }
+
     private readonly dataView: DataView;
 
     constructor(
@@ -53,7 +73,9 @@ export default class PeptideData {
         // IPR is stored as an integer (4 bytes) and it's count (4 bytes)
         // EC is stored as 4 integers (4 bytes) and it's count (4 bytes)
         const faDataLength = 12 + gos.length * 8 + iprs.length * 8 + ecs.length * 20;
-        const bufferLength = PeptideData.FA_DATA_START + faDataLength;
+
+        const taxaStart = PeptideData.FA_DATA_START + faDataLength;
+        const bufferLength = taxaStart + PeptideData.TAXON_COUNT_SIZE + (response.taxa?.length || 0) * PeptideData.TAXON_SIZE;
 
         const dataBuffer = new ArrayBuffer(bufferLength);
 
@@ -111,6 +133,15 @@ export default class PeptideData {
             dataView.setUint32(currentPos, parseInt(ipr.replace("IPR:IPR", "")));
             dataView.setUint32(currentPos + 4, response.fa.data[ipr]);
             currentPos += 8;
+        }
+
+        // Keep track of how many taxa there are stored in this object
+        dataView.setUint32(taxaStart, response.taxa?.length || 0);
+        currentPos = taxaStart + PeptideData.TAXON_COUNT_SIZE;
+        // Store the actual taxa IDs
+        for (const taxon of response.taxa || []) {
+            dataView.setUint32(currentPos, taxon);
+            currentPos += PeptideData.TAXON_SIZE;
         }
 
         return new PeptideData(dataBuffer);
@@ -218,6 +249,17 @@ export default class PeptideData {
         return output;
     }
 
+    public get taxa(): number[] {
+        const output = [];
+
+        const taxaLength = this.dataView.getUint32(this.TAXA_START);
+
+        for (let i = 0; i < taxaLength; i++) {
+            output.push(this.dataView.getUint32(this.TAXA_START + PeptideData.TAXON_COUNT_SIZE + i * PeptideData.TAXON_SIZE));
+        }
+
+        return output;
+    }
 
     public toPeptideDataResponse(): PeptideDataResponse {
         const faCounts = this.faCounts;
@@ -238,7 +280,8 @@ export default class PeptideData {
                     IPR: faCounts.ipr
                 },
                 data: dataObject
-            }
+            },
+            taxa: this.taxa,
         }
     }
 }

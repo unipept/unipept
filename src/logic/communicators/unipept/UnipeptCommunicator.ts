@@ -1,4 +1,4 @@
-const base = "https://api.unipept.ugent.be/api/v1/";
+const base = "https://api.unipept.ugent.be/api/v2/";
 const privateBase = "https://api.unipept.ugent.be/private_api/"
 
 export default class UnipeptCommunicator {
@@ -98,11 +98,12 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "pept2funct.json", params)).then(r => r.json());
     }
 
-    public async peptinfo(input: string[], equate_il = false, extra = false, domains = false): Promise<string[]> {
+    public async peptinfo(input: string[], equate_il = false, extra = false, domains = false, names = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString(),
-            domains: domains.toString()
+            domains: domains.toString(),
+            names: names.toString()
         });
 
         for(const inp of input) {
@@ -110,6 +111,20 @@ export default class UnipeptCommunicator {
         }
 
         return await fetch(this.prepareURL(base, "peptinfo.json", params)).then(r => r.json());
+    }
+
+    public async protinfo(input: string[], extra = false, domains = false, names = false): Promise<string[]> {
+        const params = new URLSearchParams({
+            extra: extra.toString(),
+            domains: domains.toString(),
+            names: names.toString()
+        });
+
+        for(const inp of input) {
+            params.append("input[]", inp);
+        }
+
+        return await fetch(this.prepareURL(base, "protinfo.json", params)).then(r => r.json());
     }
 
     public async taxa2lca(input: string[], extra = false, names = false): Promise<string[]> {

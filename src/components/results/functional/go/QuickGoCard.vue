@@ -19,7 +19,7 @@
             v-model="showModal"
             max-width="90%"
         >
-            <v-card>
+            <v-unipept-card>
                 <v-card-title>
                     QuickGo {{ namespace.toString() }}
                 </v-card-title>
@@ -50,7 +50,7 @@
                 <v-card-text v-else>
                     No GO terms for this domain were found.
                 </v-card-text>
-            </v-card>
+            </v-unipept-card>
         </v-dialog>
     </div>
 </template>
@@ -58,7 +58,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
-import {GoNamespace} from "@/composables/ontology/useGoOntology";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 const props = defineProps<{
     items: GoResultsTableItem[]

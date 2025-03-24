@@ -48,7 +48,7 @@ const usePeptideAnalysisStore = (
 
         const peptideTable: CountTable<string> = new CountTable(new Map<string, number>([[peptide.value, proteins.value.length]]));
 
-        await processPept2Filtered([peptide.value], config.value.equate);
+        await processPept2Filtered([peptide.value], config.value.equate, undefined);
 
         await processEc(peptideTable, peptideToData.value!);
         await processGo(peptideTable, peptideToData.value!);
@@ -59,8 +59,8 @@ const usePeptideAnalysisStore = (
         const lcaProteinMap: Map<number, number> = new Map();
         lcaSet.add(lca.value);
         for (const protein of proteins.value) {
-            lcaSet.add(protein.organism);
-            lcaProteinMap.set(protein.organism, (lcaProteinMap.get(protein.organism) || 0) + 1);
+            lcaSet.add(protein.taxonId);
+            lcaProteinMap.set(protein.taxonId, (lcaProteinMap.get(protein.taxonId) || 0) + 1);
         }
         for (const ncbiId of commonLineage.value) {
             lcaSet.add(ncbiId);

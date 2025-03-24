@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card>
         <v-card-text>
             <h4>
                 Example <small>{{ title }}</small>
@@ -26,7 +26,7 @@
             <h4>Response</h4>
             <json :object="response" />
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

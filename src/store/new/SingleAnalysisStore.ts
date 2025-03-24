@@ -12,6 +12,8 @@ import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTree
 import usePeptonizerStore from "@/store/new/PeptonizerAnalysisStore";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import useCustomFilterStore from "@/store/new/CustomFilterStore";
+import useMetaData from "@/composables/communication/unipept/useMetaData";
 
 
 const useSingleAnalysisStore = (
@@ -23,6 +25,8 @@ const useSingleAnalysisStore = (
     _peptideIntensities?: Map<string, number>
 ) => defineStore(`singleSampleStore/${_id}`, () => {
     const ontologyStore = useOntologyStore();
+    const customFilterStore = useCustomFilterStore();
+    const peptonizerStore = usePeptonizerStore(_id);
 
     // ===============================================================
     // ======================== REFERENCES ===========================
@@ -30,6 +34,7 @@ const useSingleAnalysisStore = (
 
     const status = ref<AnalysisStatus>(AnalysisStatus.Pending);
     const filteringStatus = ref<AnalysisStatus>(AnalysisStatus.Finished);
+    const lastAnalysed = ref<Date | undefined>(undefined);
 
     const id = ref<string>(_id);
     const name = ref<string>(_name);
@@ -46,6 +51,7 @@ const useSingleAnalysisStore = (
 
     const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered();
 
+    const { databaseVersion, process: processMetadata } = useMetaData();
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
     const { countTable: filteredPeptidesTable, process: processFilteredPeptides } = usePeptideProcessor();
     const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
@@ -54,7 +60,6 @@ const useSingleAnalysisStore = (
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
     const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
-    const peptonizerStore = usePeptonizerStore(_id);
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -66,6 +71,20 @@ const useSingleAnalysisStore = (
 
     const filteredOrganism = computed(() => ncbiTreeNodes.value.get(taxonomicFilter.value));
 
+    const lastAnalysedString = computed(() => {
+        if (!lastAnalysed.value) return "";
+
+        const formatter = new Intl.DateTimeFormat(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric"
+        })
+
+        return formatter.format(lastAnalysed.value);
+    });
+
     // ===============================================================
     // ========================== METHODS ============================
     // ===============================================================
@@ -75,8 +94,12 @@ const useSingleAnalysisStore = (
 
         await processPeptides(peptides.value!, config.value.equate, config.value.filter);
 
-        await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate);
+        const filter = customFilterStore.getFilter(config.value.database);
+        await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate, filter);
         processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
+
+        await processMetadata();
+        lastAnalysed.value = new Date();
 
         await processLca(peptidesTable.value!, peptideToData.value!);
         await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
@@ -165,6 +188,8 @@ const useSingleAnalysisStore = (
         functionalFilter,
         status,
         filteringStatus,
+        databaseVersion,
+        lastAnalysedString,
 
         peptideToData,
         peptidesTable,

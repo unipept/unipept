@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            <initialism>POST</initialism> /api/v1/taxonomy
+            <initialism>POST</initialism> /api/v2/taxonomy
         </h1>
         <h3 class="font-weight-light">
             Returns the taxonomic information for a given taxon identifier.
@@ -20,14 +20,14 @@
             large-title
         >
             <p>
-                The taxonomy method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/taxonomy</inline-code>.
+                The taxonomy method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v2/taxonomy</inline-code>.
                 <r-link
                     to="#parameters"
                     router
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
             </p>
 
             <h3 class="font-weight-medium">
@@ -88,6 +88,55 @@
                     Do not use this parameter unless the extra information fields are needed.
                 </p>
             </static-alert>
+
+            <h3 class="font-weight-medium">
+                descendants
+            </h3>
+            <p>
+                <inline-code>descendants</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                When the parameter is set to <inline-code>true</inline-code>, Unipept will also return all the descendants for each taxon.
+            </p>
+
+            <h3 class="font-weight-medium">
+                descendants_ranks
+            </h3>
+            <p>
+                <inline-code>descendants_ranks</inline-code> is an optional parameter and should be a list of NCBI ranks. Possible values are listed below.
+                When not set explicitly, the parameter defaults to <inline-code>[ "species" ]</inline-code>. When the parameter is set to a non-empty list
+                of ranks, Unipept will only return the descendants of the given ranks for each taxon.
+            </p>
+            <ul class="multi-column my-3">
+                <li><inline-code>domain</inline-code></li>
+                <li><inline-code>realm</inline-code></li>
+                <li><inline-code>kingdom</inline-code></li>
+                <li><inline-code>subkingdom</inline-code></li>
+                <li><inline-code>superphylum</inline-code></li>
+                <li><inline-code>phylum</inline-code></li>
+                <li><inline-code>subphylum</inline-code></li>
+                <li><inline-code>superclass</inline-code></li>
+                <li><inline-code>class</inline-code></li>
+                <li><inline-code>subclass</inline-code></li>
+                <li><inline-code>infraclass</inline-code></li>
+                <li><inline-code>superorder</inline-code></li>
+                <li><inline-code>order</inline-code></li>
+                <li><inline-code>suborder</inline-code></li>
+                <li><inline-code>infraorder</inline-code></li>
+                <li><inline-code>parvorder</inline-code></li>
+                <li><inline-code>superfamily</inline-code></li>
+                <li><inline-code>family</inline-code></li>
+                <li><inline-code>subfamily</inline-code></li>
+                <li><inline-code>tribe</inline-code></li>
+                <li><inline-code>subtribe</inline-code></li>
+                <li><inline-code>genus</inline-code></li>
+                <li><inline-code>subgenus</inline-code></li>
+                <li><inline-code>species_group</inline-code></li>
+                <li><inline-code>species_subgroup</inline-code></li>
+                <li><inline-code>species</inline-code></li>
+                <li><inline-code>subspecies</inline-code></li>
+                <li><inline-code>varietas</inline-code></li>
+                <li><inline-code>forma</inline-code></li>
+            </ul>
         </header-body-card>
 
         <!-- Response Card -->
@@ -110,7 +159,8 @@
             information fields:
 
             <ul class="multi-column my-3">
-                <li><inline-code>superkingdom_id</inline-code></li>
+                <li><inline-code>domain_id</inline-code></li>
+                <li><inline-code>realm_id</inline-code></li>
                 <li><inline-code>kingdom_id</inline-code></li>
                 <li><inline-code>subkingdom_id</inline-code></li>
                 <li><inline-code>superphylum_id</inline-code></li>
@@ -144,7 +194,8 @@
             the lineage using the following information fields:
 
             <ul class="multi-column mt-3">
-                <li><inline-code>superkingdom_name</inline-code></li>
+                <li><inline-code>domain_name</inline-code></li>
+                <li><inline-code>realm_name</inline-code></li>
                 <li><inline-code>kingdom_name</inline-code></li>
                 <li><inline-code>subkingdom_name</inline-code></li>
                 <li><inline-code>superphylum_name</inline-code></li>
@@ -244,6 +295,43 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <b>descendants</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return all descendants for each input taxon.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>descendants_ranks</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return only descendants of the given ranks for each input taxon. <inline-code>[ "species" ]</inline-code> (default)
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be a valid list of NCBI ranks, see <r-link
+                                    to="#request"
+                                    router
+                                >request</r-link>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </v-table>
         </header-body-card>
@@ -265,10 +353,10 @@
                 </r-link>).
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxonomy -d 'input[]=817'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxonomy -d 'input[]=817'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxonomy.json?input[]=817
+                https://api.unipept.ugent.be/api/v2/taxonomy.json?input[]=817
             </template>
         </example-card>
 
@@ -286,10 +374,10 @@
                 </r-link>).
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxa2lca -d 'input[]=817' -d 'input[]=329854'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2lca -d 'input[]=817' -d 'input[]=329854'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxa2lca.json?input[]=817&input[]=329854
+                https://api.unipept.ugent.be/api/v2/taxa2lca.json?input[]=817&input[]=329854
             </template>
         </example-card>
 
@@ -304,10 +392,10 @@
                 </r-link>), including its complete lineage.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxonomy -d 'input[]=817' -d 'extra=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxonomy -d 'input[]=817' -d 'extra=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxonomy.json?input[]=817&extra=true
+                https://api.unipept.ugent.be/api/v2/taxonomy.json?input[]=817&extra=true
             </template>
         </example-card>
 
@@ -322,10 +410,10 @@
                 </r-link>), including its complete lineage with names.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/taxonomy -d 'input[]=817' -d 'extra=true' -d 'names=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxonomy -d 'input[]=817' -d 'extra=true' -d 'names=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/taxonomy.json?input[]=817&extra=true&names=true
+                https://api.unipept.ugent.be/api/v2/taxonomy.json?input[]=817&extra=true&names=true
             </template>
         </example-card>
 

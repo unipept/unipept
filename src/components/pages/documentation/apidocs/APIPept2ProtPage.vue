@@ -1,21 +1,21 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            <initialism>POST</initialism> /api/v1/pept2prot
+            <initialism>POST</initialism> /api/v2/pept2prot
         </h1>
         <h3 class="font-weight-light">
-            Returns the set of UniProt entries containing a given tryptic peptide.
+            Returns the set of UniProt entries containing a given peptide.
         </h3>
 
         <v-divider class="my-2" />
 
         <p>
-            This method returns the list of UniProt entries containing a given tryptic peptide. This is the same information as provided on the Protein matches
+            This method returns the list of UniProt entries containing a given peptide. This is the same information as provided on the Protein matches
             tab when performing a search with the <r-link
                 to="/tpa"
                 router
             >
-                Tryptic Peptide Analysis
+                Single Peptide Analysis
             </r-link> in the web interface.
         </p>
 
@@ -27,21 +27,21 @@
         >
             <v-card-text>
                 <p>
-                    The pept2prot method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v1/pept2prot</inline-code>.
+                    The pept2prot method can be used by doing a <initialism>HTTP POST</initialism>-request (preferred) or <initialism>GET</initialism>-request to <inline-code>https://api.unipept.ugent.be/api/v2/pept2prot</inline-code>.
                     <r-link
                         to="#parameters"
                         router
                     >
                         Parameters
                     </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                    The only required parameter is <inline-code>input[]</inline-code>, which takes one or more tryptic peptides.
+                    The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
                 </p>
 
                 <h3 class="font-weight-medium">
                     input
                 </h3>
                 <p>
-                    <inline-code>input[]</inline-code> is a required parameter that takes one or more tryptic peptides. Unipept will return the list of UniProt entries that contain any of the <inline-code>input[]</inline-code> peptides in their protein sequence.
+                    <inline-code>input[]</inline-code> is a required parameter that takes one or more peptides. Unipept will return the list of UniProt entries that contain any of the <inline-code>input[]</inline-code> peptides in their protein sequence.
                     To pass multiple peptides at once, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
                         to="#example2"
                         router
@@ -64,12 +64,12 @@
                 <p>
                     <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
                     When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
-                    When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries.
+                    When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching peptides to UniProt entries.
                     This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
                         to="/tpa"
                         router
                     >
-                        Tryptic Peptide Analysis
+                        Single Peptide Analysis
                     </r-link> in the web interface.
                 </p>
 
@@ -94,6 +94,24 @@
                         Do not use this parameter unless the extra information fields are needed.
                     </p>
                 </static-alert>
+
+                <h3 class="font-weight-medium">
+                    cutoff
+                </h3>
+                <p>
+                    <inline-code>cutoff</inline-code> is an optional parameter and can only be a <inline-code>natural number (>0)</inline-code>.
+                    When not set explicitly, the parameter defaults to <inline-code>10000</inline-code>. When an input peptide matches more than
+                    <inline-code>cutoff</inline-code> UniProt entries, the response will be truncated.
+                </p>
+
+                <h3 class="font-weight-medium">
+                    tryptic
+                </h3>
+                <p>
+                    <inline-code>tryptic</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                    When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                    When the parameter is set to <inline-code>true</inline-code>, Unipept will only return tryptic matches.
+                </p>
             </v-card-text>
         </header-body-card>
 
@@ -152,7 +170,7 @@
                             <i style="font-size: 85%;">required</i>
                         </td>
                         <td class="py-3">
-                            Tryptic peptide to search for. Add multiple parameters to search for multiple peptides.
+                            Peptide to search for. Add multiple parameters to search for multiple peptides.
                             <br>
                             <div
                                 class="mt-3"
@@ -196,6 +214,40 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <b>cutoff</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Sets a limit on the amount of matched proteins that are used for the response.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be a <inline-code>natural number (>0)</inline-code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>tryptic</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Return only tryptic matches if <inline-code>true</inline-code>.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </v-table>
         </header-body-card>
@@ -208,71 +260,71 @@
         </h2>
 
         <example-card
-            title="Retrieve all UniProt entries containing a given tryptic peptide"
+            title="Retrieve all UniProt entries containing a given peptide"
             :response="response1"
         >
             <template #description>
                 This example retrieves all UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2prot -d 'input[]=AIPQLEVARPADAYETAEAYR'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2prot -d 'input[]=AIPQLEVARPADAYETAEAYR'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR
+                https://api.unipept.ugent.be/api/v2/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR
             </template>
         </example-card>
 
         <example-card
             id="example2"
             class="mt-5"
-            title="Retrieve all UniProt entries containing any of multiple tryptic peptides"
+            title="Retrieve all UniProt entries containing any of multiple peptides"
             :response="response2"
         >
             <template #description>
-                This example retrieves all UniProt entries containing either the tryptic peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> or the tryptic peptide <i><initialism>APVLSDSSCK</initialism></i>.
-                The result is the same as the combination of this search and this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves all UniProt entries containing either the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i> or the peptide <i><initialism>APVLSDSSCK</initialism></i>.
+                The result is the same as the combination of this search and this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2prot -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2prot -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'input[]=APVLSDSSCK'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK
+                https://api.unipept.ugent.be/api/v2/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&input[]=APVLSDSSCK
             </template>
         </example-card>
 
         <example-card
             class="mt-5"
-            title="Retrieve all UniProt entries containing a single tryptic peptide, while equating I and L"
+            title="Retrieve all UniProt entries containing a single peptide, while equating I and L"
             :response="response3"
         >
             <template #description>
-                This example retrieves all UniProt entries containing the tryptic peptide <i><initialism>APVLSDSSCK</initialism></i>.
+                This example retrieves all UniProt entries containing the peptide <i><initialism>APVLSDSSCK</initialism></i>.
                 In searching, isoleucine (I) and leucine (L) are considered equal.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2prot -d 'input[]=APVISDSSCK' -d 'equate_il=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2prot -d 'input[]=APVISDSSCK' -d 'equate_il=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2prot.json?input[]=APVISDSSCK&equate_il=true
+                https://api.unipept.ugent.be/api/v2/pept2prot.json?input[]=APVISDSSCK&equate_il=true
             </template>
         </example-card>
 
         <example-card
             class="mt-5"
-            title="Retrieve all UniProt entries containing a single tryptic peptide and return extra information"
+            title="Retrieve all UniProt entries containing a single peptide and return extra information"
             :response="response4"
         >
             <template #description>
-                This example retrieves all UniProt entries containing the tryptic peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>, including additional information fields that are not returned by default.
-                The result is the same as this search with the Tryptic Peptide Analysis in the web interface.
+                This example retrieves all UniProt entries containing the peptide <i><initialism>AIPQLEVARPADAYETAEAYR</initialism></i>, including additional information fields that are not returned by default.
+                The result is the same as this search with the Single Peptide Analysis in the web interface.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v1/pept2prot -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/pept2prot -d 'input[]=AIPQLEVARPADAYETAEAYR' -d 'extra=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v1/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true
+                https://api.unipept.ugent.be/api/v2/pept2prot.json?input[]=AIPQLEVARPADAYETAEAYR&extra=true
             </template>
         </example-card>
 

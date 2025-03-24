@@ -66,7 +66,7 @@
             </template>
         </v-app-bar>
 
-        <v-main class="d-flex flex-column">
+        <v-main class="d-flex flex-column bg-mainBody">
             <v-container
                 class="main-container flex-grow-1"
                 style="max-width: 1400px;"

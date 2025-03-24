@@ -1,33 +1,33 @@
 <template>
     <v-dialog
         v-model="dialogOpen"
-        max-width="50%"
+        max-width="450px"
     >
-        <v-card>
-            <v-alert
-                type="error"
-                icon="mdi-alert"
-                variant="tonal"
-            >
-                Are you sure you want to undo all changes? All changes made will be lost. This action is irreversible.
-                <div class="d-flex justify-end">
-                    <v-btn
-                        class="me-3"
-                        variant="text"
-                        @click="dialogOpen = false"
-                    >
-                        Cancel
-                    </v-btn>
+        <v-unipept-card>
+            <v-card-text class="pa-4">
+                <v-alert type="error" variant="tonal" density="compact">
+                    Are you sure you want to undo all changes? This action is
+                    <strong>irreversible</strong>. All changes made will be permanently lost.
+                </v-alert>
+            </v-card-text>
 
-                    <v-btn
-                        color="error"
-                        @click="confirm"
-                    >
-                        Yes, undo changes
-                    </v-btn>
-                </div>
-            </v-alert>
-        </v-card>
+            <v-card-actions class="d-flex justify-end">
+                <v-btn
+                    variant="text"
+                    @click="dialogOpen = false"
+                >
+                    Cancel
+                </v-btn>
+
+                <v-btn
+                    color="error"
+                    variant="flat"
+                    @click="confirm"
+                >
+                    Yes, undo changes
+                </v-btn>
+            </v-card-actions>
+        </v-unipept-card>
     </v-dialog>
 </template>
 

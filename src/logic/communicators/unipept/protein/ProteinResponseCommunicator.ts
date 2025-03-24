@@ -1,13 +1,5 @@
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
-
-export interface ProteinResponse {
-    uniprotAccessionId: string,
-    name: string,
-    organism: number,
-    ecNumbers: string[],
-    goTerms: string[],
-    interproEntries: string[]
-}
+import ProteinResponse from "@/logic/communicators/unipept/protein/ProteinResponse";
 
 export interface MetaProteinResponse {
     lca: number,
@@ -17,11 +9,15 @@ export interface MetaProteinResponse {
 
 export default class ProteinResponseCommunicator {
     public static readonly PROTEIN_ENDPOINT: string = "/private_api/proteins";
+    public static readonly PROTEIN_COUNT_ENDPOINT: string = "/private_api/proteins/count"
+    public static readonly PROTEIN_FILTER_ENDPOINT: string = "/private_api/proteins/filter";
 
     private static inProgress: Promise<MetaProteinResponse> | undefined;
+    private static responsesInProgress: Promise<ProteinResponse[]> | undefined;
 
     constructor(
-        private readonly apiBaseUrl: string
+        private readonly apiBaseUrl: string,
+        private readonly batchSize: number
     ) {}
 
     /**
@@ -44,6 +40,61 @@ export default class ProteinResponseCommunicator {
         return data;
     }
 
+    public async getResponses(
+        accessions: string[]
+    ): Promise<ProteinResponse[]> {
+        while (ProteinResponseCommunicator.responsesInProgress) {
+            await ProteinResponseCommunicator.responsesInProgress;
+        }
+
+        ProteinResponseCommunicator.responsesInProgress = this.doProcess(accessions);
+        let result: ProteinResponse[];
+
+        try {
+            result = await ProteinResponseCommunicator.responsesInProgress;
+        } finally {
+            ProteinResponseCommunicator.responsesInProgress = undefined;
+        }
+
+        return result;
+    }
+
+    public async getProteinCount(
+        filter = ""
+    ): Promise<number> {
+        const requestBody = JSON.stringify({
+                filter
+        });
+
+        const res = await NetworkUtils.postJSON(
+            this.apiBaseUrl + ProteinResponseCommunicator.PROTEIN_COUNT_ENDPOINT,
+            requestBody
+        );
+
+        return res["count"];
+    }
+
+    public async getProteinRange(
+        start: number,
+        end: number,
+        filter = "",
+        sortBy: "uniprot_accession_id" | "name" | "db_type" | "taxon_id" = "uniprot_accession_id",
+        sortDescending = false
+    ): Promise<string[]> {
+        const requestBody = JSON.stringify({
+            filter,
+            start,
+            end,
+            sort_by: sortBy,
+            sort_descending: sortDescending
+        });
+
+        return await NetworkUtils.postJSON(
+            this.apiBaseUrl + ProteinResponseCommunicator.PROTEIN_FILTER_ENDPOINT,
+            requestBody
+        );
+    }
+
     private async compute(peptide: string, equateIl: boolean): Promise<MetaProteinResponse> {
         const data = JSON.stringify({
             peptide: peptide,
@@ -53,5 +104,23 @@ export default class ProteinResponseCommunicator {
         return await NetworkUtils.postJSON(
             this.apiBaseUrl + ProteinResponseCommunicator.PROTEIN_ENDPOINT, data
         );
+    }
+
+    private async doProcess(accessionIds: string[]): Promise<ProteinResponse[]> {
+        const responses: ProteinResponse[] = [];
+
+        for (let i = 0; i < accessionIds.length; i += this.batchSize) {
+            const data = JSON.stringify({
+                accessions: accessionIds
+            });
+
+            const res =  await NetworkUtils.postJSON(
+                this.apiBaseUrl + ProteinResponseCommunicator.PROTEIN_ENDPOINT, data
+            );
+
+            responses.push(...res);
+        }
+
+        return responses;
     }
 }
