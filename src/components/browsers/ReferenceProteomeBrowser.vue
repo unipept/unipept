@@ -24,7 +24,7 @@
                     :items-length="proteomesLength"
                     :items-per-page="5"
                     :loading="proteomesLoading"
-                    :search="filterValue"
+                    :search="debouncedFilterValue"
                     @update:options="loadProteomes"
                     density="comfortable"
                     color="primary"
@@ -86,6 +86,7 @@ import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
 import useDatabaseSummary from "@/components/browsers/useDatabaseSummary";
 import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowserLoader";
+import {refDebounced} from "@vueuse/core";
 
 // TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
 const headers: any = [
@@ -141,6 +142,8 @@ const {
     filterValue,
     clearSearch
 } = useBrowserLoader<string, ReferenceProteome>();
+
+const debouncedFilterValue = refDebounced(filterValue, 300);
 
 const proteomeCommunicator = new ProteomeCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 
