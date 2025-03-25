@@ -31,6 +31,30 @@
 
         <publication-card
             class="mt-5"
+            title="PathwayPilot: A User-Friendly Tool for Visualizing and Navigating Metabolic Pathways"
+            :authors='["Tibo Vande Moortele", "Pieter Verschaffelt", "Qingyao Huang", "Nadezhda T. Doncheva", "Tanja Holstein", "Caroline Jachmann", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere", "Tim Van Den Bossche"]'
+            journal="Molecular & Cellular Proteomics"
+            year="2025"
+            doi="doi.org/10.1016/j.mcpro.2025.100918"
+            google-scholar="https://scholar.google.com.au/citations?view_op=view_citation&hl=nl&user=jl2iClUAAAAJ&citation_for_view=jl2iClUAAAAJ:d1gkVwhDpl0C"
+            :image="Publication2025Image"
+        >
+            <template #abstract>
+                Metaproteomics, the study of collective proteomes in environmental communities, plays a crucial role in understanding microbial functionalities
+                affecting ecosystems and human health. Pathway analysis offers structured insights into the biochemical processes within these communities.
+                However, no existing tool effectively combines pathway analysis with peptide- or protein-level data. We here introduce PathwayPilot, a web-based
+                application designed to improve metaproteomic data analysis by integrating pathway analysis with peptide- and protein-level data, filling a
+                critical gap in current metaproteomics bioinformatics tools. By allowing users to compare functional annotations across different samples or
+                multiple organisms within a sample, PathwayPilot provides valuable insights into microbial functions. In the re-analysis of a study examining the
+                effects of caloric restriction on gut microbiota, the tool successfully identified shifts in enzyme expressions linked to short-chain fatty acid
+                biosynthesis, aligning with its original findings. PathwayPilot’s user-friendly interface and robust capabilities make it a significant advancement
+                in metaproteomics, with the potential for widespread application in microbial ecology and health sciences. All code is open source under the Apache2
+                license and is available at <r-link to="https://pathwaypilot.ugent.be">https://pathwaypilot.ugent.be</r-link>.
+            </template>
+        </publication-card>
+
+        <publication-card
+            class="mt-5"
             title="Biodiversity Analysis of Metaproteomics Samples with Unipept: A Comprehensive Tutorial"
             :authors='["Tim Van Den Bossche", "Pieter Verschaffelt", "Tibo Vande Moortele", "Peter Dawyndt", "Lennart Martens", "Bart Mesuere"]'
             journal="Protein Bioinformatics"
@@ -303,6 +327,7 @@ import PublicationCard from '../cards/PublicationCard.vue';
 import Initialism from '../highlights/Initialism.vue';
 import RLink from '../highlights/ResourceLink.vue';
 import Preprint2025Image from '@/assets/preprint-2025.png';
+import Publication2025Image from '@/assets/publications-2025.jpg';
 import Publication2024Image from '@/assets/publications-2024.jpg';
 import Publication2023Image from '@/assets/publications-2023.jpg';
 import Publication2021Image from '@/assets/publications-2021.jpg';
