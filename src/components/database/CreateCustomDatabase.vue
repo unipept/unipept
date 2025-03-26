@@ -241,6 +241,8 @@ import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
 import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
 import ProteinBrowser from "@/components/browsers/ProteinBrowser.vue";
+import Protein from "@/logic/ontology/proteins/Protein";
+import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
 
 const customFilterStore = useCustomFilterStore();
 
@@ -255,8 +257,8 @@ const isValidDatabaseName = ref(false);
 const filterSelection = ref<FilterSelection>(FilterSelection.None);
 
 const selectedTaxa = ref<NcbiTaxon[]>([]);
-const selectedProteomes = ref<any[]>([]);
-const selectedProteins = ref<any[]>([]);
+const selectedProteomes = ref<ReferenceProteome[]>([]);
+const selectedProteins = ref<Protein[]>([]);
 
 const buildTaxonDatabase = () => {
     emits("create", databaseName.value, {
@@ -277,7 +279,7 @@ const buildProteomeDatabase = () => {
 const buildProteinDatabase = () => {
     emits("create", databaseName.value, {
         filter: FilterType.Protein,
-        data: selectedProteins.value.map(protein => protein.protein)
+        data: selectedProteins.value.map(protein => protein.id)
     });
     dialogOpen.value = false;
 };
