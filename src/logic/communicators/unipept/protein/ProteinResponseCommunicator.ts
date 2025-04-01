@@ -78,7 +78,7 @@ export default class ProteinResponseCommunicator {
         start: number,
         end: number,
         filter = "",
-        sortBy: "uniprot_accession_id" | "name" | "db_type" | "taxon_id" = "uniprot_accession_id",
+        sortBy: "uniprot_accession_number" | "name" | "db_type" | "taxon_id" = "uniprot_accession_number",
         sortDescending = false
     ): Promise<string[]> {
         const requestBody = JSON.stringify({
