@@ -142,6 +142,7 @@ import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
 
 const { getNcbiDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
@@ -185,8 +186,10 @@ const prepareDownload = async (separator: string, callback: () => void): Promise
 };
 
 const download = async (callback: () => void): Promise<void> => {
+    const unipeptCommunicator = new UnipeptCommunicator();
+    const uniprotVersion = await unipeptCommunicator.uniprotVersion();
     const exportExtension = exportDelimiter === "\t" ? "tsv" : "csv";
-    await downloadCsv(peptideExportContent, `unipept_${analysis.name.replaceAll(" ", "_")}_mpa.${exportExtension}`, exportDelimiter);
+    await downloadCsv(peptideExportContent, `mpa_${analysis.name.replaceAll(" ", "_")}_unipept_${APP_VERSION}_UniProtKB_${uniprotVersion}.${exportExtension}`, exportDelimiter);
     callback();
 }
 
