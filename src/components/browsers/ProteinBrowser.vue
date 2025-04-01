@@ -178,7 +178,7 @@ const {
     clearSearch
 } = useBrowserLoader<string, Protein>();
 
-const debouncedFilterValue = refDebounced(filterValue, 300);
+const debouncedFilterValue = refDebounced(filterValue, 600);
 
 const proteinCommunicator = new ProteinResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 

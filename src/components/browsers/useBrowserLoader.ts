@@ -1,5 +1,6 @@
 import { ref, Ref } from "vue";
 import {refDebounced} from "@vueuse/core";
+import useAsync from "@/composables/useAsync";
 
 export interface LoadItemsParams {
     page: number;
@@ -12,6 +13,8 @@ function useBrowserLoader<IdType, T>() {
     const items = ref<T[]>([]);
     const itemsLength = ref(0);
     const filterValue = ref("");
+    
+    const { performIfLast } = useAsync<{ items: T[], total: number }>();
 
     const load = async function(
         loadItemsParams: LoadItemsParams,
@@ -29,25 +32,38 @@ function useBrowserLoader<IdType, T>() {
             sortDesc = loadItemsParams.sortBy[0].order === "desc";
         }
 
-        const idsInRange = await getRange(
-            (loadItemsParams.page - 1) * loadItemsParams.itemsPerPage,
-            loadItemsParams.page * loadItemsParams.itemsPerPage,
-            filterValue.value,
-            sortByColumn,
-            sortDesc
+        // By wrapping this in the `performIfLast` function we make sure that slow requests don't overwrite the results
+        // of more recent, faster requests.
+        await performIfLast(
+            async () => {
+                const idsInRange = await getRange(
+                    (loadItemsParams.page - 1) * loadItemsParams.itemsPerPage,
+                    loadItemsParams.page * loadItemsParams.itemsPerPage,
+                    filterValue.value,
+                    sortByColumn,
+                    sortDesc
+                );
+
+                await updateOntology(idsInRange);
+
+                const processedItems: T[] = [];
+                for (const id of idsInRange) {
+                    processedItems.push(ontology.get(id)!);
+                }
+
+                const total = await getCount(filterValue.value);
+
+                return {
+                    items: processedItems,
+                    total
+                };
+            },
+            (result) => {
+                items.value = result.items;
+                itemsLength.value = result.total;
+            }
         );
 
-        await updateOntology(idsInRange);
-
-        const processedItems: T[] = [];
-        for (const id of idsInRange) {
-            processedItems.push(ontology.get(id)!);
-        }
-
-        const total = await getCount(filterValue.value);
-
-        items.value = processedItems;
-        itemsLength.value = total;
         loading.value = false;
     };
 
