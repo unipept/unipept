@@ -270,7 +270,7 @@ const {
     clearSearch
 } = useBrowserLoader<number, NcbiTaxon>();
 
-const debouncedFilterValue = refDebounced(filterValue, 300);
+const debouncedFilterValue = refDebounced(filterValue, 600);
 
 const ncbiCommunicator = new NcbiResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 const taxonomyCommunicator = new TaxonomyResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
