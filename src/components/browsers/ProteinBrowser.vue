@@ -187,7 +187,7 @@ const loadProteins = async (params: LoadItemsParams) => {
         params,
         updateProteinOntology,
         proteinOntology,
-        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => proteinCommunicator.getProteinRange(start, end, filter, sortByColumn as any, sortDesc),
+        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => proteinCommunicator.getProteinRange(start, end, filter, sortByColumn === "id" ? "uniprot_accession_number" : sortByColumn as any, sortDesc),
         (filter) => proteinCommunicator.getProteinCount(filter)
     );
 }
