@@ -1,13 +1,19 @@
 import {defineStore} from "pinia";
-import useMultiAnalysisStore, {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import useMultiAnalysisStore, {
+    MultiAnalysisStore,
+    MultiAnalysisStoreImport,
+    useMultiAnalysisStoreImport
+} from "@/store/new/MultiAnalysisStore";
 import {computed, ref} from "vue";
 import {v4 as uuidv4} from "uuid";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
-import useCustomFilterStore from "@/store/new/CustomFilterStore";
+import useCustomFilterStore, {CustomFilterStoreImport, useCustomFilterStoreImport} from "@/store/new/CustomFilterStore";
 
 export const DEFAULT_NEW_GROUP_NAME = "Group";
 
 const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
+    const customFilterStore = useCustomFilterStore();
+
     // ===============================================================
     // ======================== REFERENCES ===========================
     // ===============================================================
@@ -48,6 +54,10 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         return id;
     };
 
+    const importGroup = (json: string): string => {
+
+    }
+
     const removeGroup = (id: string): void => {
         _groups.value.delete(id);
     }
@@ -77,6 +87,21 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         return counter;
     }
 
+    const exportStore = (): string => {
+        return JSON.stringify({
+            groups: Array.from(_groups.value.values()).map(group => group.exportStore()),
+            filters: customFilterStore.exportStore()
+        });
+    }
+
+    const setImportedData = (storeImport: GroupAnalysisStoreImport) => {
+        clear();
+        for (const group of storeImport.groups) {
+            _groups.value.set(group.id, useMultiAnalysisStoreImport(group));
+        }
+        useCustomFilterStoreImport(storeImport.filters);
+    }
+
     return {
         groups,
         empty,
@@ -89,9 +114,21 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         addAnalysis,
         removeAnalysis,
         clear,
-        findFirstAvailableGroupNumber
+        findFirstAvailableGroupNumber,
+        exportStore,
+        setImportedData
     };
 });
+
+export interface GroupAnalysisStoreImport {
+    groups: MultiAnalysisStoreImport[];
+    filters: CustomFilterStoreImport;
+}
+
+export const useGroupAnalysisStoreImport = (storeImport: GroupAnalysisStoreImport): void => {
+    const groupStore = useGroupAnalysisStore();
+    groupStore.setImportedData(storeImport);
+}
 
 export type GroupAnalysisStore = ReturnType<typeof useGroupAnalysisStore>;
 

@@ -14,7 +14,9 @@ import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 import useCustomFilterStore from "@/store/new/CustomFilterStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
-
+import {ShareableMap} from "shared-memory-datastructures";
+import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 
 const useSingleAnalysisStore = (
     _id: string,
@@ -115,7 +117,7 @@ const useSingleAnalysisStore = (
 
         processNcbiTree(lcaTable.value!);
 
-        status.value = AnalysisStatus.Finished
+        status.value = AnalysisStatus.Finished;
     }
 
     const updateFunctionalFilter = async (newFilter: number) => {
@@ -176,6 +178,62 @@ const useSingleAnalysisStore = (
         status.value = AnalysisStatus.Pending;
     }
 
+    const exportStore = (): SingleAnalysisStoreImport => {
+        const [ indexBuffer, dataBuffer ]: [ArrayBuffer, ArrayBuffer] = peptideToData.value?.getBuffers();
+        return {
+            id: id.value,
+            name: name.value,
+            rawPeptides: rawPeptides.value,
+            config: config.value,
+            intensities: intensities.value,
+            taxonomicFilter: taxonomicFilter.value,
+            functionalFilter: functionalFilter.value,
+            lastAnalysed: lastAnalysed.value,
+
+            databaseVersion: databaseVersion.value,
+            indexBuffer: Array.from(new Uint32Array(indexBuffer)),
+            dataBuffer: Array.from(new Uint32Array(dataBuffer)),
+
+            // TODO: also export peptonizerStore
+        };
+    }
+
+    const importStore = async () => {
+        status.value = AnalysisStatus.Running;
+
+        await processPeptides(peptides.value!, config.value.equate, config.value.filter);
+        processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
+
+        await processLca(peptidesTable.value!, peptideToData.value!);
+        await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
+        await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
+        await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
+
+        await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
+        await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
+        await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
+        await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.keys()));
+
+        processNcbiTree(lcaTable.value!);
+
+        // TODO: update taxonomic filter
+
+        status.value = AnalysisStatus.Finished;
+    }
+
+    const setImportedData = (storeImport: SingleAnalysisStoreImport) => {
+        taxonomicFilter.value = storeImport.taxonomicFilter;
+        functionalFilter.value = storeImport.functionalFilter;
+        lastAnalysed.value = new Date(storeImport.lastAnalysed);
+        databaseVersion.value = storeImport.databaseVersion;
+
+        peptideToData.value = new ShareableMap<string, PeptideData>(undefined, undefined, new PeptideDataSerializer());
+        peptideToData.value.setBuffers(
+            new Uint32Array(storeImport.indexBuffer).buffer,
+            new Uint32Array(storeImport.dataBuffer).buffer
+        );
+    }
+
     return {
         id,
         name,
@@ -214,9 +272,40 @@ const useSingleAnalysisStore = (
         updateName,
         updateConfig,
         updateFunctionalFilter,
-        updateTaxonomicFilter
+        updateTaxonomicFilter,
+        exportStore,
+        importStore,
+        setImportedData
     };
 })();
+
+export interface SingleAnalysisStoreImport {
+    id: string;
+    name: string;
+    rawPeptides: string;
+    config: AnalysisConfig;
+    intensities: Map<string, number>;
+    taxonomicFilter: number;
+    functionalFilter: number;
+    lastAnalysed: Date;
+    databaseVersion: string;
+    indexBuffer: number[];
+    dataBuffer: number[];
+}
+
+export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImport) => {
+    const store = useSingleAnalysisStore(
+        storeImport.id,
+        storeImport.name,
+        storeImport.rawPeptides,
+        storeImport.config,
+        new Map(storeImport.intensities)
+    );
+
+    store.setImportedData(storeImport);
+
+    return store;
+}
 
 export type SingleAnalysisStore = ReturnType<typeof useSingleAnalysisStore>;
 

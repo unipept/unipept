@@ -14,7 +14,6 @@ export default function usePeptideTrustProcessor() {
         let matchedPeptides = 0;
         const missedPeptides: string[] = [];
 
-
         for (const peptide of countTable.keys()) {
             if (peptideData.has(peptide)) {
                 matchedPeptides += countTable.getOrDefault(peptide);

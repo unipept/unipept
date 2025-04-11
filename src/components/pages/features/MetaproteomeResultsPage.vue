@@ -1,4 +1,8 @@
 <template>
+    <v-btn
+        @click="exportProject"
+    />
+
     <project
         :project="groupStore"
         @sample:add="addSample"
@@ -16,6 +20,10 @@ import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import Project from "@/components/project/Project.vue";
 
 const groupStore = useGroupAnalysisStore();
+
+const exportProject = () => {
+    console.log(groupStore.exportStore());
+}
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
     const analysisId = groupStore.getGroup(groupId).addAnalysis(

@@ -31,14 +31,34 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
         return _filters.value.has(key);
     }
 
+    const exportStore = (): CustomFilterStoreImport => {
+        return Array.from(_filters.value.entries());
+    }
+
+    const setImportedData = (storeImport: CustomFilterStoreImport) => {
+        _filters.value.clear();
+        storeImport.forEach(([key, filter]) => {
+            _filters.value.set(key, filter);
+        });
+    }
+
     return {
         filters,
 
         getFilter,
         addFilter,
-        hasFilter
+        hasFilter,
+        exportStore,
+        setImportedData
     };
 });
+
+export type CustomFilterStoreImport = [string, Filter][];
+
+export const useCustomFilterStoreImport = (storeImport: CustomFilterStoreImport) => {
+    const store = useCustomFilterStore();
+    store.setImportedData(storeImport);
+}
 
 export type CustomFilterStore = ReturnType<typeof useCustomFilterStore>;
 

@@ -21,6 +21,16 @@
                         />
                     </v-card-text>
                 </v-unipept-card>
+                <file-upload
+                    v-model="jsonFile"
+                    class="mb-4"
+                />
+                <v-btn
+                    class="my-3 float-right"
+                    variant="tonal"
+                    text="Import project"
+                    @click="importProject"
+                />
             </v-col>
 
             <v-col cols="6">
@@ -50,11 +60,12 @@
 import QuickAnalysisCard from "@/components/analysis/multi/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/analysis/multi/DemoAnalysisCard.vue";
 import {useRouter} from "vue-router";
-import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import useGroupAnalysisStore, {useGroupAnalysisStoreImport} from "@/store/new/GroupAnalysisStore";
 import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import FileUpload from "@/components/filesystem/FileUpload.vue";
 
 const router = useRouter();
 const groupStore = useGroupAnalysisStore();
@@ -62,12 +73,31 @@ const sampleDataStore = useSampleDataStore();
 
 const loadingSampleData: Ref<boolean> = ref(true);
 
+const jsonFile: Ref<File | null> = ref(null);
+
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     groupStore.clear();
     const groupId = groupStore.addGroup("Quick analysis");
     groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     await router.push({ name: "mpaResults" });
     await startAnalysis();
+    //await groupStore.getGroup(groupId)?.getAnalysis(analysisId)?.importStore();
+}
+
+const importProject = async () => {
+    groupStore.clear();
+
+    const projectJson = await jsonFile.value.text();
+
+    useGroupAnalysisStoreImport(JSON.parse(projectJson));
+
+    await router.push({ name: "mpaResults" });
+
+    for (const group of groupStore.groups) {
+        for (const analysis of group.analyses) {
+            await analysis.importStore();
+        }
+    }
 }
 
 const advancedAnalyze = () => {
