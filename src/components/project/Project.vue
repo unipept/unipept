@@ -1,5 +1,10 @@
 <template>
+    <project-drawer
+        v-model="selectedPage"
+    />
+
     <v-navigation-drawer
+        v-if="selectedPage === ProjectDrawerItem.ANALYSIS"
         permanent
     >
         <filesystem
@@ -24,7 +29,11 @@
         </template>
     </v-navigation-drawer>
 
-    <v-container fluid class="h-100">
+    <v-container
+        v-if="selectedPage === ProjectDrawerItem.ANALYSIS"
+        fluid
+        class="h-100"
+    >
         <new-project
             v-if="project.empty"
             @group:add="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
@@ -110,6 +119,7 @@ import NewProject from "@/components/project/NewProject.vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
+import ProjectDrawer, {ProjectDrawerItem} from "@/components/project/ProjectDrawer.vue";
 
 const { project } = defineProps<{
     project: GroupAnalysisStore;
@@ -123,6 +133,8 @@ const emits = defineEmits<{
     (e: 'group:update', groupId: string, updatedName: string): void;
     (e: 'group:remove', groupId: string):  void;
 }>();
+
+const selectedPage = ref<ProjectDrawerItem>(ProjectDrawerItem.ANALYSIS);
 
 const manageSamplesDialogOpen = ref(false);
 const selectedAnalyses: Ref = ref<SingleAnalysisStore[]>([]);
@@ -201,6 +213,10 @@ const selectFirstAnalysis = () => {
         }
     }
 }
+
+watch(() => selectedPage, (newPage) => {
+    console.log("Selected page changed to:", newPage);
+});
 
 onMounted(() => {
     isSafari.value = detectSafari();

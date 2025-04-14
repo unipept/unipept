@@ -91,29 +91,30 @@ const useSingleAnalysisStore = (
     // ========================== METHODS ============================
     // ===============================================================
 
-    const analyse = async () => {
+    const analyse = async (fetch: boolean = true) => {
         status.value = AnalysisStatus.Running;
 
         await processPeptides(peptides.value!, config.value.equate, config.value.filter);
 
-        const filter = customFilterStore.getFilter(config.value.database);
-        await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate, filter);
-        processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
+        if (fetch) {
+            const filter = customFilterStore.getFilter(config.value.database);
+            await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate, filter);
 
-        await processMetadata();
-        lastAnalysed.value = new Date();
+            await processMetadata();
+            lastAnalysed.value = new Date();
+        }
+
+        processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
 
         await processLca(peptidesTable.value!, peptideToData.value!);
         await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
         await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
         await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
 
-
         await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
         await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
         await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
         await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.keys()));
-
 
         processNcbiTree(lcaTable.value!);
 
@@ -199,26 +200,8 @@ const useSingleAnalysisStore = (
     }
 
     const importStore = async () => {
-        status.value = AnalysisStatus.Running;
-
-        await processPeptides(peptides.value!, config.value.equate, config.value.filter);
-        processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
-
-        await processLca(peptidesTable.value!, peptideToData.value!);
-        await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
-        await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
-        await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
-
-        await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
-        await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
-        await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
-        await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.keys()));
-
-        processNcbiTree(lcaTable.value!);
-
-        // TODO: update taxonomic filter
-
-        status.value = AnalysisStatus.Finished;
+        await analyse(false);
+        await updateTaxonomicFilter(taxonomicFilter.value);
     }
 
     const setImportedData = (storeImport: SingleAnalysisStoreImport) => {
@@ -299,7 +282,7 @@ export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImp
         storeImport.name,
         storeImport.rawPeptides,
         storeImport.config,
-        new Map(storeImport.intensities)
+        storeImport.intensities === undefined ? undefined : new Map(storeImport.intensities)
     );
 
     store.setImportedData(storeImport);
