@@ -64,6 +64,7 @@ const onDrop = (event: DragEvent) => {
     isDragging.value = false;
     if (event.dataTransfer?.files.length) {
         selectedFiles.value = event.dataTransfer.files[0];
+        onFileSelect();
     }
 };
 
