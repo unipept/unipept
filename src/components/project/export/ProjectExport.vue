@@ -170,7 +170,6 @@ const finishedAnalyses = computed(() => {
 const peptonizerJobs = computed(() => {
     return project.groups.reduce((total, group) => {
         return total + group.analyses.filter(analysis =>
-            analysis.peptonizerStore.status === PeptonizerStatus.Pending ||
             analysis.peptonizerStore.status === PeptonizerStatus.Running
         ).length;
     }, 0);

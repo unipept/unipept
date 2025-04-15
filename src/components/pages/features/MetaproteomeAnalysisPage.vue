@@ -5,6 +5,7 @@
                 <quick-analysis-card
                     @analyze="quickAnalyze"
                 />
+
                 <v-unipept-card class="mt-5">
                     <v-card-title>
                         <h2>Advanced analysis</h2>
@@ -21,15 +22,10 @@
                         />
                     </v-card-text>
                 </v-unipept-card>
-                <file-upload
-                    v-model="jsonFile"
-                    class="mb-4"
-                />
-                <v-btn
-                    class="my-3 float-right"
-                    variant="tonal"
-                    text="Import project"
-                    @click="importProject"
+
+                <project-import
+                    class="mt-5"
+                    @imported="importProject"
                 />
             </v-col>
 
@@ -68,8 +64,7 @@ import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
-import FileUpload from "@/components/filesystem/FileUpload.vue";
-import JSZip from "jszip";
+import ProjectImport from "@/components/project/import/ProjectImport.vue";
 
 const router = useRouter();
 const groupStore = useGroupAnalysisStore();
@@ -77,34 +72,18 @@ const sampleDataStore = useSampleDataStore();
 
 const loadingSampleData: Ref<boolean> = ref(true);
 
-const jsonFile: Ref<File | null> = ref(null);
-
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     groupStore.clear();
     const groupId = groupStore.addGroup("Quick analysis");
     groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     await router.push({ name: "mpaResults" });
     await startAnalysis();
-    //await groupStore.getGroup(groupId)?.getAnalysis(analysisId)?.importStore();
 }
 
-const importProject = async () => {
+const importProject = async (project: GroupAnalysisStoreImport) => {
     groupStore.clear();
 
-    const zipper = await JSZip.loadAsync(jsonFile.value);
-
-    const metadata = JSON.parse(await zipper.file("metadata.json")?.async("string"));
-
-    const buffers = zipper.folder("buffers");
-
-    for (const group of metadata.groups) {
-        for (const analysis of group.analyses) {
-            analysis.indexBuffer = await buffers.file(`${analysis.id}.index`)?.async("arraybuffer") || undefined;
-            analysis.dataBuffer = await buffers.file(`${analysis.id}.data`)?.async("arraybuffer") || undefined;
-        }
-    }
-
-    useGroupAnalysisStoreImport(metadata);
+    useGroupAnalysisStoreImport(project);
 
     await router.push({ name: "mpaResults" });
 
