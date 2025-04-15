@@ -185,7 +185,7 @@ const useSingleAnalysisStore = (
             id: id.value,
             name: name.value,
             rawPeptides: rawPeptides.value,
-            config: config.value,
+            config: { ...config.value },
             intensities: intensities.value,
             taxonomicFilter: taxonomicFilter.value,
             functionalFilter: functionalFilter.value,

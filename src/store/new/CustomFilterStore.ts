@@ -32,7 +32,8 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
     }
 
     const exportStore = (): CustomFilterStoreImport => {
-        return Array.from(_filters.value.entries());
+        return Array.from(_filters.value.entries()).map(
+            ([key, filter]) => [key, { ...filter }]);
     }
 
     const setImportedData = (storeImport: CustomFilterStoreImport) => {

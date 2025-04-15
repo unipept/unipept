@@ -87,11 +87,11 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
         return counter;
     }
 
-    const exportStore = (): string => {
-        return JSON.stringify({
+    const exportStore = (): GroupAnalysisStoreImport => {
+        return {
             groups: Array.from(_groups.value.values()).map(group => group.exportStore()),
             filters: customFilterStore.exportStore()
-        });
+        };
     }
 
     const setImportedData = (storeImport: GroupAnalysisStoreImport) => {

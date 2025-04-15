@@ -30,78 +30,84 @@
     </v-navigation-drawer>
 
     <v-container
-        v-if="selectedPage === ProjectDrawerItem.ANALYSIS"
         fluid
         class="h-100"
     >
-        <new-project
-            v-if="project.empty"
-            @group:add="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
-        />
+        <div v-if="selectedPage === ProjectDrawerItem.ANALYSIS">
+            <new-project
+                v-if="project.empty"
+                @group:add="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
+            />
 
-        <div
-            v-else-if="!selectedAnalysisFinished"
-            class="d-flex align-center justify-center h-100"
-        >
-            <analysis-summary-progress />
-        </div>
-
-        <div v-else>
             <div
-                v-if="selectedAnalysisFiltered"
-                class="position-sticky bg-white py-5 mt-n5 mx-n2"
-                style="width: inherit; z-index: 1000; top: 110px"
+                v-else-if="!selectedAnalysisFinished"
+                class="d-flex align-center justify-center h-100"
             >
-                <v-alert
-                    variant="tonal"
-                    type="info"
-                >
-                    <div
-                        class="d-flex justify-space-between align-center"
-                        style="width: inherit"
-                    >
-                        <span>
-                            <b>Filtered results:</b> these results are limited to the all peptides specific
-                            to <b>{{ selectedAnalysis.filteredOrganism!.name }} ({{ selectedAnalysis.filteredOrganism!.extra.rank }})</b>
-                        </span>
-                        <v-btn
-                            text="Reset filter"
-                            variant="outlined"
-                            size="small"
-                            @click="resetTaxonomicFilter"
-                        />
-                    </div>
-                </v-alert>
+                <analysis-summary-progress />
             </div>
 
-            <analysis-summary
-                v-if="selectedGroup"
-                :analysis="selectedAnalysis"
-                :group="selectedGroup"
-                @edit="manageSamplesDialogOpen = true"
-            />
+            <div v-else>
+                <div
+                    v-if="selectedAnalysisFiltered"
+                    class="position-sticky bg-white py-5 mt-n5 mx-n2"
+                    style="width: inherit; z-index: 1000; top: 110px"
+                >
+                    <v-alert
+                        variant="tonal"
+                        type="info"
+                    >
+                        <div
+                            class="d-flex justify-space-between align-center"
+                            style="width: inherit"
+                        >
+                            <span>
+                                <b>Filtered results:</b> these results are limited to the all peptides specific
+                                to <b>{{ selectedAnalysis.filteredOrganism!.name }} ({{ selectedAnalysis.filteredOrganism!.extra.rank }})</b>
+                            </span>
+                            <v-btn
+                                text="Reset filter"
+                                variant="outlined"
+                                size="small"
+                                @click="resetTaxonomicFilter"
+                            />
+                        </div>
+                    </v-alert>
+                </div>
 
-            <taxonomic-results
-                class="mt-5"
-                :analysis="selectedAnalysis"
-            />
+                <analysis-summary
+                    v-if="selectedGroup"
+                    :analysis="selectedAnalysis"
+                    :group="selectedGroup"
+                    @edit="manageSamplesDialogOpen = true"
+                />
 
-            <mpa-functional-results
-                class="mt-5"
-                :analysis="selectedAnalysis"
-            />
+                <taxonomic-results
+                    class="mt-5"
+                    :analysis="selectedAnalysis"
+                />
 
-            <manage-sample-group
-                v-if="selectedGroup"
-                v-model="manageSamplesDialogOpen"
-                :group="selectedGroup"
-                @sample:add="addSample"
-                @sample:update="updateSample"
-                @sample:remove="removeSample"
-                @group:update="updateGroup"
-                @group:remove="removeGroup"
-            />
+                <mpa-functional-results
+                    class="mt-5"
+                    :analysis="selectedAnalysis"
+                />
+
+                <manage-sample-group
+                    v-if="selectedGroup"
+                    v-model="manageSamplesDialogOpen"
+                    :group="selectedGroup"
+                    @sample:add="addSample"
+                    @sample:update="updateSample"
+                    @sample:remove="removeSample"
+                    @group:update="updateGroup"
+                    @group:remove="removeGroup"
+                />
+            </div>
         </div>
+
+        <project-export
+            v-else-if="selectedPage === ProjectDrawerItem.EXPORT"
+            :project="project"
+        />
     </v-container>
 </template>
 
@@ -120,6 +126,7 @@ import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
 import ProjectDrawer, {ProjectDrawerItem} from "@/components/project/ProjectDrawer.vue";
+import ProjectExport from "@/components/project/export/ProjectExport.vue";
 
 const { project } = defineProps<{
     project: GroupAnalysisStore;
