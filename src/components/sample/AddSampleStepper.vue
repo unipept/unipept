@@ -8,7 +8,7 @@
             <h3>Step {{ currentStep }}. {{ currentStepTitle }}</h3>
         </v-card-title>
         <v-card-text
-            style="padding-top: 0 !important;"
+            style="padding-top: 0 !important; overflow-y: auto;"
             class="flex-grow-1"
         >
             <v-window v-model="currentStep">
