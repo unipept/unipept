@@ -96,10 +96,10 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
 
     const setImportedData = (storeImport: GroupAnalysisStoreImport) => {
         clear();
+        useCustomFilterStoreImport(storeImport.filters);
         for (const group of storeImport.groups) {
             _groups.value.set(group.id, useMultiAnalysisStoreImport(group));
         }
-        useCustomFilterStoreImport(storeImport.filters);
     }
 
     return {

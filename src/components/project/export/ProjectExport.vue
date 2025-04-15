@@ -12,6 +12,24 @@
             </v-card-text>
         </v-unipept-card>
 
+        <v-alert
+            v-if="finishedAnalyses < amountOfSamples"
+            type="warning"
+            variant="tonal"
+            class="mb-6"
+            icon="mdi-alert-circle-outline"
+        >
+            <div class="d-flex justify-space-between align-center">
+                <span>
+                    <b>Warning:</b> Not all samples have been analyzed yet <b>({{ finishedAnalyses }} out of {{ amountOfSamples }} are finished)</b>.
+                    Exporting your data now may result in incomplete results.
+                    Unfinished analyses will be analysed upon importing the project. The latest version of UniProtKB will be used for
+                    the analysis, rather than the version used in this project.
+                </span>
+
+            </div>
+        </v-alert>
+
         <v-row class="mb-6" dense>
             <v-col cols="12" sm="3">
                 <v-unipept-card class="d-flex flex-row py-2 px-4 align-center">
@@ -71,26 +89,12 @@
         <v-row justify="center" class="mt-6">
             <v-btn
                 color="primary"
+                variant="tonal"
                 @click="exportProject"
                 prepend-icon="mdi-download"
-                text="Prepare Project Export (.zip)"
+                text="Download Project Export"
                 :loading="preparingExport"
             />
-
-            <v-snackbar
-                v-model="a"
-                color="primary"
-                timeout="-1"
-            >
-                Your export is ready to download!
-
-                <template v-slot:actions>
-                    <v-btn
-                        text="download"
-                        @click="snackbar = false"
-                    />
-                </template>
-            </v-snackbar>
         </v-row>
     </div>
 </template>
@@ -99,9 +103,8 @@
 import GroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {computed, ref} from "vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
-import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import {useWebWorkerFn} from "@vueuse/core";
 import useProjectExport from "@/components/project/export/useProjectExport";
+import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 
 const { formatNumber } = useNumberFormatter();
 
@@ -110,8 +113,6 @@ const { project } = defineProps<{
 }>();
 
 const preparingExport = ref(false);
-const exportedProject = ref<string | null>(null);
-const a = ref(true)
 
 const amountOfGroups = computed(() => project.groups.length);
 
@@ -158,6 +159,12 @@ const groups = computed(() => project.groups.map(group => {
     };
 }));
 
+const finishedAnalyses = computed(() => {
+    return project.groups.reduce((total, group) => {
+        return total + group.analyses.filter(analysis => analysis.status === AnalysisStatus.Finished).length;
+    }, 0);
+});
+
 const headers = [
     { title: '', value: 'expand', width: '32px' },
     { title: 'Group', value: 'name' },
@@ -171,7 +178,13 @@ const { process: processExport } = useProjectExport();
 async function exportProject() {
     preparingExport.value = true;
 
-    exportedProject.value = await processExport(project.exportStore());
+    const url = URL.createObjectURL(await processExport(project));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'project.unipept';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 
     preparingExport.value = false;
 }

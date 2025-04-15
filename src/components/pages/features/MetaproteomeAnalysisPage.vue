@@ -60,12 +60,16 @@
 import QuickAnalysisCard from "@/components/analysis/multi/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/analysis/multi/DemoAnalysisCard.vue";
 import {useRouter} from "vue-router";
-import useGroupAnalysisStore, {useGroupAnalysisStoreImport} from "@/store/new/GroupAnalysisStore";
+import useGroupAnalysisStore, {
+    GroupAnalysisStoreImport,
+    useGroupAnalysisStoreImport
+} from "@/store/new/GroupAnalysisStore";
 import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 import FileUpload from "@/components/filesystem/FileUpload.vue";
+import JSZip from "jszip";
 
 const router = useRouter();
 const groupStore = useGroupAnalysisStore();
@@ -87,9 +91,20 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
 const importProject = async () => {
     groupStore.clear();
 
-    const projectJson = await jsonFile.value.text();
+    const zipper = await JSZip.loadAsync(jsonFile.value);
 
-    useGroupAnalysisStoreImport(JSON.parse(projectJson));
+    const metadata = JSON.parse(await zipper.file("metadata.json")?.async("string"));
+
+    const buffers = zipper.folder("buffers");
+
+    for (const group of metadata.groups) {
+        for (const analysis of group.analyses) {
+            analysis.indexBuffer = await buffers.file(`${analysis.id}.index`)?.async("arraybuffer") || undefined;
+            analysis.dataBuffer = await buffers.file(`${analysis.id}.data`)?.async("arraybuffer") || undefined;
+        }
+    }
+
+    useGroupAnalysisStoreImport(metadata);
 
     await router.push({ name: "mpaResults" });
 

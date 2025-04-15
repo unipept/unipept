@@ -180,7 +180,7 @@ const useSingleAnalysisStore = (
     }
 
     const exportStore = (): SingleAnalysisStoreImport => {
-        const [ indexBuffer, dataBuffer ]: [ArrayBuffer, ArrayBuffer] = peptideToData.value?.getBuffers();
+        const [ indexBuffer, dataBuffer ] = peptideToData.value?.getBuffers() || [undefined, undefined];
         return {
             id: id.value,
             name: name.value,
@@ -190,31 +190,32 @@ const useSingleAnalysisStore = (
             taxonomicFilter: taxonomicFilter.value,
             functionalFilter: functionalFilter.value,
             lastAnalysed: lastAnalysed.value,
-
             databaseVersion: databaseVersion.value,
-            indexBuffer: Array.from(new Uint32Array(indexBuffer)),
-            dataBuffer: Array.from(new Uint32Array(dataBuffer)),
+
+            indexBuffer: indexBuffer,
+            dataBuffer: dataBuffer
 
             // TODO: also export peptonizerStore
-        };
+        }
     }
 
     const importStore = async () => {
-        await analyse(false);
+        await analyse(peptideToData.value === undefined);
         await updateTaxonomicFilter(taxonomicFilter.value);
     }
 
     const setImportedData = (storeImport: SingleAnalysisStoreImport) => {
+        status.value = AnalysisStatus.Pending;
+
         taxonomicFilter.value = storeImport.taxonomicFilter;
         functionalFilter.value = storeImport.functionalFilter;
         lastAnalysed.value = new Date(storeImport.lastAnalysed);
         databaseVersion.value = storeImport.databaseVersion;
 
-        peptideToData.value = new ShareableMap<string, PeptideData>(undefined, undefined, new PeptideDataSerializer());
-        peptideToData.value.setBuffers(
-            new Uint32Array(storeImport.indexBuffer).buffer,
-            new Uint32Array(storeImport.dataBuffer).buffer
-        );
+        if (storeImport.indexBuffer && storeImport.dataBuffer) {
+            peptideToData.value = new ShareableMap<string, PeptideData>(undefined, undefined, new PeptideDataSerializer());
+            peptideToData.value.setBuffers(storeImport.indexBuffer, storeImport.dataBuffer);
+        }
     }
 
     return {
@@ -272,8 +273,8 @@ export interface SingleAnalysisStoreImport {
     functionalFilter: number;
     lastAnalysed: Date;
     databaseVersion: string;
-    indexBuffer: number[];
-    dataBuffer: number[];
+    indexBuffer: ArrayBuffer;
+    dataBuffer: ArrayBuffer;
 }
 
 export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImport) => {
