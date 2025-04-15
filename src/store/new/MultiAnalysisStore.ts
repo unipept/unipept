@@ -1,6 +1,10 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
-import useSingleAnalysisStore, {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import useSingleAnalysisStore, {
+    importStoreFromJson,
+    SingleAnalysisStore, SingleAnalysisStoreImport,
+    useSingleAnalysisStoreImport
+} from "@/store/new/SingleAnalysisStore";
 import {v4 as uuidv4} from "uuid";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 
@@ -63,6 +67,21 @@ const useMultiAnalysisStore = (
         name.value = newName;
     }
 
+    const exportStore = (): MultiAnalysisStoreImport => {
+        return {
+            id: id.value,
+            name: name.value,
+            analyses: Array.from(_analyses.value.values()).map(analysis => analysis.exportStore())
+        };
+    }
+
+    const setImportedData = (storeImport: MultiAnalysisStoreImport) => {
+        storeImport.analyses.forEach((analysisImport: string) => {
+            const analysis = useSingleAnalysisStoreImport(analysisImport);
+            _analyses.value.set(analysis.id, analysis);
+        });
+    }
+
     return {
         id,
         name,
@@ -74,9 +93,23 @@ const useMultiAnalysisStore = (
         addAnalysis,
         removeAnalysis,
         clear,
-        updateName
+        updateName,
+        exportStore,
+        setImportedData
     };
 })();
+
+export interface MultiAnalysisStoreImport {
+    id: string;
+    name: string;
+    analyses: SingleAnalysisStoreImport[];
+}
+
+export const useMultiAnalysisStoreImport = (storeImport: MultiAnalysisStoreImport): MultiAnalysisStore => {
+    const store = useMultiAnalysisStore(storeImport.id, storeImport.name);
+    store.setImportedData(storeImport);
+    return store;
+}
 
 export type MultiAnalysisStore = ReturnType<typeof useMultiAnalysisStore>;
 

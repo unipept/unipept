@@ -5,6 +5,7 @@
                 <quick-analysis-card
                     @analyze="quickAnalyze"
                 />
+
                 <v-unipept-card class="mt-5">
                     <v-card-title>
                         <h2>Advanced analysis</h2>
@@ -21,6 +22,11 @@
                         />
                     </v-card-text>
                 </v-unipept-card>
+
+                <project-import
+                    class="mt-5"
+                    @imported="importProject"
+                />
             </v-col>
 
             <v-col cols="6">
@@ -50,11 +56,15 @@
 import QuickAnalysisCard from "@/components/analysis/multi/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/analysis/multi/DemoAnalysisCard.vue";
 import {useRouter} from "vue-router";
-import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import useGroupAnalysisStore, {
+    GroupAnalysisStoreImport,
+    useGroupAnalysisStoreImport
+} from "@/store/new/GroupAnalysisStore";
 import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import ProjectImport from "@/components/project/import/ProjectImport.vue";
 
 const router = useRouter();
 const groupStore = useGroupAnalysisStore();
@@ -68,6 +78,20 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     await router.push({ name: "mpaResults" });
     await startAnalysis();
+}
+
+const importProject = async (project: GroupAnalysisStoreImport) => {
+    groupStore.clear();
+
+    useGroupAnalysisStoreImport(project);
+
+    await router.push({ name: "mpaResults" });
+
+    for (const group of groupStore.groups) {
+        for (const analysis of group.analyses) {
+            await analysis.importStore();
+        }
+    }
 }
 
 const advancedAnalyze = () => {
