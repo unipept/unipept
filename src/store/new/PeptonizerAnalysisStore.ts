@@ -1,4 +1,4 @@
-import {ref, Ref} from "vue";
+import {ref, Ref, toRaw} from "vue";
 import {defineStore} from "pinia";
 import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
@@ -7,6 +7,7 @@ import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcess
 import useOntologyStore from "@/store/new/OntologyStore";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import {Filter} from "@/store/new/CustomFilterStore";
 
 export enum PeptonizerStatus {
     Pending,
@@ -166,6 +167,26 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         status.value = PeptonizerStatus.Pending;
     }
 
+    const exportStore = (): PeptonizerStoreImport | undefined => {
+        if (taxaIdsToConfidence.value && taxaNamesToConfidence.value) {
+            return {
+                taxaIdsToConfidence: Array.from(toRaw(taxaIdsToConfidence.value).entries()),
+                taxaNamesToConfidence: Array.from(toRaw(taxaNamesToConfidence.value).entries()),
+                status: status.value
+            }
+        }
+
+        return undefined;
+    }
+
+    const setImportedData = (storeImport: PeptonizerStoreImport) => {
+        taxaIdsToConfidence.value = new Map<number, number>(storeImport.taxaIdsToConfidence);
+        taxaNamesToConfidence.value = new Map<string, number>(storeImport.taxaNamesToConfidence);
+        status.value = PeptonizerStatus.Finished;
+
+        console.log(storeImport);
+    }
+
     return {
         taxaNamesToConfidence,
         taxaIdsToConfidence,
@@ -179,9 +200,17 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         peptonizerError,
 
         runPeptonizer,
-        cancelPeptonizer
+        cancelPeptonizer,
+        exportStore,
+        setImportedData
     }
 })();
+
+export type PeptonizerStoreImport = {
+    taxaIdsToConfidence: [number, number][];
+    taxaNamesToConfidence: [string, number][];
+    status: PeptonizerStatus;
+}
 
 export type PeptonizerStore = ReturnType<typeof usePeptonizerStore>;
 

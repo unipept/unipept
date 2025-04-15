@@ -9,7 +9,7 @@ import useInterproProcessor from "@/composables/processing/functional/useInterpr
 import useOntologyStore from "@/store/new/OntologyStore";
 import useTaxonomicProcessor from "@/composables/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTreeProcessor";
-import usePeptonizerStore from "@/store/new/PeptonizerAnalysisStore";
+import usePeptonizerStore, {PeptonizerStoreImport} from "@/store/new/PeptonizerAnalysisStore";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
 import useCustomFilterStore from "@/store/new/CustomFilterStore";
@@ -193,9 +193,9 @@ const useSingleAnalysisStore = (
             databaseVersion: databaseVersion.value,
 
             indexBuffer: indexBuffer,
-            dataBuffer: dataBuffer
+            dataBuffer: dataBuffer,
 
-            // TODO: also export peptonizerStore
+            peptonizer: peptonizerStore.exportStore()
         }
     }
 
@@ -215,6 +215,10 @@ const useSingleAnalysisStore = (
         if (storeImport.indexBuffer && storeImport.dataBuffer) {
             peptideToData.value = new ShareableMap<string, PeptideData>(undefined, undefined, new PeptideDataSerializer());
             peptideToData.value.setBuffers(storeImport.indexBuffer, storeImport.dataBuffer);
+        }
+
+        if (storeImport.peptonizer) {
+            peptonizerStore.setImportedData(storeImport.peptonizer);
         }
     }
 
@@ -273,8 +277,9 @@ export interface SingleAnalysisStoreImport {
     functionalFilter: number;
     lastAnalysed: Date;
     databaseVersion: string;
-    indexBuffer: ArrayBuffer;
-    dataBuffer: ArrayBuffer;
+    indexBuffer: ArrayBuffer | undefined;
+    dataBuffer: ArrayBuffer | undefined;
+    peptonizer: PeptonizerStoreImport | undefined;
 }
 
 export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImport) => {

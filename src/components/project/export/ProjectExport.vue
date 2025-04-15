@@ -13,7 +13,7 @@
         </v-unipept-card>
 
         <v-alert
-            v-if="finishedAnalyses < amountOfSamples"
+            v-if="finishedAnalyses < amountOfSamples || peptonizerJobs > 0"
             type="warning"
             variant="tonal"
             class="mb-6"
@@ -21,7 +21,8 @@
         >
             <div class="d-flex justify-space-between align-center">
                 <span>
-                    <b>Warning:</b> Not all samples have been analyzed yet <b>({{ finishedAnalyses }} out of {{ amountOfSamples }} are finished)</b>.
+                    <b>Warning:</b> Not all samples have been analyzed yet <b>({{ finishedAnalyses }} out of {{ amountOfSamples }} are finished)</b> OR
+                    some peptonizer jobs are still running <b>({{ peptonizerJobs }} {{ peptonizerJobs === 1 ? 'job' : 'jobs' }} running)</b>.
                     Exporting your data now may result in incomplete results.
                     Unfinished analyses will be analysed upon importing the project. The latest version of UniProtKB will be used for
                     the analysis, rather than the version used in this project.
@@ -105,6 +106,7 @@ import {computed, ref} from "vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import useProjectExport from "@/components/project/export/useProjectExport";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {PeptonizerStatus} from "@/store/new/PeptonizerAnalysisStore";
 
 const { formatNumber } = useNumberFormatter();
 
@@ -162,6 +164,15 @@ const groups = computed(() => project.groups.map(group => {
 const finishedAnalyses = computed(() => {
     return project.groups.reduce((total, group) => {
         return total + group.analyses.filter(analysis => analysis.status === AnalysisStatus.Finished).length;
+    }, 0);
+});
+
+const peptonizerJobs = computed(() => {
+    return project.groups.reduce((total, group) => {
+        return total + group.analyses.filter(analysis =>
+            analysis.peptonizerStore.status === PeptonizerStatus.Pending ||
+            analysis.peptonizerStore.status === PeptonizerStatus.Running
+        ).length;
     }, 0);
 });
 
