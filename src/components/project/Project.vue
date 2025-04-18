@@ -4,7 +4,7 @@
     />
 
     <v-navigation-drawer
-        v-if="selectedPage === ProjectDrawerItem.ANALYSIS"
+        v-if="selectedPage === ProjectDrawerItem.ANALYSIS && project.groups.length > 0"
         permanent
     >
         <filesystem

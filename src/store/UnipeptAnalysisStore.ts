@@ -8,6 +8,7 @@ import useSampleDataStore from "@/store/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {computed, ref} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
+import useCustomFilterStore from "@/store/CustomFilterStore";
 
 const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const store = localforage.createInstance({
@@ -20,6 +21,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const { process: blobToStore } = useProjectImport();
 
     const project = useProjectAnalysisStore();
+    const customDatabases = useCustomFilterStore();
 
     const isDemoMode = ref(false);
 
@@ -70,7 +72,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         project.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     }
 
-    watchDebounced(project, async () => {
+    watchDebounced([project, customDatabases], async () => {
         if (!isDemoMode.value) {
             await store.setItem('project', storeToBlob(project));
         }
