@@ -30,7 +30,14 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     });
 
     const getProjects = async () => {
-        return await store.keys();
+        const keys = await store.keys();
+        return await Promise.all(keys.map(async (key) => {
+            const value = await store.getItem(key);
+            return {
+                name: key,
+                lastAccessed: new Date(value.lastAccessed)
+            };
+        }));
     }
 
     const loadNewProject = async (projectName: string) => {
@@ -45,7 +52,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         const blob = await store.getItem(projectName);
         if (blob !== null) {
             project.clear();
-            project.setImportedData(await blobToStore(blob));
+            project.setImportedData(await blobToStore(blob.project));
         }
     }
 
@@ -86,8 +93,10 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
     watchDebounced([ project, customDatabases ], async () => {
         if (!isDemoMode.value) {
-            console.log(_projectName.value);
-            await store.setItem(_projectName.value, storeToBlob(project));
+            await store.setItem(_projectName.value, {
+                lastAccessed: Date.now(),
+                project: await storeToBlob(project)
+            });
         }
     }, { deep: true, debounce: 1000, maxWait: 1000 });
 

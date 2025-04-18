@@ -20,20 +20,20 @@
                     v-for="project in visibleProjects"
                     :key="project"
                     class="project-card mb-1"
-                    @click="openProject(project)"
+                    @click="openProject(project.name)"
                     variant="flat"
                     density="compact"
                 >
                     <v-card-text class="d-flex align-center gap-2">
                         <v-icon size="20" class="me-3">mdi-folder-outline</v-icon>
-                        <span>{{ project }}</span>
+                        <span>{{ project.name }}</span>
                         <v-spacer />
 
                         <v-icon
                             class="me-2"
                             color="error"
                             icon="mdi-delete"
-                            @click.stop="deleteProject(project)"
+                            @click.stop="deleteProject(project.name)"
                         />
 
                         <v-tooltip location="top">
@@ -44,7 +44,7 @@
                                 />
                             </template>
                             <span>
-                                Last opened on XXX
+                                Last opened on {{ project.lastAccessed.toLocaleDateString() }}
                             </span>
                         </v-tooltip>
                     </v-card-text>
@@ -96,7 +96,7 @@ import {useElementBounding} from "@vueuse/core";
 
 const props = defineProps<{
     height: number
-    projects: string[]
+    projects: { name: string, lastAccessed: Date }[]
 }>();
 
 const emits = defineEmits<{
@@ -111,7 +111,12 @@ const visibleCount = ref(5);
 const deleteDialogOpen = ref(false);
 const projectToDelete = ref<string>("");
 
-const visibleProjects = computed(() => props.projects.slice(0, visibleCount.value))
+const sortedProjects = computed(() => {
+    return props.projects.sort((a, b) => {
+        return b.lastAccessed.getTime() - a.lastAccessed.getTime();
+    });
+})
+const visibleProjects = computed(() => sortedProjects.value.slice(0, visibleCount.value))
 const hasMore = computed(() => visibleCount.value < props.projects.length)
 
 const showMore = () => {
