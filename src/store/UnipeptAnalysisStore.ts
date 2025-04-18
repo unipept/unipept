@@ -1,12 +1,12 @@
 import {defineStore} from "pinia";
 import useProjectAnalysisStore, {useProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
-import {watchDebounced} from "@vueuse/core";
+import {computedAsync, useStorageAsync, watchDebounced} from "@vueuse/core";
 import localforage from "localforage";
 import useProjectExport from "@/components/project/export/useProjectExport";
 import useProjectImport from "@/components/project/import/useProjectImport";
 import useSampleDataStore from "@/store/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
-import {computed, ref} from "vue";
+import {computed, ref, shallowRef} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 
@@ -23,16 +23,24 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const project = useProjectAnalysisStore();
     const customDatabases = useCustomFilterStore();
 
-    const isDemoMode = ref(false);
+    const _projectName = ref<string>("");
 
-    const loadNewProject = async () => {
-        isDemoMode.value = false;
+    const isDemoMode = computed(() => {
+        return _projectName.value === "";
+    });
+
+    const getProjects = async () => {
+        return await store.keys();
+    }
+
+    const loadNewProject = async (projectName: string) => {
+        _projectName.value = projectName;
 
         project.clear();
     }
 
     const loadProjectFromStorage = async (projectName: string) => {
-        isDemoMode.value = false;
+        _projectName.value = projectName;
 
         const blob = await store.getItem(projectName);
         if (blob !== null) {
@@ -41,15 +49,15 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         }
     }
 
-    const loadProjectFromFile = async (file: File) => {
-        isDemoMode.value = false;
+    const loadProjectFromFile = async (projectName: string, file: File) => {
+        _projectName.value = projectName;
 
         project.clear();
         project.setImportedData(await blobToStore(file));
     }
 
     const loadProjectFromSample = async (sample: SampleData) => {
-        isDemoMode.value = true;
+        _projectName.value = "";
 
         project.clear();
 
@@ -65,28 +73,35 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     const loadProjectFromPeptides = async (rawPeptides: string[], config: AnalysisConfig) => {
-        isDemoMode.value = true;
+        _projectName.value = "";
 
         project.clear();
         const groupId = project.addGroup("Quick analysis");
         project.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     }
 
-    watchDebounced([project, customDatabases], async () => {
+    const deleteProject = async (projectName: string) => {
+        await store.removeItem(projectName);
+    }
+
+    watchDebounced([ project, customDatabases ], async () => {
         if (!isDemoMode.value) {
-            await store.setItem('project', storeToBlob(project));
+            console.log(_projectName.value);
+            await store.setItem(_projectName.value, storeToBlob(project));
         }
-    }, { deep: true, debounce: 3000, maxWait: 3000 });
+    }, { deep: true, debounce: 1000, maxWait: 1000 });
 
     return {
         project,
         isDemoMode,
 
+        getProjects,
         loadNewProject,
         loadProjectFromStorage,
         loadProjectFromFile,
         loadProjectFromSample,
-        loadProjectFromPeptides
+        loadProjectFromPeptides,
+        deleteProject
     }
 });
 

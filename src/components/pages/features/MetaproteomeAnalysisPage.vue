@@ -18,12 +18,17 @@
             <v-col cols="6">
                 <new-analysis-card
                     ref="topCard"
-                    @click="advancedAnalyze"
+                    :projects="projects"
+                    @new="advancedAnalyze"
+                    @open="importProject"
                 />
 
                 <recent-analysis-card
                     class="mt-5"
                     :height="bottomCardHeight"
+                    :projects="projects"
+                    @open="loadFromIndexedDB"
+                    @delete="deleteFromIndexedDB"
                 />
             </v-col>
         </v-row>
@@ -38,7 +43,6 @@ import {computed, onMounted, Ref, ref, useTemplateRef, watch} from "vue"
 import useSampleDataStore from "@/store/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
-import ProjectImport from "@/components/project/import/ProjectImport.vue";
 import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import NewAnalysisCard from "@/components/analysis/multi/NewAnalysisCard.vue";
 import RecentAnalysisCard from "@/components/analysis/multi/RecentAnalysisCard.vue";
@@ -48,11 +52,14 @@ const router = useRouter();
 
 const {
     project,
+
+    getProjects,
     loadNewProject,
     loadProjectFromStorage,
     loadProjectFromFile,
     loadProjectFromSample,
-    loadProjectFromPeptides
+    loadProjectFromPeptides,
+    deleteProject
 } = useUnipeptAnalysisStore();
 const sampleDataStore = useSampleDataStore();
 
@@ -63,6 +70,7 @@ const { height: topCardHeight } = useElementBounding(topCard);
 const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.value - 20);
 
 const loadingSampleData: Ref<boolean> = ref(true);
+const projects = ref<string[]>([]);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     await loadProjectFromPeptides(rawPeptides, config);
@@ -70,20 +78,25 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     await startAnalysis();
 }
 
-const importProject = async (file: File) => {
-    await loadProjectFromFile(file)
+const importProject = async (projectName: string, file: File) => {
+    await loadProjectFromFile(projectName, file)
     await router.push({ name: "mpaResults" });
     await startImport();
 }
 
-const loadFromIndexedDB = async () => {
-    await loadProjectFromStorage("project");
+const loadFromIndexedDB = async (projectName: string) => {
+    await loadProjectFromStorage(projectName);
     await router.push({ name: "mpaResults" });
     await startImport();
 }
 
-const advancedAnalyze = () => {
-    loadNewProject();
+const deleteFromIndexedDB = async (projectName: string) => {
+    await deleteProject(projectName);
+    projects.value = await getProjects();
+}
+
+const advancedAnalyze = (projectName: string) => {
+    loadNewProject(projectName);
     router.push({ name: "mpaResults" });
 }
 
@@ -109,13 +122,8 @@ const startImport = async () => {
     }
 }
 
-watch(bottomCardHeight, () => {
-    console.log(bottomCardHeight.value);
-    console.log(firstColumnHeight.value);
-    console.log(topCardHeight.value);
-})
-
 onMounted(async () => {
+    projects.value = await getProjects();
     loadingSampleData.value = true;
     await sampleDataStore.loadSampleData();
     loadingSampleData.value = false;

@@ -1,86 +1,141 @@
 <template>
-    <v-card
-        class="overflow-hidden"
-        color="transparent"
-        variant="flat"
-        :height="height"
-    >
-        <h2 ref="header" class="mb-3 font-weight-light">
-            Recent projects
-        </h2>
-
+    <div>
         <v-card
-            class="overflow-scroll"
+            class="overflow-hidden"
             color="transparent"
             variant="flat"
-            :height="height - headerHeight - 15"
+            :height="height"
         >
-            <v-card
-                v-for="(project, index) in visibleProjects"
-                :key="project.id"
-                class="project-card mb-1"
-                @click="openProject(project)"
-                variant="flat"
-                density="compact"
-            >
-                <v-card-text class="d-flex align-center gap-2">
-                    <v-icon size="20" class="me-3">mdi-folder-outline</v-icon>
-                    <span>{{ project.name }}</span>
-                </v-card-text>
-            </v-card>
+            <h2 ref="header" class="mb-3 font-weight-light">
+                Recent projects
+            </h2>
 
-            <v-btn v-if="hasMore" variant="text" color="primary" @click="showMore">
-                Show more
-            </v-btn>
+            <v-card
+                class="overflow-scroll"
+                color="transparent"
+                variant="flat"
+                :height="height - headerHeight - 15"
+            >
+                <v-card
+                    v-for="project in visibleProjects"
+                    :key="project"
+                    class="project-card mb-1"
+                    @click="openProject(project)"
+                    variant="flat"
+                    density="compact"
+                >
+                    <v-card-text class="d-flex align-center gap-2">
+                        <v-icon size="20" class="me-3">mdi-folder-outline</v-icon>
+                        <span>{{ project }}</span>
+                        <v-spacer />
+
+                        <v-icon
+                            class="me-2"
+                            color="error"
+                            icon="mdi-delete"
+                            @click.stop="deleteProject(project)"
+                        />
+
+                        <v-tooltip location="top">
+                            <template #activator="{ props }">
+                                <v-icon
+                                    v-bind="props"
+                                    icon="mdi-information"
+                                />
+                            </template>
+                            <span>
+                                Last opened on XXX
+                            </span>
+                        </v-tooltip>
+                    </v-card-text>
+                </v-card>
+
+                <v-btn v-if="hasMore" variant="text" color="primary" @click="showMore">
+                    Show more
+                </v-btn>
+            </v-card>
         </v-card>
-    </v-card>
+
+        <v-dialog
+            v-model="deleteDialogOpen"
+            max-width="600"
+            persistent
+        >
+            <v-unipept-card>
+                <v-card-title class="text-h6 font-weight-bold">
+                    Delete project
+                </v-card-title>
+
+                <v-card-text class="pb-0">
+                    <p>
+                        Are you sure you want to delete the project <strong>{{ projectToDelete }}</strong>?
+                        This action is irreversible.
+                    </p>
+
+                    <v-alert type="warning" class="mt-4">
+                        Deleting this project will remove all associated data and results.
+                    </v-alert>
+                </v-card-text>
+
+                <v-card-actions class="justify-end">
+                    <v-btn variant="text" @click="cancel">Cancel</v-btn>
+                    <v-btn
+                        color="error"
+                        text="Delete"
+                        @click="confirmDeleteProject"
+                    />
+                </v-card-actions>
+            </v-unipept-card>
+        </v-dialog>
+    </div>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, useTemplateRef} from 'vue'
+import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
 import {useElementBounding} from "@vueuse/core";
 
 const props = defineProps<{
     height: number
-}>()
+    projects: string[]
+}>();
 
-const projects = [
-    { id: 1, name: 'Genome Analysis' },
-    { id: 2, name: 'Protein Clustering' },
-    { id: 3, name: 'Pathway Mapping' },
-    { id: 4, name: 'Microbiome Study' },
-    { id: 5, name: 'Cancer Genomics' },
-    { id: 6, name: 'Peptide DB Search' },
-    { id: 7, name: 'Metabolomics Explorer' },
-    { id: 8, name: 'Antibiotic Resistance' },
-    { id: 9, name: 'Soil Microbiome Survey' },
-    { id: 9, name: 'Soil Microbiome Survey' },
-    { id: 9, name: 'Soil Microbiome Survey' },
-    { id: 9, name: 'Soil Microbiome Survey' },
-    { id: 9, name: 'Soil Microbiome Survey' },
-    { id: 9, name: 'Soil Microbiome Survey' },
-]
+const emits = defineEmits<{
+    (e: 'open', project: string): void
+    (e: 'delete', project: string): void
+}>();
 
 const header = useTemplateRef('header');
 const { height: headerHeight } = useElementBounding(header);
 
-const visibleCount = ref(5)
-const step = 5
+const visibleCount = ref(5);
+const deleteDialogOpen = ref(false);
+const projectToDelete = ref<string>("");
 
-const visibleProjects = computed(() => projects.slice(0, visibleCount.value))
-const hasMore = computed(() => visibleCount.value < projects.length)
+const visibleProjects = computed(() => props.projects.slice(0, visibleCount.value))
+const hasMore = computed(() => visibleCount.value < props.projects.length)
 
-function showMore() {
-    visibleCount.value = Math.min(visibleCount.value + step, projects.length)
+const showMore = () => {
+    visibleCount.value = Math.min(visibleCount.value + 5, props.projects.length)
 }
 
-function openProject(project) {
-    console.log('Opening project:', project)
+const openProject = (projectName: string) => {
+    emits('open', projectName)
 }
 
-watch(() => props.height, (newHeight) => {
-    console.log('Height changed:', newHeight)
-})
+const cancel = () => {
+    deleteDialogOpen.value = false;
+    projectToDelete.value = "";
+}
+
+const deleteProject = (projectName: string) => {
+    projectToDelete.value = projectName;
+    deleteDialogOpen.value = true;
+}
+
+const confirmDeleteProject = () => {
+    emits('delete', projectToDelete.value);
+    deleteDialogOpen.value = false;
+}
 </script>
 
 <style scoped>
