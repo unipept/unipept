@@ -33,7 +33,7 @@
                                     persistent-hint
                                     :rules="[
                                         v => !!v || 'Provide a valid name for your database',
-                                        v => databaseName === v || !customFilterStore.hasFilter(v) || 'A filter with this name already exists'
+                                        v => (!customFilterStore.hasFilter(v) || name === v) || 'A filter with this name already exists'
                                     ]"
                                 />
                             </div>

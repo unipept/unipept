@@ -192,12 +192,12 @@ const editDatabase = (name: string) => {
 };
 
 const confirmEditDatabase = async (name: string, filter: Filter) => {
-    customFilterStore.updateFilter(databaseToManipulate.value, name, filter);
+    emits('database:update', databaseToManipulate.value, name, filter);
+
     const taxonCount = await computeTaxonCount(filter);
     const proteinCount = await computeProteinCount(filter);
     taxonCounts.value.set(name, `~ ${formatNumber(taxonCount)}`);
     proteinCounts.value.set(name, `~ ${formatNumber(proteinCount)}`);
-    emits('database:update', databaseToManipulate.value, name, filter);
 };
 
 const deleteDatabase = (name: string) => {
@@ -206,11 +206,11 @@ const deleteDatabase = (name: string) => {
 };
 
 const confirmDeleteDatabase = (name: string) => {
-    customFilterStore.removeFilter(name);
+    emits('database:delete', name);
+
     taxonCounts.value.delete(name);
     proteinCounts.value.delete(name);
     databaseToManipulate.value = '';
-    emits('database:delete', name);
 };
 
 const duplicateDatabase = (name: string) => {

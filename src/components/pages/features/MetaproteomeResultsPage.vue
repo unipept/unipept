@@ -16,9 +16,10 @@
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import Project from "@/components/project/Project.vue";
-import {Filter} from "@/store/new/CustomFilterStore";
+import useCustomFilterStore, {Filter} from "@/store/new/CustomFilterStore";
 
 const groupStore = useGroupAnalysisStore();
+const customFilterStore = useCustomFilterStore();
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
     const analysisId = groupStore.getGroup(groupId).addAnalysis(
@@ -55,6 +56,8 @@ const updateGroup = (groupId: string, updatedName: string) => {
 }
 
 const updateDatabase = async (name: string, newName: string, newFilter: Filter) => {
+    customFilterStore.updateFilter(name, newName, newFilter);
+
     const reanalyse = [];
     for (const group of groupStore.groups) {
         for (const analysis of group.analyses) {
@@ -75,6 +78,8 @@ const updateDatabase = async (name: string, newName: string, newFilter: Filter) 
 }
 
 const deleteDatabase = async (name: string) => {
+    customFilterStore.removeFilter(name);
+
     const reanalyse = [];
     for (const group of groupStore.groups) {
         for (const analysis of group.analyses) {
