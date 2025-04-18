@@ -183,8 +183,6 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         taxaIdsToConfidence.value = new Map<number, number>(storeImport.taxaIdsToConfidence);
         taxaNamesToConfidence.value = new Map<string, number>(storeImport.taxaNamesToConfidence);
         status.value = PeptonizerStatus.Finished;
-
-        console.log(storeImport);
     }
 
     return {

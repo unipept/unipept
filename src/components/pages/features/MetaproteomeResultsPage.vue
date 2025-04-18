@@ -7,6 +7,8 @@
         @group:add="createGroup"
         @group:update="updateGroup"
         @group:remove="removeGroup"
+        @database:update="updateDatabase"
+        @database:delete="deleteDatabase"
     />
 </template>
 
@@ -14,6 +16,7 @@
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import Project from "@/components/project/Project.vue";
+import {Filter} from "@/store/new/CustomFilterStore";
 
 const groupStore = useGroupAnalysisStore();
 
@@ -49,6 +52,46 @@ const removeGroup = groupStore.removeGroup;
 
 const updateGroup = (groupId: string, updatedName: string) => {
     groupStore.getGroup(groupId)?.updateName(updatedName);
+}
+
+const updateDatabase = async (name: string, newName: string, newFilter: Filter) => {
+    const reanalyse = [];
+    for (const group of groupStore.groups) {
+        for (const analysis of group.analyses) {
+            if (analysis.config.database === name) {
+                analysis.updateConfig({
+                    ...analysis.config,
+                    database: newName,
+                });
+                analysis.status = AnalysisStatus.Pending;
+                reanalyse.push(analysis);
+            }
+        }
+    }
+
+    for (const analysis of reanalyse) {
+        await analysis.analyse();
+    }
+}
+
+const deleteDatabase = async (name: string) => {
+    const reanalyse = [];
+    for (const group of groupStore.groups) {
+        for (const analysis of group.analyses) {
+            if (analysis.config.database === name) {
+                analysis.updateConfig({
+                    ...analysis.config,
+                    database: "UniProtKB",
+                });
+                analysis.status = AnalysisStatus.Pending;
+                reanalyse.push(analysis);
+            }
+        }
+    }
+
+    for (const analysis of reanalyse) {
+        await analysis.analyse();
+    }
 }
 </script>
 
