@@ -56,18 +56,18 @@
 import QuickAnalysisCard from "@/components/analysis/multi/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/analysis/multi/DemoAnalysisCard.vue";
 import {useRouter} from "vue-router";
-import useGroupAnalysisStore, {
-    GroupAnalysisStoreImport,
-    useGroupAnalysisStoreImport
-} from "@/store/new/GroupAnalysisStore";
+import useProjectAnalysisStore, {
+    ProjectAnalysisStoreImport,
+    useProjectAnalysisStoreImport
+} from "@/store/ProjectAnalysisStore";
 import {onMounted, Ref, ref} from "vue"
-import useSampleDataStore from "@/store/new/SampleDataStore";
+import useSampleDataStore from "@/store/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import {AnalysisConfig} from "@/store/AnalysisConfig";
 import ProjectImport from "@/components/project/import/ProjectImport.vue";
 
 const router = useRouter();
-const groupStore = useGroupAnalysisStore();
+const groupStore = useProjectAnalysisStore();
 const sampleDataStore = useSampleDataStore();
 
 const loadingSampleData: Ref<boolean> = ref(true);
@@ -80,10 +80,10 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     await startAnalysis();
 }
 
-const importProject = async (project: GroupAnalysisStoreImport) => {
+const importProject = async (project: ProjectAnalysisStoreImport) => {
     groupStore.clear();
 
-    useGroupAnalysisStoreImport(project);
+    useProjectAnalysisStoreImport(project);
 
     await router.push({ name: "mpaResults" });
 

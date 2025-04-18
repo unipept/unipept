@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { DEFAULT_NEW_GROUP_NAME } from "@/store/new/GroupAnalysisStore";
+import { DEFAULT_NEW_GROUP_NAME } from "@/store/ProjectAnalysisStore";
 
 const emits = defineEmits<{
     (e: 'group:add', name: string): void;

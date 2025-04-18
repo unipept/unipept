@@ -125,19 +125,19 @@ import AnalysisSummary from "@/components/analysis/multi/AnalysisSummary.vue";
 import TaxonomicResults from "@/components/results/taxonomic/TaxonomicResults.vue";
 import {computed, ComputedRef, onMounted, Ref, ref, watch} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import {DEFAULT_NEW_GROUP_NAME, GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
+import {DEFAULT_NEW_GROUP_NAME, ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 import NewProject from "@/components/project/NewProject.vue";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
 import ProjectDrawer, {ProjectDrawerItem} from "@/components/project/ProjectDrawer.vue";
 import ProjectExport from "@/components/project/export/ProjectExport.vue";
 import DatabaseOverview from "@/components/database/DatabaseOverview.vue";
-import {Filter} from "@/store/new/CustomFilterStore";
+import {Filter} from "@/store/CustomFilterStore";
 
 const { project } = defineProps<{
-    project: GroupAnalysisStore;
+    project: ProjectAnalysisStore;
 }>();
 
 const emits = defineEmits<{
@@ -155,7 +155,7 @@ const selectedPage = ref<ProjectDrawerItem>(ProjectDrawerItem.ANALYSIS);
 
 const manageSamplesDialogOpen = ref(false);
 const selectedAnalyses: Ref = ref<SingleAnalysisStore[]>([]);
-const selectedGroup = ref<MultiAnalysisStore | undefined>();
+const selectedGroup = ref<GroupAnalysisStore | undefined>();
 
 const selectedAnalysis: ComputedRef = computed(() => selectedAnalyses.value?.[0]);
 

@@ -1,8 +1,8 @@
-import {GroupAnalysisStoreImport} from "@/store/new/GroupAnalysisStore";
+import {ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
 import JSZip from "jszip";
 
 export default function useProjectImport() {
-    const process = async (file: File): Promise<GroupAnalysisStoreImport> => {
+    const process = async (file: File): Promise<ProjectAnalysisStoreImport> => {
         const zipper = await JSZip.loadAsync(file);
 
         const metadata = JSON.parse(await zipper.file("metadata.json")?.async("string"));

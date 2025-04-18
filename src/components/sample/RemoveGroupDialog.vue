@@ -32,12 +32,12 @@
 </template>
 
 <script setup lang="ts">
-import { MultiAnalysisStore } from "@/store/new/MultiAnalysisStore";
+import { GroupAnalysisStore } from "@/store/GroupAnalysisStore";
 
 const dialogOpen = defineModel<boolean>();
 
 defineProps<{
-    group: MultiAnalysisStore;
+    group: GroupAnalysisStore;
 }>();
 
 const emits = defineEmits<{

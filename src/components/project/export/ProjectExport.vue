@@ -101,12 +101,12 @@
 </template>
 
 <script setup lang="ts">
-import GroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import GroupAnalysisStore from "@/store/ProjectAnalysisStore";
 import {computed, ref} from "vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import useProjectExport from "@/components/project/export/useProjectExport";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import {PeptonizerStatus} from "@/store/new/PeptonizerAnalysisStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
 
 const { formatNumber } = useNumberFormatter();
 

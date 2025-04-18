@@ -1,7 +1,7 @@
 import {shallowRef} from "vue";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import CountTable from "@/logic/processors/CountTable";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 
 export default function useNcbiTreeProcessor() {
     const { getNcbiDefinition } = useOntologyStore();

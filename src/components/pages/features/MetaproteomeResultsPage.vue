@@ -13,12 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import Project from "@/components/project/Project.vue";
-import useCustomFilterStore, {Filter} from "@/store/new/CustomFilterStore";
+import useCustomFilterStore, {Filter} from "@/store/CustomFilterStore";
 
-const groupStore = useGroupAnalysisStore();
+const groupStore = useProjectAnalysisStore();
 const customFilterStore = useCustomFilterStore();
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
@@ -101,8 +101,8 @@ const deleteDatabase = async (name: string) => {
 </script>
 
 <script lang="ts">
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {AnalysisConfig} from "@/store/AnalysisConfig";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
 
 export interface AnalysisGroup {
     name: string;

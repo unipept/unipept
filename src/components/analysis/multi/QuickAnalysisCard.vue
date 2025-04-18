@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import {AnalysisConfig} from "@/store/AnalysisConfig";
 
 const emits = defineEmits<{
     (e: "analyze", rawPeptides: string, config: AnalysisConfig): void;

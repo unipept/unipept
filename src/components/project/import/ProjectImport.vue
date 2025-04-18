@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import FileUpload from "@/components/filesystem/FileUpload.vue";
-import {GroupAnalysisStoreImport} from "@/store/new/GroupAnalysisStore";
+import {ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
 import {ref, Ref} from "vue";
 import useProjectImport from "@/components/project/import/useProjectImport";
 
@@ -30,7 +30,7 @@ const projectImport = useProjectImport();
 const importFile: Ref<File | null> = ref(null);
 
 const emits = defineEmits<{
-    (e: "imported", project: GroupAnalysisStoreImport): void;
+    (e: "imported", project: ProjectAnalysisStoreImport): void;
 }>();
 
 const importProject = async () => {

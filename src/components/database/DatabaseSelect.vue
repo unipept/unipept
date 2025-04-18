@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
 import {computed, ref} from "vue";
-import useCustomFilterStore from "@/store/new/CustomFilterStore";
+import useCustomFilterStore from "@/store/CustomFilterStore";
 
 const customFilterStore = useCustomFilterStore();
 
