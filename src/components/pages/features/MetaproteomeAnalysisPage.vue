@@ -2,57 +2,28 @@
     <v-container>
         <v-row>
             <v-col cols="6">
-                <quick-analysis-card
-                    @analyze="quickAnalyze"
-                />
+                <div ref="firstColumn">
+                    <quick-analysis-card
+                        @analyze="quickAnalyze"
+                    />
 
-                <v-unipept-card class="mt-5">
-                    <v-card-title>
-                        <h2>Advanced analysis</h2>
-                    </v-card-title>
-                    <v-card-text>
-                        <p>
-                            Create a new project and analyze multiple samples or groups.
-                        </p>
-                        <v-btn
-                            class="my-3 float-right"
-                            variant="tonal"
-                            text="Create new project"
-                            @click="advancedAnalyze"
-                        />
-                    </v-card-text>
-                </v-unipept-card>
-
-                <project-import
-                    class="mt-5"
-                    @imported="importProject"
-                />
-
-                <v-btn
-                    class="my-3 float-right"
-                    variant="tonal"
-                    text="load from indexeddb"
-                    @click="loadFromIndexedDB"
-                />
+                    <demo-analysis-card
+                        class="mt-5"
+                        :samples="sampleDataStore.samples"
+                        @select="demoAnalyze"
+                    />
+                </div>
             </v-col>
 
             <v-col cols="6">
-                <div
-                    v-if="loadingSampleData"
-                    class="d-flex flex-column align-center"
-                >
-                    <v-progress-circular
-                        indeterminate
-                        color="primary"
-                    />
-                    <div class="mt-4">
-                        Loading sample data...
-                    </div>
-                </div>
-                <demo-analysis-card
-                    v-else
-                    :samples="sampleDataStore.samples"
-                    @select="demoAnalyze"
+                <new-analysis-card
+                    ref="topCard"
+                    @click="advancedAnalyze"
+                />
+
+                <recent-analysis-card
+                    class="mt-5"
+                    :height="bottomCardHeight"
                 />
             </v-col>
         </v-row>
@@ -63,16 +34,15 @@
 import QuickAnalysisCard from "@/components/analysis/multi/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/analysis/multi/DemoAnalysisCard.vue";
 import {useRouter} from "vue-router";
-import useProjectAnalysisStore, {
-    ProjectAnalysisStoreImport,
-    useProjectAnalysisStoreImport
-} from "@/store/ProjectAnalysisStore";
-import {onMounted, Ref, ref} from "vue"
+import {computed, onMounted, Ref, ref, useTemplateRef, watch} from "vue"
 import useSampleDataStore from "@/store/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import ProjectImport from "@/components/project/import/ProjectImport.vue";
 import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
+import NewAnalysisCard from "@/components/analysis/multi/NewAnalysisCard.vue";
+import RecentAnalysisCard from "@/components/analysis/multi/RecentAnalysisCard.vue";
+import {useElementBounding} from "@vueuse/core";
 
 const router = useRouter();
 
@@ -85,6 +55,12 @@ const {
     loadProjectFromPeptides
 } = useUnipeptAnalysisStore();
 const sampleDataStore = useSampleDataStore();
+
+const firstColumn = useTemplateRef("firstColumn");
+const { height: firstColumnHeight } = useElementBounding(firstColumn);
+const topCard = useTemplateRef("topCard");
+const { height: topCardHeight } = useElementBounding(topCard);
+const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.value - 20);
 
 const loadingSampleData: Ref<boolean> = ref(true);
 
@@ -132,6 +108,12 @@ const startImport = async () => {
         }
     }
 }
+
+watch(bottomCardHeight, () => {
+    console.log(bottomCardHeight.value);
+    console.log(firstColumnHeight.value);
+    console.log(topCardHeight.value);
+})
 
 onMounted(async () => {
     loadingSampleData.value = true;
