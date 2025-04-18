@@ -1,6 +1,15 @@
 <template>
+    <v-container class="py-0">
+        <v-alert
+            v-if="isDemoMode"
+            type="info"
+        >
+            You are currently in demo mode. Changes made to the project will not be saved. To save your changes, please create a new project.
+        </v-alert>
+    </v-container>
+
     <project
-        :project="groupStore"
+        :project="project"
         @sample:add="addSample"
         @sample:update="updateSample"
         @sample:remove="removeSample"
@@ -13,22 +22,22 @@
 </template>
 
 <script setup lang="ts">
-import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import Project from "@/components/project/Project.vue";
 import useCustomFilterStore, {Filter} from "@/store/CustomFilterStore";
+import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
-const groupStore = useProjectAnalysisStore();
+const { project, isDemoMode } = useUnipeptAnalysisStore();
 const customFilterStore = useCustomFilterStore();
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
-    const analysisId = groupStore.getGroup(groupId).addAnalysis(
+    const analysisId = project.getGroup(groupId).addAnalysis(
         sample.name,
         sample.rawPeptides,
         sample.config,
         sample.intensities
     );
-    const analysis = groupStore.getGroup(groupId).getAnalysis(analysisId);
+    const analysis = project.getGroup(groupId).getAnalysis(analysisId);
     if (!analysis) {
       throw Error(`Could not create a new analysis with the provided properties. Analysis with id ${analysisId} is invalid.`);
     } else {
@@ -37,29 +46,29 @@ const addSample = (groupId: string, sample: SampleTableItem) => {
 }
 
 const removeSample = (groupId: string, analysisId: string) => {
-    groupStore.getGroup(groupId)?.removeAnalysis(analysisId);
+    project.getGroup(groupId)?.removeAnalysis(analysisId);
 }
 
 const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
-    const analysis = groupStore.getGroup(groupId)?.getAnalysis(analysisId);
+    const analysis = project.getGroup(groupId)?.getAnalysis(analysisId);
     analysis?.updateName(updatedSample.name);
     analysis?.updateConfig(updatedSample.config);
     analysis?.analyse();
 }
 
-const createGroup = groupStore.addGroup;
+const createGroup = project.addGroup;
 
-const removeGroup = groupStore.removeGroup;
+const removeGroup = project.removeGroup;
 
 const updateGroup = (groupId: string, updatedName: string) => {
-    groupStore.getGroup(groupId)?.updateName(updatedName);
+    project.getGroup(groupId)?.updateName(updatedName);
 }
 
 const updateDatabase = async (name: string, newName: string, newFilter: Filter) => {
     customFilterStore.updateFilter(name, newName, newFilter);
 
     const reanalyse = [];
-    for (const group of groupStore.groups) {
+    for (const group of project.groups) {
         for (const analysis of group.analyses) {
             if (analysis.config.database === name) {
                 analysis.updateConfig({
@@ -81,7 +90,7 @@ const deleteDatabase = async (name: string) => {
     customFilterStore.removeFilter(name);
 
     const reanalyse = [];
-    for (const group of groupStore.groups) {
+    for (const group of project.groups) {
         for (const analysis of group.analyses) {
             if (analysis.config.database === name) {
                 analysis.updateConfig({

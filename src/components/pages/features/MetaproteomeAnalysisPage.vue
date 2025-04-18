@@ -27,6 +27,13 @@
                     class="mt-5"
                     @imported="importProject"
                 />
+
+                <v-btn
+                    class="my-3 float-right"
+                    variant="tonal"
+                    text="load from indexeddb"
+                    @click="loadFromIndexedDB"
+                />
             </v-col>
 
             <v-col cols="6">
@@ -65,59 +72,63 @@ import useSampleDataStore from "@/store/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import ProjectImport from "@/components/project/import/ProjectImport.vue";
+import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
 const router = useRouter();
-const groupStore = useProjectAnalysisStore();
+
+const {
+    project,
+    loadNewProject,
+    loadProjectFromStorage,
+    loadProjectFromFile,
+    loadProjectFromSample,
+    loadProjectFromPeptides
+} = useUnipeptAnalysisStore();
 const sampleDataStore = useSampleDataStore();
 
 const loadingSampleData: Ref<boolean> = ref(true);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
-    groupStore.clear();
-    const groupId = groupStore.addGroup("Quick analysis");
-    groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
+    await loadProjectFromPeptides(rawPeptides, config);
     await router.push({ name: "mpaResults" });
     await startAnalysis();
 }
 
-const importProject = async (project: ProjectAnalysisStoreImport) => {
-    groupStore.clear();
-
-    useProjectAnalysisStoreImport(project);
-
+const importProject = async (file: File) => {
+    await loadProjectFromFile(file)
     await router.push({ name: "mpaResults" });
+    await startImport();
+}
 
-    for (const group of groupStore.groups) {
-        for (const analysis of group.analyses) {
-            await analysis.importStore();
-        }
-    }
+const loadFromIndexedDB = async () => {
+    await loadProjectFromStorage("project");
+    await router.push({ name: "mpaResults" });
+    await startImport();
 }
 
 const advancedAnalyze = () => {
-    groupStore.clear();
+    loadNewProject();
     router.push({ name: "mpaResults" });
 }
 
 const demoAnalyze = async (sample: SampleData) => {
-    groupStore.clear();
-    const groupId = groupStore.addGroup(sample.environment);
-    for (const dataset of sample.datasets) {
-        groupStore.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), {
-            equate: true,
-            filter: true,
-            missed: true,
-            database: "UniProtKB"
-        });
-    }
+    await loadProjectFromSample(sample);
     await router.push({ name: "mpaResults" });
     await startAnalysis();
 }
 
 const startAnalysis = async () => {
-    for (const group of groupStore.groups) {
+    for (const group of project.groups) {
         for (const analysis of group.analyses) {
             await analysis.analyse();
+        }
+    }
+}
+
+const startImport = async () => {
+    for (const group of project.groups) {
+        for (const analysis of group.analyses) {
+            await analysis.importStore();
         }
     }
 }

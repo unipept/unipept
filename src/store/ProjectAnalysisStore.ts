@@ -73,6 +73,7 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     const clear = () => {
         _groups.value.forEach(group => group.clear());
         _groups.value.clear();
+        customFilterStore.clear();
     }
 
     /**

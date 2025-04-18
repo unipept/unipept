@@ -36,8 +36,6 @@ const process = async ({ project }: ProjectExportData) => {
         filters: project.filters
     };
 
-    console.log(JSON.stringify(metadata.groups[0].analyses[0].peptonizer));
-
     zipper.file("metadata.json", JSON.stringify(metadata));
 
     const content = await zipper.generateAsync({ type: "blob" });
