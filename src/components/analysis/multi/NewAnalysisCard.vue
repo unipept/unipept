@@ -141,9 +141,9 @@ const projectExists = (name: string) => {
 };
 
 const cancel = () => {
-    projectName.value = '';
     newDialogOpen.value = false;
     uploadDialogOpen.value = false;
+    projectName.value = '';
 };
 
 const openUploadDialog = (file: File) => {
@@ -153,15 +153,15 @@ const openUploadDialog = (file: File) => {
 };
 
 const openProject = () => {
-    emits('open', projectName.value, openProjectFile.value);
     uploadDialogOpen.value = false;
+    emits('open', projectName.value, openProjectFile.value);
     openProjectFile.value = null;
     projectName.value = '';
 };
 
 const newProject = () => {
-    emits('new', projectName.value);
     newDialogOpen.value = false;
+    emits('new', projectName.value);
     projectName.value = '';
 };
 </script>

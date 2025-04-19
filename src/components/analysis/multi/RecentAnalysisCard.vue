@@ -17,6 +17,7 @@
                 :height="height - headerHeight - 15"
             >
                 <v-card
+                    v-if="projects.length > 0"
                     v-for="project in visibleProjects"
                     :key="project"
                     class="project-card mb-1"
@@ -47,6 +48,18 @@
                                 Last opened on {{ project.lastAccessed.toLocaleDateString() }}
                             </span>
                         </v-tooltip>
+                    </v-card-text>
+                </v-card>
+
+                <v-card
+                    v-else
+                    class="d-flex align-center justify-center"
+                    color="transparent"
+                    variant="flat"
+                >
+                    <v-card-text class="d-flex align-center">
+                        <v-icon class="me-5" icon="mdi-folder-alert-outline" />
+                        No projects found...
                     </v-card-text>
                 </v-card>
 
