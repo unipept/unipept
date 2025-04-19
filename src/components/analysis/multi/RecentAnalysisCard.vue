@@ -82,7 +82,7 @@
                 <v-card-text class="pb-0">
                     <p>
                         Are you sure you want to delete the project <strong>{{ projectToDelete }}</strong>?
-                        This action is irreversible.
+                        This action is <b>irreversible</b>.
                     </p>
 
                     <v-alert type="warning" class="mt-4">
