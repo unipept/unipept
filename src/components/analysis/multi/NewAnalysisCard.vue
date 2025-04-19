@@ -137,7 +137,7 @@ const projectName = ref('');
 const openProjectFile = ref<File | null>(null);
 
 const projectExists = (name: string) => {
-    return props.projects.some(project => project === name);
+    return props.projects.some(project => project.name === name);
 };
 
 const cancel = () => {
