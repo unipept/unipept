@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogOpen" max-width="600">
+    <v-dialog v-model="dialogOpen" max-width="600" persistent>
         <v-unipept-card>
             <v-card-title class="text-h6 font-weight-bold">
                 Delete Group
