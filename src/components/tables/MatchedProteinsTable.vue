@@ -203,11 +203,11 @@
 <script setup lang="ts">
 import {computed, onMounted, ref, Ref, ComputedRef} from 'vue';
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
-import useOntologyStore from "@/store/new/OntologyStore";
+import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
+import useOntologyStore from "@/store/OntologyStore";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import useStringUtils from "@/composables/useStringUtils";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 import {InterproNamespace} from "@/logic/communicators/unipept/functional/InterproResponse";

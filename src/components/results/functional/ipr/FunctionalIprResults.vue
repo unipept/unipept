@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import IprResultsTable, {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
 import {computed, ref} from "vue";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 

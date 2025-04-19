@@ -149,7 +149,7 @@
 
 <script setup lang="ts">
 import CountTable from "@/logic/processors/CountTable";
-import {PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisStore";
+import {PeptonizerStatus, PeptonizerStore} from "@/store/PeptonizerAnalysisStore";
 import {onMounted, Ref, ref, toRaw, watch} from "vue";
 import PeptonizerProgress from "@/components/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/results/taxonomic/peptonizer/PeptonizerChart.vue";

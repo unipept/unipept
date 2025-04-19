@@ -6,13 +6,13 @@ import usePeptideTrustProcessor from "@/composables/processing/peptide/usePeptid
 import useEcProcessor from "@/composables/processing/functional/useEcProcessor";
 import useGoProcessor from "@/composables/processing/functional/useGoProcessor";
 import useInterproProcessor from "@/composables/processing/functional/useInterproProcessor";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import useTaxonomicProcessor from "@/composables/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTreeProcessor";
-import usePeptonizerStore, {PeptonizerStoreImport} from "@/store/new/PeptonizerAnalysisStore";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
-import useCustomFilterStore from "@/store/new/CustomFilterStore";
+import usePeptonizerStore, {PeptonizerStoreImport} from "@/store/PeptonizerAnalysisStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import {AnalysisConfig} from "@/store/AnalysisConfig";
+import useCustomFilterStore from "@/store/CustomFilterStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";

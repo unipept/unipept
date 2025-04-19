@@ -32,7 +32,7 @@
             v-model="selectedFiles"
             style="display: none;"
             label="Hidden File Input"
-
+            accept=".csv, .tsv, .txt, text/csv, text/tab-separated-values, text/plain"
             :multiple="multiple"
             @change="onFileSelect"
         />
@@ -40,7 +40,6 @@
 </template>
 
 <script setup lang="ts">
-// accept=".csv, .tsv, .txt, text/csv, text/tab-separated-values, text/plain"
 import { ref } from "vue";
 
 const props = withDefaults(defineProps<{

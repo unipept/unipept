@@ -4,11 +4,11 @@ import useSingleAnalysisStore, {
     importStoreFromJson,
     SingleAnalysisStore, SingleAnalysisStoreImport,
     useSingleAnalysisStoreImport
-} from "@/store/new/SingleAnalysisStore";
+} from "@/store/SingleAnalysisStore";
 import {v4 as uuidv4} from "uuid";
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import {AnalysisConfig} from "@/store/AnalysisConfig";
 
-const useMultiAnalysisStore = (
+const useGroupAnalysisStore = (
     groupId: string,
     groupName: string
 ) => defineStore(`multiSampleStore/${groupId}`, () => {
@@ -67,7 +67,7 @@ const useMultiAnalysisStore = (
         name.value = newName;
     }
 
-    const exportStore = (): MultiAnalysisStoreImport => {
+    const exportStore = (): GroupAnalysisStoreImport => {
         return {
             id: id.value,
             name: name.value,
@@ -75,7 +75,7 @@ const useMultiAnalysisStore = (
         };
     }
 
-    const setImportedData = (storeImport: MultiAnalysisStoreImport) => {
+    const setImportedData = (storeImport: GroupAnalysisStoreImport) => {
         storeImport.analyses.forEach((analysisImport: string) => {
             const analysis = useSingleAnalysisStoreImport(analysisImport);
             _analyses.value.set(analysis.id, analysis);
@@ -99,18 +99,18 @@ const useMultiAnalysisStore = (
     };
 })();
 
-export interface MultiAnalysisStoreImport {
+export interface GroupAnalysisStoreImport {
     id: string;
     name: string;
     analyses: SingleAnalysisStoreImport[];
 }
 
-export const useMultiAnalysisStoreImport = (storeImport: MultiAnalysisStoreImport): MultiAnalysisStore => {
-    const store = useMultiAnalysisStore(storeImport.id, storeImport.name);
+export const useGroupAnalysisStoreImport = (storeImport: GroupAnalysisStoreImport): GroupAnalysisStore => {
+    const store = useGroupAnalysisStore(storeImport.id, storeImport.name);
     store.setImportedData(storeImport);
     return store;
 }
 
-export type MultiAnalysisStore = ReturnType<typeof useMultiAnalysisStore>;
+export type GroupAnalysisStore = ReturnType<typeof useGroupAnalysisStore>;
 
-export default useMultiAnalysisStore;
+export default useGroupAnalysisStore;

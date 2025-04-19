@@ -19,6 +19,7 @@
     "highcharts-vue": "^2.0.1",
     "html-to-image": "^1.11.11",
     "jszip": "^3.10.1",
+    "localforage": "^1.10.0",
     "marked": "^15.0.7",
     "peptonizer": "file:./peptonizer-v0.0.31.tgz",
     "pinia": "^3.0.1",

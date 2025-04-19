@@ -1,13 +1,13 @@
 <template>
-    <v-dialog v-model="dialogOpen" max-width="600">
+    <v-dialog v-model="dialogOpen" max-width="600" persistent>
         <v-unipept-card>
             <v-card-title class="text-h6 font-weight-bold">
                 Confirm Update
             </v-card-title>
-            <v-card-text>
+            <v-card-text class="pb-0">
                 <p>
                     Are you sure you want to update this custom database <strong>{{ database }}</strong>?
-                    This action is irreversible.
+                    This action is <b>irreversible</b>.
                 </p>
                 <v-alert type="warning" class="mt-4">
                     Updating this database will trigger a <em>reanalysis</em> of all samples that currently use this database.

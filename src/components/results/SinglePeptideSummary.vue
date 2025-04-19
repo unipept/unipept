@@ -147,9 +147,9 @@
 
 <script setup lang="ts">
 import {computed} from "vue";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import useOntologyStore from "@/store/new/OntologyStore";
-import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import useOntologyStore from "@/store/OntologyStore";
+import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import usePercentage from "@/composables/usePercentage";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 

@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
+import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
 import {ref, watch} from "vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";

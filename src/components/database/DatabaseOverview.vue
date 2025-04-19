@@ -86,7 +86,7 @@
 
 <script setup lang="ts">
 import {ref, computed, onMounted} from 'vue';
-import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore.js";
+import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
 import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomic/TaxonomyResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import ProteinResponseCommunicator from "@/logic/communicators/unipept/protein/ProteinResponseCommunicator";
