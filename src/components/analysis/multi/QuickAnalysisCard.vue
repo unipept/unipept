@@ -68,7 +68,7 @@
                 color="primary"
                 variant="tonal"
                 text="Analyze"
-                class="float-right mb-3"
+                class="float-right"
                 :disabled="rawPeptides.length === 0"
                 @click="analyze"
             />
@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import {AnalysisConfig} from "@/store/AnalysisConfig";
 
 const emits = defineEmits<{
     (e: "analyze", rawPeptides: string, config: AnalysisConfig): void;

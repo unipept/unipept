@@ -21,9 +21,9 @@
 
 <script setup lang="ts">
 import {computed, ComputedRef, ref, watch} from "vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import DataSourceSelectTable from "./DataSourceSelectTable.vue";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import {DataSourceTableItem} from "@/components/results/taxonomic/heatmap/DataSourceSelectTable.vue";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import CountTable from "@/logic/processors/CountTable";

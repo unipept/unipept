@@ -91,7 +91,7 @@
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue';
 import DataSourceSelect from './DataSourceSelect.vue';
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import NormalizationSelect from "@/components/results/taxonomic/heatmap/NormalizationSelect.vue";
 import useNormalization, {NormalizationType} from "@/composables/useNormalization";
 import {DataSourceTableItem} from "@/components/results/taxonomic/heatmap/DataSourceSelectTable.vue";

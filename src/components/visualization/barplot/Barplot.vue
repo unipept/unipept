@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import {Bar, BarItem} from "@/components/visualization/barplot/Bar";
-import {onMounted, ref, watch, withDefaults} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 import * as d3 from 'd3';
 import { BarplotSettings } from "@/components/visualization/barplot/BarplotSettings";
 

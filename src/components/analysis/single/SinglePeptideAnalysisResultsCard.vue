@@ -103,12 +103,12 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import MatchedProteinsTable from "@/components/tables/MatchedProteinsTable.vue";
-import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
+import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import LineageTable from "@/components/tables/LineageTable.vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import FunctionalGoResults from "@/components/results/functional/go/FunctionalGoResults.vue";
 import usePercentage from "@/composables/usePercentage";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
 import FunctionalEcResults from "@/components/results/functional/ec/FunctionalEcResults.vue";
 import FunctionalIprResults from "@/components/results/functional/ipr/FunctionalIprResults.vue";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";

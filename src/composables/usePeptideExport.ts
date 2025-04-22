@@ -1,5 +1,5 @@
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import useOntologyStore from "@/store/new/OntologyStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
+import useOntologyStore from "@/store/OntologyStore";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import PeptideExportProcessorWorker from "@/composables/processing/workers/peptideExportProcessor.worker.ts?worker";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";

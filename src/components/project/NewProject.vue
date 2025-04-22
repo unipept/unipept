@@ -19,13 +19,11 @@
 
                         <v-card-text>
                             <p>
-                                Start by creating a group. A group is a collection of samples you want to analyze together.
-                                Click the button below or use the bottom-left button.
+                                Start by creating a group. A group is a collection of samples you want to analyze together..
                             </p>
 
                             <div class="d-flex justify-center mt-5">
                                 <v-btn
-                                    class=""
                                     color="primary"
                                     text="Create Group"
                                     @click="addGroup(DEFAULT_NEW_GROUP_NAME)"
@@ -73,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { DEFAULT_NEW_GROUP_NAME } from "@/store/new/GroupAnalysisStore";
+import { DEFAULT_NEW_GROUP_NAME } from "@/store/ProjectAnalysisStore";
 
 const emits = defineEmits<{
     (e: 'group:add', name: string): void;

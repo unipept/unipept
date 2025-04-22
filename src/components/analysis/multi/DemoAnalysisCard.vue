@@ -1,50 +1,84 @@
 <template>
-    <v-card class="bg-transparent" variant="flat">
-        <v-card-title>
-            <h2>New here? Try a sample dataset</h2>
-        </v-card-title>
+    <div>
+        <v-unipept-card>
+            <v-card-title>
+                <h2>New here? Try a sample dataset</h2>
+            </v-card-title>
 
-        <v-card-text>
-            <p>
-                If this is the first time you're using our application, we advise you to try a sample
-                project and discover what this application can do for you.
-            </p>
+            <v-card-text>
+                <p>
+                    If this is the first time you're using our application, we advise you to try a sample
+                    project and discover what this application can do for you.
+                </p>
 
-            <v-unipept-card
-                v-for="item in samples"
-                :key="item.id"
-                class="mt-3 pa-0"
-            >
-                <v-card-text>
-                    <div
-                        class="d-flex flex-column"
-                    >
-                        <span><b>Environment:</b> {{ item.environment }}</span>
-                        <span>
-                            <b>Reference:</b> {{ item.reference }}
-                            <v-icon
-                                color="primary"
-                                size="small"
-                                @click="openReference(item)"
-                            >
-                                mdi-link-variant
-                            </v-icon>
-                        </span>
-                    </div>
+                <div class="d-flex float-right">
                     <v-btn
-                        class="mt-1 float-right mb-3"
-                        text="Analyze"
+                        class="float-right mt-1"
+                        color="primary"
                         variant="tonal"
-                        @click="() => emits('select', item)"
+                        text="Try a sample dataset"
+                        @click="dialogOpen = true"
                     />
+                </div>
+            </v-card-text>
+        </v-unipept-card>
+
+        <v-dialog v-model="dialogOpen">
+            <v-unipept-card class="bg-mainBody">
+                <v-card-title class="d-flex align-center">
+                    <h2>Select a sample dataset</h2>
+                    <v-spacer />
+                    <v-btn
+                        color="transparent"
+                        icon
+                        flat
+                        @click="dialogOpen = false"
+                    >
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-card-title>
+
+                <v-card-text>
+                    <v-row>
+                        <v-col
+                            v-for="sample in samples"
+                            :key="sample.id"
+                            cols="12"
+                            sm="6"
+                        >
+                            <v-unipept-card
+                                class="d-flex flex-row align-center"
+                                @click="selectSample(sample)"
+                                style="min-height: 100%;"
+                            >
+                                <div>
+                                    <v-card-title class="text-primary">
+                                        {{ sample.environment }}
+                                    </v-card-title>
+                                    <v-card-text style="padding-top: 0 !important;">
+                                        <div class="text-body-2 mb-2">{{ sample.reference }}</div>
+                                        <v-btn
+                                            color="primary"
+                                            variant="plain"
+                                            style="z-index: 10000"
+                                            @click.stop="openReference(sample)"
+                                        >
+                                            View Article
+                                        </v-btn>
+                                    </v-card-text>
+                                </div>
+                            </v-unipept-card>
+                        </v-col>
+                    </v-row>
                 </v-card-text>
             </v-unipept-card>
-        </v-card-text>
-    </v-card>
+        </v-dialog>
+    </div>
 </template>
 
 <script setup lang="ts">
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
+import {ref} from "vue";
 
 const { samples } = defineProps<{
     samples: SampleData[]
@@ -54,7 +88,16 @@ const emits = defineEmits<{
     (e: "select", sample: SampleData): void;
 }>();
 
-const openReference = (sample: SampleData) => window.open(sample.url, '_blank');
+const selectSample = (sample: SampleData) => {
+    dialogOpen.value = false;
+    emits("select", sample);
+};
+
+const dialogOpen = ref(false);
+
+const openReference = (sample: SampleData) => {
+    window.open(sample.url, "_blank");
+};
 </script>
 
 <style scoped>

@@ -293,6 +293,11 @@ const computeProteinCount = async () => {
 };
 
 const computeTaxonCount = async () => {
+    if (selectedItems.value.length === 0) {
+        const taxonomies = await taxonomyCommunicator.getResponses([ 1 ]);
+        return taxonomies.reduce((acc, taxonomy) => acc + taxonomy.descendants.length, 0);
+    }
+
     const items = selectedItems.value.filter(taxon => !ancestorSelected(taxon));
     const taxonomies = await taxonomyCommunicator.getResponses(items.map(taxon => taxon.id));
     return taxonomies.reduce((acc, taxonomy) => acc + taxonomy.descendants.length, 0);
