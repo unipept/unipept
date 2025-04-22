@@ -4,67 +4,109 @@
 
 <script setup lang="ts">
 import {Bar} from "@/components/visualization/barplot/Bar";
-import {onMounted, ref, watch} from 'vue';
+import {onMounted, ref, watch, withDefaults} from 'vue';
 import * as d3 from 'd3';
+import { BarplotSettings } from "@/components/visualization/barplot/BarplotSettings";
 
-const {bars, width, height} = defineProps<{
-    bars: Bar[],
-    width: number,
-    height: number
-}>();
+const props = withDefaults(
+    defineProps<{
+        bars: Bar[],
+        settings?: BarplotSettings
+    }>(), {
+        settings: new BarplotSettings()
+    }
+);
 
 const barplotContainer = ref<HTMLElement>();
 
 const renderPlot = () => {
-    if (!barplotContainer.value) return;
+    if (!barplotContainer.value || !props.bars) return;
 
-    // Padding for the whole element (plot + legend)
-    const visualizationPadding = {
-        left: 10,
-        top: 10,
-        right: 10,
-        bottom: 10
-    };
+    let bars = props.bars;
+    
+    if (props.settings.displayMode == "relative") {
+        bars = bars.map(bar => {
+            const total = bar.items.reduce((sum, item) => sum + item.counts, 0);
+            return {
+                items: bar.items.map(item => ({
+                    label: item.label,
+                    counts: (item.counts / total) * 100
+                }))
+            };
+        });
+    }
 
-    // Default font for all text in the visualization
-    const font = "Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;";
+    const width = props.settings.width;
+    const height = props.settings.height;
 
-    // Legend specific settings
-    const legendFontSize = 12;
-    const legendBoxSize = 12;
-    // Vertical padding between two successive legend items
-    const legendEntryPadding = 5;
-    // Horizontal padding between legend colored box and legend label
-    const legendBoxLabelPadding = 10;
-    const legendTitleFontSize = 20;
+    // Visualization-wide settings
+    // Padding for the whole visualization container
+    const visualizationPadding = props.settings.padding;
+
+    const font = props.settings.font;
+
+    // Plot settings
+    // Padding for the actual plot area
+    const plotPadding = props.settings.plot.padding;
+
+    // Height of each bar in the barplot
+    const barHeight = props.settings.barHeight;
+
+    const horizontal = props.settings.orientation == "horizontal";
+
+    // Legend settings
+    // Padding for the legend area
+    const legendPadding = props.settings.legend.padding;
+
+    const legendWidth = props.settings.legend.width;
+
+    const legendTitleFontSize = props.settings.legend.titleFontSize;
+    const legendLabelFontSize = props.settings.legend.labelFontSize;
+
+    const legendSymbolSize = props.settings.legend.symbolSize;
+
+    const legendRowSpacing = props.settings.legend.rowSpacing;
+    const legendColumnSpacing = props.settings.legend.columnSpacing;
+
+    const legendColumns = props.settings.legend.columns;
+
     // Padding below the title of the legend
-    const legendTitlePadding = 10;
-    const legendWidth = 200;
+    const legendTitlePaddingBottom = 10;
 
-    // Padding for the legend area only
-    const legendPadding = {
-        left: 10,
-        top: 10,
-        right: 10,
-        bottom: 10
-    }
+    // Horizontal padding between legend colored box and legend label
+    const legendSymbolPaddingRight = 10;
 
-    // Padding for the plot area only
-    const plotPadding = {
-        left: 10,
-        top: 10,
-        right: 10,
-        bottom: 10
-    }
+    // Height of the x-axis bar and it's labels
+    const xAxisHeight: number = 35;
 
-    const barHeight = 75;
+    let plotAreaWidth: number;
+    let plotAreaHeight: number;
+    let legendContentStartLeft: number;
+    let legendContentStartTop: number;
+    let legendEntryHeight: number;
+    let maxLegendLabelWidth: number;
+    let legendAreaWidth: number;
+    let legendEntryWidth: number;
 
     // Computed metrics
-    const plotAreaWidth = width - visualizationPadding.left - plotPadding.left - plotPadding.right - legendWidth - visualizationPadding.right;
-    const legendContentStartLeft = visualizationPadding.left + plotPadding.left + plotAreaWidth + plotPadding.right + legendPadding.left;
-    const legendEntryHeight = Math.max(legendBoxSize, legendFontSize);
-    // Max width that a legend label should be
-    const maxLegendLabelWidth = legendWidth - legendPadding.left - legendPadding.right - legendBoxSize - legendBoxLabelPadding;
+    if (horizontal) {
+        plotAreaWidth = width - visualizationPadding.left - plotPadding.left - plotPadding.right - legendWidth - visualizationPadding.right;
+        plotAreaHeight = barHeight * bars.length;
+        legendContentStartTop = visualizationPadding.top + legendPadding.top;
+        legendContentStartLeft = visualizationPadding.left + plotPadding.left + plotAreaWidth + plotPadding.right + legendPadding.left;
+        legendEntryHeight = Math.max(legendSymbolSize, legendLabelFontSize);
+        // Max width that a legend label should be
+        maxLegendLabelWidth = legendWidth - legendPadding.left - legendPadding.right - legendSymbolSize - legendSymbolPaddingRight;
+        legendEntryWidth = legendWidth - legendPadding.left - legendPadding.right;
+    } else {
+        plotAreaWidth = width - visualizationPadding.left - plotPadding.left - plotPadding.right - visualizationPadding.right;
+        plotAreaHeight = barHeight * bars.length;
+        legendContentStartTop = visualizationPadding.top + plotAreaHeight + legendPadding.top + xAxisHeight;
+        legendContentStartLeft = visualizationPadding.left + legendPadding.left;
+        legendEntryHeight = Math.max(legendSymbolSize, legendLabelFontSize);
+        legendAreaWidth = width - visualizationPadding.left - legendPadding.left - legendPadding.right - visualizationPadding.right;
+        legendEntryWidth = Math.floor((legendAreaWidth - Math.max(legendColumns - 1, 0) * legendColumnSpacing) / legendColumns);
+    }
 
     // Clear previous chart
     d3.select(barplotContainer.value).selectAll("*").remove();
@@ -139,24 +181,24 @@ const renderPlot = () => {
 
     // Add x-axis
     svg.append("g")
-        .attr("transform", `translate(${visualizationPadding.left + plotPadding.left},${visualizationPadding.top + plotPadding.top + yScale.range()[1]})`)
+        .attr("transform", `translate(${visualizationPadding.left + plotPadding.left}, ${visualizationPadding.top + plotPadding.top + barHeight * bars.length})`)
         .call(d3.axisBottom(xScale))
         .append("text")
         .attr("font-family", font)
         .attr("fill", "black")
         .attr("x", plotAreaWidth / 2)
-        .attr("y", 35)
+        .attr("y", xAxisHeight)
         .attr("text-anchor", "start")
-        .text("Count");
+        .text(props.settings.displayMode === "relative" ? "Percentage" : "Count");
 
     // Add legend
     const legend = svg.append("g")
         .attr("font-family", font)
-        .attr("font-size", legendFontSize)
+        .attr("font-size", legendLabelFontSize)
         .selectAll("g")
         .data(colorScale.domain())
         .join("g")
-        .attr("transform", (_, i) => `translate(0,${i * (legendEntryHeight + legendEntryPadding) + legendTitleFontSize + legendTitlePadding + visualizationPadding.top + legendPadding.top})`);
+        .attr("transform", (_, i) => `translate(${(i % legendColumns) * legendEntryWidth + Math.max((i % legendColumns) - 1, 0) * legendColumnSpacing}, ${Math.floor(i / legendColumns) * (legendEntryHeight + legendRowSpacing) + legendTitleFontSize + legendTitlePaddingBottom + legendContentStartTop})`);
 
     // Legend title
     svg.append("text")
@@ -164,24 +206,24 @@ const renderPlot = () => {
         .attr("font-size", legendTitleFontSize)
         .attr("dominant-baseline", "hanging")
         .attr("x", legendContentStartLeft)
-        .attr("y", visualizationPadding.top + legendPadding.top)
+        .attr("y", legendContentStartTop)
         .text("Legend");
 
     // Little colored boxes before each legend item
     legend.append("rect")
         .attr("x", legendContentStartLeft)
-        .attr("width", legendBoxSize)
-        .attr("height", legendBoxSize)
+        .attr("width", legendSymbolSize)
+        .attr("height", legendSymbolSize)
         .attr("fill", colorScale);
 
     // Legend labels
     legend.append("text")
-        .attr("x", legendContentStartLeft + legendBoxSize + legendBoxLabelPadding)
-        .attr("y", legendFontSize / 2)
+        .attr("x", legendContentStartLeft + legendSymbolSize + legendSymbolPaddingRight)
+        .attr("y", legendLabelFontSize / 2)
         .attr("dy", "0.35em")
         .text(d => {
-            if (d.length * (legendFontSize * 0.6) > maxLegendLabelWidth) {
-                const charsToShow = Math.floor(maxLegendLabelWidth / (legendFontSize * 0.6));
+            if (d.length * (legendLabelFontSize * 0.6) > maxLegendLabelWidth) {
+                const charsToShow = Math.floor(maxLegendLabelWidth / (legendLabelFontSize * 0.6));
                 return d.substring(0, charsToShow - 3) + "...";
             }
             return d;
@@ -193,9 +235,9 @@ onMounted(() => {
 });
 
 watch([
-    () => bars,
-    () => width,
-    () => height
+    () => props.bars,
+    () => props.settings.width,
+    () => props.settings.height
 ], () => {
     renderPlot();
 });

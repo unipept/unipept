@@ -1,6 +1,6 @@
 <template>
     <div ref="barplotWrapper" style="height: 100%;">
-        <barplot :bars="barData" :width="containerWidth" :height="containerHeight"/>
+        <barplot :bars="barData" :settings="barplotSettings" />
     </div>
 </template>
 
@@ -9,6 +9,7 @@
     import {Bar, BarItem} from "@/components/visualization/barplot/Bar";
     import {ref, Ref, onMounted, computed} from "vue";
     import Barplot from "@/components/visualization/barplot/Barplot.vue";
+    import {BarplotSettings} from "@/components/visualization/barplot/BarplotSettings";
 
     const props = withDefaults(defineProps<{
         ncbiRoot: NcbiTreeNode
@@ -22,6 +23,7 @@
     const barplotWrapper = ref<HTMLDivElement>();
     const containerWidth: Ref<number> = ref(props.width);
     const containerHeight: Ref<number> = ref(props.height);
+    const barplotSettings: Ref<BarplotSettings> = ref(new BarplotSettings());
     const barData: Ref<Bar[]> = ref([]);
 
     const initializeSpeciesBar = () => {
@@ -41,6 +43,8 @@
             });
         }
 
+        items.sort((a: BarItem, b: BarItem) => b.counts - a.counts);
+
         barData.value = [{
             items
         }];
@@ -51,6 +55,9 @@
         const observer = new ResizeObserver(() => {
             containerWidth.value = barplotWrapper.value?.offsetWidth ?? props.width;
             containerHeight.value = barplotWrapper.value?.offsetHeight ?? props.height;
+
+            barplotSettings.value.width = containerWidth.value;
+            barplotSettings.value.height = containerHeight.value;
         });
 
         if (barplotWrapper.value) {
@@ -59,7 +66,6 @@
 
         initializeSpeciesBar();
     })
-    // const speciesBar: Bar = props.ncbiRoot.
 </script>
 
 <style scoped>
