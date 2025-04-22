@@ -31,7 +31,7 @@ withDefaults(defineProps<{
     multiple?: boolean
     loading?: boolean
     color?: string
-    variant?: string
+    variant?: "flat" | "text" | "elevated" | "tonal" | "outlined" | "plain" | undefined
     prependIcon?: string
     text?: string
     accept?: string

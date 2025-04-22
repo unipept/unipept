@@ -194,19 +194,22 @@ watch(dialogOpen, async () => {
 
         switch (props.filter.filter) {
             case FilterType.Taxon:
+                const taxonData = props.filter!.data as number[];
                 filterSelection.value = FilterSelection.Manually;
-                await updateNcbiOntology(props.filter.data);
-                selectedTaxa.value = props.filter.data?.map(taxon => ncbiOntology.get(taxon)) || [];
+                await updateNcbiOntology(taxonData);
+                selectedTaxa.value = taxonData.map(taxon => ncbiOntology.get(taxon)).filter(t => t !== undefined) || [];
                 break;
             case FilterType.Protein:
+                const proteinData = props.filter!.data as string[];
                 filterSelection.value = FilterSelection.Proteins;
-                await updateProteinOntology(props.filter.data);
-                selectedProteins.value = props.filter.data?.map(protein => proteinOntology.get(protein)) || [];
+                await updateProteinOntology(proteinData);
+                selectedProteins.value = proteinData.map(protein => proteinOntology.get(protein)).filter(p => p !== undefined) || [];
                 break;
             case FilterType.Proteome:
+                const proteomeData = props.filter!.data as string[];
                 filterSelection.value = FilterSelection.ReferenceProteomes;
-                await updateProteomeOntology(props.filter.data);
-                selectedProteomes.value = props.filter.data?.map(proteome => proteomeOntology.get(proteome)) || [];
+                await updateProteomeOntology(proteomeData);
+                selectedProteomes.value = proteomeData.map(proteome => proteomeOntology.get(proteome)).filter(p => p !== undefined) || [];
                 break;
             case FilterType.UniProtKB:
             default:
@@ -224,10 +227,3 @@ export enum FilterSelection {
     Proteins
 }
 </script>
-
-<style scoped>
-:deep(.v-stepper-vertical-actions.v-stepper-actions) {
-    padding-top: 0;
-}
-</style>
-

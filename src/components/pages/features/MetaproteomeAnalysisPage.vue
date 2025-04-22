@@ -16,12 +16,13 @@
             </v-col>
 
             <v-col cols="6">
-                <new-analysis-card
-                    ref="topCard"
-                    :projects="projects"
-                    @new="advancedAnalyze"
-                    @open="importProject"
-                />
+                <div ref="topCard">
+                    <new-analysis-card
+                        :projects="projects"
+                        @new="advancedAnalyze"
+                        @open="importProject"
+                    />
+                </div>
 
                 <recent-analysis-card
                     class="mt-5"
@@ -39,7 +40,7 @@
 import QuickAnalysisCard from "@/components/analysis/multi/QuickAnalysisCard.vue";
 import DemoAnalysisCard from "@/components/analysis/multi/DemoAnalysisCard.vue";
 import {useRouter} from "vue-router";
-import {computed, onMounted, Ref, ref, useTemplateRef, watch} from "vue"
+import {computed, onMounted, Ref, ref, useTemplateRef} from "vue"
 import useSampleDataStore from "@/store/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
@@ -70,7 +71,7 @@ const { height: topCardHeight } = useElementBounding(topCard);
 const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.value - 20);
 
 const loadingSampleData: Ref<boolean> = ref(true);
-const projects = ref<string[]>([]);
+const projects = ref<{ name: string, lastAccessed: Date }[]>([]);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     await loadProjectFromPeptides(rawPeptides, config);

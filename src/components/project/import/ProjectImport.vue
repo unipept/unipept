@@ -21,17 +21,16 @@
 
 <script setup lang="ts">
 import FileUpload from "@/components/filesystem/FileUpload.vue";
-import {ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
 import {ref, Ref} from "vue";
 
 const importFile: Ref<File | null> = ref(null);
 
 const emits = defineEmits<{
-    (e: "imported", project: ProjectAnalysisStoreImport): void;
+    (e: "imported", project: File): void;
 }>();
 
 const importProject = () => {
-    emits("imported", importFile.value);
+    emits("imported", importFile.value!);
 }
 </script>
 

@@ -1,7 +1,6 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
 import useSingleAnalysisStore, {
-    importStoreFromJson,
     SingleAnalysisStore, SingleAnalysisStoreImport,
     useSingleAnalysisStoreImport
 } from "@/store/SingleAnalysisStore";
@@ -76,7 +75,7 @@ const useGroupAnalysisStore = (
     }
 
     const setImportedData = (storeImport: GroupAnalysisStoreImport) => {
-        storeImport.analyses.forEach((analysisImport: string) => {
+        storeImport.analyses.forEach((analysisImport: SingleAnalysisStoreImport) => {
             const analysis = useSingleAnalysisStoreImport(analysisImport);
             _analyses.value.set(analysis.id, analysis);
         });

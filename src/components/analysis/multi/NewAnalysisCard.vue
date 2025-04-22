@@ -87,7 +87,7 @@
                         class="mb-4"
                         type="warning"
                     >
-                        A project with the name <b>{{ openProjectFile.name.slice(0, -8) }}</b> already exists. You can either overwrite the
+                        A project with the name <b>{{ projectName }}</b> already exists. You can either overwrite the
                         existing project or choose a different name.
                     </v-alert>
 
@@ -122,7 +122,7 @@ import FileUploadButton from "@/components/filesystem/FileUploadButton.vue";
 import {ref} from "vue";
 
 const props = defineProps<{
-    projects: string[]
+    projects: { name: string, lastAccessed: Date }[]
 }>();
 
 const emits = defineEmits<{
@@ -154,7 +154,7 @@ const openUploadDialog = (file: File) => {
 
 const openProject = () => {
     uploadDialogOpen.value = false;
-    emits('open', projectName.value, openProjectFile.value);
+    emits('open', projectName.value, openProjectFile.value!);
     openProjectFile.value = null;
     projectName.value = '';
 };

@@ -1,4 +1,4 @@
-import {computed, ref, shallowRef} from "vue";
+import {computed, ref} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/processing/peptide/usePeptideProcessor";
@@ -209,7 +209,7 @@ const useSingleAnalysisStore = (
 
         taxonomicFilter.value = storeImport.taxonomicFilter;
         functionalFilter.value = storeImport.functionalFilter;
-        lastAnalysed.value = new Date(storeImport.lastAnalysed);
+        lastAnalysed.value = storeImport.lastAnalysed ? new Date(storeImport.lastAnalysed) : undefined;
         databaseVersion.value = storeImport.databaseVersion;
 
         if (storeImport.indexBuffer && storeImport.dataBuffer) {
@@ -272,10 +272,10 @@ export interface SingleAnalysisStoreImport {
     name: string;
     rawPeptides: string;
     config: AnalysisConfig;
-    intensities: Map<string, number>;
+    intensities: Map<string, number> | undefined;
     taxonomicFilter: number;
     functionalFilter: number;
-    lastAnalysed: Date;
+    lastAnalysed: Date | undefined;
     databaseVersion: string;
     indexBuffer: ArrayBuffer | undefined;
     dataBuffer: ArrayBuffer | undefined;

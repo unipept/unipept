@@ -101,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import GroupAnalysisStore from "@/store/ProjectAnalysisStore";
+import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 import {computed, ref} from "vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import useProjectExport from "@/components/project/export/useProjectExport";
@@ -111,7 +111,7 @@ import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
 const { formatNumber } = useNumberFormatter();
 
 const { project } = defineProps<{
-    project: GroupAnalysisStore
+    project: ProjectAnalysisStore
 }>();
 
 const preparingExport = ref(false);

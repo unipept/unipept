@@ -54,10 +54,6 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
         return id;
     };
 
-    const importGroup = (json: string): string => {
-
-    }
-
     const removeGroup = (id: string): void => {
         _groups.value.delete(id);
     }
@@ -122,7 +118,7 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
 });
 
 export interface ProjectAnalysisStoreImport {
-    groups: ProjectAnalysisStoreImport[];
+    groups: GroupAnalysisStoreImport[];
     filters: CustomFilterStoreImport;
 }
 
