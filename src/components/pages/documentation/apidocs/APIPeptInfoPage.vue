@@ -320,7 +320,7 @@
                                 class="mt-3"
                                 style="font-size: 85%;"
                             >
-                                Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                                Value: Must be <inline-code>true</inline-code> (default) or <inline-code>false</inline-code>
                             </div>
                         </td>
                     </tr>
