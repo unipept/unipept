@@ -1,73 +1,73 @@
 <template>
     <div>
-        <v-card
-            class="overflow-hidden"
-            color="transparent"
-            variant="flat"
-            :height="height"
-        >
-            <h2 ref="header" class="mb-3 font-weight-light">
-                Recent projects
-            </h2>
+        <v-unipept-card :height="height">
+            <v-card-title ref="header">
+                <h2 class="font-weight-light">
+                    Recent projects
+                </h2>
+            </v-card-title>
 
-            <v-card
-                class="overflow-scroll"
-                color="transparent"
-                variant="flat"
+            <v-virtual-scroll
+                v-if="projects.length > 0"
+                :items="visibleProjects"
                 :height="height - headerHeight - 15"
             >
-                <v-card
-                    v-if="projects.length > 0"
-                    v-for="project in visibleProjects"
-                    :key="project"
-                    class="project-card mb-1"
-                    @click="openProject(project.name)"
-                    variant="flat"
-                    density="compact"
-                >
-                    <v-card-text class="d-flex align-center gap-2">
-                        <v-icon size="20" class="me-3">mdi-folder-outline</v-icon>
-                        <span>{{ project.name }}</span>
-                        <v-spacer />
+                <template #default="{ item, index }">
+                    <v-card
+                        class="project-card mb-1 ps-5"
+                        @click="openProject(item.name)"
+                        variant="flat"
+                        density="compact"
+                    >
+                        <v-card-text class="d-flex align-center gap-2">
+                            <v-icon size="20" class="me-3">mdi-folder-outline</v-icon>
+                            <span>{{ item.name }}</span>
+                            <v-spacer />
 
-                        <v-icon
-                            class="me-2"
-                            color="error"
-                            icon="mdi-delete"
-                            @click.stop="deleteProject(project.name)"
-                        />
+                            <v-icon
+                                class="me-2"
+                                color="error"
+                                icon="mdi-delete"
+                                @click.stop="deleteProject(item.name)"
+                            />
 
-                        <v-tooltip location="top">
-                            <template #activator="{ props }">
-                                <v-icon
-                                    v-bind="props"
-                                    icon="mdi-information"
-                                />
-                            </template>
-                            <span>
-                                Last opened on {{ project.lastAccessed.toLocaleDateString() }}
-                            </span>
-                        </v-tooltip>
-                    </v-card-text>
-                </v-card>
+                            <v-tooltip location="top">
+                                <template #activator="{ props }">
+                                    <v-icon
+                                        v-bind="props"
+                                        icon="mdi-information"
+                                    />
+                                </template>
+                                <span>
+                                    Last opened on {{ item.lastAccessed.toLocaleDateString() }}
+                                </span>
+                            </v-tooltip>
+                        </v-card-text>
+                    </v-card>
 
-                <v-card
-                    v-else
-                    class="d-flex align-center justify-center"
-                    color="transparent"
-                    variant="flat"
-                >
-                    <v-card-text class="d-flex align-center">
-                        <v-icon class="me-5" icon="mdi-folder-alert-outline" />
-                        No projects found...
-                    </v-card-text>
-                </v-card>
+                    <v-btn
+                        v-if="hasMore && (index === visibleProjects.length - 1)"
+                        class="ms-5"
+                        variant="text"
+                        color="primary"
+                        @click="showMore"
+                    >
+                        Show more
+                    </v-btn>
+                </template>
+            </v-virtual-scroll>
 
-                <v-btn v-if="hasMore" variant="text" color="primary" @click="showMore">
-                    Show more
-                </v-btn>
+            <v-card
+                v-else
+                class="d-flex align-center justify-center ms-5"
+                variant="flat"
+            >
+                <v-card-text class="d-flex align-center">
+                    <v-icon class="me-5" icon="mdi-folder-alert-outline" />
+                    No projects found...
+                </v-card-text>
             </v-card>
-        </v-card>
+        </v-unipept-card>
 
         <v-dialog
             v-model="deleteDialogOpen"
