@@ -178,9 +178,11 @@ const duplicateSample = (index: number) => {
     }
 
     const newSample = {
-        ...sample,
         id: uuidv4(),
-        name: `${sample.name} - copy ${counter}`
+        name: `${sample.name} - copy ${counter}`,
+        rawPeptides: `${sample.rawPeptides}`,
+        intensities: sample.intensities ? new Map(sample.intensities) : undefined,
+        config: { ...sample.config }
     };
     samples.value = [ ...samples.value, newSample ];
 }
