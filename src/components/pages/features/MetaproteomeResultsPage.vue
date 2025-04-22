@@ -1,10 +1,10 @@
 <template>
-    <v-container class="py-0">
+    <v-container class="py-0" fluid>
         <v-alert
             v-if="isDemoMode"
             type="info"
         >
-            You are currently in demo mode. Changes made to the project will not be saved. To save your changes, please create a new project.
+            You are currently in <b>demo</b> mode. Changes made to the project will not be saved. To save your changes, please create a new project.
         </v-alert>
     </v-container>
 
