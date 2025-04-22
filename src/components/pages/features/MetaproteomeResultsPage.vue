@@ -1,5 +1,5 @@
 <template>
-    <v-container class="py-0">
+    <v-container class="py-0" fluid>
         <v-alert
             v-if="isDemoMode"
             type="info"
