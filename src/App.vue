@@ -76,95 +76,71 @@
             </v-container>
 
             <v-footer
-                dark
-                class="bg-grey-darken-3 d-flex"
-                style="flex: 0 0 auto; "
-                height="100px"
-                order="1000"
+                class="text-center d-flex flex-column ga-2 py-4 flex-grow-0"
+                color="grey-darken-3"
             >
-                <div style="width: 100%">
-                    <div class="d-md-flex justify-space-between">
-                        <div
-                            v-if="$route.meta"
-                            class="text-center text-grey"
-                        >
-                            {{ $route.meta.publication }}
-                            <a
-                                class="link"
-                                :href="'https://' + $route.meta.publicationLink"
-                                target="_blank"
-                            >
-                                &nbsp;{{ $route.meta.publicationLink }}
-                            </a>
-                        </div>
-                        <div
-                            class="text-center mt-3 mt-md-0"
-                        >
-                            <a
-                                class="link"
-                                href="mailto:unipept@ugent.be"
-                            >
-                                <v-icon
-                                    size="30px"
-                                    class="grey--text link"
-                                >
-                                    mdi-email-outline
-                                </v-icon>
-                            </a>
-                            <a
-                                class="ml-10 link"
-                                href="https://twitter.com/unipept"
-                                target="_blank"
-                            >
-                                <v-icon
-                                    size="30px"
-                                    class="grey--text link"
-                                >
-                                    mdi-twitter
-                                </v-icon>
-                            </a>
-                            <a
-                                class="ml-10 link"
-                                href="https://github.com/unipept/unipept"
-                                target="_blank"
-                            >
-                                <v-icon
-                                    size="30px"
-                                    class="grey--text link"
-                                >
-                                    mdi-github
-                                </v-icon>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="d-md-flex justify-space-between">
-                        <div class="text-center text-grey mt-3 mt-md-0">
-                            © 2025 Universiteit Gent
-                        </div>
-                        <div class="text-center mt-3 mt-md-0">
-                            <router-link
-                                class="link"
-                                to="/about"
-                            >
-                                Terms of service
-                            </router-link>
-                            <router-link
-                                class="link ml-5"
-                                to="/news"
-                            >
-                                News
-                            </router-link>
-                            <router-link
-                                class="link ml-5"
-                                to="/publications"
-                            >
-                                Publications
-                            </router-link>
-                        </div>
-                        <div class="text-center text-grey mt-3 mt-md-0">
-                            Unipept {{ unipeptVersion }} using UniProt {{ uniprotVersion }}
-                        </div>
-                    </div>
+                <div class="d-flex ga-3 text-color">
+                    <v-btn
+                        icon="mdi-email-outline"
+                        density="comfortable"
+                        variant="text"
+                        @click="openLink('mailto:unipept@ugent.be')"
+                    />
+                    <v-btn
+                        icon="mdi-twitter"
+                        density="comfortable"
+                        variant="text"
+                        @click="openLink('https://twitter.com/unipept')"
+                    />
+                    <v-btn
+                        icon="mdi-github"
+                        density="comfortable"
+                        variant="text"
+                        @click="openLink('https://github.com/unipept/unipept')"
+                    />
+                </div>
+
+                <v-divider class="my-2" thickness="2" width="50"></v-divider>
+
+                <div
+                    v-if="$route.meta"
+                    class="text-center mb-5 text-color"
+                >
+                    {{ $route.meta.publication }}
+                    <a
+                        class="link"
+                        :href="'https://' + $route.meta.publicationLink"
+                        target="_blank"
+                    >
+                        &nbsp;{{ $route.meta.publicationLink }}
+                    </a>
+                </div>
+
+                <div>
+                    <router-link
+                        class="link"
+                        to="/about"
+                    >
+                        Terms of service
+                    </router-link>
+                    <router-link
+                        class="link ml-5"
+                        to="/news"
+                    >
+                        News
+                    </router-link>
+                    <router-link
+                        class="link ml-5"
+                        to="/publications"
+                    >
+                        Publications
+                    </router-link>
+                </div>
+
+                <div class="d-flex text-color">
+                    <span>© {{ new Date().getFullYear() }} Universiteit Gent</span>
+                    <span class="mx-3">-</span>
+                    <span>Unipept {{ unipeptVersion }} using UniProt {{ uniprotVersion }}</span>
                 </div>
             </v-footer>
         </v-main>
@@ -211,6 +187,10 @@ const navigateToPage = async function(navItem: NavItem) {
         navigationKey.value++;
     }
 }
+
+const openLink = (url: string) => {
+    window.open(url, "_blank");
+}
 </script>
 
 
@@ -228,8 +208,12 @@ body {
     display: none !important;
 }
 
+footer .text-color {
+    color: #cccccc !important;
+}
+
 footer .link {
-    color: #9e9e9e !important;
+    color: #cccccc !important;
     text-decoration: none;
 }
 
