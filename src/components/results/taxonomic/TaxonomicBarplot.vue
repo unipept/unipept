@@ -46,6 +46,7 @@
         items.sort((a: BarItem, b: BarItem) => b.counts - a.counts);
 
         barData.value = [{
+            label: "Sample 1",
             items
         }];
     }

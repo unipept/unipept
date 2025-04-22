@@ -4,5 +4,6 @@ export interface BarItem {
 }
 
 export interface Bar {
-    items: BarItem[]
+    items: BarItem[],
+    label: string
 }

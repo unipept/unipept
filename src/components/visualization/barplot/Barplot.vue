@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import {Bar} from "@/components/visualization/barplot/Bar";
+import {Bar, BarItem} from "@/components/visualization/barplot/Bar";
 import {onMounted, ref, watch, withDefaults} from 'vue';
 import * as d3 from 'd3';
 import { BarplotSettings } from "@/components/visualization/barplot/BarplotSettings";
@@ -20,14 +20,54 @@ const props = withDefaults(
 const barplotContainer = ref<HTMLElement>();
 
 const renderPlot = () => {
-    if (!barplotContainer.value || !props.bars) return;
+    if (!barplotContainer.value || !props.bars || props.bars.length == 0) return;
 
-    let bars = props.bars;
-    
+    // Clone the bars such that we can modify them without updating the data moved into this structure
+    let bars = props.bars.map(b => { return { ... b } });
+
+    if (props.settings.maxItems) {
+        // Determine which items are the largest and which should be moved into the "rest" category
+        const firstBarItems = [...(bars[0].items)].sort((a, b) => b.counts - a.counts).splice(0, props.settings.maxItems);
+
+        // After sorting out the items of the first bar, make sure that the remaining bars use the same categories
+        bars = bars.map(bar => {
+            let otherCount = 0;
+
+            const newItems: BarItem[] = [];
+
+            // Count all items in this bar that are not in the first bar
+            for (const currentItem of bar.items) {
+                if (firstBarItems.findIndex(item => item.label === currentItem.label) >= 0) {
+                    newItems.push(currentItem);
+                } else {
+                    otherCount += currentItem.counts;
+                }
+            }
+
+            // Sort the current bar's items according to the order of the first bar
+            const sortedBarItems = newItems.sort((a, b) => {
+                const aIndex = firstBarItems.findIndex(item => item.label === a.label);
+                const bIndex = firstBarItems.findIndex(item => item.label === b.label);
+
+                return aIndex - bIndex;
+            });
+
+            return {
+                label: bar.label,
+                items: [
+                    ...sortedBarItems,
+                    {label: "Other", counts: otherCount}
+                ]
+            };
+        });
+    }
+
+    // Convert the absolute counts to relative percentages if required
     if (props.settings.displayMode == "relative") {
         bars = bars.map(bar => {
             const total = bar.items.reduce((sum, item) => sum + item.counts, 0);
             return {
+                label: bar.label,
                 items: bar.items.map(item => ({
                     label: item.label,
                     counts: (item.counts / total) * 100
@@ -108,6 +148,16 @@ const renderPlot = () => {
         legendEntryWidth = Math.floor((legendAreaWidth - Math.max(legendColumns - 1, 0) * legendColumnSpacing) / legendColumns);
     }
 
+    const barLabelWidth = 125;
+    const barLabelFontSize = 20;
+    const barLabelPaddingRight = 10;
+
+    let barWidth = plotAreaWidth;
+
+    if (props.settings.showBarLabel) {
+        barWidth = plotAreaWidth - barLabelWidth - barLabelPaddingRight;
+    }
+
     // Clear previous chart
     d3.select(barplotContainer.value).selectAll("*").remove();
 
@@ -126,7 +176,7 @@ const renderPlot = () => {
     // Scales
     const xScale = d3.scaleLinear()
         .domain([0, d3.max(stackedData, d => d3.max(d, d => d[1])) || 0])
-        .range([0, plotAreaWidth]);
+        .range([0, barWidth]);
 
     const yScale = d3.scaleBand()
         .domain(bars.map((_, i) => i.toString()))
@@ -161,12 +211,34 @@ const renderPlot = () => {
         "#BF360C"     // deep-orange-darken-4
     ];
 
+    // Color for the "other" class in the labels
+    const otherColor = "#9E9E9E";
+
+    if (props.settings.maxItems) {
+        materialDesignColors[props.settings.maxItems % (bars[0].items.length + 1)] = otherColor;
+    }
+
     const colorScale: d3.ScaleOrdinal<string, string, string> = d3.scaleOrdinal<string, string, string>()
         .domain(Array.from(new Set(bars.flatMap(bar => bar.items.map(item => item.label)))))
         .range(materialDesignColors);
 
+    if (props.settings.showBarLabel) {
+        // Add bar labels
+        svg.append("g")
+            .attr("class", "barLabels")
+            .selectAll("text")
+            .data(bars)
+            .join("text")
+            .attr("x", visualizationPadding.left + plotPadding.left)
+            .attr("y", (_, i) => visualizationPadding.top + plotPadding.top + (yScale(i.toString()) || 0) + yScale.bandwidth() / 2)
+            .attr("dy", ".35em")
+            .attr("font-family", font)
+            .attr("font-size", barLabelFontSize)
+            .text(d => d.label);
+    }
+
     // Add bars
-    svg.append("g")
+    const renderedBars = svg.append("g")
         .selectAll("g")
         .data(stackedData)
         .join("g")
@@ -174,14 +246,31 @@ const renderPlot = () => {
         .selectAll("rect")
         .data(d => d)
         .join("rect")
-        .attr("x", d => visualizationPadding.left + plotPadding.left + Math.floor(xScale(d[0])))
+        .attr("x", d => visualizationPadding.left + plotPadding.left + barLabelWidth + barLabelPaddingRight + Math.floor(xScale(d[0])))
         .attr("y", (d, i) => visualizationPadding.top + plotPadding.top + (yScale(i.toString()) || 0))
         .attr("width", d => Math.floor(xScale(d[1])) - Math.floor(xScale(d[0])))
         .attr("height", yScale.bandwidth());
 
+    if (props.settings.showValuesInBars) {
+        renderedBars
+            .each(function (d) {
+                const width = Math.floor(xScale(d[1]) - xScale(d[0]));
+                const value = d[1] - d[0];
+                if (width > 30) { // Only show text if bar is wide enough
+                    d3.select(this.parentNode).append("text")
+                        .attr("x", visualizationPadding.left + plotPadding.left + barLabelWidth + barLabelPaddingRight + Math.floor(xScale(d[0])) + width / 2)
+                        .attr("y", (_, i) => visualizationPadding.top + plotPadding.top + (yScale(i.toString()) || 0) + yScale.bandwidth() / 2)
+                        .attr("dy", ".35em")
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "white")
+                        .text(props.settings.displayMode === "relative" ? `${value.toFixed(1)}%` : value);
+                }
+            });
+    }
+
     // Add x-axis
     svg.append("g")
-        .attr("transform", `translate(${visualizationPadding.left + plotPadding.left}, ${visualizationPadding.top + plotPadding.top + barHeight * bars.length})`)
+        .attr("transform", `translate(${visualizationPadding.left + plotPadding.left + barLabelWidth + barLabelPaddingRight}, ${visualizationPadding.top + plotPadding.top + barHeight * bars.length})`)
         .call(d3.axisBottom(xScale))
         .append("text")
         .attr("font-family", font)

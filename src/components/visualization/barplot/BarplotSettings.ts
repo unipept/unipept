@@ -24,16 +24,16 @@ export class BarplotLegendSettings {
     };
 
     // Size for the title of the legend
-    titleFontSize: number = 20;
+    titleFontSize: number = 24;
 
     // Size for the labels in the legend
-    labelFontSize: number = 12;
+    labelFontSize: number = 16;
 
     // Size in pixels of the colored square for each entry in the legend
-    symbolSize: number = 12;
+    symbolSize: number = 16;
 
     // Amount of columns that should be used for the legend items
-    columns: number = 3;
+    columns: number = 4;
 
     // Maximum width of the legend (in pixels), when used in horizontal mode. The width of the complete visualization is
     // used when the barplot is rendered in vertical mode. The available width will be spread over the amount of desired
@@ -58,10 +58,20 @@ export class BarplotSettings {
     // Height of each bar in the visualization
     barHeight: number = 75;
 
-    // Which font for the titles and labels in the visualisation
+    // Only shows the n largest items in the barplot and moves all the others into a single group "other"
+    // The order of the items is determined by looking at values in the first bar. Pass undefined into this option to
+    // display all items.
+    maxItems: number = 15;
+
+    // Which font for the titles and labels in the visualization
     font: string = "Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;";
 
     displayMode: "absolute" | "relative" = "relative";
+
+    // Show the name of the dataset that's represented by a bar before the actual bar?
+    showBarLabel: boolean = true;
+
+    showValuesInBars: boolean = true;
 
     // Padding around the whole visualization area (including both the actual plot area and legend area)
     padding: VisualizationPadding = {
