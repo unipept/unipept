@@ -13,7 +13,7 @@ const props = withDefaults(
         bars: Bar[],
         settings?: BarplotSettings
     }>(), {
-        settings: new BarplotSettings()
+        settings: () => new BarplotSettings()
     }
 );
 

@@ -1,9 +1,11 @@
 <template>
-    <v-unipept-card>
-        <div ref="barplotWrapper" style="width: 100%;">
-            <barplot :bars="bars" :settings="barplotSettings" />
-        </div>
-    </v-unipept-card>
+    <div ref="barplotWrapper">
+        <template v-for="(group, idx) in project.groups">
+            <v-unipept-card :title="group.name" class="mb-4">
+                <barplot :bars="bars[idx]" :settings="barplotSettings" />
+            </v-unipept-card>
+        </template>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -20,12 +22,13 @@ const { project } = defineProps<{
 
 const barplotWrapper = ref<HTMLDivElement>();
 
-const bars: Ref<Bar[]> = ref([]);
+const bars: Ref<Bar[][]> = ref([]);
 const barplotSettings: Ref<BarplotSettings> = ref(new BarplotSettings());
 
 const computeBars = () => {
     // Get all samples from the project
     for (const group of project.groups) {
+        const barsInGroup: Bar[] = [];
         for (const analysis of group.analyses) {
             const tree = analysis.ncbiTree;
 
@@ -45,11 +48,12 @@ const computeBars = () => {
                 });
             }
 
-            bars.value.push({
+            barsInGroup.push({
                 label: analysis.name,
                 items
-            })
+            });
         }
+        bars.value.push(barsInGroup);
     }
 }
 

@@ -66,7 +66,7 @@ export class BarplotSettings {
     // Which font for the titles and labels in the visualization
     font: string = "Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;";
 
-    displayMode: "absolute" | "relative" = "relative";
+    displayMode: "absolute" | "relative" = "absolute";
 
     // Show the name of the dataset that's represented by a bar before the actual bar?
     showBarLabel: boolean = true;
