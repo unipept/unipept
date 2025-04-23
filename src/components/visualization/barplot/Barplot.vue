@@ -117,7 +117,7 @@ const renderPlot = () => {
     const legendSymbolPaddingRight = 10;
 
     // Height of the x-axis bar and it's labels
-    const xAxisHeight: number = 35;
+    const xAxisHeight: number = 40;
 
     let plotAreaWidth: number;
     let plotAreaHeight: number;
@@ -148,8 +148,8 @@ const renderPlot = () => {
         legendEntryWidth = Math.floor((legendAreaWidth - Math.max(legendColumns - 1, 0) * legendColumnSpacing) / legendColumns);
     }
 
-    const barLabelWidth = 125;
-    const barLabelFontSize = 20;
+    const barLabelWidth = 150;
+    const barLabelFontSize = 15;
     const barLabelPaddingRight = 10;
 
     let barWidth = plotAreaWidth;
@@ -234,7 +234,13 @@ const renderPlot = () => {
             .attr("dy", ".35em")
             .attr("font-family", font)
             .attr("font-size", barLabelFontSize)
-            .text(d => d.label);
+            .text(d => {
+                if (d.label.length * (barLabelFontSize * 0.6) > barLabelWidth) {
+                    const charsToShow = Math.floor(barLabelWidth / (barLabelFontSize * 0.6));
+                    return d.label.substring(0, charsToShow - 3) + "...";
+                }
+                return d.label;
+            });
     }
 
     // Add bars
@@ -252,19 +258,29 @@ const renderPlot = () => {
         .attr("height", yScale.bandwidth());
 
     if (props.settings.showValuesInBars) {
-        renderedBars
-            .each(function (d) {
-                const width = Math.floor(xScale(d[1]) - xScale(d[0]));
+        svg.append("g")
+            .selectAll("g")
+            .data(stackedData)
+            .join("g")
+            .selectAll("text")
+            .data(d => d)
+            .join("text")
+            .attr("x", d => {
+                const barStart = Math.floor(xScale(d[0]));
+                const barEnd = Math.floor(xScale(d[1]));
+                return visualizationPadding.left + plotPadding.left + barLabelWidth + barLabelPaddingRight + barStart + (barEnd - barStart) / 2;
+            })
+            .attr("y", (d, i) => visualizationPadding.top + plotPadding.top + (yScale(i.toString()) || 0) + yScale.bandwidth() / 2)
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .attr("fill", "white")
+            .attr("font-family", font)
+            .attr("font-size", props.settings.valuesFontSize)
+            .text(d => {
                 const value = d[1] - d[0];
-                if (width > 30) { // Only show text if bar is wide enough
-                    d3.select(this.parentNode).append("text")
-                        .attr("x", visualizationPadding.left + plotPadding.left + barLabelWidth + barLabelPaddingRight + Math.floor(xScale(d[0])) + width / 2)
-                        .attr("y", (_, i) => visualizationPadding.top + plotPadding.top + (yScale(i.toString()) || 0) + yScale.bandwidth() / 2)
-                        .attr("dy", ".35em")
-                        .attr("text-anchor", "middle")
-                        .attr("fill", "white")
-                        .text(props.settings.displayMode === "relative" ? `${value.toFixed(1)}%` : value);
-                }
+                const width = Math.floor(xScale(d[1])) - Math.floor(xScale(d[0]));
+                if (width < 30) return "";
+                return props.settings.displayMode === "relative" ? `${value.toFixed(1)}%` : value;
             });
     }
 
@@ -272,12 +288,14 @@ const renderPlot = () => {
     svg.append("g")
         .attr("transform", `translate(${visualizationPadding.left + plotPadding.left + barLabelWidth + barLabelPaddingRight}, ${visualizationPadding.top + plotPadding.top + barHeight * bars.length})`)
         .call(d3.axisBottom(xScale))
+        .attr("font-size", "12px") // Increase tick label size
         .append("text")
         .attr("font-family", font)
         .attr("fill", "black")
-        .attr("x", plotAreaWidth / 2)
+        .attr("x", barWidth / 2)
         .attr("y", xAxisHeight)
-        .attr("text-anchor", "start")
+        .attr("text-anchor", "middle")
+        .attr("font-size", 14)
         .text(props.settings.displayMode === "relative" ? "Percentage" : "Count");
 
     // Add legend

@@ -104,6 +104,11 @@
             </div>
         </div>
 
+        <comparative-analysis
+            v-else-if="selectedPage === ProjectDrawerItem.COMPARE"
+            :project="project"
+        />
+
         <project-export
             v-else-if="selectedPage === ProjectDrawerItem.EXPORT"
             :project="project"
@@ -135,6 +140,7 @@ import ProjectDrawer, {ProjectDrawerItem} from "@/components/project/ProjectDraw
 import ProjectExport from "@/components/project/export/ProjectExport.vue";
 import DatabaseOverview from "@/components/database/DatabaseOverview.vue";
 import {Filter} from "@/store/CustomFilterStore";
+import ComparativeAnalysis from "@/components/analysis/comparative/ComparativeAnalysis.vue";
 
 const { project } = defineProps<{
     project: ProjectAnalysisStore;

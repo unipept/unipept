@@ -73,6 +73,9 @@ export class BarplotSettings {
 
     showValuesInBars: boolean = true;
 
+    // Size (in pixels) of the values shown inside of the bars
+    valuesFontSize: number = 12;
+
     // Padding around the whole visualization area (including both the actual plot area and legend area)
     padding: VisualizationPadding = {
         top: 10,
