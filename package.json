@@ -13,7 +13,7 @@
     "@mdi/font": "^7.4.47",
     "@types/uuid": "^10.0.0",
     "@vueuse/components": "^11.2.0",
-    "@vueuse/core": "^13.0.0",
+    "@vueuse/core": "^13.1.0",
     "async": "^3.2.6",
     "highcharts": "^12.2.0",
     "highcharts-vue": "^2.0.1",
