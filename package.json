@@ -20,7 +20,7 @@
     "html-to-image": "^1.11.11",
     "peptonizer": "file:./peptonizer-v0.0.31.tgz",
     "marked": "^15.0.7",
-    "pinia": "^3.0.1",
+    "pinia": "^3.0.2",
     "roboto-fontface": "*",
     "shared-memory-datastructures": "0.1.9",
     "unipept-visualizations": "^2.1.0",
