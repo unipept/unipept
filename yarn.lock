@@ -3045,10 +3045,10 @@ vue@^3.5.12:
     "@vue/server-renderer" "3.5.13"
     "@vue/shared" "3.5.13"
 
-vuetify@^3.0.0:
-  version "3.7.19"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.7.19.tgz#386ab39900400e9aa811fa0569e10db650f54b84"
-  integrity sha512-RrUpdBOGWGcT2oNLqXBiqYRudKTFqxTfr8lISl51Cuo80cfgRmbyDnlQQRWxE4QSNxcqXk6ZzBoJRUEXpW9C/w==
+vuetify@^3.8.2:
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.8.2.tgz#59799811a6e97154ee238981b2926b166ff14ae2"
+  integrity sha512-UJNFP4egmKJTQ3V3MKOq+7vIUKO7/Fko5G6yUsOW2Rm0VNBvAjgO6VY6EnK3DTqEKN6ugVXDEPw37NQSTGLZvw==
 
 webfontloader@^1.0.0:
   version "1.6.28"
