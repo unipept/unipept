@@ -148,7 +148,7 @@ const renderPlot = () => {
         legendEntryWidth = Math.floor((legendAreaWidth - Math.max(legendColumns - 1, 0) * legendColumnSpacing) / legendColumns);
     }
 
-    const barLabelWidth = 150;
+    let barLabelWidth = 150;
     const barLabelFontSize = 15;
     const barLabelPaddingRight = 10;
 
@@ -156,6 +156,8 @@ const renderPlot = () => {
 
     if (props.settings.showBarLabel) {
         barWidth = plotAreaWidth - barLabelWidth - barLabelPaddingRight;
+    } else {
+        barLabelWidth = 0;
     }
 
     // Clear previous chart
@@ -244,7 +246,7 @@ const renderPlot = () => {
     }
 
     // Add bars
-    const renderedBars = svg.append("g")
+    svg.append("g")
         .selectAll("g")
         .data(stackedData)
         .join("g")
