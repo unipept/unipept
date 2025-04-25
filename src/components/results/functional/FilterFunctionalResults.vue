@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import {ref, watch} from 'vue';
 
 const dialogOpen = defineModel({ default: false });
 
@@ -84,7 +84,7 @@ const emit = defineEmits<{
 }>();
 
 const props = defineProps<{
-    filterPercentage?: number
+    filterPercentage: number
 }>();
 
 const filterPercentage = ref(props.filterPercentage ?? 5);
@@ -98,6 +98,10 @@ const undoChanges = () => {
     filterPercentage.value
     dialogOpen.value = false;
 };
+
+watch(() => props.filterPercentage, (newValue) => {
+    filterPercentage.value = newValue;
+});
 </script>
 
 <style scoped>
