@@ -69,7 +69,7 @@
 
     const useAbsoluteValues = ref(false);
 
-    const taxonCount = ref(15);
+    const taxonCount = ref(10);
 
     const barplotWrapper = ref<HTMLDivElement>();
     const containerWidth: Ref<number> = ref(800);
@@ -80,10 +80,10 @@
     barplotSettings.value.padding.top = 50;
     barplotSettings.value.plot.padding.left = 0;
     barplotSettings.value.plot.padding.right = 15;
-    // barplotSettings.value.padding.right = 10;
     barplotSettings.value.height = 400;
     barplotSettings.value.showBarLabel = false;
     barplotSettings.value.displayMode = "relative";
+    barplotSettings.value.barHeight = 100;
 
     const initializeSpeciesBar = () => {
         const nodesAtSpecies: NcbiTreeNode[] = [];
@@ -143,7 +143,7 @@
     watch(taxonCount, () => {
         barplotSettings.value.maxItems = taxonCount.value;
         initializeSpeciesBar();
-    })
+    });
 </script>
 
 <style scoped>

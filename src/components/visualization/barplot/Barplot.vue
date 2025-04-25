@@ -146,6 +146,7 @@ const renderPlot = () => {
         legendEntryHeight = Math.max(legendSymbolSize, legendLabelFontSize);
         legendAreaWidth = width - visualizationPadding.left - legendPadding.left - legendPadding.right - visualizationPadding.right;
         legendEntryWidth = Math.floor((legendAreaWidth - Math.max(legendColumns - 1, 0) * legendColumnSpacing) / legendColumns);
+        maxLegendLabelWidth = legendEntryWidth - legendSymbolSize - legendSymbolPaddingRight;
     }
 
     let barLabelWidth = 150;
@@ -323,6 +324,7 @@ const renderPlot = () => {
         .attr("x", legendContentStartLeft)
         .attr("width", legendSymbolSize)
         .attr("height", legendSymbolSize)
+        .attr("rx", 5)
         .attr("fill", colorScale);
 
     // Legend labels

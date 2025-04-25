@@ -21,7 +21,7 @@
                         :elevation="0"
                     />
                 </template>
-                <v-list style="width: 350px;">
+                <v-list style="width: 350px; border-radius: 12px;">
                     <slot name="settings"/>
                 </v-list>
             </v-menu>
