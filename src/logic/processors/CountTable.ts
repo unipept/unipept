@@ -10,4 +10,8 @@ export default class CountTable<O> extends Map<O, number> {
     getOrDefault(key: O, defaultValue = 0): number {
         return this.get(key) ?? defaultValue;
     }
+
+    getEntriesRange(start: number, end: number): [O, number][] {
+        return [...this.entries()].slice(start, end);
+    }
 }
