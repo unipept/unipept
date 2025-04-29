@@ -116,7 +116,7 @@
                         <v-spacer />
                         <analysis-summary-export @prepareDownload="prepareDownload" @download="download" />
                     </div>
-                    <analysis-summary-table :items="peptides" />
+                    <analysis-summary-table :analysis="analysis" />
                 </v-col>
             </v-row>
         </v-card-text>
@@ -130,10 +130,10 @@
 
 <script setup lang="ts">
 import AnalysisSummaryTable from "@/components/analysis/multi/AnalysisSummaryTable.vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {computed, onMounted, ref} from "vue";
 import usePercentage from "@/composables/usePercentage";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
 import useCsvDownload from "@/composables/useCsvDownload";
 import usePeptideExport from "@/composables/usePeptideExport";
@@ -141,7 +141,7 @@ import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDi
 import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
 
 const { getNcbiDefinition } = useOntologyStore();
@@ -152,7 +152,7 @@ const { databaseVersion: latest, process } = useMetaData();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
-    group: MultiAnalysisStore
+    group: GroupAnalysisStore
 }>();
 
 const emits = defineEmits<{
@@ -161,17 +161,6 @@ const emits = defineEmits<{
 
 const showMissingPeptides = ref(false);
 
-const peptides = computed(() => [...analysis.peptidesTable!.entries()].map(([peptide, count]) => {
-    const lca = analysis.peptideToLca!.get(peptide)!;
-    return {
-        peptide: peptide,
-        occurrence: count,
-        lca: getNcbiDefinition(lca)?.name ?? "N/A",
-        rank: getNcbiDefinition(lca)?.rank ?? "N/A",
-        found: analysis.peptideToLca!.has(peptide),
-        faCounts: analysis.peptideToData!.get(peptide)?.faCounts
-    };
-}));
 const missedPeptides = computed(() => {
     return analysis.peptideTrust!.missedPeptides;
 });

@@ -55,10 +55,10 @@
 
 <script setup lang="ts">
 import { computed, ref, ComputedRef, Ref } from 'vue';
-import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
+import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import useOntologyStore from "@/store/new/OntologyStore";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import useOntologyStore from "@/store/OntologyStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
 import Protein from "@/logic/ontology/proteins/Protein";
 
 export interface Props {

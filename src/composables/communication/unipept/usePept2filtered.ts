@@ -4,7 +4,7 @@ import {ref} from "vue";
 import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
-import {Filter, FilterType} from "@/store/new/CustomFilterStore";
+import {Filter, FilterType} from "@/store/CustomFilterStore";
 
 export default function usePept2filtered(
     baseUrl = DEFAULT_API_BASE_URL,

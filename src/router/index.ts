@@ -60,13 +60,19 @@ const routes = [
     },
     {
         path: "/mpa",
-        component: () => import("@/components/pages/features/MetaproteomeAnalysisPage.vue"),
+        component: () => import("@/components/pages/features/analysis/MetaproteomeHomePage.vue"),
         meta: mpaMeta
     },
     {
-        path: "/mpa/results",
-        name: "mpaResults",
-        component:  () => import("@/components/pages/features/MetaproteomeResultsPage.vue"),
+        path: "/mpa/result",
+        name: "mpaResult",
+        component:  () => import("@/components/pages/features/analysis/MetaproteomeResultsPage.vue"),
+        children: [
+            { path: "single", name: "mpaSingle", component: () => import("@/components/pages/features/analysis/MetaproteomeSinglePage.vue"), meta: mpaMeta },
+            //{ path: "compare", component: () => import("@/components/pages/features/MetaproteomeAnalysisOverviewPage.vue"), meta: mpaMeta },
+            { path: "export", name: "mpaExport", component: () => import("@/components/pages/features/analysis/MetaproteomeExportPage.vue"), meta: mpaMeta },
+            { path: "database", name: "mpaDatabase", component: () => import("@/components/pages/features/analysis/MetaproteomeDatabasePage.vue"), meta: mpaMeta },
+        ],
         meta: mpaMeta
     },
     {

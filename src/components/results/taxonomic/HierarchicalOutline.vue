@@ -184,7 +184,7 @@ watch(selectedItem, () => {
 
 <script lang="ts">
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {FilteredTree} from "@/composables/useTreeFilter";
 
 const headers = [

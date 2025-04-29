@@ -149,8 +149,8 @@
 
 <script setup lang="ts">
 import CountTable from "@/logic/processors/CountTable";
-import {PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisStore";
-import {Ref, ref, toRaw, watch} from "vue";
+import {PeptonizerStatus, PeptonizerStore} from "@/store/PeptonizerAnalysisStore";
+import {onMounted, Ref, ref, toRaw, watch} from "vue";
 import PeptonizerProgress from "@/components/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/results/taxonomic/peptonizer/PeptonizerChart.vue";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
@@ -222,7 +222,7 @@ const downloadCsv = async (callback: () => void): Promise<void> => {
     callback();
 }
 
-watch(() => props.peptonizerStore.status, () => {
+const setStep = () => {
     const peptonizerStatus = props.peptonizerStore.status;
     if (peptonizerStatus === PeptonizerStatus.Pending) {
         peptonizerStep.value = 1;
@@ -231,7 +231,11 @@ watch(() => props.peptonizerStore.status, () => {
     } else {
         peptonizerStep.value = 3;
     }
-});
+}
+
+watch(() => props.peptonizerStore.status, setStep);
+
+onMounted(setStep);
 </script>
 
 <style scoped>

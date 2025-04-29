@@ -96,7 +96,7 @@ import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import useCsvDownload from "@/composables/useCsvDownload";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 import {DataNodeLike} from "unipept-visualizations";
 
