@@ -79,6 +79,7 @@
             v-model="editDatabaseDialogOpen"
             :name="databaseToManipulate"
             :filter="customFilterStore.getFilter(databaseToManipulate)"
+            :amount-of-linked-samples="amountOfLinkedSamples"
             @edit="confirmEditDatabase"
         />
     </div>
@@ -98,6 +99,7 @@ import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue
 import DeleteDatabaseDialog from "@/components/database/DeleteDatabaseDialog.vue";
 import EditCustomDatabase from "@/components/database/EditCustomDatabase.vue";
 import EditDatabaseDialog from "@/components/database/EditDatabaseDialog.vue";
+import {GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
 
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
@@ -106,6 +108,10 @@ const { formatNumber } = useNumberFormatter();
 
 const taxonomyCommunicator = new TaxonomyResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 const proteinCommunicator = new ProteinResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
+
+const { project } = defineProps<{
+    project: GroupAnalysisStore
+}>();
 
 const emits = defineEmits<{
     (e: 'database:update', name: string, newName: string, newFilter: Filter): void,
@@ -118,6 +124,17 @@ const editDatabaseDialogOpen = ref(false);
 const databaseToManipulate = ref<string>('');
 const taxonCounts = ref<Map<string, string>>(new Map());
 const proteinCounts = ref<Map<string, string>>(new Map());
+
+const amountOfLinkedSamples = computed(() =>
+    project.groups.reduce((acc, group) => {
+        return acc + group.analyses.reduce((acc, analysis) => {
+            if (analysis.config.database === databaseToManipulate.value) {
+                return acc + 1;
+            }
+            return acc;
+        }, 0);
+    }, 0)
+);
 
 const databases = computed(() => {
     return customFilterStore.filters.map(name => {

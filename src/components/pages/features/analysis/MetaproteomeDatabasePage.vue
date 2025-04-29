@@ -1,6 +1,7 @@
 <template>
     <v-container fluid>
         <database-overview
+            :project="groupStore"
             @database:update="updateDatabase"
             @database:delete="deleteDatabase"
         />
@@ -11,6 +12,7 @@
 import DatabaseOverview from "@/components/database/DatabaseOverview.vue";
 import useCustomFilterStore, {Filter} from "@/store/new/CustomFilterStore";
 import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 
 const groupStore = useGroupAnalysisStore();
 const customFilterStore = useCustomFilterStore();

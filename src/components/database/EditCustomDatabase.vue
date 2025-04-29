@@ -59,7 +59,7 @@
                         variant="tonal"
                         text="Update database"
                         :disabled="!isValidDatabaseName"
-                        @click="confirmDialogOpen = true"
+                        @click="openConfirmDialog(updateTaxonDatabase)"
                     />
 
                     <edit-database-dialog
@@ -84,7 +84,7 @@
                         variant="tonal"
                         text="Update database"
                         :disabled="!isValidDatabaseName"
-                        @click="confirmDialogOpen = true"
+                        @click="openConfirmDialog(updateProteomeDatabase)"
                     />
 
                     <edit-database-dialog
@@ -109,7 +109,7 @@
                         variant="tonal"
                         text="Update database"
                         :disabled="!isValidDatabaseName"
-                        @click="confirmDialogOpen = true"
+                        @click="openConfirmDialog(updateProteinDatabase)"
                     />
 
                     <edit-database-dialog
@@ -147,6 +147,7 @@ const dialogOpen = defineModel<boolean>();
 const props = defineProps<{
     name: string,
     filter: Filter | undefined,
+    amountOfLinkedSamples: number,
 }>();
 
 const emits = defineEmits<{
@@ -162,6 +163,14 @@ const filterSelection = ref<FilterSelection>(FilterSelection.None);
 const selectedTaxa = ref<NcbiTaxon[]>([]);
 const selectedProteomes = ref<ReferenceProteome[]>([]);
 const selectedProteins = ref<Protein[]>([]);
+
+const openConfirmDialog = (updateDatabaseCallback: () => void) => {
+    if (props.amountOfLinkedSamples > 0) {
+        confirmDialogOpen.value = true;
+        return;
+    }
+    updateDatabaseCallback();
+}
 
 const updateDatabase = (type: FilterType, data: number[] | string[]) => {
     emits("edit", databaseName.value, {
