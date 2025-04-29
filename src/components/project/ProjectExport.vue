@@ -2,12 +2,13 @@
     <div>
         <v-unipept-card class="mb-6">
             <v-card-title class="text-h5 font-weight-bold mb-2">
-                🧬 Export Project Overview
+                <v-icon icon="mdi-file-download-outline" size="30" class="me-2" color="primary"/>
+                Export Project Overview
             </v-card-title>
             <v-card-text>
                 <p>
                     You’re about to export your entire project. This includes all samples, groups, analysis results, and settings.
-                    The export will be saved as a <strong>.zip</strong> file that can later be re-imported or shared with others.
+                    The export will be saved as a <strong>.unipept</strong> file that can later be re-imported or shared with others.
                 </p>
             </v-card-text>
         </v-unipept-card>
@@ -104,7 +105,7 @@
 import GroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {computed, ref} from "vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
-import useProjectExport from "@/components/project/export/useProjectExport";
+import useProjectExport from "@/composables/useProjectExport";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {PeptonizerStatus} from "@/store/new/PeptonizerAnalysisStore";
 

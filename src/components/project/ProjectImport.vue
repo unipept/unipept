@@ -23,7 +23,7 @@
 import FileUpload from "@/components/filesystem/FileUpload.vue";
 import {GroupAnalysisStoreImport} from "@/store/new/GroupAnalysisStore";
 import {ref, Ref} from "vue";
-import useProjectImport from "@/components/project/import/useProjectImport";
+import useProjectImport from "@/composables/useProjectImport";
 
 const projectImport = useProjectImport();
 

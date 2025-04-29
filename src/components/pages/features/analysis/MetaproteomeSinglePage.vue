@@ -30,9 +30,9 @@ const addSample = (groupId: string, sample: SampleTableItem) => {
     );
     const analysis = groupStore.getGroup(groupId).getAnalysis(analysisId);
     if (!analysis) {
-      throw Error(`Could not create a new analysis with the provided properties. Analysis with id ${analysisId} is invalid.`);
+        throw Error(`Could not create a new analysis with the provided properties. Analysis with id ${analysisId} is invalid.`);
     } else {
-      analysis.analyse();
+        analysis.analyse();
     }
 }
 

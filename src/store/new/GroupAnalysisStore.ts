@@ -123,9 +123,11 @@ const useGroupAnalysisStore = defineStore('_groupsampleStore', () => {
 export interface GroupAnalysisStoreImport {
     groups: MultiAnalysisStoreImport[];
     filters: CustomFilterStoreImport;
+    version: string;
 }
 
 export const useGroupAnalysisStoreImport = (storeImport: GroupAnalysisStoreImport): void => {
+    console.log(storeImport)
     const groupStore = useGroupAnalysisStore();
     groupStore.setImportedData(storeImport);
 }
