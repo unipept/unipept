@@ -109,7 +109,7 @@
 <script setup lang="ts">
 import SampleTable from "@/components/sample/SampleTable.vue";
 import {computed, ref, watch} from "vue";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import RemoveGroupDialog from "@/components/sample/RemoveGroupDialog.vue";
 import AddSampleStepper from "@/components/sample/AddSampleStepper.vue";
 import UndoChangesDialog from "@/components/sample/UndoChangesDialog.vue";
@@ -117,7 +117,7 @@ import UndoChangesDialog from "@/components/sample/UndoChangesDialog.vue";
 const dialogOpen = defineModel<boolean>();
 
 const { group } = defineProps<{
-    group: MultiAnalysisStore
+    group: GroupAnalysisStore
 }>();
 
 const emit = defineEmits<{
@@ -222,7 +222,7 @@ watch(dialogOpen, () => {
 </script>
 
 <script lang="ts">
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 
 const cloneOriginalSamples = (originalSamples: SingleAnalysisStore[]): SampleTableItem[] => {

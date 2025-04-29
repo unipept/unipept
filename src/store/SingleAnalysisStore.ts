@@ -1,4 +1,4 @@
-import {computed, ref, shallowRef} from "vue";
+import {computed, ref} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/processing/peptide/usePeptideProcessor";
@@ -6,13 +6,13 @@ import usePeptideTrustProcessor from "@/composables/processing/peptide/usePeptid
 import useEcProcessor from "@/composables/processing/functional/useEcProcessor";
 import useGoProcessor from "@/composables/processing/functional/useGoProcessor";
 import useInterproProcessor from "@/composables/processing/functional/useInterproProcessor";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import useTaxonomicProcessor from "@/composables/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTreeProcessor";
-import usePeptonizerStore, {PeptonizerStoreImport} from "@/store/new/PeptonizerAnalysisStore";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
-import useCustomFilterStore from "@/store/new/CustomFilterStore";
+import usePeptonizerStore, {PeptonizerStoreImport} from "@/store/PeptonizerAnalysisStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import {AnalysisConfig} from "@/store/AnalysisConfig";
+import useCustomFilterStore from "@/store/CustomFilterStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
@@ -209,7 +209,7 @@ const useSingleAnalysisStore = (
 
         taxonomicFilter.value = storeImport.taxonomicFilter;
         functionalFilter.value = storeImport.functionalFilter;
-        lastAnalysed.value = new Date(storeImport.lastAnalysed);
+        lastAnalysed.value = storeImport.lastAnalysed ? new Date(storeImport.lastAnalysed) : undefined;
         databaseVersion.value = storeImport.databaseVersion;
 
         if (storeImport.indexBuffer && storeImport.dataBuffer) {
@@ -272,10 +272,10 @@ export interface SingleAnalysisStoreImport {
     name: string;
     rawPeptides: string;
     config: AnalysisConfig;
-    intensities: Map<string, number>;
+    intensities: Map<string, number> | undefined;
     taxonomicFilter: number;
     functionalFilter: number;
-    lastAnalysed: Date;
+    lastAnalysed: Date | undefined;
     databaseVersion: string;
     indexBuffer: ArrayBuffer | undefined;
     dataBuffer: ArrayBuffer | undefined;

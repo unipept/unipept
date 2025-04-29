@@ -136,8 +136,8 @@
 
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import useOntologyStore from "@/store/new/OntologyStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
+import useOntologyStore from "@/store/OntologyStore";
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore

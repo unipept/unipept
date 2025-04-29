@@ -105,14 +105,14 @@
 
 <script setup lang="ts">
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import {ref} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import {CustomFilterStore} from "@/store/new/CustomFilterStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import {CustomFilterStore} from "@/store/CustomFilterStore";
 
 defineProps<{
-    group: MultiAnalysisStore
+    group: GroupAnalysisStore
 }>();
 
 const emits = defineEmits<{

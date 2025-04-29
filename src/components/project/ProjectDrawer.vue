@@ -21,7 +21,7 @@
             >
                 <v-list-item
                     color="primary"
-                    prepend-icon="mdi-content-save"
+                    prepend-icon="mdi-file-download"
                     to="export"
                 />
                 <v-list-item

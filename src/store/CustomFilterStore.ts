@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {computed, ref} from "vue";
+import {computed, ref, toRaw} from "vue";
 
 export enum FilterType {
     Taxon,
@@ -27,13 +27,27 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
         _filters.value.set(key, filter);
     }
 
+    const removeFilter = (key: string) => {
+        _filters.value.delete(key);
+    }
+
     const hasFilter = (key: string): boolean => {
         return _filters.value.has(key);
     }
 
+    const updateFilter = (oldKey: string, newKey: string, newFilter: Filter) => {
+        _filters.value.delete(oldKey);
+        _filters.value.set(newKey, newFilter);
+    }
+
+    const clear = () => {
+        _filters.value.clear();
+        _filters.value.set('UniProtKB', { filter: FilterType.UniProtKB });
+    }
+
     const exportStore = (): CustomFilterStoreImport => {
         return Array.from(_filters.value.entries()).map(
-            ([key, filter]) => [key, { ...filter }]);
+            ([key, filter]) => [key, toRaw(filter)]);
     }
 
     const setImportedData = (storeImport: CustomFilterStoreImport) => {
@@ -48,7 +62,10 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
 
         getFilter,
         addFilter,
+        removeFilter,
         hasFilter,
+        updateFilter,
+        clear,
         exportStore,
         setImportedData
     };

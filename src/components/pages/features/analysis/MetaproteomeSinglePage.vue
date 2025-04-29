@@ -1,6 +1,15 @@
 <template>
+    <v-container class="py-0" fluid>
+        <v-alert
+            v-if="isDemoMode"
+            type="info"
+        >
+            You are currently in <b>demo</b> mode. Changes made to the project will not be saved. To save your changes, please create a new project.
+        </v-alert>
+    </v-container>
+
     <project
-        :project="groupStore"
+        :project="project"
         @sample:add="addSample"
         @sample:update="updateSample"
         @sample:remove="removeSample"
@@ -11,20 +20,20 @@
 </template>
 
 <script setup lang="ts">
-import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import Project from "@/components/project/Project.vue";
+import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
-const groupStore = useGroupAnalysisStore();
+const { project, isDemoMode } = useUnipeptAnalysisStore();
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
-    const analysisId = groupStore.getGroup(groupId).addAnalysis(
+    const analysisId = project.getGroup(groupId).addAnalysis(
         sample.name,
         sample.rawPeptides,
         sample.config,
         sample.intensities
     );
-    const analysis = groupStore.getGroup(groupId).getAnalysis(analysisId);
+    const analysis = project.getGroup(groupId).getAnalysis(analysisId);
     if (!analysis) {
         throw Error(`Could not create a new analysis with the provided properties. Analysis with id ${analysisId} is invalid.`);
     } else {
@@ -33,34 +42,28 @@ const addSample = (groupId: string, sample: SampleTableItem) => {
 }
 
 const removeSample = (groupId: string, analysisId: string) => {
-    groupStore.getGroup(groupId)?.removeAnalysis(analysisId);
+    project.getGroup(groupId)?.removeAnalysis(analysisId);
 }
 
 const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
-    const analysis = groupStore.getGroup(groupId)?.getAnalysis(analysisId);
+    const analysis = project.getGroup(groupId)?.getAnalysis(analysisId);
     analysis?.updateName(updatedSample.name);
     analysis?.updateConfig(updatedSample.config);
     analysis?.analyse();
 }
 
-const createGroup = groupStore.addGroup;
+const createGroup = project.addGroup;
 
-const removeGroup = groupStore.removeGroup;
+const removeGroup = project.removeGroup;
 
 const updateGroup = (groupId: string, updatedName: string) => {
-    groupStore.getGroup(groupId)?.updateName(updatedName);
+    project.getGroup(groupId)?.updateName(updatedName);
 }
 </script>
 
 <script lang="ts">
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-
-export interface AnalysisGroup {
-    name: string;
-    analysis: Analysis[];
-    open: boolean;
-}
+import {AnalysisConfig} from "@/store/AnalysisConfig";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
 
 export interface Analysis {
     id: number;

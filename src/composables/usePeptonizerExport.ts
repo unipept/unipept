@@ -1,4 +1,4 @@
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 
 export default function usePeptonizerExport() {
     const {

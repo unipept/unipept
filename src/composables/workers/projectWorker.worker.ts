@@ -10,6 +10,10 @@ const process = async ({ project }: ProjectExportData) => {
 
     const buffers = zipper.folder("buffers");
 
+    if (!buffers) {
+        throw new Error("Failed to create buffers folder");
+    }
+
     // Store all the buffers in the zip file
     for (const group of project.groups) {
         const analyses = group.analyses;
@@ -34,7 +38,7 @@ const process = async ({ project }: ProjectExportData) => {
             })
         })),
         filters: project.filters,
-        version: APP_VERSION
+        version: project.version
     };
 
     zipper.file("metadata.json", JSON.stringify(metadata));

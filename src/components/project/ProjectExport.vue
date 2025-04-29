@@ -102,17 +102,17 @@
 </template>
 
 <script setup lang="ts">
-import GroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 import {computed, ref} from "vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
 import useProjectExport from "@/composables/useProjectExport";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import {PeptonizerStatus} from "@/store/new/PeptonizerAnalysisStore";
 
 const { formatNumber } = useNumberFormatter();
 
 const { project } = defineProps<{
-    project: GroupAnalysisStore
+    project: ProjectAnalysisStore
 }>();
 
 const preparingExport = ref(false);
