@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
 import {ref, computed, onMounted} from 'vue';
-import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore.js";
+import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
 import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomic/TaxonomyResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import ProteinResponseCommunicator from "@/logic/communicators/unipept/protein/ProteinResponseCommunicator";
@@ -98,8 +98,7 @@ import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
 import DeleteDatabaseDialog from "@/components/database/DeleteDatabaseDialog.vue";
 import EditCustomDatabase from "@/components/database/EditCustomDatabase.vue";
-import EditDatabaseDialog from "@/components/database/EditDatabaseDialog.vue";
-import {GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
+import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
@@ -110,7 +109,7 @@ const taxonomyCommunicator = new TaxonomyResponseCommunicator(DEFAULT_API_BASE_U
 const proteinCommunicator = new ProteinResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 
 const { project } = defineProps<{
-    project: GroupAnalysisStore
+    project: ProjectAnalysisStore
 }>();
 
 const emits = defineEmits<{
@@ -125,20 +124,21 @@ const databaseToManipulate = ref<string>('');
 const taxonCounts = ref<Map<string, string>>(new Map());
 const proteinCounts = ref<Map<string, string>>(new Map());
 
-const amountOfLinkedSamples = computed(() =>
-    project.groups.reduce((acc, group) => {
-        return acc + group.analyses.reduce((acc, analysis) => {
+const amountOfLinkedSamples = computed(() => {
+    let count = 0;
+    for (const group of project.groups) {
+        for (const analysis of group.analyses) {
             if (analysis.config.database === databaseToManipulate.value) {
-                return acc + 1;
+                count++;
             }
-            return acc;
-        }, 0);
-    }, 0)
-);
+        }
+    }
+    return count;
+});
 
 const databases = computed(() => {
     return customFilterStore.filters.map(name => {
-        const filter = customFilterStore.getFilter(name);
+        const filter = customFilterStore.getFilter(name)!;
         return {
             name: name,
             type: showFilterType(filter.filter),
@@ -168,15 +168,17 @@ const computeTaxonCount = async (filter: Filter) => {
             const total = await taxonomyCommunicator.getResponses([ 1 ]);
             return total.reduce((acc, taxonomy) => acc + taxonomy.descendants.length, 0);
         case FilterType.Taxon:
-            const taxonomies = await taxonomyCommunicator.getResponses(filter.data);
+            const taxonomies = await taxonomyCommunicator.getResponses(filter.data as number[]);
             return taxonomies.reduce((acc, taxonomy) => acc + taxonomy.descendants.length, 0);
         case FilterType.Protein:
-            await updateProteinOntology(filter.data);
-            return new Set<number>(filter.data?.map(p => proteinOntology.get(p)?.taxonId)).size
+            const proteinData = filter.data as string[];
+            await updateProteinOntology(proteinData);
+            return new Set<number>(proteinData.map(p => proteinOntology.get(p)?.taxonId).filter(t => t !== undefined)).size
         case FilterType.Proteome:
         default:
-            await updateProteomeOntology(filter.data);
-            return new Set<number>(filter.data?.map(p => proteomeOntology.get(p)?.taxonId)).size
+            const proteomeData = filter.data as string[];
+            await updateProteomeOntology(proteomeData);
+            return new Set<number>(proteomeData.map(p => proteomeOntology.get(p)?.taxonId).filter(t => t !== undefined)).size
     }
 };
 
@@ -185,13 +187,14 @@ const computeProteinCount = async (filter: Filter) => {
         case FilterType.UniProtKB:
             return await proteinCommunicator.getProteinCount();
         case FilterType.Taxon:
-            return await UniprotCommunicator.getRecordCount(filter.data);
+            return await UniprotCommunicator.getRecordCount(filter.data as number[]);
         case FilterType.Protein:
-            return filter.data.length;
+            return filter.data?.length || 0;
         case FilterType.Proteome:
         default:
-            await updateProteomeOntology(filter.data);
-            return filter.data.reduce((acc, proteome) => acc + proteomeOntology.get(proteome)?.proteinCount || 0, 0);
+            const proteomeData = filter.data as string[];
+            await updateProteomeOntology(proteomeData);
+            return proteomeData.reduce((acc, proteome) => acc + (proteomeOntology.get(proteome)?.proteinCount || 0), 0);
     }
 };
 
@@ -237,10 +240,10 @@ const duplicateDatabase = (name: string) => {
     }
 
     const newName = `${name} - copy ${counter}`;
-    const filter = customFilterStore.getFilter(name);
+    const filter = customFilterStore.getFilter(name)!;
     customFilterStore.addFilter(newName, { ...filter });
-    taxonCounts.value.set(newName, taxonCounts.value.get(name));
-    proteinCounts.value.set(newName, proteinCounts.value.get(name));
+    taxonCounts.value.set(newName, taxonCounts.value.get(name)!);
+    proteinCounts.value.set(newName, proteinCounts.value.get(name)!);
 };
 
 const createDatabase = () => databaseDialogOpen.value = true;
@@ -255,7 +258,7 @@ const confirmCreateDatabase = async (name: string, filter: Filter) => {
 
 const updateCounts = async () => {
     for (const filterName of customFilterStore.filters) {
-        const filter = customFilterStore.getFilter(filterName);
+        const filter = customFilterStore.getFilter(filterName)!;
         const taxonCount = await computeTaxonCount(filter);
         const proteinCount = await computeProteinCount(filter);
         taxonCounts.value.set(filterName, `~ ${formatNumber(taxonCount)}`);

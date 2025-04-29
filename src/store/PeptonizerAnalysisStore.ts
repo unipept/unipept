@@ -4,10 +4,10 @@ import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import {PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcessor";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import {Filter} from "@/store/new/CustomFilterStore";
+import {Filter} from "@/store/CustomFilterStore";
 
 export enum PeptonizerStatus {
     Pending,

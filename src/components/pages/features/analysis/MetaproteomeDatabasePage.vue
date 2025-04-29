@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <database-overview
-            :project="groupStore"
+            :project="project"
             @database:update="updateDatabase"
             @database:delete="deleteDatabase"
         />
@@ -10,18 +10,18 @@
 
 <script setup lang="ts">
 import DatabaseOverview from "@/components/database/DatabaseOverview.vue";
-import useCustomFilterStore, {Filter} from "@/store/new/CustomFilterStore";
-import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import useCustomFilterStore, {Filter} from "@/store/CustomFilterStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 
-const groupStore = useGroupAnalysisStore();
+const project = useProjectAnalysisStore();
 const customFilterStore = useCustomFilterStore();
 
 const updateDatabase = async (name: string, newName: string, newFilter: Filter) => {
     customFilterStore.updateFilter(name, newName, newFilter);
 
     const reanalyse = [];
-    for (const group of groupStore.groups) {
+    for (const group of project.groups) {
         for (const analysis of group.analyses) {
             if (analysis.config.database === name) {
                 analysis.updateConfig({
@@ -43,7 +43,7 @@ const deleteDatabase = async (name: string) => {
     customFilterStore.removeFilter(name);
 
     const reanalyse = [];
-    for (const group of groupStore.groups) {
+    for (const group of project.groups) {
         for (const analysis of group.analyses) {
             if (analysis.config.database === name) {
                 analysis.updateConfig({

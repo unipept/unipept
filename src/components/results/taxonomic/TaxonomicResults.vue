@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import Sunburst from "@/components/results/taxonomic/Sunburst.vue";
 import Treemap from "@/components/results/taxonomic/Treemap.vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";

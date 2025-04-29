@@ -35,13 +35,13 @@
 import FilesystemGroup from "@/components/filesystem/FilesystemGroup.vue";
 import {onMounted, ref, watch} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import {GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
+import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 
 const selected = defineModel<SingleAnalysisStore[]>({ required: true });
 
 const { project } = defineProps<{
-    project: GroupAnalysisStore;
+    project: ProjectAnalysisStore;
 }>();
 
 const emits = defineEmits<{

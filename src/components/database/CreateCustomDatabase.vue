@@ -238,7 +238,7 @@
 import {ref, watch} from "vue";
 import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import useCustomFilterStore, {Filter, FilterType} from "@/store/new/CustomFilterStore";
+import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
 import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
 import ProteinBrowser from "@/components/browsers/ProteinBrowser.vue";
 import Protein from "@/logic/ontology/proteins/Protein";

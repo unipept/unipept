@@ -40,6 +40,11 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
         _filters.value.set(newKey, newFilter);
     }
 
+    const clear = () => {
+        _filters.value.clear();
+        _filters.value.set('UniProtKB', { filter: FilterType.UniProtKB });
+    }
+
     const exportStore = (): CustomFilterStoreImport => {
         return Array.from(_filters.value.entries()).map(
             ([key, filter]) => [key, toRaw(filter)]);
@@ -60,6 +65,7 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
         removeFilter,
         hasFilter,
         updateFilter,
+        clear,
         exportStore,
         setImportedData
     };
