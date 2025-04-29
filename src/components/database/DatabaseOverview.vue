@@ -6,8 +6,8 @@
                 Custom Databases
             </v-card-title>
             <v-card-text class="text-body-1">
-                Below you can find a list of all custom databases that are currently registered to this application.
-                To create a new custom database, press the floating button at the bottom. A wizard will guide you
+                Below you can find a complete list of all custom databases that are currently registered to this
+                project. To create a new custom database, press the button below the table. A wizard will guide you
                 through the custom database construction process.
             </v-card-text>
         </v-unipept-card>
@@ -79,6 +79,7 @@
             v-model="editDatabaseDialogOpen"
             :name="databaseToManipulate"
             :filter="customFilterStore.getFilter(databaseToManipulate)"
+            :amount-of-linked-samples="amountOfLinkedSamples"
             @edit="confirmEditDatabase"
         />
     </div>
@@ -97,6 +98,7 @@ import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
 import DeleteDatabaseDialog from "@/components/database/DeleteDatabaseDialog.vue";
 import EditCustomDatabase from "@/components/database/EditCustomDatabase.vue";
+import ProjectAnalysisStore from "@/store/ProjectAnalysisStore"
 
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
@@ -105,6 +107,10 @@ const { formatNumber } = useNumberFormatter();
 
 const taxonomyCommunicator = new TaxonomyResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 const proteinCommunicator = new ProteinResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
+
+const { project } = defineProps<{
+    project: ProjectAnalysisStore
+}>();
 
 const emits = defineEmits<{
     (e: 'database:update', name: string, newName: string, newFilter: Filter): void,
@@ -117,6 +123,17 @@ const editDatabaseDialogOpen = ref(false);
 const databaseToManipulate = ref<string>('');
 const taxonCounts = ref<Map<string, string>>(new Map());
 const proteinCounts = ref<Map<string, string>>(new Map());
+
+const amountOfLinkedSamples = computed(() =>
+    project.groups.reduce((acc, group) => {
+        return acc + group.analyses.reduce((acc, analysis) => {
+            if (analysis.config.database === databaseToManipulate.value) {
+                return acc + 1;
+            }
+            return acc;
+        }, 0);
+    }, 0)
+);
 
 const databases = computed(() => {
     return customFilterStore.filters.map(name => {
@@ -137,7 +154,7 @@ const showFilterType = (filterType: FilterType) => {
         case FilterType.Taxon:
             return 'Taxa';
         case FilterType.Protein:
-            return 'Proteins';
+            return 'Protein Accession Numbers';
         case FilterType.Proteome:
         default:
             return 'Reference Proteomes';

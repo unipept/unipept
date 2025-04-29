@@ -1,6 +1,7 @@
 <template>
     <v-container fluid>
         <database-overview
+            :project="groupStore"
             @database:update="updateDatabase"
             @database:delete="deleteDatabase"
         />

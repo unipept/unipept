@@ -10,8 +10,9 @@
                     This action is <b>irreversible</b>.
                 </p>
                 <v-alert type="warning" class="mt-4">
-                    Deleting this database will trigger a <em>reanalysis</em> of all samples that currently use this database.
-                    The reanalysis will be performed using the default <strong>UniProtKB</strong> database.
+                    Deleting this database will trigger a <em>reanalysis</em> of all samples that currently use this
+                    database. The reanalysis will be performed using the default <strong>unfiltered UniProtKB</strong>
+                    database.
                 </v-alert>
             </v-card-text>
             <v-card-actions class="justify-end">
