@@ -87,7 +87,8 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     const exportStore = (): ProjectAnalysisStoreImport => {
         return {
             groups: Array.from(_groups.value.values()).map(group => group.exportStore()),
-            filters: customFilterStore.exportStore()
+            filters: customFilterStore.exportStore(),
+            version: APP_VERSION
         };
     }
 
