@@ -48,6 +48,7 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import NewAnalysisCard from "@/components/analysis/multi/NewAnalysisCard.vue";
 import RecentAnalysisCard from "@/components/analysis/multi/RecentAnalysisCard.vue";
 import {useElementBounding} from "@vueuse/core";
+import ProjectImport from "@/components/project/ProjectImport.vue";
 
 const router = useRouter();
 
@@ -75,19 +76,19 @@ const projects = ref<{ name: string, lastAccessed: Date }[]>([]);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     await loadProjectFromPeptides(rawPeptides, config);
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startAnalysis();
 }
 
 const importProject = async (projectName: string, file: File) => {
     await loadProjectFromFile(projectName, file)
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startImport();
 }
 
 const loadFromIndexedDB = async (projectName: string) => {
     await loadProjectFromStorage(projectName);
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startImport();
 }
 
@@ -98,12 +99,12 @@ const deleteFromIndexedDB = async (projectName: string) => {
 
 const advancedAnalyze = (projectName: string) => {
     loadNewProject(projectName);
-    router.push({ name: "mpaResults" });
+    router.push({ name: "mpaSingle" });
 }
 
 const demoAnalyze = async (sample: SampleData) => {
     await loadProjectFromSample(sample);
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startAnalysis();
 }
 
@@ -130,7 +131,3 @@ onMounted(async () => {
     loadingSampleData.value = false;
 })
 </script>
-
-<style scoped>
-
-</style>

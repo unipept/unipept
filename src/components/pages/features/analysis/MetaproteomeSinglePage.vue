@@ -28,7 +28,6 @@ import useCustomFilterStore, {Filter} from "@/store/CustomFilterStore";
 import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
 const { project, isDemoMode } = useUnipeptAnalysisStore();
-const customFilterStore = useCustomFilterStore();
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
     const analysisId = project.getGroup(groupId).addAnalysis(
@@ -39,9 +38,9 @@ const addSample = (groupId: string, sample: SampleTableItem) => {
     );
     const analysis = project.getGroup(groupId).getAnalysis(analysisId);
     if (!analysis) {
-      throw Error(`Could not create a new analysis with the provided properties. Analysis with id ${analysisId} is invalid.`);
+        throw Error(`Could not create a new analysis with the provided properties. Analysis with id ${analysisId} is invalid.`);
     } else {
-      analysis.analyse();
+        analysis.analyse();
     }
 }
 
@@ -62,50 +61,6 @@ const removeGroup = project.removeGroup;
 
 const updateGroup = (groupId: string, updatedName: string) => {
     project.getGroup(groupId)?.updateName(updatedName);
-}
-
-const updateDatabase = async (name: string, newName: string, newFilter: Filter) => {
-    customFilterStore.updateFilter(name, newName, newFilter);
-
-    const reanalyse = [];
-    for (const group of project.groups) {
-        for (const analysis of group.analyses) {
-            if (analysis.config.database === name) {
-                analysis.updateConfig({
-                    ...analysis.config,
-                    database: newName,
-                });
-                analysis.status = AnalysisStatus.Pending;
-                reanalyse.push(analysis);
-            }
-        }
-    }
-
-    for (const analysis of reanalyse) {
-        await analysis.analyse();
-    }
-}
-
-const deleteDatabase = async (name: string) => {
-    customFilterStore.removeFilter(name);
-
-    const reanalyse = [];
-    for (const group of project.groups) {
-        for (const analysis of group.analyses) {
-            if (analysis.config.database === name) {
-                analysis.updateConfig({
-                    ...analysis.config,
-                    database: "UniProtKB",
-                });
-                analysis.status = AnalysisStatus.Pending;
-                reanalyse.push(analysis);
-            }
-        }
-    }
-
-    for (const analysis of reanalyse) {
-        await analysis.analyse();
-    }
 }
 </script>
 

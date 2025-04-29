@@ -22,6 +22,9 @@
 <script setup lang="ts">
 import FileUpload from "@/components/filesystem/FileUpload.vue";
 import {ref, Ref} from "vue";
+import useProjectImport from "@/composables/useProjectImport";
+
+const projectImport = useProjectImport();
 
 const importFile: Ref<File | null> = ref(null);
 

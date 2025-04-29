@@ -120,6 +120,7 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
 export interface ProjectAnalysisStoreImport {
     groups: GroupAnalysisStoreImport[];
     filters: CustomFilterStoreImport;
+    version: string;
 }
 
 export const useProjectAnalysisStoreImport = (storeImport: ProjectAnalysisStoreImport): void => {

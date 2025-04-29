@@ -19,7 +19,7 @@
 
                         <v-card-text>
                             <p>
-                                Start by creating a group. A group is a collection of samples you want to analyze together..
+                                Start by creating a group. A group is a collection of samples you want to analyze together.
                             </p>
 
                             <div class="d-flex justify-center mt-5">
