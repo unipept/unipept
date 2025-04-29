@@ -1,11 +1,12 @@
 <template>
-    <v-data-table
+    <v-data-table-server
         :headers="headers"
-        :items="items"
+        :items="shownItems"
         :items-per-page="5"
-        :loading="false"
+        :items-length="analysis.peptidesTable!.totalCount"
         density="compact"
         style="background-color: transparent"
+        @update:options="computeShownItems"
     >
         <template #no-data>
             <v-alert
@@ -130,13 +131,46 @@
                 </template>
             </v-tooltip>
         </template>
-    </v-data-table>
+    </v-data-table-server>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-    items: AnalysisSummaryTableItem[]
+import {ref, watch} from "vue";
+import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import useOntologyStore from "@/store/new/OntologyStore";
+
+const { analysis } = defineProps<{
+    analysis: SingleAnalysisStore
 }>();
+
+const shownItems = ref<AnalysisSummaryTableItem[]>([]);
+
+const { getNcbiDefinition } = useOntologyStore();
+
+const computeShownItems = (params: ConfigParams) => {
+    shownItems.value = analysis.peptidesTable!
+        .getEntriesRange(
+            (params.page - 1) * params.itemsPerPage,
+            params.page * params.itemsPerPage
+        )
+        .map(([peptide, count]) => {
+            const lca = analysis.peptideToLca!.get(peptide)!;
+            return {
+                peptide: peptide,
+                occurrence: count,
+                lca: getNcbiDefinition(lca)?.name ?? "N/A",
+                rank: getNcbiDefinition(lca)?.rank ?? "N/A",
+                found: analysis.peptideToLca!.has(peptide),
+                faCounts: analysis.peptideToData!.get(peptide)?.faCounts
+            };
+        });
+}
+
+watch(() => analysis, () => computeShownItems({
+    page: 1,
+    itemsPerPage: 5,
+    sortBy: []
+}));
 </script>
 
 <script lang="ts">
@@ -146,21 +180,25 @@ const headers: any = [
         title: "Peptide",
         align: "start",
         key: "peptide",
+        sortable: false
     },
     {
         title: "Occurrence",
         align: "start",
         key: "occurrence",
+        sortable: false
     },
     {
         title: "Lowest common ancestor",
         align: "start",
-        key: "lca"
+        key: "lca",
+        sortable: false
     },
     {
         title: "Rank",
         align: "start",
-        key: "rank"
+        key: "rank",
+        sortable: false
     },
     {
         title: "Annotations",
@@ -183,6 +221,12 @@ export interface AnalysisSummaryTableItem {
     rank: string;
     found: boolean;
     faCounts: { all: number, ec: number, go: number, ipr: number } | undefined;
+}
+
+interface ConfigParams {
+    page: number;
+    itemsPerPage: number;
+    sortBy: { key: string, order: "asc" | "desc" }[];
 }
 
 const openPeptideAnalysis = (peptide: string) => {

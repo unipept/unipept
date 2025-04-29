@@ -10,4 +10,21 @@ export default class CountTable<O> extends Map<O, number> {
     getOrDefault(key: O, defaultValue = 0): number {
         return this.get(key) ?? defaultValue;
     }
+
+    getEntriesRange(start: number, end: number): [O, number][] {
+        const entriesIterator = this.entries();
+
+        // Skip the first `start` entries
+        for (let i = 0; i < start; i++) {
+            entriesIterator.next();
+        }
+
+        // Take the next `end` entries
+        const entries: [O, number][] = [];
+        for (let i = start; i < Math.min(end, this.totalCount); i++) {
+            entries.push(entriesIterator.next().value);
+        }
+
+        return entries;
+    }
 }
