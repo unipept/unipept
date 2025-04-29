@@ -6,8 +6,8 @@
                 Custom Databases
             </v-card-title>
             <v-card-text class="text-body-1">
-                Below you can find a list of all custom databases that are currently registered to this application.
-                To create a new custom database, press the floating button at the bottom. A wizard will guide you
+                Below you can find a complete list of all custom databases that are currently registered to this
+                project. To create a new custom database, press the button below the table. A wizard will guide you
                 through the custom database construction process.
             </v-card-text>
         </v-unipept-card>
@@ -138,7 +138,7 @@ const showFilterType = (filterType: FilterType) => {
         case FilterType.Taxon:
             return 'Taxa';
         case FilterType.Protein:
-            return 'Proteins';
+            return 'Protein Accession Numbers';
         case FilterType.Proteome:
         default:
             return 'Reference Proteomes';

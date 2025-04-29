@@ -7,8 +7,6 @@
         @group:add="createGroup"
         @group:update="updateGroup"
         @group:remove="removeGroup"
-        @database:update="updateDatabase"
-        @database:delete="deleteDatabase"
     />
 </template>
 
