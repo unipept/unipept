@@ -127,7 +127,6 @@ export interface GroupAnalysisStoreImport {
 }
 
 export const useGroupAnalysisStoreImport = (storeImport: GroupAnalysisStoreImport): void => {
-    console.log(storeImport)
     const groupStore = useGroupAnalysisStore();
     groupStore.setImportedData(storeImport);
 }
