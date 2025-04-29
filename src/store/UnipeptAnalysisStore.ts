@@ -2,12 +2,12 @@ import {defineStore} from "pinia";
 import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 import {watchDebounced} from "@vueuse/core";
 import localforage from "localforage";
-import useProjectExport from "@/components/project/export/useProjectExport";
-import useProjectImport from "@/components/project/import/useProjectImport";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {computed, ref} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
+import useProjectExport from "@/composables/useProjectExport";
+import useProjectImport from "@/composables/useProjectImport";
 
 interface StoreValue {
     lastAccessed: number;

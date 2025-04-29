@@ -1,12 +1,12 @@
 <template>
     <v-container fluid>
-        <project-export :project="groupStore" />
+        <project-export :project="project" />
     </v-container>
 </template>
 
 <script setup lang="ts">
 import ProjectExport from "@/components/project/ProjectExport.vue";
-import useGroupAnalysisStore from "@/store/new/GroupAnalysisStore";
+import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 
-const groupStore = useGroupAnalysisStore();
+const project = useProjectAnalysisStore();
 </script>

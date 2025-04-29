@@ -16,15 +16,12 @@
         @group:add="createGroup"
         @group:update="updateGroup"
         @group:remove="removeGroup"
-        @database:update="updateDatabase"
-        @database:delete="deleteDatabase"
     />
 </template>
 
 <script setup lang="ts">
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import Project from "@/components/project/Project.vue";
-import useCustomFilterStore, {Filter} from "@/store/CustomFilterStore";
 import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
 const { project, isDemoMode } = useUnipeptAnalysisStore();
@@ -67,12 +64,6 @@ const updateGroup = (groupId: string, updatedName: string) => {
 <script lang="ts">
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
-
-export interface AnalysisGroup {
-    name: string;
-    analysis: Analysis[];
-    open: boolean;
-}
 
 export interface Analysis {
     id: number;
