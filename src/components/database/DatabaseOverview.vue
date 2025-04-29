@@ -98,7 +98,7 @@ import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
 import DeleteDatabaseDialog from "@/components/database/DeleteDatabaseDialog.vue";
 import EditCustomDatabase from "@/components/database/EditCustomDatabase.vue";
-import ProjectAnalysisStore from "@/store/ProjectAnalysisStore"
+import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
@@ -124,16 +124,17 @@ const databaseToManipulate = ref<string>('');
 const taxonCounts = ref<Map<string, string>>(new Map());
 const proteinCounts = ref<Map<string, string>>(new Map());
 
-const amountOfLinkedSamples = computed(() =>
-    project.groups.reduce((acc, group) => {
-        return acc + group.analyses.reduce((acc, analysis) => {
+const amountOfLinkedSamples = computed(() => {
+    let count = 0;
+    for (const group of project.groups) {
+        for (const analysis of group.analyses) {
             if (analysis.config.database === databaseToManipulate.value) {
-                return acc + 1;
+                count++;
             }
-            return acc;
-        }, 0);
-    }, 0)
-);
+        }
+    }
+    return count;
+});
 
 const databases = computed(() => {
     return customFilterStore.filters.map(name => {
