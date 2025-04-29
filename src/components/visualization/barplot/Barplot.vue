@@ -20,6 +20,7 @@ const props = withDefaults(
 const barplotContainer = ref<HTMLElement>();
 
 const renderPlot = () => {
+    console.log(JSON.stringify(props.bars));
     if (!barplotContainer.value || !props.bars || props.bars.length == 0) return;
 
     // Clone the bars such that we can modify them without updating the data moved into this structure
