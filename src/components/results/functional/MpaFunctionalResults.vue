@@ -63,6 +63,7 @@
 
             <filter-functional-results
                 v-model="filterModalOpen"
+                :filter-percentage="analysis.functionalFilter"
                 @confirm="updateFilter"
             />
         </v-tabs>
@@ -130,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import FunctionalGoResults from "@/components/results/functional/go/FunctionalGoResults.vue";
 import SortingPeptidesDialog from "@/components/results/functional/SortingPeptidesDialog.vue";
 import FunctionalEcResults from "@/components/results/functional/ec/FunctionalEcResults.vue";
@@ -160,34 +161,32 @@ const currentTab = ref(0);
 const sortPeptidePercentage = ref(false);
 const sortingPeptidesDialogOpen = ref(false);
 const filterModalOpen = ref<boolean>(false);
-const filter = ref<number>(analysis.functionalFilter);
 
-const goData = ref<GoTableData>({
+const goData = computed(() => ({
     goTable: analysis.goTable!,
     goTrust: analysis.goTrust!,
     ncbiTree: analysis.ncbiTree,
     goToPeptides: analysis.goToPeptides!,
     lcaToPeptides: analysis.lcaToPeptides
-});
+}));
 
-const ecData = ref<EcTableData>({
+const ecData = computed(() => ({
     ecTable: analysis.ecTable!,
     ecTrust: analysis.ecTrust!,
     ncbiTree: analysis.ncbiTree,
     ecToPeptides: analysis.ecToPeptides!,
     lcaToPeptides: analysis.lcaToPeptides
-});
+}));
 
-const iprData = ref<InterproTableData>({
+const iprData = computed(() => ({
     iprTable: analysis.iprTable!,
     iprTrust: analysis.iprTrust!,
     ncbiTree: analysis.ncbiTree,
     iprToPeptides: analysis.iprToPeptides!,
     lcaToPeptides: analysis.lcaToPeptides
-});
+}));
 
 const updateFilter = (value: number) => {
-    filter.value = value;
     analysis.updateFunctionalFilter(value);
 }
 

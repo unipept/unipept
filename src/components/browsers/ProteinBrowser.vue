@@ -28,6 +28,7 @@
                     :search="debouncedFilterValue"
                     density="compact"
                     color="primary"
+                    class="protein-browser"
                     @update:options="loadProteins"
                 >
                     <template #footer.prepend>
@@ -95,28 +96,28 @@ const headers: any = [
         align: "start",
         value: "id",
         width: "20%",
-        sortable: true
+        sortable: false
     },
     {
         title: "Name",
         align: "start",
         value: "name",
         width: "30%",
-        sortable: true
+        sortable: false
     },
     {
         title: "Taxon ID",
         align: "start",
         value: "taxonId",
         width: "20%",
-        sortable: true
+        sortable: false
     },
     {
         title: "Database Type",
         align: "start",
         value: "databaseType",
         width: "15%",
-        sortable: true
+        sortable: false
     },
     {
         title: "",
@@ -187,7 +188,7 @@ const loadProteins = async (params: LoadItemsParams) => {
         params,
         updateProteinOntology,
         proteinOntology,
-        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => proteinCommunicator.getProteinRange(start, end, filter, sortByColumn === "id" ? "uniprot_accession_number" : sortByColumn as any, sortDesc),
+        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => proteinCommunicator.getProteinRange(start, end, filter),
         (filter) => proteinCommunicator.getProteinCount(filter)
     );
 }
@@ -202,6 +203,8 @@ const computeTaxonCount = async () => {
 }
 </script>
 
-<style scoped>
-
+<style>
+.protein-browser .v-pagination__last {
+    display: none;
+}
 </style>
