@@ -2,7 +2,7 @@
     <div>
         <v-unipept-card class="mb-6">
             <v-card-title class="text-h5 font-weight-bold">
-                <v-icon icon="mdi-database" size="36" class="me-2" color="primary"/>
+                <v-icon icon="mdi-database" size="30" class="me-2" color="primary"/>
                 Custom Databases
             </v-card-title>
             <v-card-text class="text-body-1">

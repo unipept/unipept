@@ -94,17 +94,6 @@
                 @group:remove="removeGroup"
             />
         </div>
-
-        <project-export
-            v-else-if="selectedPage === ProjectDrawerItem.EXPORT"
-            :project="project"
-        />
-
-        <database-overview
-            v-else-if="selectedPage === ProjectDrawerItem.DATABASE"
-            @database:update="updateDatabase"
-            @database:delete="deleteDatabase"
-        />
     </v-container>
 </template>
 
@@ -122,10 +111,6 @@ import NewProject from "@/components/project/NewProject.vue";
 import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
-import ProjectDrawer, {ProjectDrawerItem} from "@/components/project/ProjectDrawer.vue";
-import ProjectExport from "@/components/project/export/ProjectExport.vue";
-import DatabaseOverview from "@/components/database/DatabaseOverview.vue";
-import {Filter} from "@/store/new/CustomFilterStore";
 
 const { project } = defineProps<{
     project: GroupAnalysisStore;
@@ -138,8 +123,6 @@ const emits = defineEmits<{
     (e: 'group:add', name: string): void;
     (e: 'group:update', groupId: string, updatedName: string): void;
     (e: 'group:remove', groupId: string):  void;
-    (e: 'database:update', name: string, newName: string, newFilter: Filter): void;
-    (e: 'database:delete', name: string): void;
 }>();
 
 const manageSamplesDialogOpen = ref(false);
@@ -185,14 +168,6 @@ const updateGroup = (groupId: string, updatedName: string) => {
 const removeGroup = (groupId: string) => {
     emits('group:remove', groupId);
     selectFirstAnalysis();
-}
-
-const updateDatabase = (name: string, newName: string, newFilter: Filter) => {
-    emits('database:update', name, newName, newFilter);
-}
-
-const deleteDatabase = (name: string) => {
-    emits('database:delete', name);
 }
 
 const resetTaxonomicFilter = () => {
