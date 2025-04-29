@@ -76,7 +76,7 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     groupStore.clear();
     const groupId = groupStore.addGroup("Quick analysis");
     groupStore.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startAnalysis();
 }
 
@@ -85,7 +85,7 @@ const importProject = async (project: GroupAnalysisStoreImport) => {
 
     useGroupAnalysisStoreImport(project);
 
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
 
     for (const group of groupStore.groups) {
         for (const analysis of group.analyses) {
@@ -96,7 +96,7 @@ const importProject = async (project: GroupAnalysisStoreImport) => {
 
 const advancedAnalyze = () => {
     groupStore.clear();
-    router.push({ name: "mpaResults" });
+    router.push({ name: "mpaSingle" });
 }
 
 const demoAnalyze = async (sample: SampleData) => {
@@ -110,7 +110,7 @@ const demoAnalyze = async (sample: SampleData) => {
             database: "UniProtKB"
         });
     }
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startAnalysis();
 }
 
@@ -128,7 +128,3 @@ onMounted(async () => {
     loadingSampleData.value = false;
 })
 </script>
-
-<style scoped>
-
-</style>

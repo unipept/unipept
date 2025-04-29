@@ -4,35 +4,30 @@
         permanent
     >
         <v-list
-            v-model:selected="selectedListItem"
             density="compact"
             nav
         >
             <v-list-item
                 color="primary"
                 prepend-icon="mdi-test-tube"
-                :value="ProjectDrawerItem.ANALYSIS"
-                @click="selectAnalysis"
+                to="single"
             />
         </v-list>
 
         <template #append>
             <v-list
-                v-model:selected="selectedListItem"
                 density="compact"
                 nav
             >
                 <v-list-item
                     color="primary"
                     prepend-icon="mdi-content-save"
-                    :value="ProjectDrawerItem.EXPORT"
-                    @click="selectExport"
+                    to="export"
                 />
                 <v-list-item
                     color="primary"
                     prepend-icon="mdi-database-cog"
-                    :value="ProjectDrawerItem.DATABASE"
-                    @click="selectDatabase"
+                    to="database"
                 />
             </v-list>
         </template>
@@ -40,32 +35,5 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
 
-const selectedListItem = ref<string[]>([ ProjectDrawerItem.ANALYSIS ]);
-
-const selected = defineModel<ProjectDrawerItem>({ default: ProjectDrawerItem.ANALYSIS });
-
-const selectAnalysis = () => {
-    selected.value = ProjectDrawerItem.ANALYSIS;
-    selectedListItem.value = [ ProjectDrawerItem.ANALYSIS ];
-}
-
-const selectExport = () => {
-    selected.value = ProjectDrawerItem.EXPORT;
-    selectedListItem.value = [ ProjectDrawerItem.EXPORT ];
-}
-
-const selectDatabase = () => {
-    selected.value = ProjectDrawerItem.DATABASE;
-    selectedListItem.value = [ ProjectDrawerItem.DATABASE ];
-}
-</script>
-
-<script lang="ts">
-export enum ProjectDrawerItem {
-    ANALYSIS = "analysis",
-    EXPORT = "export",
-    DATABASE = "database"
-}
 </script>
