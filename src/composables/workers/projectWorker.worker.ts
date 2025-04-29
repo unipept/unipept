@@ -1,4 +1,4 @@
-import {ProjectExportData} from "@/components/project/export/useProjectExport";
+import {ProjectExportData} from "@/composables/useProjectExport";
 import JSZip from "jszip";
 
 self.onmessage = async (event) => {
@@ -33,10 +33,9 @@ const process = async ({ project }: ProjectExportData) => {
                 return analysis;
             })
         })),
-        filters: project.filters
+        filters: project.filters,
+        version: APP_VERSION
     };
-
-    console.log(JSON.stringify(metadata.groups[0].analyses[0].peptonizer));
 
     zipper.file("metadata.json", JSON.stringify(metadata));
 

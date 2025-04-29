@@ -126,7 +126,7 @@ import {AnalysisStatus} from "@/store/new/AnalysisStatus";
 import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
 import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
 import ProjectDrawer, {ProjectDrawerItem} from "@/components/project/ProjectDrawer.vue";
-import ProjectExport from "@/components/project/export/ProjectExport.vue";
+import ProjectExport from "@/components/project/ProjectExport.vue";
 
 const { project } = defineProps<{
     project: GroupAnalysisStore;
@@ -220,10 +220,6 @@ const selectFirstAnalysis = () => {
         }
     }
 }
-
-watch(() => selectedPage, (newPage) => {
-    console.log("Selected page changed to:", newPage);
-});
 
 onMounted(() => {
     isSafari.value = detectSafari();

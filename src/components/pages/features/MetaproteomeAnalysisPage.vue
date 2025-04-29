@@ -64,7 +64,7 @@ import {onMounted, Ref, ref} from "vue"
 import useSampleDataStore from "@/store/new/SampleDataStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/new/AnalysisConfig";
-import ProjectImport from "@/components/project/import/ProjectImport.vue";
+import ProjectImport from "@/components/project/ProjectImport.vue";
 
 const router = useRouter();
 const groupStore = useGroupAnalysisStore();
