@@ -38,7 +38,7 @@ const process = async ({ project }: ProjectExportData) => {
             })
         })),
         filters: project.filters,
-        version: APP_VERSION
+        version: project.version
     };
 
     zipper.file("metadata.json", JSON.stringify(metadata));
