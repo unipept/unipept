@@ -6,7 +6,7 @@
             </v-card-title>
             <v-card-text>
                 <p>
-                    Open an existing project (<em>.unipept</em>) or start from scratch with an empty project and start analyzing
+                    Open an existing project (<em>.unipept</em>) or start from scratch with an empty project and analyse
                     your own data.
                 </p>
 
@@ -128,8 +128,8 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'open', projectName: string, file: File): void
-    (e: 'new', projectName: string): void
+    (e: 'project:open', projectName: string, file: File): void
+    (e: 'project:new', projectName: string): void
 }>();
 
 const newDialogOpen = ref(false);
@@ -156,14 +156,14 @@ const openUploadDialog = (file: File) => {
 
 const openProject = () => {
     uploadDialogOpen.value = false;
-    emits('open', projectName.value, openProjectFile.value!);
+    emits('project:open', projectName.value, openProjectFile.value!);
     openProjectFile.value = null;
     projectName.value = '';
 };
 
 const newProject = () => {
     newDialogOpen.value = false;
-    emits('new', projectName.value);
+    emits('project:new', projectName.value);
     projectName.value = '';
 };
 </script>

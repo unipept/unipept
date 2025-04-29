@@ -19,8 +19,8 @@
                 <div ref="topCard">
                     <new-analysis-card
                         :projects="projects"
-                        @new="advancedAnalyze"
-                        @open="importProject"
+                        @project:new="advancedAnalyze"
+                        @project:open="importProject"
                     />
                 </div>
 
@@ -48,7 +48,6 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import NewAnalysisCard from "@/components/analysis/multi/NewAnalysisCard.vue";
 import RecentAnalysisCard from "@/components/analysis/multi/RecentAnalysisCard.vue";
 import {useElementBounding} from "@vueuse/core";
-import ProjectImport from "@/components/project/ProjectImport.vue";
 
 const router = useRouter();
 
