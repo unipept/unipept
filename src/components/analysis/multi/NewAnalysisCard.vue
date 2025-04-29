@@ -38,6 +38,7 @@
             v-model="newDialogOpen"
             max-width="600"
             persistent
+            @keydown.enter="() => projectName && !projectExists(projectName) && newProject()"
         >
             <v-unipept-card>
                 <v-card-title class="text-h6 font-weight-bold">
@@ -75,6 +76,7 @@
             v-model="uploadDialogOpen"
             max-width="600"
             persistent
+            @keydown.enter="() => projectName && openProject()"
         >
             <v-unipept-card>
                 <v-card-title class="text-h6 font-weight-bold">
@@ -107,7 +109,7 @@
                     <v-btn variant="text" @click="cancel">Cancel</v-btn>
                     <v-btn
                         color="primary"
-                        text="Upoad project"
+                        text="Upload project"
                         :disabled="!projectName"
                         @click="openProject"
                     />
