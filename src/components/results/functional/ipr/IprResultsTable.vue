@@ -1,6 +1,7 @@
 <template>
     <v-data-table
         v-model:expanded="expanded"
+        v-model:sort-by="sortBy"
         :items="items"
         :headers="headers"
         :items-per-page="10"
@@ -90,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, toRaw} from "vue";
+import {ref, watch, toRaw, Ref} from "vue";
 import usePercentage from "@/composables/usePercentage";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
@@ -99,6 +100,7 @@ import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/OntologyStore";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 import {DataNodeLike} from "unipept-visualizations";
+import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
@@ -189,7 +191,9 @@ const headers: any = [
         width: "2%",
         sortable: false
     }
-]
+];
+
+const sortBy: Ref<SortItem[]> = ref([{ key: 'count', order: 'desc' }]);
 
 export interface IprResultsTableItem {
     code: string;

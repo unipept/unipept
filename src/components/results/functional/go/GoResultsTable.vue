@@ -1,6 +1,7 @@
 <template>
     <v-data-table
         v-model:expanded="expanded"
+        v-model:sort-by="sortBy"
         :items="items"
         :headers="headers"
         :items-per-page="5"
@@ -90,13 +91,14 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, toRaw} from "vue";
+import {ref, watch, toRaw, Ref} from "vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import usePercentage from "@/composables/usePercentage";
 import useCsvDownload from "@/composables/useCsvDownload";
 import GoTableData from "@/components/results/functional/go/GoTableData";
+import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
@@ -183,6 +185,8 @@ const headers: any = [
         sortable: false
     }
 ]
+
+const sortBy: Ref<SortItem[]> = ref([{ key: 'count', order: 'desc' }]);
 
 export interface GoResultsTableItem {
     code: string;
