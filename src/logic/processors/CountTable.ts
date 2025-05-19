@@ -1,18 +1,22 @@
-export default class CountTable<O> extends Map<O, number> {
+import {ShareableMap} from "shared-memory-datastructures";
+
+export default class CountTable<O>  {
     public readonly totalCount: number;
 
-    constructor(counts: Map<O, number>, totalCount?: number) {
-        super(counts);
+    constructor(
+        public readonly counts: ShareableMap<O, number>,
+        totalCount?: number
+    ) {
         this.totalCount = totalCount ??
             [...counts.values()].reduce((a, b) => a + b, 0);
     }
 
     getOrDefault(key: O, defaultValue = 0): number {
-        return this.get(key) ?? defaultValue;
+        return this.counts.get(key) ?? defaultValue;
     }
 
     getEntriesRange(start: number, end: number): [O, number][] {
-        const entriesIterator = this.entries();
+        const entriesIterator = this.counts.entries();
 
         // Skip the first `start` entries
         for (let i = 0; i < start; i++) {

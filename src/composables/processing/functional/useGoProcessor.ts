@@ -1,14 +1,14 @@
 import useFunctionalProcessor from "@/composables/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import {ref} from "vue";
+import {ref, shallowRef} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
 import CountTable from "@/logic/processors/CountTable";
 
 export default function useGoProcessor() {
-    const countTable = ref<CountTable<string>>();
-    const trust = ref<FunctionalTrust>();
-    const goToPeptides = ref<Map<string, string[]>>();
+    const countTable = shallowRef<CountTable<string>>();
+    const trust = shallowRef<FunctionalTrust>();
+    const goToPeptides = shallowRef<Map<string, string[]>>();
 
     const { process: processFunctional } = useFunctionalProcessor();
 
@@ -17,18 +17,20 @@ export default function useGoProcessor() {
         peptideData: ShareableMap<string, PeptideData>,
         percentage = 5
     ) => {
-        const buffer = peptideData.getBuffers();
+        const peptideDataTransferable = peptideData.toTransferableState();
+        const peptideCountsTransferable = peptideCounts.counts.toTransferableState();
 
         const processed = await processFunctional({
-            peptideCounts: new Map(peptideCounts.entries()),
-            indexBuffer: buffer[0],
-            dataBuffer: buffer[1],
+            countsMapTransferable: peptideCountsTransferable,
+            peptideDataTransferable: peptideDataTransferable,
             percentage,
             termPrefix: "go",
             proteinCountProperty: "go"
         });
 
-        countTable.value = new CountTable(processed.sortedCounts, processed.annotatedCount);
+        const countTableMap = ShareableMap.fromTransferableState<string, number>(processed.sortedCountsTransferable);
+
+        countTable.value = new CountTable(countTableMap, processed.annotatedCount);
         trust.value = {
             annotatedItems: processed.annotatedCount,
             totalItems: peptideCounts.totalCount

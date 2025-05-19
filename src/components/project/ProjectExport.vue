@@ -189,7 +189,7 @@ const { process: processExport } = useProjectExport();
 async function exportProject() {
     preparingExport.value = true;
 
-    const url = URL.createObjectURL(await processExport(project));
+    const url = URL.createObjectURL((await processExport(project)).content);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'project.unipept';

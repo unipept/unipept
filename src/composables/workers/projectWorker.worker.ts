@@ -19,9 +19,21 @@ const process = async ({ project }: ProjectExportData) => {
         const analyses = group.analyses;
         for (const analysis of analyses) {
             // Check if the buffers are defined
-            if (analysis.indexBuffer && analysis.dataBuffer) {
-                buffers.file(`${analysis.id}.index`, analysis.indexBuffer, { binary: true });
-                buffers.file(`${analysis.id}.data`, analysis.dataBuffer, { binary: true });
+            if (analysis.peptideToDataTransferable) {
+                const transferableMap = analysis.peptideToDataTransferable;
+
+                // Create new ArrayBuffers and copy the data from SharedArrayBuffers
+                const indexArray = new Uint8Array(transferableMap.indexBuffer.buffer);
+                const dataArray = new Uint8Array(transferableMap.dataBuffer.buffer);
+
+                // Create regular ArrayBuffers from the TypedArrays
+                const indexArrayBuffer = indexArray.slice().buffer;
+                const dataArrayBuffer = dataArray.slice().buffer;
+
+                // Write the regular ArrayBuffers to file
+                buffers.file(`${analysis.id}.index`, indexArrayBuffer, { binary: true });
+                buffers.file(`${analysis.id}.data`, dataArrayBuffer, { binary: true });
+
             }
         }
     }
@@ -32,8 +44,7 @@ const process = async ({ project }: ProjectExportData) => {
             id: group.id,
             name: group.name,
             analyses: group.analyses.map(analysis => {
-                analysis.indexBuffer = undefined;
-                analysis.dataBuffer = undefined;
+                analysis.peptideToDataTransferable = undefined;
                 return analysis;
             })
         })),

@@ -17,8 +17,8 @@ export default function useProjectExport() {
     );
 
     const process = async (project: ProjectAnalysisStore) => {
-        const { content } = await post({ project: project.exportStore() });
-        return content;
+        const data = project.exportStore();
+        return await post({ project: data });
     };
 
     return {

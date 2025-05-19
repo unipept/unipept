@@ -198,7 +198,7 @@ const downloadGoItem = (item: GoResultsTableItem) => {
         const itemProteinCount = peptideData.go[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable!.get(peptide),
+            analysis.peptidesTable!.counts.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),
@@ -229,7 +229,7 @@ const downloadEcItem = (item: EcResultsTableItem) => {
         const itemProteinCount = peptideData!.ec[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable!.get(peptide),
+            analysis.peptidesTable!.counts.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),
@@ -261,7 +261,7 @@ const downloadInterproItem = (item: IprResultsTableItem) => {
         const itemProteinCount = peptideData!.ipr[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable!.get(peptide),
+            analysis.peptidesTable!.counts.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),

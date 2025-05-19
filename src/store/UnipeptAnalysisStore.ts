@@ -99,10 +99,10 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         if (!isDemoMode.value) {
             await store.setItem(_projectName.value, {
                 lastAccessed: Date.now(),
-                project: await storeToBlob(project)
+                project: (await storeToBlob(project)).content
             });
         }
-    }, { deep: true, debounce: 1000, maxWait: 1000 });
+    }, { deep: true, debounce: 1000, maxWait: 5000 });
 
     return {
         project,

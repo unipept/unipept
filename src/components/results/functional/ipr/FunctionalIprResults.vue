@@ -61,7 +61,7 @@ const emits = defineEmits<{
 
 const selectedNamespace = ref<string>("all");
 
-const items = computed(() => Array.from(data.iprTable!.entries()).map(([key, value]) => {
+const items = computed(() => Array.from(data.iprTable!.counts.entries()).map(([key, value]) => {
     return {
         code: key,
         name: getIprDefinition(key)?.name ?? "Unknown",

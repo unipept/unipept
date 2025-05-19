@@ -19,7 +19,7 @@ export default function useEcTreeProcessor() {
             children: []
         });
 
-        for (const [code, count] of sortAnnotations([...countTable.entries()])) {
+        for (const [code, count] of sortAnnotations([...countTable.counts.entries()])) {
             nodes.get("root").count += count;
 
             const levels = code.substring(3).split(".");

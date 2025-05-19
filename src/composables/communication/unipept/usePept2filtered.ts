@@ -18,7 +18,7 @@ export default function usePept2filtered(
         equate: boolean,
         filter: Filter | undefined
     ) => {
-        const result = new ShareableMap<string, PeptideData>(undefined, undefined, new PeptideDataSerializer());
+        const result = new ShareableMap<string, PeptideData>({ serializer: new PeptideDataSerializer() });
 
         // TODO: caching
 

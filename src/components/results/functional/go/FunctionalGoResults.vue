@@ -111,7 +111,7 @@ const cellularComponentItems = computed(() => getItems(data.goTable).filter(x =>
 const molecularFunctionItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
 
 const getItems = (items: CountTable<string>) => {
-    return Array.from(items.entries())
+    return Array.from(items.counts.entries())
         .map(([key, value]) => ({
             code: key,
             name: getGoDefinition(key)?.name ?? "Unknown",

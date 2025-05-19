@@ -1,4 +1,4 @@
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/processing/peptide/usePeptideProcessor";
@@ -14,7 +14,7 @@ import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
-import {ShareableMap} from "shared-memory-datastructures";
+import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 
@@ -98,7 +98,7 @@ const useSingleAnalysisStore = (
 
         if (fetch) {
             const filter = customFilterStore.getFilter(config.value.database);
-            await processPept2Filtered([...peptidesTable.value!.keys()], config.value.equate, filter);
+            await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, filter);
 
             await processMetadata();
             lastAnalysed.value = new Date();
@@ -114,7 +114,7 @@ const useSingleAnalysisStore = (
         await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
         await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
         await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
-        await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.keys()));
+        await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.counts.keys()));
 
         processNcbiTree(lcaTable.value!);
 
@@ -180,7 +180,7 @@ const useSingleAnalysisStore = (
     }
 
     const exportStore = (): SingleAnalysisStoreImport => {
-        const [ indexBuffer, dataBuffer ] = peptideToData.value?.getBuffers() || [undefined, undefined];
+        const peptideToDataTransferable = peptideToData.value?.toTransferableState();
         return {
             id: id.value,
             name: name.value,
@@ -192,8 +192,7 @@ const useSingleAnalysisStore = (
             lastAnalysed: lastAnalysed.value,
             databaseVersion: databaseVersion.value,
 
-            indexBuffer: indexBuffer,
-            dataBuffer: dataBuffer,
+            peptideToDataTransferable,
 
             peptonizer: peptonizerStore.exportStore()
         }
@@ -201,7 +200,7 @@ const useSingleAnalysisStore = (
 
     const importStore = async () => {
         await analyse(peptideToData.value === undefined);
-        await updateTaxonomicFilter(taxonomicFilter.value);
+        //await updateTaxonomicFilter(taxonomicFilter.value);
     }
 
     const setImportedData = (storeImport: SingleAnalysisStoreImport) => {
@@ -212,9 +211,8 @@ const useSingleAnalysisStore = (
         lastAnalysed.value = storeImport.lastAnalysed ? new Date(storeImport.lastAnalysed) : undefined;
         databaseVersion.value = storeImport.databaseVersion;
 
-        if (storeImport.indexBuffer && storeImport.dataBuffer) {
-            peptideToData.value = new ShareableMap<string, PeptideData>(undefined, undefined, new PeptideDataSerializer());
-            peptideToData.value.setBuffers(storeImport.indexBuffer, storeImport.dataBuffer);
+        if (storeImport.peptideToDataTransferable) {
+            peptideToData.value = ShareableMap.fromTransferableState<string, PeptideData>(storeImport.peptideToDataTransferable, { serializer: new PeptideDataSerializer() });
         }
 
         if (storeImport.peptonizer) {
@@ -277,8 +275,7 @@ export interface SingleAnalysisStoreImport {
     functionalFilter: number;
     lastAnalysed: Date | undefined;
     databaseVersion: string;
-    indexBuffer: ArrayBuffer | undefined;
-    dataBuffer: ArrayBuffer | undefined;
+    peptideToDataTransferable: TransferableState | undefined;
     peptonizer: PeptonizerStoreImport | undefined;
 }
 

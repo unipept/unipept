@@ -49,13 +49,10 @@ export default class PeptideData {
         return PeptideData.FA_DATA_START + faDataLength;
     }
 
-    private readonly dataView: DataView;
 
     constructor(
-        public readonly buffer: ArrayBuffer
-    ) {
-        this.dataView = new DataView(buffer);
-    }
+        public readonly dataView: DataView
+    ) {}
 
     public static createFromPeptideDataResponse(response: PeptideDataResponse): PeptideData {
         const gos = response.fa.data ? Object.keys(response.fa.data).filter(
@@ -144,7 +141,7 @@ export default class PeptideData {
             currentPos += PeptideData.TAXON_SIZE;
         }
 
-        return new PeptideData(dataBuffer);
+        return new PeptideData(dataView);
     }
 
     public get faCounts(): { all: number, ec: number, go: number, ipr: number } {

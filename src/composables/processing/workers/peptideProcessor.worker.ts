@@ -1,4 +1,5 @@
 import {PeptideProcessorData} from "@/composables/processing/peptide/usePeptideProcessor";
+import {ShareableMap} from "shared-memory-datastructures";
 
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
@@ -11,7 +12,7 @@ const process = async ({
 }: PeptideProcessorData) => {
     peptides = preprocess(peptides, equate);
 
-    const peptideCounts = new Map<string, number>();
+    const peptideCounts = new ShareableMap<string, number>();
     for (const peptide of peptides) {
         const count = peptideCounts.get(peptide) || 0;
         peptideCounts.set(peptide, filter ? 1 : count + 1);
@@ -20,7 +21,7 @@ const process = async ({
     const totalPeptideCount = Array.from(peptideCounts.values()).reduce((a, b) => a + b, 0);
 
     return {
-        peptideCounts,
+        peptideCountsTransferable: peptideCounts.toTransferableState(),
         totalPeptideCount
     };
 }

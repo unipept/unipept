@@ -19,7 +19,7 @@ export default function useNcbiTreeProcessor() {
 
         const tree = new NcbiTreeNode(id, name);
 
-        for (const taxonId of taxaCountTable.keys()) {
+        for (const taxonId of taxaCountTable.counts.keys()) {
             const taxonDefinition = getNcbiDefinition(taxonId);
 
             if (!taxonDefinition) {
