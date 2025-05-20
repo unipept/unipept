@@ -2358,9 +2358,9 @@ magic-string@^0.30.17:
     "@jridgewell/sourcemap-codec" "^1.5.0"
 
 marked@^15.0.10:
-  version "15.0.11"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-15.0.11.tgz#08a8d12c285e16259e44287b89ce0d871c9d55e8"
-  integrity sha512-1BEXAU2euRCG3xwgLVT1y0xbJEld1XOrmRJpUwRCcy7rxhSCwMrmEu9LXoPhHSCJG41V7YcQ2mjKRr5BA3ITIA==
+  version "15.0.12"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-15.0.12.tgz#30722c7346e12d0a2d0207ab9b0c4f0102d86c4e"
+  integrity sha512-8dD6FusOQSrpv9Z1rdNMdlSgQOIP880DHqnohobOmYLElGEqAL/JvxvuxZO16r4HtjTlfPRDC1hbvxC9dPN2nA==
 
 merge2@^1.3.0, merge2@^1.4.1:
   version "1.4.1"
@@ -2777,9 +2777,10 @@ setimmediate@^1.0.5:
   resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
   integrity sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA==
 
-"shared-memory-datastructures@file:./shared-memory-datastructures-1.0.0-alpha.1.tgz":
+shared-memory-datastructures@1.0.0-alpha.1:
   version "1.0.0-alpha.1"
-  resolved "file:./shared-memory-datastructures-1.0.0-alpha.1.tgz#f13075b0d1db046c5dc4aa55c7aa1426cdae06c1"
+  resolved "https://registry.yarnpkg.com/shared-memory-datastructures/-/shared-memory-datastructures-1.0.0-alpha.1.tgz#a5e65628e41242b1917d98d73a4224fc30abb66f"
+  integrity sha512-MBoZZnjYAqYhCqdRDzp77cAX7c5d4xsGzIJUJ7A9ICezKJTNv4pKzbBI+mCvndt/KxbiEG5ndhWjum4/eWGkKg==
   dependencies:
     fnv-plus "^1.3.1"
 
