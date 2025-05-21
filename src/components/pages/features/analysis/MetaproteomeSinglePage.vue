@@ -27,6 +27,7 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 const { project, isDemoMode } = useUnipeptAnalysisStore();
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
+    console.log("Adding sample...");
     const analysisId = project.getGroup(groupId).addAnalysis(
         sample.name,
         sample.rawPeptides,
@@ -46,6 +47,7 @@ const removeSample = (groupId: string, analysisId: string) => {
 }
 
 const updateSample = (groupId: string, analysisId: string, updatedSample: SampleTableItem) => {
+    console.log("Updating sample...");
     const analysis = project.getGroup(groupId)?.getAnalysis(analysisId);
     analysis?.updateName(updatedSample.name);
     analysis?.updateConfig(updatedSample.config);

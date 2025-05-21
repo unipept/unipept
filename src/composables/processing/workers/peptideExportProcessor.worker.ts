@@ -6,6 +6,11 @@ import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializ
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
+self.onunhandledrejection = (event) => {
+    // This will propagate to the main thread's `onerror` handler
+    throw event.reason;
+};
+
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }

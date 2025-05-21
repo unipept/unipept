@@ -1,6 +1,11 @@
 import {PeptideProcessorData} from "@/composables/processing/peptide/usePeptideProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
 
+self.onunhandledrejection = (event) => {
+    // This will propagate to the main thread's `onerror` handler
+    throw event.reason;
+};
+
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
@@ -12,7 +17,7 @@ const process = async ({
 }: PeptideProcessorData) => {
     peptides = preprocess(peptides, equate);
 
-    const peptideCounts = new ShareableMap<string, number>();
+    const peptideCounts = new ShareableMap<string, number>({maxDataSize: 64});
     for (const peptide of peptides) {
         const count = peptideCounts.get(peptide) || 0;
         peptideCounts.set(peptide, filter ? 1 : count + 1);

@@ -3,6 +3,11 @@ import {FunctionalProcessorData} from "@/composables/processing/functional/useFu
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 
+self.onunhandledrejection = (event) => {
+    // This will propagate to the main thread's `onerror` handler
+    throw event.reason;
+};
+
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
@@ -19,7 +24,7 @@ const process = async ({
 
     // First we count the amount of peptides per unique code. Afterwards, we can fetch definitions for all these
     // terms and split them on namespace.
-    const countsPerCode = new ShareableMap<string, number>();
+    const countsPerCode = new ShareableMap<string, number>({maxDataSize: 64});
     // Keeps track of how many peptides are associated with at least one annotation
     let annotatedCount = 0;
 

@@ -3,6 +3,11 @@ import {TaxonomicProcessorData} from "@/composables/processing/taxonomic/useTaxo
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 
+self.onunhandledrejection = (event) => {
+    // This will propagate to the main thread's `onerror` handler
+    throw event.reason;
+};
+
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
@@ -37,7 +42,7 @@ const process = async ({
         annotatedCount += peptideCount;
     }
 
-    const countsShareableMap = new ShareableMap<number, number>();
+    const countsShareableMap = new ShareableMap<number, number>({maxDataSize: 64});
     for (const [lca, count] of countsPerLca) {
         countsShareableMap.set(lca, count);
     }

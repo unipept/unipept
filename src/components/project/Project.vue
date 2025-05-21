@@ -31,6 +31,26 @@
             @group:add="addGroup(`${DEFAULT_NEW_GROUP_NAME} ${project.findFirstAvailableGroupNumber()}`)"
         />
 
+        <div v-else-if="selectedAnalysisFailed">
+            <v-alert
+                variant="tonal"
+                type="error"
+                class="my-2"
+            >
+                <div>
+                    An error occurred while analysing this sample. Please try again.
+                    You can contact us if the issue persists.
+                </div>
+                <div class="font-weight-bold">
+                    Error details:
+                </div>
+                <pre>{{ selectedAnalysis.analysisError }}</pre>
+                <v-btn variant="flat" class="float-right" @click="reanalyseSample(selectedAnalysis)">
+                    Reanalyse sample
+                </v-btn>
+            </v-alert>
+        </div>
+
         <div
             v-else-if="!selectedAnalysisFinished"
             class="d-flex align-center justify-center h-100"
@@ -139,6 +159,10 @@ const selectedAnalysisFiltered = computed(() => {
     return selectedAnalysis.value && selectedAnalysis.value.taxonomicFilter !== 1;
 });
 
+const selectedAnalysisFailed = computed(() => {
+    return selectedAnalysis.value && selectedAnalysis.value.status === AnalysisStatus.Failed;
+})
+
 const addSample = (groupId: string, sample: SampleTableItem) => {
     if (project.empty) {
         emits('sample:add', groupId, sample);
@@ -180,6 +204,10 @@ const selectAnalysis = (groupId: string | undefined, analysisId: string | undefi
         selectedAnalyses.value = analysis ? [ analysis ] : [];
         selectedGroup.value = project.getGroup(groupId);
     }
+}
+
+const reanalyseSample = (analysis: SingleAnalysisStore) => {
+    analysis.analyse();
 }
 
 const isSafari = ref(false);

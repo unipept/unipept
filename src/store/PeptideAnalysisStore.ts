@@ -47,7 +47,7 @@ const usePeptideAnalysisStore = (
 
         await processProteins(peptide.value, config.value.equate);
 
-        const peptideTableMap = new ShareableMap<string, number>();
+        const peptideTableMap = new ShareableMap<string, number>({maxDataSize: 64});
         peptideTableMap.set(peptide.value, proteins.value.length);
 
         const peptideTable: CountTable<string> = new CountTable(peptideTableMap);
@@ -60,7 +60,7 @@ const usePeptideAnalysisStore = (
 
         // Add all organism IDs for which we need detailed information from the NCBI ontology
         const lcaSet: Set<number> = new Set();
-        const lcaProteinMap = new ShareableMap<number, number>();
+        const lcaProteinMap = new ShareableMap<number, number>({maxDataSize: 64});
         lcaSet.add(lca.value);
         for (const protein of proteins.value) {
             lcaSet.add(protein.taxonId);

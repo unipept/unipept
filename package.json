@@ -25,7 +25,7 @@
     "peptonizer": "file:./peptonizer-v0.0.31.tgz",
     "pinia": "^3.0.2",
     "roboto-fontface": "*",
-    "shared-memory-datastructures": "1.0.0-alpha.1",
+    "shared-memory-datastructures": "file:./shared-memory-datastructures-1.0.0-alpha.7.tgz",
     "unipept-visualizations": "^2.1.0",
     "uuid": "^11.1.0",
     "vue": "^3.5.12",

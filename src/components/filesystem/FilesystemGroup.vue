@@ -77,6 +77,12 @@
                     width="3"
                     indeterminate
                 />
+
+                <v-icon
+                    v-else-if="analysis.status === AnalysisStatus.Failed"
+                    color="error"
+                    icon="mdi-alert-circle"
+                />
             </template>
         </v-list-item>
 

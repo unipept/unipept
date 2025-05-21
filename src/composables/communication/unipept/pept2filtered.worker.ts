@@ -5,8 +5,14 @@ import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializ
 import {parallelLimit} from "async";
 import {Filter, FilterType} from "@/store/CustomFilterStore";
 
+self.onunhandledrejection = (event) => {
+    // This will propagate to the main thread's `onerror` handler
+    throw event.reason;
+};
+
 self.onmessage = async (event) => {
-    self.postMessage(await process(event.data));
+    const result = await process(event.data);
+    self.postMessage(result);
 };
 
 const process = async ({

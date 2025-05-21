@@ -22,7 +22,7 @@ export interface Pept2filteredWorkerOutput {
 
 export default function usePept2filtered(
     baseUrl = DEFAULT_API_BASE_URL,
-    batchSize = 400,
+    batchSize = 500,
     parallelRequests = 5,
 ) {
     const peptideData = shallowRef<ShareableMap<string, PeptideData>>();

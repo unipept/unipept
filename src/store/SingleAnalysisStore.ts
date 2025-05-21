@@ -37,6 +37,7 @@ const useSingleAnalysisStore = (
     const status = ref<AnalysisStatus>(AnalysisStatus.Pending);
     const filteringStatus = ref<AnalysisStatus>(AnalysisStatus.Finished);
     const lastAnalysed = ref<Date | undefined>(undefined);
+    const analysisError = ref<string>("");
 
     const id = ref<string>(_id);
     const name = ref<string>(_name);
@@ -94,31 +95,46 @@ const useSingleAnalysisStore = (
     const analyse = async (fetch: boolean = true) => {
         status.value = AnalysisStatus.Running;
 
-        await processPeptides(peptides.value!, config.value.equate, config.value.filter);
+        try {
+            await processPeptides(peptides.value!, config.value.equate, config.value.filter);
 
-        if (fetch) {
-            const filter = customFilterStore.getFilter(config.value.database);
-            await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, filter);
+            console.log(`PeptideCounts index size: ${peptidesTable.value!.counts.toTransferableState().indexBuffer.byteLength / 1024 / 1024}MiB`);
+            console.log(`PeptideCounts data size: ${peptidesTable.value!.counts.toTransferableState().dataBuffer.byteLength / 1024 / 1024}MiB`);
 
-            await processMetadata();
-            lastAnalysed.value = new Date();
+            if (fetch) {
+                const filter = customFilterStore.getFilter(config.value.database);
+                await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, filter);
+
+                console.log(`Pept2Data index size: ${peptideToData.value!.toTransferableState().indexBuffer.byteLength / 1024 / 1024}MiB`);
+                console.log(`Pept2Data data size: ${peptideToData.value!.toTransferableState().dataBuffer.byteLength / 1024 / 1024}MiB`);
+
+                await processMetadata();
+                lastAnalysed.value = new Date();
+            }
+
+            processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
+
+            await processLca(peptidesTable.value!, peptideToData.value!);
+            await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
+            await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
+            await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
+
+            await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
+            await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
+            await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
+            await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.counts.keys()));
+
+            processNcbiTree(lcaTable.value!);
+
+            status.value = AnalysisStatus.Finished;
+        } catch (error) {
+            status.value = AnalysisStatus.Failed;
+            if (error) {
+                analysisError.value = (error as any).toString();
+            } else {
+                analysisError.value = "Unknown error";
+            }
         }
-
-        processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
-
-        await processLca(peptidesTable.value!, peptideToData.value!);
-        await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
-        await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
-        await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
-
-        await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
-        await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
-        await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
-        await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.counts.keys()));
-
-        processNcbiTree(lcaTable.value!);
-
-        status.value = AnalysisStatus.Finished;
     }
 
     const updateFunctionalFilter = async (newFilter: number) => {
@@ -234,6 +250,7 @@ const useSingleAnalysisStore = (
         filteringStatus,
         databaseVersion,
         lastAnalysedString,
+        analysisError,
 
         peptideToData,
         peptidesTable,
