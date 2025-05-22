@@ -28,6 +28,7 @@
                     class="mt-5"
                     :height="bottomCardHeight"
                     :projects="projects"
+                    :loading="loadingProject"
                     @open="loadFromIndexedDB"
                     @delete="deleteFromIndexedDB"
                 />
@@ -71,6 +72,8 @@ const { height: topCardHeight } = useElementBounding(topCard);
 const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.value - 20);
 
 const loadingSampleData: Ref<boolean> = ref(true);
+const loadingProject: Ref<boolean> = ref(false);
+
 const projects = ref<{ name: string, lastAccessed: Date }[]>([]);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
@@ -86,9 +89,11 @@ const importProject = async (projectName: string, file: File) => {
 }
 
 const loadFromIndexedDB = async (projectName: string) => {
+    loadingProject.value = true;
     await loadProjectFromStorage(projectName);
     await router.push({ name: "mpaSingle" });
     await startImport();
+    loadingProject.value = false;
 }
 
 const deleteFromIndexedDB = async (projectName: string) => {

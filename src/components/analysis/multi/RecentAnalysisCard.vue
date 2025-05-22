@@ -7,8 +7,12 @@
                 </h2>
             </v-card-title>
 
+            <div v-if="loading" class="d-flex justify-center">
+                <v-progress-circular color="primary" indeterminate />
+            </div>
+
             <v-virtual-scroll
-                v-if="projects.length > 0"
+                v-else-if="projects.length > 0"
                 :items="visibleProjects"
                 :height="height - headerHeight - 15"
             >
@@ -108,8 +112,9 @@ import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
 import {useElementBounding} from "@vueuse/core";
 
 const props = defineProps<{
-    height: number
-    projects: { name: string, lastAccessed: Date }[]
+    height: number,
+    projects: { name: string, lastAccessed: Date }[],
+    loading: boolean
 }>();
 
 const emits = defineEmits<{
