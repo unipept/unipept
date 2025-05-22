@@ -37,7 +37,8 @@
                             <v-spacer />
 
 
-                            <v-icon
+                            <v-btn
+                                variant="text"
                                 class="me-2"
                                 color="error"
                                 icon="mdi-delete"
