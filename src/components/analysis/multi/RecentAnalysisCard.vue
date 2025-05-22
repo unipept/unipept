@@ -49,9 +49,9 @@
                         </v-card-text>
                     </v-card>
 
-                    <div class="d-flex justify-center">
+                    <div class="d-flex justify-center" v-if="index === visibleProjects.length - 1">
                         <v-btn
-                            :disabled="!hasMore || (index !== visibleProjects.length - 1)"
+                            :disabled="!hasMore"
                             class="ms-5 mr-4"
                             variant="text"
                             color="primary"
