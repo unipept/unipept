@@ -76,7 +76,7 @@ const loadingSampleData: Ref<boolean> = ref(true);
 const loadingProject: Ref<boolean> = ref(false);
 const importingProject: Ref<boolean> = ref(false);
 
-const projects = ref<{ name: string, lastAccessed: Date }[]>([]);
+const projects = ref<{ name: string, totalPeptides: number, lastAccessed: Date }[]>([]);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     await loadProjectFromPeptides(rawPeptides, config);

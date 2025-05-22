@@ -18,15 +18,24 @@
             >
                 <template #default="{ item, index }">
                     <v-card
-                        class="project-card mb-1 ps-5"
+                        class="project-card mb-1 ps-2"
                         @click="openProject(item.name)"
                         variant="flat"
                         density="compact"
                     >
                         <v-card-text class="d-flex align-center gap-2">
-                            <v-icon size="20" class="me-3">mdi-folder-outline</v-icon>
-                            <span>{{ item.name }}</span>
+                            <v-icon size="20" class="mr-5">mdi-folder-outline</v-icon>
+                            <div>
+                                <div>{{ item.name }}</div>
+                                <div class="text-subtitle-2">
+                                    <span>Last opened on {{ item.lastAccessed.toLocaleDateString() }}</span>
+                                    <span class="mx-2">•</span>
+                                    <span>{{ item.totalPeptides }} peptides</span>
+                                </div>
+                            </div>
+
                             <v-spacer />
+
 
                             <v-icon
                                 class="me-2"
@@ -34,18 +43,6 @@
                                 icon="mdi-delete"
                                 @click.stop="deleteProject(item.name)"
                             />
-
-                            <v-tooltip location="top">
-                                <template #activator="{ props }">
-                                    <v-icon
-                                        v-bind="props"
-                                        icon="mdi-information"
-                                    />
-                                </template>
-                                <span>
-                                    Last opened on {{ item.lastAccessed.toLocaleDateString() }}
-                                </span>
-                            </v-tooltip>
                         </v-card-text>
                     </v-card>
 
@@ -113,7 +110,7 @@ import {useElementBounding} from "@vueuse/core";
 
 const props = defineProps<{
     height: number,
-    projects: { name: string, lastAccessed: Date }[],
+    projects: { name: string, totalPeptides: number, lastAccessed: Date }[],
     loading: boolean
 }>();
 

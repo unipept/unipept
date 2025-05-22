@@ -11,6 +11,7 @@ import useProjectImport from "@/composables/useProjectImport";
 
 interface StoreValue {
     lastAccessed: number;
+    totalPeptides: number;
     project: Blob;
 }
 
@@ -39,6 +40,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
             const value: StoreValue | null = await store.getItem(key);
             return {
                 name: key,
+                totalPeptides: value!.totalPeptides,
                 lastAccessed: new Date(value!.lastAccessed)
             };
         }));
@@ -97,8 +99,16 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
     watchDebounced([ project, customDatabases ], async () => {
         if (!isDemoMode.value) {
+            let totalPeptides = 0;
+            for (const group of project.groups) {
+                for (const analysis of group.analyses) {
+                    totalPeptides += analysis.peptides.length;
+                }
+            }
+
             await store.setItem(_projectName.value, {
                 lastAccessed: Date.now(),
+                totalPeptides: totalPeptides,
                 project: (await storeToBlob(project)).content
             });
         }

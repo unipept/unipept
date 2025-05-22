@@ -32,7 +32,6 @@ export default function useProjectImport() {
                 // Update the buffer assignments
                 analysis.indexBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.index`)?.async("arraybuffer") || undefined);
                 analysis.dataBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.data`)?.async("arraybuffer") || undefined);
-
             }
         }
 
