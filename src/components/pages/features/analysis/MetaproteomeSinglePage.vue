@@ -27,7 +27,6 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 const { project, isDemoMode } = useUnipeptAnalysisStore();
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
-    console.log("Adding sample...");
     const analysisId = project.getGroup(groupId).addAnalysis(
         sample.name,
         sample.rawPeptides,
