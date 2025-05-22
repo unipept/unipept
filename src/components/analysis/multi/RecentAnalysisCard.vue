@@ -30,7 +30,7 @@
                                 <div class="text-subtitle-2">
                                     <span>Last opened on {{ item.lastAccessed.toLocaleDateString() }}</span>
                                     <span class="mx-2">•</span>
-                                    <span>{{ item.totalPeptides }} peptides</span>
+                                    <span>{{ formatNumber(item.totalPeptides) }} peptides</span>
                                 </div>
                             </div>
 
@@ -108,6 +108,7 @@
 <script setup lang="ts">
 import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
 import {useElementBounding} from "@vueuse/core";
+import {useNumberFormatter} from "@/composables/useNumberFormatter";
 
 const props = defineProps<{
     height: number,
@@ -119,6 +120,8 @@ const emits = defineEmits<{
     (e: 'open', project: string): void
     (e: 'delete', project: string): void
 }>();
+
+const { formatNumber } = useNumberFormatter();
 
 const header = useTemplateRef('header');
 const { height: headerHeight } = useElementBounding(header);
