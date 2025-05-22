@@ -42,7 +42,7 @@ const process = async ({
         annotatedCount += peptideCount;
     }
 
-    const countsShareableMap = new ShareableMap<number, number>({maxDataSize: 64});
+    const countsShareableMap = new ShareableMap<number, number>();
     for (const [lca, count] of countsPerLca) {
         countsShareableMap.set(lca, count);
     }

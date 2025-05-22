@@ -17,7 +17,7 @@ const process = async ({
 }: PeptideProcessorData) => {
     peptides = preprocess(peptides, equate);
 
-    const peptideCounts = new ShareableMap<string, number>({maxDataSize: 64});
+    const peptideCounts = new ShareableMap<string, number>();
     for (const peptide of peptides) {
         const count = peptideCounts.get(peptide) || 0;
         peptideCounts.set(peptide, filter ? 1 : count + 1);

@@ -24,7 +24,7 @@ const process = async ({
 
     // First we count the amount of peptides per unique code. Afterwards, we can fetch definitions for all these
     // terms and split them on namespace.
-    const countsPerCode = new ShareableMap<string, number>({maxDataSize: 64});
+    const countsPerCode = new ShareableMap<string, number>();
     // Keeps track of how many peptides are associated with at least one annotation
     let annotatedCount = 0;
 

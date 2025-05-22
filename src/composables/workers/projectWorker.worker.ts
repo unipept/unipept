@@ -28,8 +28,8 @@ const process = async ({ project }: ProjectExportData) => {
                 const transferableMap = analysis.peptideToDataTransferable;
 
                 // Create new ArrayBuffers and copy the data from SharedArrayBuffers
-                const indexArray = new Uint8Array(transferableMap.indexBuffer.buffer);
-                const dataArray = new Uint8Array(transferableMap.dataBuffer.buffer);
+                const indexArray = new Uint8Array(transferableMap.indexBuffer);
+                const dataArray = new Uint8Array(transferableMap.dataBuffer);
 
                 // Create regular ArrayBuffers from the TypedArrays
                 const indexArrayBuffer = indexArray.slice().buffer;
