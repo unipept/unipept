@@ -19,6 +19,7 @@
                 <div ref="topCard">
                     <new-analysis-card
                         :projects="projects"
+                        :loading="importingProject"
                         @project:new="advancedAnalyze"
                         @project:open="importProject"
                     />
@@ -73,6 +74,7 @@ const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.
 
 const loadingSampleData: Ref<boolean> = ref(true);
 const loadingProject: Ref<boolean> = ref(false);
+const importingProject: Ref<boolean> = ref(false);
 
 const projects = ref<{ name: string, lastAccessed: Date }[]>([]);
 
@@ -83,9 +85,11 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
 }
 
 const importProject = async (projectName: string, file: File) => {
+    importingProject.value = true;
     await loadProjectFromFile(projectName, file)
     await router.push({ name: "mpaSingle" });
     await startImport();
+    importingProject.value = false;
 }
 
 const loadFromIndexedDB = async (projectName: string) => {

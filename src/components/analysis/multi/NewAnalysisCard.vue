@@ -12,6 +12,7 @@
 
                 <div class="d-flex justify-end">
                     <file-upload-button
+                        :loading="loading"
                         class="mt-3 me-3 float-right"
                         variant="plain"
                         color="primary"
@@ -124,7 +125,8 @@ import FileUploadButton from "@/components/filesystem/FileUploadButton.vue";
 import {ref} from "vue";
 
 const props = defineProps<{
-    projects: { name: string, lastAccessed: Date }[]
+    projects: { name: string, lastAccessed: Date }[],
+    loading: boolean
 }>();
 
 const emits = defineEmits<{
