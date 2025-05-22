@@ -3,7 +3,7 @@
         <v-unipept-card :height="height">
             <v-card-title ref="header">
                 <h2 class="font-weight-light">
-                    Recent projects
+                    Load recent project
                 </h2>
             </v-card-title>
 

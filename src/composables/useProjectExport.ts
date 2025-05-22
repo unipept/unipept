@@ -1,5 +1,5 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import ProjectWorkerWebWorker from "./workers/projectWorker.worker?worker&inline";
+import ProjectWorkerWebWorker from "./workers/projectExportWorker.worker?worker&inline";
 import {ProjectAnalysisStore, ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
 import JSZip from "jszip";
 
