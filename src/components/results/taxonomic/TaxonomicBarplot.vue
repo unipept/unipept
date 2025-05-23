@@ -1,6 +1,10 @@
 <template>
     <div>
-        <visualization-controls caption="Hover over the bars to see more details" :settings="true">
+        <visualization-controls
+            caption="Hover over the bars to see more details"
+            :settings="true"
+            :download="() => downloadImageModalOpen = true"
+        >
             <template #settings>
                 <v-list-item>
                     Barplot settings
@@ -40,26 +44,34 @@
             </template>
 
             <template #visualization>
-                <div ref="barplotWrapper">
+                <div ref="barplotWrapper" style="padding-top: 50px;">
                     <barplot :bars="barData" :settings="barplotSettings" />
                 </div>
             </template>
         </visualization-controls>
     </div>
+
+    <download-image
+        v-if="svg"
+        v-model="downloadImageModalOpen"
+        :image="svg"
+        filename="barplot"
+    />
 </template>
 
 <script setup lang="ts">
     import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-    import {Bar, BarItem} from "@/components/visualization/barplot/Bar";
-    import {ref, Ref, onMounted, watch} from "vue";
+    import {ref, Ref, onMounted, watch, computed, nextTick} from "vue";
     import Barplot from "@/components/visualization/barplot/Barplot.vue";
-    import {BarplotSettings} from "@/components/visualization/barplot/BarplotSettings";
     import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
     import VisualizationControls from "@/components/results/taxonomic/VisualizationControls.vue";
+    import {Bar, BarItem, BarplotSettings} from "unipept-visualizations";
+    import DownloadImage from "@/components/image/DownloadImage.vue";
 
     const props = defineProps<{
         ncbiRoot: NcbiTreeNode
     }>();
+
 
     const taxonomicRankOptions: Ref<string[]> = ref(
         Object.values(NcbiRank)
@@ -76,10 +88,13 @@
     const barplotSettings: Ref<BarplotSettings> = ref(new BarplotSettings());
     const barData: Ref<Bar[]> = ref([]);
 
+    const downloadImageModalOpen: Ref<boolean> = ref(false);
+
+    const svg: Ref<SVGElement | undefined | null> = ref();
+
     // Display the barplot below the visualization settings bar
-    barplotSettings.value.padding.top = 50;
-    barplotSettings.value.plot.padding.left = 0;
-    barplotSettings.value.plot.padding.right = 15;
+    barplotSettings.value.chart.padding.left = 0;
+    barplotSettings.value.chart.padding.right = 15;
     barplotSettings.value.height = 400;
     barplotSettings.value.showBarLabel = false;
     barplotSettings.value.displayMode = "relative";
@@ -126,6 +141,10 @@
         initializeSpeciesBar();
     });
 
+    watch(() => props.ncbiRoot, () => {
+        initializeSpeciesBar();
+    });
+
     watch(selectedTaxonomicRank, () => {
         initializeSpeciesBar();
     });
@@ -144,6 +163,11 @@
         barplotSettings.value.maxItems = taxonCount.value;
         initializeSpeciesBar();
     });
+
+    watch(barplotWrapper, async () => {
+        await nextTick();
+        svg.value = barplotWrapper.value?.querySelector("svg") as SVGElement;
+    }, { immediate: true })
 </script>
 
 <style scoped>

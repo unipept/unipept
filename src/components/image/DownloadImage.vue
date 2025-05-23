@@ -101,8 +101,17 @@ const supportedFormats = computed(() => {
 })
 
 const resolution = computed(() => {
-    const width = image.clientWidth;
-    const height = image.clientHeight;
+    let width: number;
+    let height: number;
+
+    if (image instanceof SVGSVGElement) {
+        width = image.viewBox.baseVal.width;
+        height = image.viewBox.baseVal.height;
+    } else {
+        width = image.clientWidth;
+        height = image.clientHeight;
+    }
+
     const factor = scalingFactorToNumber(selectedScalingFactor.value);
 
     return {
