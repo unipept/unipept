@@ -93,8 +93,10 @@
     const svg: Ref<SVGElement | undefined | null> = ref();
 
     // Display the barplot below the visualization settings bar
-    barplotSettings.value.chart.padding.left = 0;
-    barplotSettings.value.chart.padding.right = 15;
+    barplotSettings.value.chart.padding.left = 15;
+    barplotSettings.value.chart.padding.right = 30;
+    barplotSettings.value.legend.padding.top = 40;
+    barplotSettings.value.legend.padding.left = 20;
     barplotSettings.value.height = 400;
     barplotSettings.value.showBarLabel = false;
     barplotSettings.value.displayMode = "relative";

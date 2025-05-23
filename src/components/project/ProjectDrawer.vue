@@ -12,12 +12,12 @@
                 prepend-icon="mdi-test-tube"
                 to="single"
             />
-            <v-list-item
-                color="primary"
-                prepend-icon="mdi-compare"
-                :value="ProjectDrawerItem.COMPARE"
-                @click="selectCompare"
-            />
+<!--            <v-list-item-->
+<!--                color="primary"-->
+<!--                prepend-icon="mdi-compare"-->
+<!--                :value="ProjectDrawerItem.COMPARE"-->
+<!--                @click="selectCompare"-->
+<!--            />-->
         </v-list>
 
         <template #append>
