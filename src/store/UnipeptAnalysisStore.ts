@@ -2,15 +2,16 @@ import {defineStore} from "pinia";
 import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 import {watchDebounced} from "@vueuse/core";
 import localforage from "localforage";
-import useProjectExport from "@/components/project/export/useProjectExport";
-import useProjectImport from "@/components/project/import/useProjectImport";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {computed, ref} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
+import useProjectExport from "@/composables/useProjectExport";
+import useProjectImport from "@/composables/useProjectImport";
 
 interface StoreValue {
     lastAccessed: number;
+    totalPeptides: number;
     project: Blob;
 }
 
@@ -39,6 +40,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
             const value: StoreValue | null = await store.getItem(key);
             return {
                 name: key,
+                totalPeptides: value!.totalPeptides,
                 lastAccessed: new Date(value!.lastAccessed)
             };
         }));
@@ -97,12 +99,20 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
     watchDebounced([ project, customDatabases ], async () => {
         if (!isDemoMode.value) {
+            let totalPeptides = 0;
+            for (const group of project.groups) {
+                for (const analysis of group.analyses) {
+                    totalPeptides += analysis.peptides.length;
+                }
+            }
+
             await store.setItem(_projectName.value, {
                 lastAccessed: Date.now(),
-                project: await storeToBlob(project)
+                totalPeptides: totalPeptides,
+                project: (await storeToBlob(project)).content
             });
         }
-    }, { deep: true, debounce: 1000, maxWait: 1000 });
+    }, { deep: true, debounce: 1000, maxWait: 5000 });
 
     return {
         project,

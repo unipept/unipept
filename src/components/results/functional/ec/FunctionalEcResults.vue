@@ -64,7 +64,7 @@ const emits = defineEmits<{
     (e: 'downloadTable', item: EcResultsTableItem[]): void;
 }>();
 
-const items = computed(() => Array.from(data.ecTable!.entries()).map(([key, value]) => {
+const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([key, value]) => {
     return {
         code: key,
         name: getEcDefinition(key)?.name ?? "Unknown",

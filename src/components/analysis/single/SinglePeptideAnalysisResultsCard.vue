@@ -41,6 +41,7 @@
             </v-window-item>
             <v-window-item value="go-terms">
                 <v-card-text>
+                    <!-- @vue-ignore -->
                     <functional-go-results
                         :data="goData"
                         :loading="assay.status! === AnalysisStatus.Running"
@@ -60,6 +61,7 @@
             </v-window-item>
             <v-window-item value="ec-numbers">
                 <v-card-text>
+                    <!-- @vue-ignore -->
                     <functional-ec-results
                         :data="ecData"
                         :loading="assay.status! === AnalysisStatus.Running"
@@ -79,6 +81,7 @@
             </v-window-item>
             <v-window-item value="interpro">
                 <v-card-text>
+                    <!-- @vue-ignore -->
                     <functional-ipr-results
                         :data="interproData"
                         :loading="assay.status! === AnalysisStatus.Running"

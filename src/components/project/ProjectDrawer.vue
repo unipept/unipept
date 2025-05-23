@@ -4,15 +4,13 @@
         permanent
     >
         <v-list
-            v-model:selected="selectedListItem"
             density="compact"
             nav
         >
             <v-list-item
                 color="primary"
                 prepend-icon="mdi-test-tube"
-                :value="ProjectDrawerItem.ANALYSIS"
-                @click="selectAnalysis"
+                to="single"
             />
             <v-list-item
                 color="primary"
@@ -24,21 +22,18 @@
 
         <template #append>
             <v-list
-                v-model:selected="selectedListItem"
                 density="compact"
                 nav
             >
                 <v-list-item
                     color="primary"
                     prepend-icon="mdi-file-download"
-                    :value="ProjectDrawerItem.EXPORT"
-                    @click="selectExport"
+                    to="export"
                 />
                 <v-list-item
                     color="primary"
                     prepend-icon="mdi-database-cog"
-                    :value="ProjectDrawerItem.DATABASE"
-                    @click="selectDatabase"
+                    to="database"
                 />
             </v-list>
         </template>

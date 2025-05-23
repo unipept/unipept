@@ -3,21 +3,22 @@ import {TaxonomicProcessorData} from "@/composables/processing/taxonomic/useTaxo
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 
+self.onunhandledrejection = (event) => {
+    // This will propagate to the main thread's `onerror` handler
+    throw event.reason;
+};
+
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
 
 const process = async ({
    peptideCounts,
-   indexBuffer,
-   dataBuffer
+   peptideDataTransferable
 }: TaxonomicProcessorData ) => {
-    const peptideToResponseMap = new ShareableMap<string, PeptideData>(
-        0, 0, new PeptideDataSerializer()
-    );
-    peptideToResponseMap.setBuffers(indexBuffer, dataBuffer);
+    const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
 
-    const countsPerLca: Map<number, number> = new Map();
+    const countsPerLca = new Map<number, number>();
     const lcaToPeptides: Map<number, string[]> = new Map();
     const peptideToLca: Map<string, number> = new Map();
     let annotatedCount = 0;
@@ -41,8 +42,13 @@ const process = async ({
         annotatedCount += peptideCount;
     }
 
+    const countsShareableMap = new ShareableMap<number, number>();
+    for (const [lca, count] of countsPerLca) {
+        countsShareableMap.set(lca, count);
+    }
+
     return {
-        countsPerLca,
+        countsPerLcaTransferable: countsShareableMap.toTransferableState(),
         lcaToPeptides,
         peptideToLca,
         annotatedCount

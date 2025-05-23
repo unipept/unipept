@@ -40,15 +40,6 @@
                             hide-details
                         />
                     </v-col>
-                    <v-col :cols="12">
-                        <h3 class="mb-2">Filter settings</h3>
-                        <v-alert type="info" variant="outlined">
-                            <span class="font-weight-bold">Note:</span> Since Unipept 6.2.0, filter settings in Unipept
-                            are sample-wide and no longer specific to the Peptonizer. You can configure which taxonomic
-                            filtering should be performed by constructing a custom database.
-                        </v-alert>
-                    </v-col>
-
                 </v-row>
                 <v-divider class="mb-1" />
                 <v-card-actions class="pb-0">

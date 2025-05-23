@@ -3,7 +3,7 @@ import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 
 export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
-export const DEFAULT_PEPTONIZER_WORKERS = 2;
+export const DEFAULT_PEPTONIZER_WORKERS = 8;
 
 export const DEFAULT_TAXA_IN_GRAPH = 25;
 
@@ -32,7 +32,7 @@ export default class PeptonizerProcessor {
     ): Promise<PeptonizerResult | undefined> {
         // If no intensities are provided, we set them to the default value
         if (!peptideIntensities) {
-            peptideIntensities = new Map<string, number>(Array.from(peptideCountTable.keys()).map((peptide: string) => [peptide, DEFAULT_PEPTIDE_INTENSITIES]));
+            peptideIntensities = new Map<string, number>(Array.from(peptideCountTable.counts.keys()).map((peptide: string) => [peptide, DEFAULT_PEPTIDE_INTENSITIES]));
         }
 
         // If the equate I / L option is enabled, we need to update the intensities as well
@@ -48,7 +48,7 @@ export default class PeptonizerProcessor {
             PeptonizerProcessor.inProgress = this.peptonizer.peptonize(
                 peptidesTaxa,
                 peptideIntensities,
-                new Map<string, number>(Array.from(peptideCountTable.entries())),
+                new Map<string, number>(Array.from(peptideCountTable.counts.entries())),
                 DEFAULT_PEPTONIZER_ALPHAS,
                 DEFAULT_PEPTONIZER_BETAS,
                 DEFAULT_PEPTONIZER_PRIORS,

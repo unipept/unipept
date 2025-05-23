@@ -3,45 +3,47 @@
         <v-unipept-card :height="height">
             <v-card-title ref="header">
                 <h2 class="font-weight-light">
-                    Recent projects
+                    Load recent project
                 </h2>
             </v-card-title>
 
+            <div v-if="loading" class="d-flex justify-center">
+                <v-progress-circular color="primary" indeterminate />
+            </div>
+
             <v-virtual-scroll
-                v-if="projects.length > 0"
+                v-else-if="projects.length > 0"
                 :items="visibleProjects"
                 :height="height - headerHeight - 15"
             >
                 <template #default="{ item, index }">
                     <v-card
-                        class="project-card mb-1 ps-5"
+                        class="project-card mb-1 ps-2"
                         @click="openProject(item.name)"
                         variant="flat"
                         density="compact"
                     >
                         <v-card-text class="d-flex align-center gap-2">
-                            <v-icon size="20" class="me-3">mdi-folder-outline</v-icon>
-                            <span>{{ item.name }}</span>
+                            <v-icon size="20" class="mr-5">mdi-folder-outline</v-icon>
+                            <div>
+                                <div>{{ item.name }}</div>
+                                <div class="text-subtitle-2">
+                                    <span>Last opened on {{ item.lastAccessed.toLocaleDateString() }}</span>
+                                    <span class="mx-2">•</span>
+                                    <span>{{ formatNumber(item.totalPeptides) }} peptides</span>
+                                </div>
+                            </div>
+
                             <v-spacer />
 
-                            <v-icon
+
+                            <v-btn
+                                variant="text"
                                 class="me-2"
                                 color="error"
                                 icon="mdi-delete"
                                 @click.stop="deleteProject(item.name)"
                             />
-
-                            <v-tooltip location="top">
-                                <template #activator="{ props }">
-                                    <v-icon
-                                        v-bind="props"
-                                        icon="mdi-information"
-                                    />
-                                </template>
-                                <span>
-                                    Last opened on {{ item.lastAccessed.toLocaleDateString() }}
-                                </span>
-                            </v-tooltip>
                         </v-card-text>
                     </v-card>
 
@@ -106,16 +108,20 @@
 <script setup lang="ts">
 import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
 import {useElementBounding} from "@vueuse/core";
+import {useNumberFormatter} from "@/composables/useNumberFormatter";
 
 const props = defineProps<{
-    height: number
-    projects: { name: string, lastAccessed: Date }[]
+    height: number,
+    projects: { name: string, totalPeptides: number, lastAccessed: Date }[],
+    loading: boolean
 }>();
 
 const emits = defineEmits<{
     (e: 'open', project: string): void
     (e: 'delete', project: string): void
 }>();
+
+const { formatNumber } = useNumberFormatter();
 
 const header = useTemplateRef('header');
 const { height: headerHeight } = useElementBounding(header);

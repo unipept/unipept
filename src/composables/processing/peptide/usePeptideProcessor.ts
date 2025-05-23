@@ -1,7 +1,8 @@
 import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import {ref} from "vue";
+import {ref, shallowRef} from "vue";
 import PeptideProcessorWebWorker from "../workers/peptideProcessor.worker.ts?worker&inline";
+import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 
 export interface PeptideProcessorData {
     peptides: string[];
@@ -10,23 +11,25 @@ export interface PeptideProcessorData {
 }
 
 export interface PeptideProcessorWorkerOutput {
-    peptideCounts: Map<string, number>;
+    peptideCountsTransferable: TransferableState;
     totalPeptideCount: number;
 }
 
 export default function usePeptideProcessor() {
-    const countTable = ref<CountTable<string>>();
+    const countTable = shallowRef<CountTable<string>>();
 
     const { post } = useAsyncWebWorker<PeptideProcessorData, PeptideProcessorWorkerOutput>(
         () => new PeptideProcessorWebWorker()
     );
 
     const process = async (peptides: string[], equate: boolean, filter: boolean) => {
-        const { peptideCounts, totalPeptideCount } = await post({
+        const { peptideCountsTransferable, totalPeptideCount } = await post({
             peptides, equate, filter
         });
 
-        countTable.value = new CountTable(peptideCounts, totalPeptideCount);
+        const countTableMap = ShareableMap.fromTransferableState<string, number>(peptideCountsTransferable);
+
+        countTable.value = new CountTable(countTableMap, totalPeptideCount);
     };
 
     return {

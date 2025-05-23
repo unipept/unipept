@@ -6,12 +6,13 @@
             </v-card-title>
             <v-card-text>
                 <p>
-                    Open an existing project (<em>.unipept</em>) or start from scratch with an empty project and start analyzing
+                    Open an existing project (<em>.unipept</em>) or start from scratch with an empty project and analyse
                     your own data.
                 </p>
 
                 <div class="d-flex justify-end">
                     <file-upload-button
+                        :loading="loading"
                         class="mt-3 me-3 float-right"
                         variant="plain"
                         color="primary"
@@ -38,6 +39,7 @@
             v-model="newDialogOpen"
             max-width="600"
             persistent
+            @keydown.enter="() => projectName && !projectExists(projectName) && newProject()"
         >
             <v-unipept-card>
                 <v-card-title class="text-h6 font-weight-bold">
@@ -75,6 +77,7 @@
             v-model="uploadDialogOpen"
             max-width="600"
             persistent
+            @keydown.enter="() => projectName && openProject()"
         >
             <v-unipept-card>
                 <v-card-title class="text-h6 font-weight-bold">
@@ -107,7 +110,7 @@
                     <v-btn variant="text" @click="cancel">Cancel</v-btn>
                     <v-btn
                         color="primary"
-                        text="Upoad project"
+                        text="Upload project"
                         :disabled="!projectName"
                         @click="openProject"
                     />
@@ -122,12 +125,13 @@ import FileUploadButton from "@/components/filesystem/FileUploadButton.vue";
 import {ref} from "vue";
 
 const props = defineProps<{
-    projects: { name: string, lastAccessed: Date }[]
+    projects: { name: string, lastAccessed: Date }[],
+    loading: boolean
 }>();
 
 const emits = defineEmits<{
-    (e: 'open', projectName: string, file: File): void
-    (e: 'new', projectName: string): void
+    (e: 'project:open', projectName: string, file: File): void
+    (e: 'project:new', projectName: string): void
 }>();
 
 const newDialogOpen = ref(false);
@@ -154,14 +158,14 @@ const openUploadDialog = (file: File) => {
 
 const openProject = () => {
     uploadDialogOpen.value = false;
-    emits('open', projectName.value, openProjectFile.value!);
+    emits('project:open', projectName.value, openProjectFile.value!);
     openProjectFile.value = null;
     projectName.value = '';
 };
 
 const newProject = () => {
     newDialogOpen.value = false;
-    emits('new', projectName.value);
+    emits('project:new', projectName.value);
     projectName.value = '';
 };
 </script>

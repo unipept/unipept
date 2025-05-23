@@ -116,7 +116,7 @@
                         <v-spacer />
                         <analysis-summary-export @prepareDownload="prepareDownload" @download="download" />
                     </div>
-                    <analysis-summary-table :items="peptides" />
+                    <analysis-summary-table :analysis="analysis" />
                 </v-col>
             </v-row>
         </v-card-text>
@@ -161,17 +161,6 @@ const emits = defineEmits<{
 
 const showMissingPeptides = ref(false);
 
-const peptides = computed(() => [...analysis.peptidesTable!.entries()].map(([peptide, count]) => {
-    const lca = analysis.peptideToLca!.get(peptide)!;
-    return {
-        peptide: peptide,
-        occurrence: count,
-        lca: getNcbiDefinition(lca)?.name ?? "N/A",
-        rank: getNcbiDefinition(lca)?.rank ?? "N/A",
-        found: analysis.peptideToLca!.has(peptide),
-        faCounts: analysis.peptideToData!.get(peptide)?.faCounts
-    };
-}));
 const missedPeptides = computed(() => {
     return analysis.peptideTrust!.missedPeptides;
 });

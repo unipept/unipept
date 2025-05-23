@@ -8,6 +8,7 @@ import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/Fun
 import {EcNamespace} from "@/logic/communicators/unipept/functional/EcResponse";
 import {InterproNamespace} from "@/logic/communicators/unipept/functional/InterproResponse";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
+import {TransferableState} from "shared-memory-datastructures";
 
 
 export interface PeptideExportData {
@@ -16,8 +17,7 @@ export interface PeptideExportData {
     ecOntology: Map<string, FunctionalDefinition<EcNamespace>>;
     iprOntology: Map<string, FunctionalDefinition<InterproNamespace>>;
     ncbiOntology: Map<number, NcbiTaxon>;
-    indexBuffer: ArrayBuffer,
-    dataBuffer: ArrayBuffer,
+    peptideDataTransferable: TransferableState;
     separator: string;
 }
 
@@ -34,16 +34,13 @@ export default function usePeptideExport() {
         analysis: SingleAnalysisStore,
         separator = ";"
     ): Promise<string[][]> => {
-        const [indexBuffer, dataBuffer] = analysis.peptideToData!.getBuffers();
-
         const workerInput: PeptideExportData = {
-            peptideTable: toRaw(analysis.peptidesTable!),
+            peptideTable: toRaw(analysis.peptidesTable!).counts,
             goOntology: toRaw(goOntology),
             ecOntology: toRaw(ecOntology),
             iprOntology: toRaw(iprOntology),
             ncbiOntology: toRaw(ncbiOntology),
-            indexBuffer,
-            dataBuffer,
+            peptideDataTransferable: analysis.peptideToData!.toTransferableState(),
             separator
         };
 

@@ -19,8 +19,9 @@
                 <div ref="topCard">
                     <new-analysis-card
                         :projects="projects"
-                        @new="advancedAnalyze"
-                        @open="importProject"
+                        :loading="importingProject"
+                        @project:new="advancedAnalyze"
+                        @project:open="importProject"
                     />
                 </div>
 
@@ -28,6 +29,7 @@
                     class="mt-5"
                     :height="bottomCardHeight"
                     :projects="projects"
+                    :loading="loadingProject"
                     @open="loadFromIndexedDB"
                     @delete="deleteFromIndexedDB"
                 />
@@ -71,24 +73,31 @@ const { height: topCardHeight } = useElementBounding(topCard);
 const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.value - 20);
 
 const loadingSampleData: Ref<boolean> = ref(true);
-const projects = ref<{ name: string, lastAccessed: Date }[]>([]);
+const loadingProject: Ref<boolean> = ref(false);
+const importingProject: Ref<boolean> = ref(false);
+
+const projects = ref<{ name: string, totalPeptides: number, lastAccessed: Date }[]>([]);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     await loadProjectFromPeptides(rawPeptides, config);
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startAnalysis();
 }
 
 const importProject = async (projectName: string, file: File) => {
+    importingProject.value = true;
     await loadProjectFromFile(projectName, file)
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startImport();
+    importingProject.value = false;
 }
 
 const loadFromIndexedDB = async (projectName: string) => {
+    loadingProject.value = true;
     await loadProjectFromStorage(projectName);
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startImport();
+    loadingProject.value = false;
 }
 
 const deleteFromIndexedDB = async (projectName: string) => {
@@ -98,12 +107,12 @@ const deleteFromIndexedDB = async (projectName: string) => {
 
 const advancedAnalyze = (projectName: string) => {
     loadNewProject(projectName);
-    router.push({ name: "mpaResults" });
+    router.push({ name: "mpaSingle" });
 }
 
 const demoAnalyze = async (sample: SampleData) => {
     await loadProjectFromSample(sample);
-    await router.push({ name: "mpaResults" });
+    await router.push({ name: "mpaSingle" });
     await startAnalysis();
 }
 
@@ -130,7 +139,3 @@ onMounted(async () => {
     loadingSampleData.value = false;
 })
 </script>
-
-<style scoped>
-
-</style>

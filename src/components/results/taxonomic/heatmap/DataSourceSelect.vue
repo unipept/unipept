@@ -86,7 +86,7 @@ watch(selectedDataSource, () => {
 const dataSources = Object.values(DataSource);
 
 const getItems = (countTable: CountTable<string | number>, peptideMapping: Map<number | string, string[]>, ontology: any) => {
-    const items = [...countTable.entries()].map(([id, count]) => {
+    const items = [...countTable.counts.entries()].map(([id, count]) => {
         const definition = ontology(id);
         return {
             id: id,

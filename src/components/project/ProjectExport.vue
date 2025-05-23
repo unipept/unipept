@@ -2,12 +2,13 @@
     <div>
         <v-unipept-card class="mb-6">
             <v-card-title class="text-h5 font-weight-bold mb-2">
-                🧬 Export Project Overview
+                <v-icon icon="mdi-file-download-outline" size="30" class="me-2" color="primary"/>
+                Export Project Overview
             </v-card-title>
             <v-card-text>
                 <p>
                     You’re about to export your entire project. This includes all samples, groups, analysis results, and settings.
-                    The export will be saved as a <strong>.zip</strong> file that can later be re-imported or shared with others.
+                    The export will be saved as a <strong>.unipept</strong> file that can later be re-imported or shared with others.
                 </p>
             </v-card-text>
         </v-unipept-card>
@@ -104,9 +105,9 @@
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 import {computed, ref} from "vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
-import useProjectExport from "@/components/project/export/useProjectExport";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
+import useProjectExport from "@/composables/useProjectExport";
 
 const { formatNumber } = useNumberFormatter();
 
@@ -188,7 +189,7 @@ const { process: processExport } = useProjectExport();
 async function exportProject() {
     preparingExport.value = true;
 
-    const url = URL.createObjectURL(await processExport(project));
+    const url = URL.createObjectURL((await processExport(project)).content);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'project.unipept';

@@ -10,6 +10,7 @@ import useInterproProcessor from "@/composables/processing/functional/useInterpr
 import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
 import CountTable from "@/logic/processors/CountTable";
 import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTreeProcessor";
+import {ShareableMap} from "shared-memory-datastructures";
 
 const usePeptideAnalysisStore = (
     _id: string,
@@ -46,7 +47,10 @@ const usePeptideAnalysisStore = (
 
         await processProteins(peptide.value, config.value.equate);
 
-        const peptideTable: CountTable<string> = new CountTable(new Map<string, number>([[peptide.value, proteins.value.length]]));
+        const peptideTableMap = new ShareableMap<string, number>();
+        peptideTableMap.set(peptide.value, proteins.value.length);
+
+        const peptideTable: CountTable<string> = new CountTable(peptideTableMap);
 
         await processPept2Filtered([peptide.value], config.value.equate, undefined);
 
@@ -56,7 +60,7 @@ const usePeptideAnalysisStore = (
 
         // Add all organism IDs for which we need detailed information from the NCBI ontology
         const lcaSet: Set<number> = new Set();
-        const lcaProteinMap: Map<number, number> = new Map();
+        const lcaProteinMap = new ShareableMap<number, number>();
         lcaSet.add(lca.value);
         for (const protein of proteins.value) {
             lcaSet.add(protein.taxonId);

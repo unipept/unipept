@@ -123,7 +123,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
         try {
             const peptideTaxa = new Map<string, number[]>();
 
-            for (const peptide of peptideCountTable.keys()) {
+            for (const peptide of peptideCountTable.counts.keys()) {
                 if (peptideToData.get(peptide)) {
                     peptideTaxa.set(peptide, peptideToData.get(peptide)!.taxa);
                 }

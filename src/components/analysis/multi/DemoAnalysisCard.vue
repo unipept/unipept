@@ -59,7 +59,7 @@
                                         <div class="text-body-2 mb-2">{{ sample.reference }}</div>
                                         <v-btn
                                             color="primary"
-                                            variant="plain"
+                                            variant="text"
                                             style="z-index: 10000"
                                             @click.stop="openReference(sample)"
                                         >
