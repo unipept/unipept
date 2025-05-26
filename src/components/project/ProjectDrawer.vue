@@ -12,12 +12,11 @@
                 prepend-icon="mdi-test-tube"
                 to="single"
             />
-<!--            <v-list-item-->
-<!--                color="primary"-->
-<!--                prepend-icon="mdi-compare"-->
-<!--                :value="ProjectDrawerItem.COMPARE"-->
-<!--                @click="selectCompare"-->
-<!--            />-->
+            <v-list-item
+                color="primary"
+                prepend-icon="mdi-compare"
+                to="compare"
+            />
         </v-list>
 
         <template #append>
@@ -39,40 +38,3 @@
         </template>
     </v-navigation-drawer>
 </template>
-
-<script setup lang="ts">
-import {ref} from "vue";
-
-const selectedListItem = ref<string[]>([ ProjectDrawerItem.ANALYSIS ]);
-
-const selected = defineModel<ProjectDrawerItem>({ default: ProjectDrawerItem.ANALYSIS });
-
-const selectAnalysis = () => {
-    selected.value = ProjectDrawerItem.ANALYSIS;
-    selectedListItem.value = [ ProjectDrawerItem.ANALYSIS ];
-}
-
-const selectCompare = () => {
-    selected.value = ProjectDrawerItem.COMPARE;
-    selectedListItem.value = [ ProjectDrawerItem.COMPARE ];
-}
-
-const selectExport = () => {
-    selected.value = ProjectDrawerItem.EXPORT;
-    selectedListItem.value = [ ProjectDrawerItem.EXPORT ];
-}
-
-const selectDatabase = () => {
-    selected.value = ProjectDrawerItem.DATABASE;
-    selectedListItem.value = [ ProjectDrawerItem.DATABASE ];
-}
-</script>
-
-<script lang="ts">
-export enum ProjectDrawerItem {
-    ANALYSIS = "analysis",
-    COMPARE = "compare",
-    EXPORT = "export",
-    DATABASE = "database"
-}
-</script>

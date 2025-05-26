@@ -69,7 +69,7 @@ const routes = [
         component:  () => import("@/components/pages/features/analysis/MetaproteomeResultsPage.vue"),
         children: [
             { path: "single", name: "mpaSingle", component: () => import("@/components/pages/features/analysis/MetaproteomeSinglePage.vue"), meta: mpaMeta },
-            //{ path: "compare", component: () => import("@/components/pages/features/MetaproteomeAnalysisOverviewPage.vue"), meta: mpaMeta },
+            { path: "compare", component: () => import("@/components/pages/features/analysis/MetaproteomeComparativePage.vue"), meta: mpaMeta },
             { path: "export", name: "mpaExport", component: () => import("@/components/pages/features/analysis/MetaproteomeExportPage.vue"), meta: mpaMeta },
             { path: "database", name: "mpaDatabase", component: () => import("@/components/pages/features/analysis/MetaproteomeDatabasePage.vue"), meta: mpaMeta },
         ],
