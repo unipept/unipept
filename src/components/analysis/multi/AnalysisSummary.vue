@@ -140,7 +140,7 @@ import usePeptideExport from "@/composables/usePeptideExport";
 import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDialog.vue";
 import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
-import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
+import ManageSampleGroupDialog from "@/components/sample/ManageSampleGroupDialog.vue";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
 

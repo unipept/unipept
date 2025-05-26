@@ -48,21 +48,25 @@
             density="compact"
         >
             <template #prepend>
-                <v-tooltip
-                    v-if="analysis.intensities"
-                    text="Custom intensity scores for Peptonizer provided">
-                    <template #activator="{ props }">
-                        <v-icon
-                            v-bind="props"
-                            icon="unipept:file-lightning-outline"
-                        />
-                    </template>
-                </v-tooltip>
+                <v-checkbox-btn v-if="multiSelect"/>
 
-                <v-icon
-                    v-else
-                    icon="mdi-file-document-outline"
-                />
+                <template v-else>
+                    <v-tooltip
+                        v-if="analysis.intensities"
+                        text="Custom intensity scores for Peptonizer provided">
+                        <template #activator="{ props }">
+                            <v-icon
+                                v-bind="props"
+                                icon="unipept:file-lightning-outline"
+                            />
+                        </template>
+                    </v-tooltip>
+
+                    <v-icon
+                        v-else
+                        icon="mdi-file-document-outline"
+                    />
+                </template>
             </template>
             <template #append>
                 <v-icon
@@ -97,7 +101,7 @@
             @click="manageSamplesDialogOpen = true"
         />
 
-        <manage-sample-group
+        <manage-sample-group-dialog
             v-model="manageSamplesDialogOpen"
             :group="group"
             @sample:add="addSample"
@@ -110,16 +114,17 @@
 </template>
 
 <script setup lang="ts">
-import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
+import ManageSampleGroupDialog from "@/components/sample/ManageSampleGroupDialog.vue";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import {ref} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {CustomFilterStore} from "@/store/CustomFilterStore";
 
-defineProps<{
-    group: GroupAnalysisStore
-}>();
+withDefaults(defineProps<{
+    group: GroupAnalysisStore,
+    multiSelect?: boolean
+}>(), { multiSelect: false });
 
 const emits = defineEmits<{
     (e: "sample:add", groupId: string, sample: SampleTableItem): void;

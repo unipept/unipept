@@ -12,7 +12,7 @@
         class="py-0"
         color="primary"
         selectable
-        select-strategy="single-leaf"
+        :select-strategy="multiSelect ? 'classic' : 'single-leaf'"
         open-strategy="multiple"
         active-strategy="single-leaf"
         mandatory
@@ -40,9 +40,10 @@ import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 
 const selected = defineModel<SingleAnalysisStore[]>({ required: true });
 
-const { project } = defineProps<{
+const { project } = withDefaults(defineProps<{
     project: ProjectAnalysisStore;
-}>();
+    multiSelect?: boolean
+}>(), { multiSelect: false });
 
 const emits = defineEmits<{
     (e: "sample:add", groupId: string, sample: SampleTableItem):  void;
