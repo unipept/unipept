@@ -1,18 +1,10 @@
 <template>
-    <v-container class="py-0" fluid>
-        <v-alert
-            v-if="isDemoMode"
-            type="info"
-        >
-            You are currently in <b>demo</b> mode. Changes made to the project will not be saved. To save your changes, please create a new project.
-        </v-alert>
-    </v-container>
-
     <project-view
         v-model:manage-samples="manageSamplesDialogOpen"
         v-model:selected-analyses="selectedAnalyses"
         v-model:selected-group="selectedGroup"
         :project="project"
+        :is-demo-mode="isDemoMode"
     >
         <template v-if="project && !project.empty">
             <div v-if="selectedAnalysisFailed">
@@ -101,24 +93,11 @@ import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import AnalysisSummary from "@/components/analysis/multi/AnalysisSummary.vue";
 import TaxonomicResults from "@/components/results/taxonomic/TaxonomicResults.vue";
 import MpaFunctionalResults from "@/components/results/functional/MpaFunctionalResults.vue";
-import {AnalysisConfig} from "@/store/AnalysisConfig";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
-
-export interface Analysis {
-    id: number;
-    sample: Sample;
-    config: AnalysisConfig;
-    result: AnalysisResult;
-}
 
 export interface Sample {
     name: string;
     rawPeptides: string;
-}
-
-export interface AnalysisResult {
-    status: AnalysisStatus;
-    config: AnalysisConfig;
 }
 
 const { project, isDemoMode } = useUnipeptAnalysisStore();

@@ -14,8 +14,7 @@
         selectable
         :select-strategy="multiSelect ? 'classic' : 'single-leaf'"
         open-strategy="multiple"
-        active-strategy="single-leaf"
-        mandatory
+        :mandatory="!multiSelect"
         @update:selected="selectItem"
     >
         <filesystem-group

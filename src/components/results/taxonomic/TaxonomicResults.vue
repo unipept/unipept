@@ -52,7 +52,7 @@
                 </v-tabs-window-item>
 
                 <v-tabs-window-item class="fixed-height">
-                    <taxonomic-barplot :ncbi-root="analysis.ncbiTree!" />
+                    <taxonomic-barplot :analyses="[analysis]" />
                 </v-tabs-window-item>
 
                 <v-tabs-window-item>

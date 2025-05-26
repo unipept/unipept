@@ -3,6 +3,7 @@
         <filesystem
             v-model="selectedAnalyses"
             :project="project"
+            :multi-select="multiSelect"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -21,6 +22,15 @@
             </div>
         </template>
     </v-navigation-drawer>
+
+    <v-container class="py-0" fluid>
+        <v-alert
+            v-if="isDemoMode"
+            type="info"
+        >
+            You are currently in <b>demo</b> mode. Changes made to the project will not be saved. To save your changes, please create a new project.
+        </v-alert>
+    </v-container>
 
     <v-container
         fluid
@@ -57,9 +67,11 @@ import EmptyProjectPlaceholder from "@/components/project/EmptyProjectPlaceholde
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import ManageSampleGroupDialog from "@/components/sample/ManageSampleGroupDialog.vue";
 
-const { project } = defineProps<{
+const { project } = withDefaults(defineProps<{
     project: ProjectAnalysisStore;
-}>();
+    isDemoMode?: boolean;
+    multiSelect?: boolean;
+}>(), { isDemoMode: false, multiSelect: false });
 
 const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses", { required: true });
 const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-group", { required: true });

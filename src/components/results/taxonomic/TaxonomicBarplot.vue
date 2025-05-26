@@ -61,15 +61,16 @@
 
 <script setup lang="ts">
     import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-    import {ref, Ref, onMounted, watch, computed, nextTick} from "vue";
+    import {ref, Ref, onMounted, watch, nextTick} from "vue";
     import Barplot from "@/components/visualization/barplot/Barplot.vue";
     import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
     import VisualizationControls from "@/components/results/taxonomic/VisualizationControls.vue";
     import {Bar, BarItem, BarplotSettings} from "unipept-visualizations";
     import DownloadImage from "@/components/image/DownloadImage.vue";
+    import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 
     const props = defineProps<{
-        ncbiRoot: NcbiTreeNode
+        analyses: SingleAnalysisStore[]
     }>();
 
 
@@ -103,28 +104,30 @@
     barplotSettings.value.barHeight = 100;
 
     const initializeSpeciesBar = () => {
-        const nodesAtSpecies: NcbiTreeNode[] = [];
-        props.ncbiRoot.callRecursivelyPostOrder((x: NcbiTreeNode) => {
-            if (x && x.extra.rank === selectedTaxonomicRank.value) {
-                nodesAtSpecies.push(x);
-            }
-        });
-
-        const items: BarItem[] = [];
-
-        for (const speciesNode of nodesAtSpecies) {
-            items.push({
-                label: speciesNode.name,
-                counts: speciesNode.count
+        for (const analysis of props.analyses) {
+            const nodesAtSpecies: NcbiTreeNode[] = [];
+            analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
+                if (x && x.extra.rank === selectedTaxonomicRank.value) {
+                    nodesAtSpecies.push(x);
+                }
             });
+
+            const items: BarItem[] = [];
+
+            for (const speciesNode of nodesAtSpecies) {
+                items.push({
+                    label: speciesNode.name,
+                    counts: speciesNode.count
+                });
+            }
+
+            items.sort((a: BarItem, b: BarItem) => b.counts - a.counts);
+
+            barData.value = [{
+                label: "Sample 1",
+                items
+            }];
         }
-
-        items.sort((a: BarItem, b: BarItem) => b.counts - a.counts);
-
-        barData.value = [{
-            label: "Sample 1",
-            items
-        }];
     }
 
     onMounted(() => {
