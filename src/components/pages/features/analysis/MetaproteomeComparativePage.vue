@@ -7,30 +7,32 @@
         :is-demo-mode="isDemoMode"
         :multi-select="true"
     >
-        <comparative-summary
-            :selected-analyses="selectedAnalyses"
-        />
+        <template v-if="!project.empty">
+            <comparative-summary
+                :selected-analyses="selectedAnalyses"
+            />
 
-        <v-unipept-card class="mt-4 pa-0">
-            <v-tabs
-                v-model="selectedComparativeTab"
-                bg-color="primary"
-                slider-color="secondary"
-            >
-                <v-tab text="Barplot"></v-tab>
-                <v-tab text="Heatmap"></v-tab>
-            </v-tabs>
-            <v-card-text class="pa-0">
-                <v-tabs-window v-model="selectedComparativeTab">
-                    <v-tabs-window-item>
-                        <taxonomic-barplot :analyses="selectedAnalyses" />
-                    </v-tabs-window-item>
-                    <v-tabs-window-item>
-                        <div>Heatmap!</div>
-                    </v-tabs-window-item>
-                </v-tabs-window>
-            </v-card-text>
-        </v-unipept-card>
+            <v-unipept-card class="mt-4 pa-0">
+                <v-tabs
+                    v-model="selectedComparativeTab"
+                    bg-color="primary"
+                    slider-color="secondary"
+                >
+                    <v-tab text="Barplot"></v-tab>
+                    <v-tab text="Heatmap"></v-tab>
+                </v-tabs>
+                <v-card-text class="pa-0">
+                    <v-tabs-window v-model="selectedComparativeTab">
+                        <v-tabs-window-item>
+                            <taxonomic-barplot :analyses="selectedAnalyses" comparative />
+                        </v-tabs-window-item>
+                        <v-tabs-window-item>
+                            <div>Heatmap!</div>
+                        </v-tabs-window-item>
+                    </v-tabs-window>
+                </v-card-text>
+            </v-unipept-card>
+        </template>
     </project-view>
 </template>
 

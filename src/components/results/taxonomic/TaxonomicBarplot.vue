@@ -69,10 +69,10 @@
     import DownloadImage from "@/components/image/DownloadImage.vue";
     import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 
-    const props = defineProps<{
-        analyses: SingleAnalysisStore[]
-    }>();
-
+    const props = withDefaults(defineProps<{
+        analyses: SingleAnalysisStore[],
+        comparative?: boolean
+    }>(), { comparative: false });
 
     const taxonomicRankOptions: Ref<string[]> = ref(
         Object.values(NcbiRank)
@@ -98,8 +98,8 @@
     barplotSettings.value.chart.padding.right = 30;
     barplotSettings.value.legend.padding.top = 40;
     barplotSettings.value.legend.padding.left = 20;
-    barplotSettings.value.height = 400;
-    barplotSettings.value.showBarLabel = false;
+    barplotSettings.value.height = 250 + 100 * props.analyses.length;
+    barplotSettings.value.showBarLabel = props.comparative;
     barplotSettings.value.displayMode = "relative";
     barplotSettings.value.barHeight = 100;
 
@@ -129,6 +129,7 @@
                 items
             });
         }
+        barplotSettings.value.height = 250 + 100 * props.analyses.length;
         barData.value = createdBars;
     }
 
@@ -171,7 +172,7 @@
         initializeSpeciesBar();
     });
 
-    watch(barplotWrapper, async () => {
+    watch(barData, async () => {
         await nextTick();
         svg.value = barplotWrapper.value?.querySelector("svg") as SVGElement;
     }, { immediate: true })
