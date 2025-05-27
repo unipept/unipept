@@ -14,7 +14,7 @@
             />
             <v-list-item
                 color="primary"
-                prepend-icon="mdi-compare"
+                prepend-icon="unipept:test-tube-multiple"
                 to="compare"
             />
         </v-list>
