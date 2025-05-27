@@ -104,6 +104,7 @@
     barplotSettings.value.barHeight = 100;
 
     const initializeSpeciesBar = () => {
+        const createdBars = [];
         for (const analysis of props.analyses) {
             const nodesAtSpecies: NcbiTreeNode[] = [];
             analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
@@ -123,11 +124,12 @@
 
             items.sort((a: BarItem, b: BarItem) => b.counts - a.counts);
 
-            barData.value = [{
-                label: "Sample 1",
+            createdBars.push({
+                label: analysis.name,
                 items
-            }];
+            });
         }
+        barData.value = createdBars;
     }
 
     onMounted(() => {
@@ -146,7 +148,7 @@
         initializeSpeciesBar();
     });
 
-    watch(() => props.ncbiRoot, () => {
+    watch(() => props.analyses, () => {
         initializeSpeciesBar();
     });
 
