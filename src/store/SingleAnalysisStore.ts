@@ -269,6 +269,8 @@ const useSingleAnalysisStore = (
         peptideToLca,
         ncbiTree,
 
+        ontologyStore,
+
         peptonizerStore,
 
         analyse,
