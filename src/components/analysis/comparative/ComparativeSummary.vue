@@ -11,9 +11,37 @@
                 Analysis summary
             </h2>
 
-            <div>
+            <v-row>
+                <v-col cols="6">
+
+                </v-col>
+                <v-col cols="6">
+                    <consistent-setting-check
+                        :selected-analyses="selectedAnalyses"
+                        :check-test="(s: SingleAnalysisStore) => s.config.equate ? 'enabled' : 'disabled'"
+                        check-name="Equate I and L"
+                    />
+
+                    <consistent-setting-check
+                        :selected-analyses="selectedAnalyses"
+                        :check-test="(s: SingleAnalysisStore) => s.config.filter ? 'enabled' : 'disabled'"
+                        check-name="Filter duplicates"
+                    />
+
+                    <consistent-setting-check
+                        :selected-analyses="selectedAnalyses"
+                        :check-test="(s: SingleAnalysisStore) => s.config.missed ? 'enabled' : 'disabled'"
+                        check-name="Advanced missed cleavage"
+                    />
+
+                    <consistent-setting-check
+                        :selected-analyses="selectedAnalyses"
+                        :check-test="(s: SingleAnalysisStore) => s.databaseVersion"
+                        check-name="UniProtKB version"
+                    />
+                </v-col>
                 <!-- Show here whether all selected samples have been analysed using the same settings. -->
-            </div>
+            </v-row>
 
             <v-container fluid class="pa-0 ma-0">
                 <v-row>
@@ -36,8 +64,9 @@
 
 <script setup lang="ts">
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
-import {onMounted, ref, Ref} from "vue";
+import {computed, ComputedRef} from "vue";
 import TopSharedSpeciesTable from "@/components/analysis/comparative/TopSharedSpeciesTable.vue";
+import ConsistentSettingCheck from "@/components/analysis/comparative/ConsistentSettingCheck.vue";
 
 const { selectedAnalyses } = defineProps<{
     selectedAnalyses: SingleAnalysisStore[]
