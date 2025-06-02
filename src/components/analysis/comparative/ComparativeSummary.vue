@@ -11,7 +11,7 @@
                 <v-col cols="6">
                     <div>
                         <span class="font-weight-bold">{{ selectedAnalyses.length }} {{ selectedAnalyses.length === 1 ? 'sample' : 'samples' }}</span>
-                        from x different groups selected
+                        from {{ totalUniqueGroups }} different groups selected
                     </div>
                     <div>
                         <span class="font-weight-bold">Total {{ formatNumber(totalPeptides) }} peptides</span>
@@ -77,9 +77,11 @@ import {computed, ComputedRef} from "vue";
 import TopSharedSpeciesTable from "@/components/analysis/comparative/TopSharedSpeciesTable.vue";
 import ConsistentSettingCheck from "@/components/analysis/comparative/ConsistentSettingCheck.vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 
-const { selectedAnalyses } = defineProps<{
-    selectedAnalyses: SingleAnalysisStore[]
+const { groups, selectedAnalyses } = defineProps<{
+    selectedAnalyses: SingleAnalysisStore[],
+    groups: GroupAnalysisStore[],
 }>();
 
 const { formatNumber } = useNumberFormatter();
@@ -106,6 +108,19 @@ const averageMatchedPeptides: ComputedRef<number> = computed(() => {
     }
 
     return (selectedAnalyses.map((s) => s.peptideTrust!.matchedPeptides / s.peptideTrust!.searchedPeptides).reduce((acc, curr) => acc + curr, 0) / selectedAnalyses.length) * 100;
+});
+
+const totalUniqueGroups: ComputedRef<number> = computed(() => {
+    let uniqueGroups: number = 0;
+    for (const group of groups) {
+        for (const analysis of group.analyses) {
+            if (selectedAnalyses.some((s: SingleAnalysisStore) => s.id === analysis.id)) {
+                uniqueGroups += 1;
+                break;
+            }
+        }
+    }
+    return uniqueGroups;
 });
 </script>
 

@@ -14,6 +14,7 @@ import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {onMounted, ref, Ref, shallowRef, watch} from "vue";
 import {useDebounceFn} from "@vueuse/core";
 import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 
 interface TopTaxon {
     // NcbiID of this taxon
@@ -60,32 +61,35 @@ const computeMostCommonSharedSpecies = () => {
 
     for (const analysis of selectedAnalyses) {
         let peptidesAtSpeciesLevel = 0;
-        let taxaToProcess: NcbiTaxon[] = [];
-        for (const taxon of analysis.lcaTable!.counts.keys()) {
-            const definition = analysis.ontologyStore.getNcbiDefinition(taxon);
+
+        // First compute the total peptides at species level
+        analysis.ncbiTree.callRecursivelyPostOrder((node: NcbiTreeNode) => {
+            const definition = analysis.ontologyStore.getNcbiDefinition(node.id);
 
             if (definition && definition.rank == NcbiRank.Species) {
-                peptidesAtSpeciesLevel += analysis.lcaToPeptides!.get(taxon)!.length;
-                taxaToProcess.push(definition);
+                peptidesAtSpeciesLevel += node.count;
             }
-        }
+        });
 
-        for (const definition of taxaToProcess) {
-            if (!taxonSamplesCount.has(definition.id)) {
-                taxonSamplesCount.set(definition.id, 0);
-            }
-            taxonSamplesCount.set(definition.id, taxonSamplesCount.get(definition.id)! + 1);
+        analysis.ncbiTree.callRecursivelyPostOrder((node: NcbiTreeNode) => {
+            const definition = analysis.ontologyStore.getNcbiDefinition(node.id);
 
-            if (!taxonNameMap.has(definition.id)) {
-                taxonNameMap.set(definition.id, definition.name);
-            }
+            if (definition && definition.rank == NcbiRank.Species) {
+                if (!taxonSamplesCount.has(definition.id)) {
+                    taxonSamplesCount.set(definition.id, 0);
+                }
+                taxonSamplesCount.set(definition.id, taxonSamplesCount.get(definition.id)! + 1);
 
-            if (!taxonRelativeAbundance.has(definition.id)) {
-                taxonRelativeAbundance.set(definition.id, []);
+                if (!taxonNameMap.has(definition.id)) {
+                    taxonNameMap.set(definition.id, definition.name);
+                }
+
+                if (!taxonRelativeAbundance.has(definition.id)) {
+                    taxonRelativeAbundance.set(definition.id, []);
+                }
+                taxonRelativeAbundance.get(definition.id)!.push(node.count / peptidesAtSpeciesLevel);
             }
-            const lcaPeptidesLength = analysis.lcaToPeptides!.get(definition.id)!.length;
-            taxonRelativeAbundance.get(definition.id)!.push(lcaPeptidesLength / peptidesAtSpeciesLevel);
-        }
+        });
     }
     
     // Extract the 20 taxa from the map for which the count is the highest

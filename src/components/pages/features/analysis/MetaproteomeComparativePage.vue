@@ -18,6 +18,7 @@
             <template v-else>
                 <comparative-summary
                     :selected-analyses="selectedAnalyses"
+                    :groups="project.groups"
                 />
 
                 <v-unipept-card class="mt-4 pa-0">
