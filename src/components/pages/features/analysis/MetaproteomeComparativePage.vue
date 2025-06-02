@@ -8,30 +8,39 @@
         :multi-select="true"
     >
         <template v-if="!project.empty">
-            <comparative-summary
-                :selected-analyses="selectedAnalyses"
-            />
+            <template v-if="!selectedAnalyses || selectedAnalyses.length === 0">
+                <v-empty-state
+                  headline="No sample selected"
+                  title="Select at least one sample from the left sidebar to start the comparative analysis."
+                  icon="mdi-beaker-question-outline"
+                />
+            </template>
+            <template v-else>
+                <comparative-summary
+                    :selected-analyses="selectedAnalyses"
+                />
 
-            <v-unipept-card class="mt-4 pa-0">
-                <v-tabs
-                    v-model="selectedComparativeTab"
-                    bg-color="primary"
-                    slider-color="secondary"
-                >
-                    <v-tab text="Barplot"></v-tab>
-                    <v-tab text="Heatmap"></v-tab>
-                </v-tabs>
-                <v-card-text class="pa-0">
-                    <v-tabs-window v-model="selectedComparativeTab">
-                        <v-tabs-window-item>
-                            <taxonomic-barplot :analyses="selectedAnalyses" comparative />
-                        </v-tabs-window-item>
-                        <v-tabs-window-item>
-                            <div>Heatmap!</div>
-                        </v-tabs-window-item>
-                    </v-tabs-window>
-                </v-card-text>
-            </v-unipept-card>
+                <v-unipept-card class="mt-4 pa-0">
+                    <v-tabs
+                        v-model="selectedComparativeTab"
+                        bg-color="primary"
+                        slider-color="secondary"
+                    >
+                        <v-tab text="Barplot"></v-tab>
+                        <v-tab text="Heatmap"></v-tab>
+                    </v-tabs>
+                    <v-card-text class="pa-0">
+                        <v-tabs-window v-model="selectedComparativeTab">
+                            <v-tabs-window-item>
+                                <taxonomic-barplot :analyses="selectedAnalyses" comparative />
+                            </v-tabs-window-item>
+                            <v-tabs-window-item>
+                                <div>Heatmap!</div>
+                            </v-tabs-window-item>
+                        </v-tabs-window>
+                    </v-card-text>
+                </v-unipept-card>
+            </template>
         </template>
     </project-view>
 </template>
