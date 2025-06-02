@@ -4,26 +4,59 @@
         :headers="tableHeaders"
         :items="topTaxa"
         :items-per-page="5"
+        :items-per-page-options="[5, 10, 20, -1]"
+        :sort-by="sortByItems"
+        multi-sort
         density="compact"
         color="primary"
-    />
+    >
+        <template #item.name="{ item }">
+            <a
+                :href="url(item.id)"
+                target="_blank"
+                class="font-regular d-flex align-center"
+            >
+                {{ item.name }}
+                <v-icon
+                    size="x-small"
+                    class="ml-1"
+                >mdi-open-in-new</v-icon>
+            </a>
+        </template>
+        <template #item.samplesOccurrence="{ item }">
+            <div>
+                {{ item.samplesOccurrence }}/{{ selectedAnalyses.length }}
+            </div>
+        </template>
+        <template #item.averageAbundance = "{ item }">
+            <div
+                :style="{
+                    padding: '6px 12px',
+                    background: `linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ${item.averageAbundance * 100}%, rgb(240, 240, 240) ${item.averageAbundance * 100}%, rgb(240, 240, 240) 100%)`,
+                }"
+            >
+                {{ (item.averageAbundance * 100).toFixed(2) }}%
+            </div>
+        </template>
+    </v-data-table>
 </template>
 
 <script setup lang="ts">
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {onMounted, ref, Ref, shallowRef, watch} from "vue";
 import {useDebounceFn} from "@vueuse/core";
-import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
+import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
+import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
 
 interface TopTaxon {
     // NcbiID of this taxon
     id: number,
     name: string,
     // In how many of the selected samples does this taxon occur?
-    samplesOccurrence: string,
+    samplesOccurrence: number,
     // What is the average relative abundance of this taxon over all selected samples?
-    averageAbundance: string
+    averageAbundance: number
 }
 
 const { selectedAnalyses } = defineProps<{
@@ -36,21 +69,41 @@ const tableHeaders: any = [
         title: "Name",
         align: "start",
         value: "name",
+        width: "40%",
+        sortable: true
     },
     {
         title: "Samples",
         align: "start",
-        value: "samplesOccurrence"
+        value: "samplesOccurrence",
+        width: "30%",
+        sortable: true
     },
     {
         title: "Avg. relative abundance",
         align: "start",
-        value: "averageAbundance"
+        value: "averageAbundance",
+        width: "40%",
+        sortable: true
     }
-]
+];
+
+const sortByItems: Ref<SortItem[]> = ref([
+    {
+        key: 'samplesOccurrence',
+        order: 'desc'
+    }, {
+        key: 'averageAbundance',
+        order: 'desc'
+    }
+]);
 
 const topTaxa: Ref<TopTaxon[]> = shallowRef([]);
 const loading: Ref<boolean> = ref(true);
+
+const url = (code: number) => {
+    return `https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=${code}`;
+}
 
 const computeMostCommonSharedSpecies = () => {
     loading.value = true;
@@ -102,12 +155,12 @@ const computeMostCommonSharedSpecies = () => {
             const bAvg = taxonRelativeAbundance.get(b[0])!.reduce((sum, curr) => sum + curr) / b[1];
             return bAvg - aAvg;
         })
-        .slice(0, 20)
+        .slice(0, 50)
         .map(([id, occurrence]) => ({
             id,
             name: taxonNameMap.get(id)!,
-            samplesOccurrence: `${occurrence}/${selectedAnalyses.length}`,
-            averageAbundance: `${((taxonRelativeAbundance.get(id)!.reduce((partialSum, current) => partialSum + current) / occurrence) * 100).toFixed(2)}%`
+            samplesOccurrence: occurrence,
+            averageAbundance: (taxonRelativeAbundance.get(id)!.reduce((partialSum, current) => partialSum + current) / occurrence)
         }));
 
     loading.value = false;

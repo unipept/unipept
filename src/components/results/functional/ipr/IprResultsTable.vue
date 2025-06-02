@@ -7,6 +7,7 @@
         :items-per-page="10"
         :loading="false"
         item-value="code"
+        density="compact"
         :show-expand="data.ncbiTree !== undefined"
         @update:expanded="singleExpand"
     >
@@ -28,9 +29,8 @@
         <template #item.count="{ item }">
             <div
                 :style="{
-                    padding: '12px',
-                    background: 'linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ' +
-                        (item.count / item.totalCount) * 100 + '%, rgba(255,255,255,0) ' + (item.count / item.totalCount) * 100 + '%)',
+                    padding: '8px 12px',
+                    background: `linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ${(item.count / item.totalCount) * 100}%, rgb(240, 240, 240) ${(item.count / item.totalCount) * 100}%, rgb(240, 240, 240) 100%)`,
                 }"
             >
                 {{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}

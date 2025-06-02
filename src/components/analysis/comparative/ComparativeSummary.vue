@@ -11,7 +11,7 @@
                 <v-col cols="6">
                     <div>
                         <span class="font-weight-bold">{{ selectedAnalyses.length }} {{ selectedAnalyses.length === 1 ? 'sample' : 'samples' }}</span>
-                        from {{ totalUniqueGroups }} different groups selected
+                        from {{ totalUniqueGroups }} different {{ totalUniqueGroups === 1 ? 'group' : 'groups' }} selected
                     </div>
                     <div>
                         <span class="font-weight-bold">Total {{ formatNumber(totalPeptides) }} peptides</span>
@@ -54,16 +54,11 @@
 
             <v-container fluid class="pa-0 ma-0">
                 <v-row>
-                    <v-col :cols="6">
+                    <v-col :cols="12">
                         <h2 class="pb-2">
                             Most common shared species
                         </h2>
                         <top-shared-species-table :selected-analyses="selectedAnalyses" />
-                    </v-col>
-                    <v-col :cols="6">
-                        <h2 class="pb-2">
-                            Sample specific unique species
-                        </h2>
                     </v-col>
                 </v-row>
             </v-container>
