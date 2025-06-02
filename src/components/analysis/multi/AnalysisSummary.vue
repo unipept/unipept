@@ -133,18 +133,14 @@ import AnalysisSummaryTable from "@/components/analysis/multi/AnalysisSummaryTab
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {computed, onMounted, ref} from "vue";
 import usePercentage from "@/composables/usePercentage";
-import useOntologyStore from "@/store/OntologyStore";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
 import useCsvDownload from "@/composables/useCsvDownload";
 import usePeptideExport from "@/composables/usePeptideExport";
 import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDialog.vue";
-import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
-import ManageSampleGroupDialog from "@/components/sample/ManageSampleGroupDialog.vue";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
 
-const { getNcbiDefinition } = useOntologyStore();
 const { displayPercentage } = usePercentage();
 const { generateExport } = usePeptideExport();
 const { download: downloadCsv } = useCsvDownload();

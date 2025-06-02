@@ -13,7 +13,7 @@
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {onMounted, ref, Ref, shallowRef, watch} from "vue";
 import {useDebounceFn} from "@vueuse/core";
-import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
+import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 
 interface TopTaxon {
     // NcbiID of this taxon
@@ -37,12 +37,12 @@ const tableHeaders: any = [
         value: "name",
     },
     {
-        title: "Samples present",
+        title: "Samples",
         align: "start",
         value: "samplesOccurrence"
     },
     {
-        title: "Average relative abundance",
+        title: "Avg. relative abundance",
         align: "start",
         value: "averageAbundance"
     }
@@ -58,26 +58,33 @@ const computeMostCommonSharedSpecies = () => {
     const taxonNameMap = new Map<number, string>();
     const taxonRelativeAbundance = new Map<number, number[]>();
 
-
     for (const analysis of selectedAnalyses) {
+        let peptidesAtSpeciesLevel = 0;
+        let taxaToProcess: NcbiTaxon[] = [];
         for (const taxon of analysis.lcaTable!.counts.keys()) {
             const definition = analysis.ontologyStore.getNcbiDefinition(taxon);
 
-            if (definition && definition.rank === NcbiRank.Species) {
-                if (!taxonSamplesCount.has(taxon)) {
-                    taxonSamplesCount.set(taxon, 0);
-                }
-                taxonSamplesCount.set(taxon, taxonSamplesCount.get(taxon)! + 1);
-
-                if (!taxonNameMap.has(taxon)) {
-                    taxonNameMap.set(taxon, definition.name);
-                }
-
-                if (!taxonRelativeAbundance.has(taxon)) {
-                    taxonRelativeAbundance.set(taxon, []);
-                }
-                taxonRelativeAbundance.get(taxon)!.push(analysis.lcaToPeptides!.get(taxon)!.length / analysis.peptideTrust!.matchedPeptides);
+            if (definition && definition.rank == NcbiRank.Species) {
+                peptidesAtSpeciesLevel += analysis.lcaToPeptides!.get(taxon)!.length;
+                taxaToProcess.push(definition);
             }
+        }
+
+        for (const definition of taxaToProcess) {
+            if (!taxonSamplesCount.has(definition.id)) {
+                taxonSamplesCount.set(definition.id, 0);
+            }
+            taxonSamplesCount.set(definition.id, taxonSamplesCount.get(definition.id)! + 1);
+
+            if (!taxonNameMap.has(definition.id)) {
+                taxonNameMap.set(definition.id, definition.name);
+            }
+
+            if (!taxonRelativeAbundance.has(definition.id)) {
+                taxonRelativeAbundance.set(definition.id, []);
+            }
+            const lcaPeptidesLength = analysis.lcaToPeptides!.get(definition.id)!.length;
+            taxonRelativeAbundance.get(definition.id)!.push(lcaPeptidesLength / peptidesAtSpeciesLevel);
         }
     }
     
