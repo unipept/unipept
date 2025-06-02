@@ -88,7 +88,7 @@ const computeMostCommonSharedSpecies = () => {
         }
     }
     
-    // Extract the 10 taxa from the map for which the count is the highest
+    // Extract the 20 taxa from the map for which the count is the highest
     topTaxa.value = Array.from(taxonSamplesCount.entries())
         .sort((a, b) => {
             const occurrenceDiff = b[1] - a[1];

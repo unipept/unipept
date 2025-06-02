@@ -9,7 +9,17 @@
             <span class="font-weight-bold">&quot;{{ checkName }}&quot;</span> setting is consistent (<span class="font-weight-bold">{{ uniqueCheckValues.values().next().value }}</span>)
         </span>
         <span v-else>
-            <span class="font-weight-bold">&quot;{{ checkName }}&quot;</span> setting is inconsistent over selected samples
+            <v-tooltip interactive close-delay="500">
+                <template v-slot:activator="{ props }">
+                    <span class="font-weight-bold" v-bind="props">&quot;{{ checkName }}&quot;</span> setting is inconsistent over selected samples
+                </template>
+                <div>
+                    The following configuration is reported for the <span class="font-weight-bold">&quot;{{ checkName }}&quot;</span> setting per sample:
+                    <ul v-for="analysis of selectedAnalyses">
+                        <li>{{ analysis.name }} &rarr; {{ checkTest(analysis) }}</li>
+                    </ul>
+                </div>
+            </v-tooltip>
         </span>
     </div>
 </template>
