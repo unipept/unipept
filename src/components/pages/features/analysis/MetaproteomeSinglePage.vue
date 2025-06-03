@@ -1,8 +1,8 @@
 <template>
     <project-view
         v-model:manage-samples="manageSamplesDialogOpen"
-        v-model:selected-analyses="selectedAnalyses"
-        v-model:selected-group="selectedGroup"
+        v-model:selected-analyses="singleAnalysisState.selectedAnalyses"
+        v-model:selected-group="singleAnalysisState.selectedGroup"
         :project="project"
         :is-demo-mode="isDemoMode"
     >
@@ -63,9 +63,9 @@
                 </div>
 
                 <analysis-summary
-                    v-if="selectedGroup"
+                    v-if="singleAnalysisState.selectedGroup"
                     :analysis="selectedAnalysis"
-                    :group="selectedGroup"
+                    :group="singleAnalysisState.selectedGroup"
                     @edit="manageSamplesDialogOpen = true"
                 />
 
@@ -85,29 +85,33 @@
 
 <script setup lang="ts">
 import ProjectView from "@/components/project/ProjectView.vue";
-import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import AnalysisSummaryProgress from "@/components/analysis/multi/AnalysisSummaryProgress.vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {computed, ComputedRef, Ref, ref} from "vue";
-import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import AnalysisSummary from "@/components/analysis/multi/AnalysisSummary.vue";
 import TaxonomicResults from "@/components/results/taxonomic/TaxonomicResults.vue";
 import MpaFunctionalResults from "@/components/results/functional/MpaFunctionalResults.vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
+import useAppStateStore from "@/store/AppStateStore";
+import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
 export interface Sample {
     name: string;
     rawPeptides: string;
 }
 
-const { project, isDemoMode } = useUnipeptAnalysisStore();
+const {
+    project,
+    isDemoMode
+} = useUnipeptAnalysisStore();
+
+const {
+    singleAnalysisState
+} = useAppStateStore();
 
 const manageSamplesDialogOpen = ref(false);
 
-const selectedAnalyses: Ref = ref<SingleAnalysisStore[]>([]);
-const selectedGroup = ref<GroupAnalysisStore | undefined>();
-
-const selectedAnalysis: ComputedRef = computed(() => selectedAnalyses.value?.[0]);
+const selectedAnalysis: ComputedRef = computed(() => singleAnalysisState.selectedAnalyses[0]);
 
 const selectedAnalysisFinished = computed(() => {
     return selectedAnalysis.value && selectedAnalysis.value.status === AnalysisStatus.Finished;
@@ -122,7 +126,7 @@ const selectedAnalysisFailed = computed(() => {
 });
 
 const resetTaxonomicFilter = () => {
-    selectedAnalyses.value?.forEach((analysis: SingleAnalysisStore) => analysis.updateTaxonomicFilter(1));
+    singleAnalysisState.selectedAnalyses.forEach((analysis: SingleAnalysisStore) => analysis.updateTaxonomicFilter(1));
 }
 
 const reanalyseSample = (analysis: SingleAnalysisStore) => {

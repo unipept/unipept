@@ -8,6 +8,7 @@ import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 import useProjectExport from "@/composables/useProjectExport";
 import useProjectImport from "@/composables/useProjectImport";
+import useAppStateStore from "@/store/AppStateStore";
 
 interface StoreValue {
     lastAccessed: number;
@@ -27,6 +28,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
     const project = useProjectAnalysisStore();
     const customDatabases = useCustomFilterStore();
+    const appState = useAppStateStore();
 
     const _projectName = ref<string>("");
 
@@ -49,6 +51,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const loadNewProject = async (projectName: string) => {
         _projectName.value = projectName;
 
+        appState.clear();
         project.clear();
     }
 
@@ -57,6 +60,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
         const value: StoreValue | null = await store.getItem(projectName);
         if (value !== null) {
+            appState.clear();
             project.clear();
             project.setImportedData(await blobToStore(value.project));
         }
@@ -65,6 +69,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const loadProjectFromFile = async (projectName: string, file: File) => {
         _projectName.value = projectName;
 
+        appState.clear();
         project.clear();
         project.setImportedData(await blobToStore(file));
     }
@@ -72,6 +77,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const loadProjectFromSample = async (sample: SampleData) => {
         _projectName.value = "";
 
+        appState.clear();
         project.clear();
 
         const groupId = project.addGroup(sample.environment);
@@ -88,6 +94,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const loadProjectFromPeptides = async (rawPeptides: string, config: AnalysisConfig) => {
         _projectName.value = "";
 
+        appState.clear();
         project.clear();
         const groupId = project.addGroup("Quick analysis");
         project.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);

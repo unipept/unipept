@@ -1,14 +1,14 @@
 <template>
     <project-view
         v-model:manage-samples="manageSamplesDialogOpen"
-        v-model:selected-analyses="selectedAnalyses"
-        v-model:selected-group="selectedGroup"
+        v-model:selected-analyses="comparativeAnalysisState.selectedAnalyses"
+        v-model:selected-group="comparativeAnalysisState.selectedGroup"
         :project="project"
         :is-demo-mode="isDemoMode"
         :multi-select="true"
     >
         <template v-if="!project.empty">
-            <template v-if="!selectedAnalyses || selectedAnalyses.length === 0">
+            <template v-if="!comparativeAnalysisState.selectedAnalyses || comparativeAnalysisState.selectedAnalyses.length === 0">
                 <v-empty-state
                   headline="No sample selected"
                   title="Select at least one sample from the left sidebar to start the comparative analysis."
@@ -17,7 +17,7 @@
             </template>
             <template v-else>
                 <comparative-summary
-                    :selected-analyses="selectedAnalyses"
+                    :selected-analyses="comparativeAnalysisState.selectedAnalyses"
                     :groups="project.groups"
                 />
 
@@ -33,7 +33,7 @@
                     <v-card-text class="pa-0">
                         <v-tabs-window v-model="selectedComparativeTab">
                             <v-tabs-window-item>
-                                <taxonomic-barplot :analyses="selectedAnalyses" comparative />
+                                <taxonomic-barplot :analyses="comparativeAnalysisState.selectedAnalyses" comparative />
                             </v-tabs-window-item>
                             <v-tabs-window-item>
                                 <div>Heatmap!</div>
@@ -48,22 +48,23 @@
 
 <script setup lang="ts">
 import ProjectView from "@/components/project/ProjectView.vue";
-import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {ref, Ref} from "vue";
-import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
-import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import ComparativeSummary from "@/components/analysis/comparative/ComparativeSummary.vue";
 import TaxonomicBarplot from "@/components/results/taxonomic/TaxonomicBarplot.vue";
+import useAppStateStore from "@/store/AppStateStore";
+import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
 const manageSamplesDialogOpen = ref(false);
+const selectedComparativeTab = ref(0);
 
-const selectedAnalyses: Ref = ref<SingleAnalysisStore[]>([]);
-const selectedGroup = ref<GroupAnalysisStore | undefined>();
+const {
+    project,
+    isDemoMode
+} = useUnipeptAnalysisStore();
 
-const selectedComparativeTab: Ref<number> = ref(0);
-
-const { project, isDemoMode } = useUnipeptAnalysisStore();
-
+const {
+    comparativeAnalysisState,
+} = useAppStateStore();
 </script>
 
 <style scoped>

@@ -144,7 +144,9 @@ const selectGroup = (groupId: string) => {
 }
 
 onMounted(() => {
-    selectFirstAnalysis();
+    if (selectedAnalyses.value.length === 0) {
+        selectFirstAnalysis();
+    }
 });
 </script>
 
