@@ -69,15 +69,15 @@
                     @edit="manageSamplesDialogOpen = true"
                 />
 
-                <taxonomic-results
-                    class="mt-5"
-                    :analysis="selectedAnalysis"
-                />
+<!--                <taxonomic-results-->
+<!--                    class="mt-5"-->
+<!--                    :analysis="selectedAnalysis"-->
+<!--                />-->
 
-                <mpa-functional-results
-                    class="mt-5"
-                    :analysis="selectedAnalysis"
-                />
+<!--                <mpa-functional-results-->
+<!--                    class="mt-5"-->
+<!--                    :analysis="selectedAnalysis"-->
+<!--                />-->
             </div>
         </template>
     </project-view>

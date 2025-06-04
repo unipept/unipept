@@ -1,4 +1,4 @@
-import {computed, ref, watch} from "vue";
+import {computed, ref, shallowRef, watch} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/processing/peptide/usePeptideProcessor";
@@ -41,9 +41,9 @@ const useSingleAnalysisStore = (
 
     const id = ref<string>(_id);
     const name = ref<string>(_name);
-    const rawPeptides = ref<string>(_rawPeptides);
+    const rawPeptides = shallowRef<string>(_rawPeptides);
     const config = ref<AnalysisConfig>({ ..._config });
-    const intensities = ref<Map<string, number> | undefined>(_peptideIntensities);
+    const intensities = shallowRef<Map<string, number> | undefined>(_peptideIntensities);
 
     const taxonomicFilter = ref<number>(1);
     const functionalFilter = ref<number>(5);
