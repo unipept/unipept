@@ -82,7 +82,7 @@
 
     const useAbsoluteValues = ref(false);
 
-    const taxonCount = ref(10);
+    const taxonCount = ref(15);
 
     const barplotWrapper = ref<HTMLDivElement>();
     const containerWidth: Ref<number> = ref(800);
@@ -101,6 +101,7 @@
     barplotSettings.value.height = 250 + 100 * props.analyses.length;
     barplotSettings.value.showBarLabel = props.comparative;
     barplotSettings.value.displayMode = "relative";
+    barplotSettings.value.maxItems = taxonCount.value;
     barplotSettings.value.barHeight = 100;
 
     const initializeSpeciesBar = () => {
