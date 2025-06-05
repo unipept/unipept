@@ -1,6 +1,7 @@
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import NcbiResponseCommunicator from "@/logic/communicators/unipept/taxonomic/NcbiResponseCommunicator";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
+import {markRaw} from "vue";
 
 export default function useNcbiOntology(
     baseUrl = DEFAULT_API_BASE_URL,
@@ -41,7 +42,7 @@ export default function useNcbiOntology(
     }
 
     return {
-        ontology,
+        ontology: markRaw(ontology),
         update
     }
 }

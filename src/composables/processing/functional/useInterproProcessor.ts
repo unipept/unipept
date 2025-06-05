@@ -1,7 +1,7 @@
 import useFunctionalProcessor from "@/composables/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import {ref, shallowRef} from "vue";
+import {markRaw, ref, shallowRef} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
 import CountTable from "@/logic/processors/CountTable";
 
@@ -30,12 +30,12 @@ export default function useInterproProcessor() {
 
         const countTableMap = ShareableMap.fromTransferableState<string, number>(processed.sortedCountsTransferable);
 
-        countTable.value = new CountTable(countTableMap, processed.annotatedCount);
+        countTable.value = markRaw(new CountTable(countTableMap, processed.annotatedCount));
         trust.value = {
             annotatedItems: processed.annotatedCount,
             totalItems: peptideCounts.totalCount
         }
-        iprToPeptides.value = processed.itemToPeptides;
+        iprToPeptides.value = markRaw(processed.itemToPeptides);
     }
 
     return {

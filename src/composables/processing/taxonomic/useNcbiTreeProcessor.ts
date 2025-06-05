@@ -1,4 +1,4 @@
-import {shallowRef} from "vue";
+import {markRaw, shallowRef} from "vue";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import CountTable from "@/logic/processors/CountTable";
 import useOntologyStore from "@/store/OntologyStore";
@@ -47,9 +47,9 @@ export default function useNcbiTreeProcessor() {
         }
 
         tree.getCounts();
-        root.value = tree;
+        root.value = markRaw(tree);
         newNodes.set(id, tree);
-        nodes.value = newNodes;
+        nodes.value = markRaw(newNodes);
     }
 
     return {

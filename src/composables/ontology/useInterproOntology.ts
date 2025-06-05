@@ -2,6 +2,7 @@ import InterproResponseCommunicator from "@/logic/communicators/unipept/function
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import {InterproNamespace} from "@/logic/communicators/unipept/functional/InterproResponse";
 import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
+import {markRaw} from "vue";
 
 export default function useInterproOntology(
     baseUrl = DEFAULT_API_BASE_URL,
@@ -30,7 +31,7 @@ export default function useInterproOntology(
     }
 
     return {
-        ontology,
+        ontology: markRaw(ontology),
         update
     }
 }

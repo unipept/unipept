@@ -1,4 +1,4 @@
-import {computed, ref, shallowRef, watch} from "vue";
+import {computed, markRaw, ref, shallowRef, watch} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/processing/peptide/usePeptideProcessor";
@@ -25,7 +25,7 @@ const useSingleAnalysisStore = (
     _config: AnalysisConfig,
     // Intensity values that can be used by the Peptonizer to improve accuracy of the analysis
     _peptideIntensities?: Map<string, number>
-) => defineStore(`singleSampleStore/${_id}`, () => {
+) => defineStore(`singleAnalysisStore/${_id}`, () => {
     const ontologyStore = useOntologyStore();
     const customFilterStore = useCustomFilterStore();
     const peptonizerStore = usePeptonizerStore(_id);
@@ -51,7 +51,6 @@ const useSingleAnalysisStore = (
     // ===============================================================
     // ======================== PROCESSORS ===========================
     // ===============================================================
-
     const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered();
 
     const { databaseVersion, process: processMetadata } = useMetaData();
@@ -216,7 +215,7 @@ const useSingleAnalysisStore = (
 
     const importStore = async () => {
         await analyse(peptideToData.value === undefined);
-        //await updateTaxonomicFilter(taxonomicFilter.value);
+        await updateTaxonomicFilter(taxonomicFilter.value);
     }
 
     const setImportedData = (storeImport: SingleAnalysisStoreImport) => {
@@ -228,7 +227,7 @@ const useSingleAnalysisStore = (
         databaseVersion.value = storeImport.databaseVersion;
 
         if (storeImport.peptideToDataTransferable) {
-            peptideToData.value = ShareableMap.fromTransferableState<string, PeptideData>(storeImport.peptideToDataTransferable, { serializer: new PeptideDataSerializer() });
+            peptideToData.value = markRaw(ShareableMap.fromTransferableState<string, PeptideData>(storeImport.peptideToDataTransferable, { serializer: new PeptideDataSerializer() }));
         }
 
         if (storeImport.peptonizer) {

@@ -1,6 +1,6 @@
 import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import {ref, shallowRef} from "vue";
+import {markRaw, ref, shallowRef} from "vue";
 import PeptideProcessorWebWorker from "../workers/peptideProcessor.worker.ts?worker&inline";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 
@@ -29,7 +29,7 @@ export default function usePeptideProcessor() {
 
         const countTableMap = ShareableMap.fromTransferableState<string, number>(peptideCountsTransferable);
 
-        countTable.value = new CountTable(countTableMap, totalPeptideCount);
+        countTable.value = markRaw(new CountTable(countTableMap, totalPeptideCount));
     };
 
     return {
