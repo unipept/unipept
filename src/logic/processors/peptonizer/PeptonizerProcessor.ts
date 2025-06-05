@@ -1,9 +1,14 @@
 import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
+import useBrowserCheck from "@/composables/useBrowserCheck";
+
+const { isSafari } = useBrowserCheck();
 
 export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
-export const DEFAULT_PEPTONIZER_WORKERS = 8;
+// Safari does not expose the same amount of web assembly memory as Chrome and Firefox do, so we need to lower the
+// amount of parallel web workers for Safari.
+export const DEFAULT_PEPTONIZER_WORKERS = isSafari() ? 2 : 8;
 
 export const DEFAULT_TAXA_IN_GRAPH = 25;
 
