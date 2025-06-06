@@ -22,7 +22,7 @@
                 density="compact"
             >
                 <template #item.actions="{ item }">
-                    <div class="d-flex align-center">
+                    <div class="d-flex align-center justify-end">
                         <v-icon
                             color="primary"
                             size="20"
@@ -198,12 +198,12 @@ const computeProteinCount = async (filter: Filter) => {
     }
 };
 
-const tableHeaders = [
+const tableHeaders: any = [
     { title: 'Name', key: 'name' },
     { title: 'Type', key: 'type' },
-    { title: '# Taxa', key: 'taxaCount' },
-    { title: '# Proteins', key: 'proteinCount' },
-    { title: 'Actions', key: 'actions', sortable: false },
+    { title: '# Taxa', key: 'taxaCount', align: "end" },
+    { title: '# Proteins', key: 'proteinCount', align: "end" },
+    { title: 'Actions', key: 'actions', align: "end", sortable: false },
 ];
 
 const editDatabase = (name: string) => {
@@ -211,13 +211,38 @@ const editDatabase = (name: string) => {
     editDatabaseDialogOpen.value = true;
 };
 
+/**
+ * Rounds a number and returns a formatted string.
+ * - For values < 1,000,000: rounds to nearest thousand and returns "xxx thousand"
+ * - For values >= 1,000,000: rounds to nearest million and returns "xxx million"
+ *
+ * @param value The number to round and format
+ * @returns A formatted string representing the rounded value
+ */
+function smartRound(value: number): string {
+    const absValue = Math.abs(value);
+    const sign = value < 0 ? "-" : "";
+
+    if (absValue < 1000000) {
+        // Round to nearest thousand
+        const roundedThousands = Math.round(absValue / 1000);
+        return `${sign}${roundedThousands} thousand`;
+    } else {
+        // Round to nearest million
+        const roundedMillions = Math.round(absValue / 1000000);
+        return `${sign}${roundedMillions} million`;
+    }
+}
+
+
+
 const confirmEditDatabase = async (name: string, filter: Filter) => {
     emits('database:update', databaseToManipulate.value, name, filter);
 
     const taxonCount = await computeTaxonCount(filter);
     const proteinCount = await computeProteinCount(filter);
-    taxonCounts.value.set(name, `~ ${formatNumber(taxonCount)}`);
-    proteinCounts.value.set(name, `~ ${formatNumber(proteinCount)}`);
+    taxonCounts.value.set(name, `~ ${smartRound(taxonCount)}`);
+    proteinCounts.value.set(name, `~ ${smartRound(proteinCount)}`);
 };
 
 const deleteDatabase = (name: string) => {
@@ -252,8 +277,8 @@ const confirmCreateDatabase = async (name: string, filter: Filter) => {
     customFilterStore.addFilter(name, filter);
     const taxonCount = await computeTaxonCount(filter);
     const proteinCount = await computeProteinCount(filter);
-    taxonCounts.value.set(name, `~ ${formatNumber(taxonCount)}`);
-    proteinCounts.value.set(name, `~ ${formatNumber(proteinCount)}`);
+    taxonCounts.value.set(name, `~ ${smartRound(taxonCount)}`);
+    proteinCounts.value.set(name, `~ ${smartRound(proteinCount)}`);
 }
 
 const updateCounts = async () => {
@@ -261,8 +286,8 @@ const updateCounts = async () => {
         const filter = customFilterStore.getFilter(filterName)!;
         const taxonCount = await computeTaxonCount(filter);
         const proteinCount = await computeProteinCount(filter);
-        taxonCounts.value.set(filterName, `~ ${formatNumber(taxonCount)}`);
-        proteinCounts.value.set(filterName, `~ ${formatNumber(proteinCount)}`);
+        taxonCounts.value.set(filterName, `~ ${smartRound(taxonCount)}`);
+        proteinCounts.value.set(filterName, `~ ${smartRound(proteinCount)}`);
     }
 }
 
