@@ -14,10 +14,10 @@
                         from {{ totalUniqueGroups }} different {{ totalUniqueGroups === 1 ? 'group' : 'groups' }} selected
                     </div>
                     <div>
-                        <span class="font-weight-bold">Total {{ formatNumber(totalPeptides) }} peptides</span>
+                        <span class="font-weight-bold">Total {{ formatNumber(totalSearchedPeptides) }} peptides</span>
                         <span>, with {{ formatNumber(matchedPeptides) }} matched</span>
                         <span>
-                            (average {{ formatNumber(Math.round(totalPeptides / selectedAnalyses.length)) }} / sample)
+                            (average {{ formatNumber(Math.round(totalSearchedPeptides / selectedAnalyses.length)) }} / sample)
                         </span>
                     </div>
                     <div>
@@ -60,51 +60,7 @@
                         <h2 class="pb-2">
                             Sample ordering
                         </h2>
-                        <v-table density="compact">
-                            <thead>
-                            <tr>
-                                <th class="text-left" style="width: 20px;">
-                                    <v-tooltip text="Drag-and-drop samples to reorder them">
-                                        <template v-slot:activator="{ props }">
-                                            <v-icon color="grey-darken-3" v-bind="props" style="cursor: pointer;">
-                                                mdi-swap-vertical
-                                            </v-icon>
-                                        </template>
-                                    </v-tooltip>
-                                </th>
-                                <th class="text-left">
-                                    Name
-                                </th>
-                                <th class="text-right">
-                                    Peptides
-                                </th>
-                                <th class="text-right">
-                                    Match ratio
-                                </th>
-                            </tr>
-                            </thead>
-                            <draggable v-model="selectedAnalyses" item-key="id" tag="tbody">
-                                <template #item="{ element, index }">
-                                    <tr style="cursor: grab" :class="index === 0 ? 'primary-sample' : ''">
-                                        <td>
-                                            <v-icon color="grey-lighten-1">mdi-menu</v-icon>
-                                        </td>
-                                        <td>{{ element.name }}</td>
-                                        <td class="text-right">{{ formatNumber(element.peptideTrust.searchedPeptides) }}</td>
-                                        <td class="text-right">{{ ((element.peptideTrust.matchedPeptides / element.peptideTrust.searchedPeptides) * 100).toFixed(2) }}%</td>
-                                    </tr>
-                                </template>
-                            </draggable>
-                            <tfoot>
-                            <tr class="summary-row font-weight-bold">
-                                <td class="text-right"></td>
-                                <td>{{ selectedAnalyses.length }} samples</td>
-                                <td class="text-right">{{ formatNumber(totalPeptides) }} (Total)</td>
-                                <td class="text-right">{{ averageMatchedPeptides.toFixed(2) }}% (Avg.)</td>
-                            </tr>
-                            </tfoot>
-
-                        </v-table>
+                        <draggable-samples-table v-model:selected-analyses="selectedAnalyses" />
                     </v-col>
                 </v-row>
             </v-container>
@@ -132,7 +88,7 @@ import TopSharedSpeciesTable from "@/components/analysis/comparative/TopSharedSp
 import ConsistentSettingCheck from "@/components/analysis/comparative/ConsistentSettingCheck.vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
-import draggable from 'vuedraggable';
+import DraggableSamplesTable from "@/components/analysis/comparative/DraggableSamplesTable.vue";
 
 const { groups } = defineProps<{
     groups: GroupAnalysisStore[],
@@ -142,7 +98,7 @@ const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses",
 
 const { formatNumber } = useNumberFormatter();
 
-const totalPeptides: ComputedRef<number> = computed(() => {
+const totalSearchedPeptides: ComputedRef<number> = computed(() => {
     if (!selectedAnalyses.value || selectedAnalyses.value.length === 0) {
         return 0;
     }
