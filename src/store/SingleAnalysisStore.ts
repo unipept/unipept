@@ -303,7 +303,7 @@ export interface SingleAnalysisStoreImport {
 
 export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImport) => {
     let intensitiesMap: Map<string, number> | undefined;
-    if (storeImport.intensities) {
+    if (storeImport.intensities && storeImport.intensities !== "{}") {
         intensitiesMap = new Map<string, number>();
         for (const [key, value] of Object.entries(JSON.parse(storeImport.intensities))) {
             intensitiesMap.set(key, value as number);

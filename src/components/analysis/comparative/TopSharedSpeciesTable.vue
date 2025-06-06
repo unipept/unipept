@@ -73,7 +73,7 @@ const tableHeaders: any = [
         sortable: true
     },
     {
-        title: "Samples",
+        title: "Sample matches",
         align: "start",
         value: "samplesOccurrence",
         width: "30%",

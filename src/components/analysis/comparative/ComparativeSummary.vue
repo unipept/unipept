@@ -63,14 +63,22 @@
                         <v-table density="compact">
                             <thead>
                             <tr>
-                                <th class="text-left" style="width: 20px;"></th>
+                                <th class="text-left" style="width: 20px;">
+                                    <v-tooltip text="Drag-and-drop samples to reorder them">
+                                        <template v-slot:activator="{ props }">
+                                            <v-icon color="grey-darken-3" v-bind="props" style="cursor: pointer;">
+                                                mdi-swap-vertical
+                                            </v-icon>
+                                        </template>
+                                    </v-tooltip>
+                                </th>
                                 <th class="text-left">
                                     Name
                                 </th>
-                                <th class="text-left">
+                                <th class="text-right">
                                     Peptides
                                 </th>
-                                <th class="text-left">
+                                <th class="text-right">
                                     Match ratio
                                 </th>
                             </tr>
@@ -82,17 +90,17 @@
                                             <v-icon color="grey-lighten-1">mdi-menu</v-icon>
                                         </td>
                                         <td>{{ element.name }}</td>
-                                        <td>{{ formatNumber(element.peptides.length) }}</td>
-                                        <td>{{ ((element.peptideTrust.matchedPeptides / element.peptideTrust.searchedPeptides) * 100).toFixed(2) }}%</td>
+                                        <td class="text-right">{{ formatNumber(element.peptideTrust.searchedPeptides) }}</td>
+                                        <td class="text-right">{{ ((element.peptideTrust.matchedPeptides / element.peptideTrust.searchedPeptides) * 100).toFixed(2) }}%</td>
                                     </tr>
                                 </template>
                             </draggable>
                             <tfoot>
                             <tr class="summary-row font-weight-bold">
-                                <td class="text-right">Total</td>
+                                <td class="text-right"></td>
                                 <td>{{ selectedAnalyses.length }} samples</td>
-                                <td>{{ formatNumber(totalPeptides) }}</td>
-                                <td>{{ averageMatchedPeptides.toFixed(2) }}% (average)</td>
+                                <td class="text-right">{{ formatNumber(totalPeptides) }} (Total)</td>
+                                <td class="text-right">{{ averageMatchedPeptides.toFixed(2) }}% (Avg.)</td>
                             </tr>
                             </tfoot>
 
