@@ -79,13 +79,15 @@
                 Sample Statistics per Group
             </v-card-title>
 
-            <v-data-table
-                :headers="headers"
-                :items="groups"
-                item-value="name"
-                density="compact"
-                hide-default-footer
-            />
+            <v-card-text>
+                <v-data-table
+                    :headers="headers"
+                    :items="groups"
+                    item-value="name"
+                    density="compact"
+                    hide-default-footer
+                />
+            </v-card-text>
         </v-unipept-card>
 
         <v-row justify="center" class="mt-6">
@@ -156,9 +158,9 @@ const groups = computed(() => project.groups.map(group => {
 
     return {
         name: group.name,
-        sampleCount: group.analyses.length,
-        peptides: group.analyses.reduce((total, analysis) => total + analysis.peptides.length, 0),
-        uniquePeptides: uniquePeptidesInGroup.size
+        sampleCount: formatNumber(group.analyses.length),
+        peptides: formatNumber(group.analyses.reduce((total, analysis) => total + analysis.peptides.length, 0)),
+        uniquePeptides: formatNumber(uniquePeptidesInGroup.size)
     };
 }));
 
@@ -177,11 +179,10 @@ const peptonizerJobs = computed(() => {
 });
 
 const headers = [
-    { title: '', value: 'expand', width: '32px' },
     { title: 'Group', value: 'name' },
-    { title: 'Samples', value: 'sampleCount' },
-    { title: 'Peptides', value: 'peptides' },
-    { title: 'Unique Peptides', value: 'uniquePeptides' }
+    { title: 'Samples', value: 'sampleCount', align: "end" },
+    { title: 'Peptides', value: 'peptides', align: "end" },
+    { title: 'Unique Peptides', value: 'uniquePeptides', align: "end" },
 ]
 
 const { process: processExport } = useProjectExport();

@@ -8,7 +8,6 @@
         :sort-by="sortByItems"
         multi-sort
         density="compact"
-        color="primary"
     >
         <template #item.name="{ item }">
             <a
