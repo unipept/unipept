@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'unipept-icons';
-  src: url('@/fonts/unipept-icons/unipept-icons.eot?96039436');
-  src: url('@/fonts/unipept-icons/unipept-icons.eot?96039436#iefix') format('embedded-opentype'),
-       url('@/fonts/unipept-icons/unipept-icons.woff2?96039436') format('woff2'),
-       url('@/fonts/unipept-icons/unipept-icons.woff?96039436') format('woff'),
-       url('@/fonts/unipept-icons/unipept-icons.ttf?96039436') format('truetype'),
-       url('@/fonts/unipept-icons/unipept-icons.svg?96039436#unipept-icons') format('svg');
+  src: url('@/fonts/unipept-icons/unipept-icons.eot?79006392');
+  src: url('@/fonts/unipept-icons/unipept-icons.eot?79006392#iefix') format('embedded-opentype'),
+       url('@/fonts/unipept-icons/unipept-icons.woff2?79006392') format('woff2'),
+       url('@/fonts/unipept-icons/unipept-icons.woff?79006392') format('woff'),
+       url('@/fonts/unipept-icons/unipept-icons.ttf?79006392') format('truetype'),
+       url('@/fonts/unipept-icons/unipept-icons.svg?79006392#unipept-icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'unipept-icons';
-    src: url('../font/unipept-icons.svg?96039436#unipept-icons') format('svg');
+    src: url('../font/unipept-icons.svg?79006392#unipept-icons') format('svg');
   }
 }
 */
@@ -56,3 +56,4 @@
 
 .unipept-icon-file-lightning-outline:before { content: '\e800'; } /* '' */
 .unipept-icon-test-tube-multiple:before { content: '\e801'; } /* '' */
+.unipept-icon-file-lightning-outline-check:before { content: '\e802'; } /* '' */

@@ -1,1 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2" viewBox="0 0 16 20"><path d="M14 2H6c-1.097 0-2 .903-2 2v16c0 1.097.903 2 2 2h12c1.097 0 2-.903 2-2V8zm4 18H6V4h7v5h5z" style="fill-rule:nonzero" transform="translate(-4 -2)"/><path d="M11 15H6l7-14v8h5l-7 14z" style="fill-rule:nonzero" transform="matrix(.49832 0 0 .52048 .219 5.245)"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path d="M14,2L6,2C4.903,2 4,2.903 4,4L4,20C4,21.097 4.903,22 6,22L18,22C19.097,22 20,21.097 20,20L20,8L14,2ZM18,20L6,20L6,4L13,4L13,9L18,9L18,20Z" style="fill-rule:nonzero;"/>
+    <g transform="matrix(0.49832,0,0,0.52048,4.219,7.245)">
+        <path d="M11,15L6,15L13,1L13,9L18,9L11,23L11,15Z" style="fill-rule:nonzero;"/>
+    </g>
+</svg>

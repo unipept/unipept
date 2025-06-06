@@ -47,21 +47,29 @@
             color="primary"
             density="compact"
         >
-            <template #prepend>
-                <v-checkbox-btn v-if="multiSelect"/>
+            <template #prepend="{ isSelected }">
+                <v-tooltip
+                    v-if="analysis.intensities"
+                    text="Custom intensity scores for Peptonizer provided">
+                    <template #activator="{ props }">
+                        <v-icon
+                            v-if="isSelected"
+                            v-bind="props"
+                            icon="unipept:file-lightning-outline-check"
+                        />
+                        <v-icon
+                            v-else
+                            v-bind="props"
+                            icon="unipept:file-lightning-outline"
+                        />
+                    </template>
+                </v-tooltip>
 
                 <template v-else>
-                    <v-tooltip
-                        v-if="analysis.intensities"
-                        text="Custom intensity scores for Peptonizer provided">
-                        <template #activator="{ props }">
-                            <v-icon
-                                v-bind="props"
-                                icon="unipept:file-lightning-outline"
-                            />
-                        </template>
-                    </v-tooltip>
-
+                    <v-icon
+                        v-if="isSelected"
+                        icon="mdi-file-document-check-outline"
+                    />
                     <v-icon
                         v-else
                         icon="mdi-file-document-outline"
@@ -119,12 +127,10 @@ import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import {ref} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
-import {CustomFilterStore} from "@/store/CustomFilterStore";
 
-withDefaults(defineProps<{
+defineProps<{
     group: GroupAnalysisStore,
-    multiSelect?: boolean
-}>(), { multiSelect: false });
+}>();
 
 const emits = defineEmits<{
     (e: "sample:add", groupId: string, sample: SampleTableItem): void;
@@ -155,4 +161,5 @@ const updateGroup = (groupId: string, updatedName: string) => {
 const removeGroup = (groupId: string) => {
     emits('group:remove', groupId);
 };
+
 </script>

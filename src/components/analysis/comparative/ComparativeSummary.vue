@@ -49,7 +49,6 @@
                         check-name="UniProtKB version"
                     />
                 </v-col>
-                <!-- Show here whether all selected samples have been analysed using the same settings. -->
             </v-row>
 
             <v-container fluid class="pa-0 ma-0">
@@ -64,6 +63,58 @@
             </v-container>
         </v-card-text>
     </v-unipept-card>
+
+    <v-unipept-card class="mt-4 pa-0">
+        <v-card-title>
+            <span class="text-h4">Sample ordering</span>
+        </v-card-title>
+        <v-card-text>
+<!--            <h2 class="pb-2">-->
+<!--                Ordering-->
+<!--            </h2>-->
+            <v-row>
+                <v-col cols="12">
+                    <v-table density="compact">
+                        <thead>
+                            <tr>
+                                <th class="text-left" style="width: 20px;"></th>
+                                <th class="text-left">
+                                    Name
+                                </th>
+                                <th class="text-left">
+                                    Peptides
+                                </th>
+                                <th class="text-left">
+                                    Match ratio
+                                </th>
+                            </tr>
+                        </thead>
+                        <draggable v-model="selectedAnalyses" item-key="id" tag="tbody">
+                            <template #item="{ element, index }">
+                                <tr style="cursor: grab" :class="index === 0 ? 'primary-sample' : ''">
+                                    <td>
+                                        <v-icon color="grey-lighten-1">mdi-menu</v-icon>
+                                    </td>
+                                    <td>{{ element.name }}</td>
+                                    <td>{{ formatNumber(element.peptides.length) }}</td>
+                                    <td>{{ ((element.peptideTrust.matchedPeptides / element.peptideTrust.searchedPeptides) * 100).toFixed(2) }}%</td>
+                                </tr>
+                            </template>
+                        </draggable>
+                        <tfoot>
+                                <tr class="summary-row font-weight-bold">
+                                    <td class="text-right">Total</td>
+                                    <td>{{ selectedAnalyses.length }} samples</td>
+                                    <td>{{ formatNumber(totalPeptides) }}</td>
+                                    <td>{{ averageMatchedPeptides.toFixed(2) }}% (average)</td>
+                                </tr>
+                            </tfoot>
+
+                    </v-table>
+                </v-col>
+            </v-row>
+        </v-card-text>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">
@@ -73,43 +124,45 @@ import TopSharedSpeciesTable from "@/components/analysis/comparative/TopSharedSp
 import ConsistentSettingCheck from "@/components/analysis/comparative/ConsistentSettingCheck.vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
+import draggable from 'vuedraggable';
 
-const { groups, selectedAnalyses } = defineProps<{
-    selectedAnalyses: SingleAnalysisStore[],
+const { groups } = defineProps<{
     groups: GroupAnalysisStore[],
 }>();
+
+const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses", { required: true });
 
 const { formatNumber } = useNumberFormatter();
 
 const totalPeptides: ComputedRef<number> = computed(() => {
-    if (!selectedAnalyses || selectedAnalyses.length === 0) {
+    if (!selectedAnalyses.value || selectedAnalyses.value.length === 0) {
         return 0;
     }
 
-    return selectedAnalyses.reduce((acc: number, s: SingleAnalysisStore) => acc + s.peptideTrust!.searchedPeptides, 0);
+    return selectedAnalyses.value.reduce((acc: number, s: SingleAnalysisStore) => acc + s.peptideTrust!.searchedPeptides, 0);
 });
 
 const matchedPeptides: ComputedRef<number> = computed(() => {
-    if (!selectedAnalyses || selectedAnalyses.length === 0) {
+    if (!selectedAnalyses.value || selectedAnalyses.value.length === 0) {
         return 0;
     }
 
-    return selectedAnalyses.reduce((acc: number, s: SingleAnalysisStore) => acc + s.peptideTrust!.matchedPeptides, 0);
+    return selectedAnalyses.value.reduce((acc: number, s: SingleAnalysisStore) => acc + s.peptideTrust!.matchedPeptides, 0);
 });
 
 const averageMatchedPeptides: ComputedRef<number> = computed(() => {
-    if (!selectedAnalyses || selectedAnalyses.length === 0) {
+    if (!selectedAnalyses.value || selectedAnalyses.value.length === 0) {
         return 0;
     }
 
-    return (selectedAnalyses.map((s) => s.peptideTrust!.matchedPeptides / s.peptideTrust!.searchedPeptides).reduce((acc, curr) => acc + curr, 0) / selectedAnalyses.length) * 100;
+    return (selectedAnalyses.value.map((s) => s.peptideTrust!.matchedPeptides / s.peptideTrust!.searchedPeptides).reduce((acc, curr) => acc + curr, 0) / selectedAnalyses.value.length) * 100;
 });
 
 const totalUniqueGroups: ComputedRef<number> = computed(() => {
     let uniqueGroups: number = 0;
     for (const group of groups) {
         for (const analysis of group.analyses) {
-            if (selectedAnalyses.some((s: SingleAnalysisStore) => s.id === analysis.id)) {
+            if (selectedAnalyses.value.some((s: SingleAnalysisStore) => s.id === analysis.id)) {
                 uniqueGroups += 1;
                 break;
             }

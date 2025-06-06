@@ -13,7 +13,7 @@
             </template>
             <template v-else-if="areAllFinished">
                 <comparative-summary
-                    :selected-analyses="comparativeAnalysisState.selectedAnalyses"
+                    v-model:selected-analyses="comparativeAnalysisState.selectedAnalyses"
                     :groups="project.groups"
                 />
 
