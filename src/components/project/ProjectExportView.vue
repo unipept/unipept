@@ -110,6 +110,7 @@ import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
 import useProjectExport from "@/composables/useProjectExport";
+import useAppStateStore from "@/store/AppStateStore";
 
 const { formatNumber } = useNumberFormatter();
 
@@ -190,7 +191,9 @@ const { process: processExport } = useProjectExport();
 async function exportProject() {
     preparingExport.value = true;
 
-    const url = URL.createObjectURL((await processExport(project)).content);
+    const appState = useAppStateStore();
+
+    const url = URL.createObjectURL((await processExport(project, appState)).content);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'project.unipept';
