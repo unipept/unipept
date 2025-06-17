@@ -37,8 +37,8 @@
             <div v-else>
                 <div
                     v-if="selectedAnalysisFiltered"
-                    class="position-sticky bg-white py-5 mt-n5 mx-n2"
-                    style="width: inherit; z-index: 1000; top: 110px"
+                    class="position-sticky py-5 mt-n5 mx-n2"
+                    style="width: inherit; z-index: 1000; top: 110px; background-color: #F9FAFC;"
                 >
                     <v-alert
                         variant="tonal"
@@ -46,7 +46,7 @@
                     >
                         <div
                             class="d-flex justify-space-between align-center"
-                            style="width: inherit"
+                            style="width: inherit;"
                         >
                             <span>
                                 <b>Filtered results:</b> these results are limited to the all peptides specific

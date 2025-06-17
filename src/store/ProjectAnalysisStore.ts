@@ -97,7 +97,8 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
         clear();
         useCustomFilterStoreImport(storeImport.filters);
         for (const group of storeImport.groups) {
-            _groups.value.set(group.id, useGroupAnalysisStoreImport(group));
+            const groupStore = useGroupAnalysisStoreImport(group);
+            _groups.value.set(group.id, groupStore);
         }
     }
 

@@ -1,5 +1,6 @@
 import JSZip from "jszip";
-import {ProjectImportData} from "@/composables/useProjectImport";
+import {ProjectImportData, SerializedStateData} from "@/composables/useProjectImport";
+import {AppStateStoreImport} from "@/store/AppStateStore";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler
@@ -17,7 +18,7 @@ const arrayBufferToShared = (buffer: ArrayBuffer | undefined): SharedArrayBuffer
     return sharedBuffer;
 };
 
-const process = async({ input }: ProjectImportData) => {
+const process = async({ input }: ProjectImportData): Promise<SerializedStateData> => {
     const zipper = await JSZip.loadAsync(input);
 
     const metadataFile = zipper.file("metadata.json");
@@ -42,5 +43,23 @@ const process = async({ input }: ProjectImportData) => {
         }
     }
 
-    return metadata;
+    const appStateFile = zipper.file("appstate.json");
+
+    let appState: AppStateStoreImport;
+    if (appStateFile) {
+        appState = JSON.parse(await appStateFile.async("string"));
+    } else {
+        // Set appState to default values
+        appState = {
+            selectedComparativeAnalysisIds: [],
+            selectedComparativeGroupId: undefined,
+            selectedSingleAnalysisIds: [],
+            selectedSingleGroupId: undefined
+        }
+    }
+
+    return {
+        project: metadata,
+        appState: appState
+    };
 }

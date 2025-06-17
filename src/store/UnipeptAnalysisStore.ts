@@ -62,7 +62,13 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         if (value !== null) {
             appState.clear();
             project.clear();
-            project.setImportedData(await blobToStore(value.project));
+
+            const processedImport = await blobToStore(value.project);
+
+            console.log(processedImport);
+
+            project.setImportedData(processedImport.project);
+            appState.setImportedData(processedImport.appState, project);
         }
     }
 
@@ -71,7 +77,13 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
         appState.clear();
         project.clear();
-        project.setImportedData(await blobToStore(file));
+
+        const processedImport = await blobToStore(file);
+
+        console.log(processedImport);
+
+        project.setImportedData(processedImport.project);
+        appState.setImportedData(processedImport.appState, project);
     }
 
     const loadProjectFromSample = async (sample: SampleData) => {
@@ -104,7 +116,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         await store.removeItem(projectName);
     }
 
-    watchDebounced([ project, customDatabases ], async () => {
+    watchDebounced([ project, customDatabases, appState ], async () => {
         if (!isDemoMode.value) {
             let totalPeptides = 0;
             for (const group of project.groups) {
@@ -113,10 +125,12 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
                 }
             }
 
+            const processedBlob = await storeToBlob(project, appState);
+
             await store.setItem(_projectName.value, {
                 lastAccessed: Date.now(),
                 totalPeptides: totalPeptides,
-                project: (await storeToBlob(project)).content
+                project: processedBlob.content,
             });
         }
     }, { deep: true, debounce: 1000, maxWait: 5000 });

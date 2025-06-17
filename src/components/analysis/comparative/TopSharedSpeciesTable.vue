@@ -27,7 +27,7 @@
                 <span v-for="analysis of selectedAnalyses" :key="analysis.id">
                     <v-tooltip v-if="analysis.lcaToPeptides!.has(item.id)" :text="`${item.name} is present in sample ${analysis.name}`">
                         <template v-slot:activator="{ props }">
-                            <v-icon color="success" v-bind="props" class="mr-1">
+                            <v-icon color="success" v-bind="props" class="mr-1" style="cursor: pointer;">
                                 mdi-check
                             </v-icon>
                         </template>
@@ -35,7 +35,7 @@
 
                     <v-tooltip v-else :text="`${item.name} was not found in sample ${analysis.name}`">
                         <template v-slot:activator="{ props }">
-                            <v-icon color="error" v-bind="props" class="mr-1">
+                            <v-icon color="error" v-bind="props" class="mr-1" style="cursor: pointer;">
                                 mdi-close
                             </v-icon>
                         </template>
