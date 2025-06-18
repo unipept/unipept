@@ -1,7 +1,6 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import ProjectWorkerWebWorker from "./workers/projectExportWorker.worker?worker&inline";
 import {ProjectAnalysisStore, ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
-import JSZip from "jszip";
 import {AppStateStore, AppStateStoreImport} from "@/store/AppStateStore";
 
 export interface ProjectExportData {

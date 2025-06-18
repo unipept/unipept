@@ -26,13 +26,13 @@ const renderPlot = () => {
     // Clear any previous renders
     barplotContainer.value.innerHTML = "";
 
-    props.settings.getTooltipText = (x: BarItem) => {
-        if (props.settings.displayMode === "absolute") {
-            return `${x.counts} peptides`;
-        } else {
-            return `${x.counts.toFixed(1)}% of peptides`;
-        }
-    };
+    // props.settings.getTooltipText = (x: BarItem) => {
+    //     if (props.settings.displayMode === "absolute") {
+    //         return `${x.counts} peptides`;
+    //     } else {
+    //         return `${x.counts.toFixed(1)}% of peptides`;
+    //     }
+    // };
 
     // Render barplot again
     const barplot = new Barplot(

@@ -2788,10 +2788,10 @@ undici-types@~6.21.0:
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.21.0.tgz#691d00af3909be93a7faa13be61b3a5b50ef12cb"
   integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
 
-unipept-visualizations@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-2.2.0.tgz#7980fc5f0a97dfbbf06aa6e65e7b208c9755caaf"
-  integrity sha512-C1JRKwOVVA2fVQ65VBzb2NaEl1rpLMB2ZdYSVRTchbzjZQ24uR8DD3Na4q9W9P6yWLOmgJt/xOFUcpOEtzlKvw==
+unipept-visualizations@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-2.2.1.tgz#0d4821b3f2297506411ce28fc13f6822daa1fc1b"
+  integrity sha512-02qMIPyKJ5w6S6tgEWh/x1sr7O6nmj16FWzSwZMXpiYMtg9Md53teSPqX8YEf6Uxm9fuDgnSIzozeEUubyxb4Q==
   dependencies:
     d3 "^7.9.0"
 

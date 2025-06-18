@@ -130,7 +130,7 @@
                 items
             });
         }
-        barplotSettings.value.height = 250 + 100 * props.analyses.length;
+        barplotSettings.value.height = 100 * props.analyses.length + 100 + Math.ceil((taxonCount.value + 1) / 3) * 25;
         barData.value = createdBars;
     }
 
