@@ -41,6 +41,15 @@
                         hide-details
                     />
                 </v-list-item>
+                <v-list-item>
+                    <v-checkbox
+                        v-model="showTooltips"
+                        label="Show tooltip on hoover"
+                        color="primary"
+                        density="compact"
+                        hide-details
+                    />
+                </v-list-item>
             </template>
 
             <template #visualization>
@@ -81,6 +90,8 @@
     const selectedTaxonomicRank: Ref<string> = ref("species");
 
     const useAbsoluteValues = ref(false);
+
+    const showTooltips = ref(true);
 
     const taxonCount = ref(15);
 
@@ -171,7 +182,12 @@
     watch(taxonCount, () => {
         barplotSettings.value.maxItems = taxonCount.value;
         initializeSpeciesBar();
-    });
+    })
+
+    watch(showTooltips, () => {
+        barplotSettings.value.enableTooltips = showTooltips.value;
+        initializeSpeciesBar();
+    })
 
     watch(barData, async () => {
         await nextTick();
