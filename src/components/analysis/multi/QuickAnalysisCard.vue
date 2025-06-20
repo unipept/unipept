@@ -59,17 +59,11 @@
                     </span>
                 </v-tooltip>
             </div>
-            <!--            <database-select-->
-            <!--                v-model="config.database"-->
-            <!--                class="mt-1"-->
-            <!--                label="Selected database"-->
-            <!--            />-->
             <v-btn
                 color="primary"
                 variant="tonal"
                 text="Analyze"
                 class="float-right"
-                :disabled="rawPeptides.length === 0"
                 @click="analyze"
             />
         </v-card-text>
