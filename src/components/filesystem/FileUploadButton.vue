@@ -6,6 +6,7 @@
             :variant="variant"
             :color="color"
             :loading="loading"
+            :disabled="disabled"
             @click="triggerFileInput"
         />
 
@@ -30,6 +31,7 @@ const fileInput = useTemplateRef("fileInput");
 withDefaults(defineProps<{
     multiple?: boolean
     loading?: boolean
+    disabled?: boolean
     color?: string
     variant?: "flat" | "text" | "elevated" | "tonal" | "outlined" | "plain" | undefined
     prependIcon?: string
@@ -38,6 +40,7 @@ withDefaults(defineProps<{
 }>(), {
     multiple: false,
     loading: false,
+    disabled: false,
     color: "primary",
     variant: "outlined",
     prependIcon: "mdi-upload",

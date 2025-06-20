@@ -1,5 +1,5 @@
 <template>
-    <v-unipept-card>
+    <v-unipept-card :disabled="disabled">
         <v-card-title>
             <h2>Quick analysis</h2>
         </v-card-title>
@@ -73,6 +73,12 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
+
+const props = withDefaults(defineProps<{
+    disabled?: boolean
+}>(), {
+    disabled: false
+});
 
 const emits = defineEmits<{
     (e: "analyze", rawPeptides: string, config: AnalysisConfig): void;

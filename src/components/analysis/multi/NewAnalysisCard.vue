@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-unipept-card>
+        <v-unipept-card :disabled="disabled">
             <v-card-title>
                 <h2>Start a new project</h2>
             </v-card-title>
@@ -66,9 +66,12 @@
 <script setup lang="ts">
 import {ref} from "vue";
 
-const props = defineProps<{
-    projects: { name: string, lastAccessed: Date }[]
-}>();
+const props = withDefaults(defineProps<{
+    projects: { name: string, lastAccessed: Date }[],
+    disabled?: boolean
+}>(), {
+    disabled: false
+});
 
 const emits = defineEmits<{
     (e: 'project:new', projectName: string): void

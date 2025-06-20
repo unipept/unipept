@@ -1,7 +1,6 @@
 <template>
     <div>
         <file-upload-button
-            :loading="loading"
             variant="tonal"
             color="primary"
             text="Open project"

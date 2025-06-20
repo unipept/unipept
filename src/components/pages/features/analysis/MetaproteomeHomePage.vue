@@ -4,11 +4,13 @@
             <v-col cols="6">
                 <div ref="firstColumn">
                     <quick-analysis-card
+                        :disabled="loadingProject || loadingSampleData"
                         @analyze="quickAnalyze"
                     />
 
                     <demo-analysis-card
                         class="mt-5"
+                        :disabled="loadingProject || loadingSampleData"
                         :samples="sampleDataStore.samples"
                         @select="demoAnalyze"
                     />
@@ -19,6 +21,7 @@
                 <div ref="topCard">
                     <new-analysis-card
                         :projects="projects"
+                        :disabled="loadingProject || loadingSampleData"
                         @project:new="advancedAnalyze"
                     />
                 </div>
@@ -27,6 +30,7 @@
                     class="mt-5"
                     :height="bottomCardHeight"
                     :projects="projects"
+                    :disabled="loadingProject || loadingSampleData"
                     :loading="loadingProject"
                     @open="loadFromIndexedDB"
                     @upload="importProject"
@@ -73,7 +77,6 @@ const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.
 
 const loadingSampleData: Ref<boolean> = ref(true);
 const loadingProject: Ref<boolean> = ref(false);
-const importingProject: Ref<boolean> = ref(false);
 
 const projects = ref<{ name: string, totalPeptides: number, lastAccessed: Date }[]>([]);
 
@@ -84,11 +87,11 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
 }
 
 const importProject = async (projectName: string, file: File) => {
-    importingProject.value = true;
+    loadingProject.value = true;
     await loadProjectFromFile(projectName, file)
     await router.push({ name: "mpaSingle" });
     await startImport();
-    importingProject.value = false;
+    loadingProject.value = false;
 }
 
 const loadFromIndexedDB = async (projectName: string) => {

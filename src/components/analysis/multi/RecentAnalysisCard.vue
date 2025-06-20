@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-unipept-card :height="height">
+        <v-unipept-card :height="height" :disabled="disabled">
             <v-card-title ref="header" class="d-flex">
                 <h2 class="font-weight-light">
                     Load recent project
@@ -13,14 +13,14 @@
                         <upload-analysis-button
                             v-bind="props"
                             :projects="projects"
-                            :loading="loadingUpload"
+                            :loading="loading"
                             @project:upload="uploadProject"
                         />
                     </template>
                 </v-tooltip>
             </v-card-title>
 
-            <div v-if="loadingOpen" class="d-flex justify-center">
+            <div v-if="loading" class="d-flex flex-column justify-center align-center h-100">
                 <v-progress-circular color="primary" indeterminate />
             </div>
 
@@ -122,12 +122,13 @@ import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
 import {useElementBounding} from "@vueuse/core";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import UploadAnalysisButton from "@/components/analysis/multi/UploadAnalysisButton.vue";
+import {load} from "webfontloader";
 
 const props = defineProps<{
     height: number,
     projects: { name: string, totalPeptides: number, lastAccessed: Date }[],
-    loadingOpen: boolean,
-    loadingUpload: boolean
+    loading: boolean,
+    disabled: boolean
 }>();
 
 const emits = defineEmits<{

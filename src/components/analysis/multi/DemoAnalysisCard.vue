@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-unipept-card>
+        <v-unipept-card :disabled="disabled">
             <v-card-title>
                 <h2>New here? Try a sample dataset</h2>
             </v-card-title>
@@ -89,9 +89,12 @@
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {ref} from "vue";
 
-const { samples } = defineProps<{
-    samples: SampleData[]
-}>();
+const { samples } = withDefaults(defineProps<{
+    samples: SampleData[],
+    disabled?: boolean
+}>(), {
+    disabled: false
+});
 
 const emits = defineEmits<{
     (e: "select", sample: SampleData): void;
