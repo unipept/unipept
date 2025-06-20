@@ -19,9 +19,7 @@
                 <div ref="topCard">
                     <new-analysis-card
                         :projects="projects"
-                        :loading="importingProject"
                         @project:new="advancedAnalyze"
-                        @project:open="importProject"
                     />
                 </div>
 
@@ -31,6 +29,7 @@
                     :projects="projects"
                     :loading="loadingProject"
                     @open="loadFromIndexedDB"
+                    @upload="importProject"
                     @delete="deleteFromIndexedDB"
                 />
             </v-col>
