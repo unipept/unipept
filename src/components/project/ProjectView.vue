@@ -67,11 +67,11 @@ import EmptyProjectPlaceholder from "@/components/project/EmptyProjectPlaceholde
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import ManageSampleGroupDialog from "@/components/sample/ManageSampleGroupDialog.vue";
 
-const { project } = withDefaults(defineProps<{
+const { project, isDemoMode = false, multiSelect = false } = defineProps<{
     project: ProjectAnalysisStore;
     isDemoMode?: boolean;
     multiSelect?: boolean;
-}>(), { isDemoMode: false, multiSelect: false });
+}>();
 
 const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses", { required: true });
 const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-group", { required: true });

@@ -39,10 +39,10 @@ import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 
 const selected = defineModel<SingleAnalysisStore[]>({ required: true });
 
-const { project } = withDefaults(defineProps<{
+const { project, multiSelect = false } = defineProps<{
     project: ProjectAnalysisStore;
     multiSelect?: boolean
-}>(), { multiSelect: false });
+}>();
 
 const emits = defineEmits<{
     (e: "sample:add", groupId: string, sample: SampleTableItem):  void;
