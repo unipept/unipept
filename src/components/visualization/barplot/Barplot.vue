@@ -18,7 +18,12 @@ const props = withDefaults(
 const barplotContainer = ref<HTMLElement>();
 
 const renderPlot = () => {
-    if (!barplotContainer.value || !props.bars || props.bars.length == 0) return;
+    const tooltipElements = document.getElementsByClassName("unipept-tooltip");
+    for (let i = 0; i < tooltipElements.length; i++) {
+        tooltipElements.item(i)?.remove();
+    }
+
+    if (!barplotContainer.value || !props.bars || props.bars.length == 0 || props.settings.width === 0) return;
 
     // Clone the bars such that we can modify them without updating the data moved into this structure
     let bars = props.bars.map(b => { return { ... b } });

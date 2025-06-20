@@ -32,7 +32,7 @@
                                 <taxonomic-barplot :analyses="comparativeAnalysisState.selectedAnalyses" comparative />
                             </v-tabs-window-item>
                             <v-tabs-window-item>
-                                <div>Heatmap!</div>
+                                <heatmap :analyses="comparativeAnalysisState.selectedAnalyses" />
                             </v-tabs-window-item>
                         </v-tabs-window>
                     </v-card-text>
@@ -73,6 +73,7 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import NoSelectedSamplesPlaceholder from "@/components/analysis/comparative/NoSelectedSamplesPlaceholder.vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import AnalysisSummaryProgress from "@/components/analysis/multi/AnalysisSummaryProgress.vue";
+import Heatmap from "@/components/visualization/heatmap/Heatmap.vue";
 
 const manageSamplesDialogOpen = ref(false);
 const selectedComparativeTab = ref(0);
