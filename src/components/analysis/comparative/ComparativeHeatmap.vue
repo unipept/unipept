@@ -48,7 +48,7 @@ const useAbsoluteValues = ref(false);
 
 const downloadImageModalOpen = ref(false);
 
-const barplotWrapper = ref<HTMLDivElement>();
+const heatmapWrapper = ref<HTMLDivElement>();
 const svg: Ref<SVGElement | undefined | null> = ref();
 
 const props = defineProps<{
@@ -97,7 +97,7 @@ watch(() => props.analyses, () => {
 
 watch(() => props.analyses, async () => {
     await nextTick();
-    svg.value = barplotWrapper.value?.querySelector("svg") as SVGElement;
+    svg.value = heatmapWrapper.value?.querySelector("svg") as SVGElement;
 }, { immediate: true });
 </script>
 

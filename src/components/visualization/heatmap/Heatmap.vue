@@ -14,6 +14,7 @@
                                 v-bind="hooveringProps"
                                 :style="`height: ${cellSize}px; margin-bottom: ${cellSpacing}px; cursor: pointer;`"
                                 class="d-flex align-center"
+                                @click="deleteRow(i)"
                                 @mouseenter="ghostRow(i)"
                                 @mouseleave="stopGhostingRow(i)"
                             >
@@ -35,7 +36,13 @@
 
     <div :style="`width: ${containerWidth}px;`" class="d-flex">
         <div :style="`width: ${rowLabelWidth}px;`"></div>
-        <v-btn color="primary" :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`" variant="tonal" size="small">
+        <v-btn
+            color="primary"
+            :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
+            variant="tonal"
+            size="small"
+            @click="addRows()"
+        >
             <v-icon>mdi-plus</v-icon>
         </v-btn>
     </div>
@@ -125,6 +132,14 @@ const containerHeight = computed(() => {
 });
 
 const colorInterpolator = d3.interpolateLab(d3.lab(minColor), d3.lab(maxColor));
+
+const deleteRow = (rowIdx: number) => {
+    emits("deselect-row", rowIdx);
+}
+
+const addRows = () => {
+    emits("select-rows");
+}
 
 /**
  * Make this row appear as a "ghost" (i.e. make it semi-invisible).
@@ -337,6 +352,14 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
             const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
             stopHighlightingCell(cell, rowIdx, colIdx);
+        })
+        .on("click", (event: MouseEvent, d: any) => {
+            // Find the corresponding visible cell
+            const overlay = event.target as HTMLElement;
+            const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
+            const rowIdx = parseInt(overlay.parentElement!.getAttribute("data-row-item")!);
+
+            emits("click-cell", rowIdx, colIdx);
         });
 };
 

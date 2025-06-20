@@ -115,8 +115,8 @@ const resolution = computed(() => {
     const factor = scalingFactorToNumber(selectedScalingFactor.value);
 
     return {
-        width: width * factor,
-        height: height * factor
+        width: Math.ceil(width * factor),
+        height: Math.ceil(height * factor)
     }
 })
 
