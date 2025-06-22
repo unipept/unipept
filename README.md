@@ -2,7 +2,7 @@
 
 The [Unipept web application](http://unipept.ugent.be) supports biodiversity and functional analysis of large and complex metaproteome samples and the analysis of peptidomes.
 
-The 4.0 release of Unipept brings functional analysis to the tool.
+The 6.0 release of Unipept brings support for non-tryptic peptides and the novel Peptonizer analysis pipeline to the tool.
 
 An [API](https://unipept.ugent.be/apidocs) and [command line tool](http://github.com/unipept/unipept-cli) are available
 for integration in other programs.
