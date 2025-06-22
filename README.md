@@ -35,9 +35,10 @@ Unipept is a research project of the computational biology group at Ghent Univer
 
 Current team:
 
-- Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): Postdoc and lead developer
-- Pieter Verschaffelt ([@pverscha](https://github.com/pverscha)): PhD student
+- Bart Mesuere ([@bmesuere](https://github.com/bmesuere)): Group leader and PhD supervisor, Unipept founder
+- Pieter Verschaffelt ([@pverscha](https://github.com/pverscha)): Postdoc and lead developer
 - Tibo Vande Moortele ([@tibvdm](https://github.com/tibvdm)): PhD student
+- Simon Van de Vyver ([@SimonVandeVyver](https://github.com/SimonVandeVyver)): PhD student
 - Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
 
 Other contributions from:
