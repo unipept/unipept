@@ -10,6 +10,15 @@
                     Heatmap settings
                 </v-list-item>
                 <v-list-item>
+                    <v-select
+                        label="Feature type"
+                        density="comfortable"
+                        :items="featureTypes"
+                        v-model="selectedFeatureType"
+                        hide-details
+                    />
+                </v-list-item>
+                <v-list-item>
                     <v-checkbox
                         v-model="useAbsoluteValues"
                         label="Use absolute peptide counts"
@@ -22,7 +31,11 @@
 
             <template #visualization>
                 <div ref="heatmapWrapper" class="mx-4 mb-4" style="padding-top: 50px;">
-                    <heatmap :data="randomRows" :row-names="randomRowNames" :col-names="colNames" />
+                    <heatmap
+                        :data="randomRows"
+                        :row-names="randomRowNames"
+                        :col-names="colNames"
+                    />
                 </div>
             </template>
         </visualization-controls>
@@ -40,7 +53,6 @@
 import VisualizationControls from "@/components/results/taxonomic/VisualizationControls.vue";
 import {computed, nextTick, onMounted, Ref, ref, watch} from "vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
-import * as d3 from 'd3';
 import DownloadImage from "@/components/image/DownloadImage.vue";
 import Heatmap from "@/components/visualization/heatmap/Heatmap.vue";
 
@@ -54,6 +66,14 @@ const svg: Ref<SVGElement | undefined | null> = ref();
 const props = defineProps<{
     analyses: SingleAnalysisStore[]
 }>();
+
+const featureTypes: string[] = [
+    "NCBI Taxonomy",
+    "Gene Ontology",
+    "EC Numbers"
+];
+
+const selectedFeatureType: Ref<string> = ref(featureTypes[0]);
 
 // Temporary generate 10 random rows with data that can be used for the heatmap visualization
 const randomRows: Ref<number[][]> = ref([]);

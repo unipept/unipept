@@ -12,7 +12,7 @@ import {TransferableState} from "shared-memory-datastructures";
 
 
 export interface PeptideExportData {
-    peptideTable: Map<string, number>;
+    peptideTableTransferable: TransferableState;
     goOntology: Map<string, FunctionalDefinition<GoNamespace>>;
     ecOntology: Map<string, FunctionalDefinition<EcNamespace>>;
     iprOntology: Map<string, FunctionalDefinition<InterproNamespace>>;
@@ -35,7 +35,7 @@ export default function usePeptideExport() {
         separator = ";"
     ): Promise<string[][]> => {
         const workerInput: PeptideExportData = {
-            peptideTable: toRaw(analysis.peptidesTable!).counts,
+            peptideTableTransferable: toRaw(analysis.peptidesTable!).counts.toTransferableState(),
             goOntology: toRaw(goOntology),
             ecOntology: toRaw(ecOntology),
             iprOntology: toRaw(iprOntology),
