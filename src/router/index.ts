@@ -68,6 +68,7 @@ const routes = [
         name: "mpaResult",
         component:  () => import("@/components/pages/features/analysis/MetaproteomeResultsPage.vue"),
         children: [
+            { path: "home", name: "home", component: () => import("@/components/pages/features/analysis/MetaproteomeHomePage.vue"), meta: mpaMeta },
             { path: "single", name: "mpaSingle", component: () => import("@/components/pages/features/analysis/MetaproteomeSinglePage.vue"), meta: mpaMeta },
             { path: "compare", component: () => import("@/components/pages/features/analysis/MetaproteomeComparativePage.vue"), meta: mpaMeta },
             { path: "export", name: "mpaExport", component: () => import("@/components/pages/features/analysis/MetaproteomeExportPage.vue"), meta: mpaMeta },

@@ -9,6 +9,14 @@
         >
             <v-list-item
                 color="primary"
+                prepend-icon="mdi-home"
+                to="home"
+            />
+
+            <v-divider class="my-1" />
+
+            <v-list-item
+                color="primary"
                 prepend-icon="mdi-test-tube"
                 to="single"
             />
@@ -38,3 +46,5 @@
         </template>
     </v-navigation-drawer>
 </template>
+<script setup lang="ts">
+</script>
