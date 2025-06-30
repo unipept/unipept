@@ -25,6 +25,7 @@
                             <div class="d-flex justify-center mt-5">
                                 <v-btn
                                     color="primary"
+                                    variant="tonal"
                                     text="Create Group"
                                     @click="addGroup(DEFAULT_NEW_GROUP_NAME)"
                                 />

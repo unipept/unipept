@@ -18,6 +18,8 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     // ======================== REFERENCES ===========================
     // ===============================================================
 
+    const name = ref<string | undefined>(undefined);
+
     const _groups = ref<Map<string, GroupAnalysisStore>>(new Map());
 
     // ===============================================================
@@ -31,6 +33,10 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     // ===============================================================
     // ========================== METHODS ============================
     // ===============================================================
+
+    const setName = (newName: string): void => {
+        name.value = newName;
+    }
 
     const getGroup = (id: string): GroupAnalysisStore => {
         const group = _groups.value.get(id);
@@ -103,9 +109,11 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     }
 
     return {
+        name,
         groups,
         empty,
 
+        setName,
         getGroup,
         getFirstGroup,
         getFirstNonEmptyGroup,

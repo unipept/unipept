@@ -30,11 +30,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const customDatabases = useCustomFilterStore();
     const appState = useAppStateStore();
 
-    const _projectName = ref<string>("");
-
-    const isDemoMode = computed(() => {
-        return _projectName.value === "";
-    });
+    const isDemoMode = ref<boolean>(false);
 
     const getProjects = async () => {
         const keys = await store.keys();
@@ -49,15 +45,14 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     const loadNewProject = async (projectName: string) => {
-        _projectName.value = projectName;
-
+        isDemoMode.value = false;
         appState.clear();
         project.clear();
+        project.setName(projectName);
     }
 
     const loadProjectFromStorage = async (projectName: string) => {
-        _projectName.value = projectName;
-
+        isDemoMode.value = false;
         const value: StoreValue | null = await store.getItem(projectName);
         if (value !== null) {
             appState.clear();
@@ -65,33 +60,30 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
             const processedImport = await blobToStore(value.project);
 
-            console.log(processedImport);
-
             project.setImportedData(processedImport.project);
+            project.setName(projectName);
             appState.setImportedData(processedImport.appState, project);
         }
     }
 
     const loadProjectFromFile = async (projectName: string, file: File) => {
-        _projectName.value = projectName;
-
+        isDemoMode.value = false;
         appState.clear();
         project.clear();
 
         const processedImport = await blobToStore(file);
 
-        console.log(processedImport);
-
         project.setImportedData(processedImport.project);
+        project.setName(projectName);
         appState.setImportedData(processedImport.appState, project);
     }
 
     const loadProjectFromSample = async (sample: SampleData) => {
-        _projectName.value = "";
-
+        isDemoMode.value = true;
         appState.clear();
         project.clear();
 
+        project.setName("Demo project");
         const groupId = project.addGroup(sample.environment);
         for (const dataset of sample.datasets) {
             project.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), {
@@ -104,11 +96,11 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     const loadProjectFromPeptides = async (rawPeptides: string, config: AnalysisConfig) => {
-        _projectName.value = "";
-
+        isDemoMode.value = true;
         appState.clear();
         project.clear();
-        const groupId = project.addGroup("Quick analysis");
+        project.setName("Quick analysis")
+        const groupId = project.addGroup("Group");
         project.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     }
 
@@ -127,7 +119,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
             const processedBlob = await storeToBlob(project, appState);
 
-            await store.setItem(_projectName.value, {
+            await store.setItem(project.name, {
                 lastAccessed: Date.now(),
                 totalPeptides: totalPeptides,
                 project: processedBlob.content,
