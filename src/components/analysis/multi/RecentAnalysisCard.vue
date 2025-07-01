@@ -1,13 +1,26 @@
 <template>
     <div>
-        <v-unipept-card :height="height">
-            <v-card-title ref="header">
+        <v-unipept-card :height="height" :disabled="disabled">
+            <v-card-title ref="header" class="d-flex">
                 <h2 class="font-weight-light">
                     Load recent project
                 </h2>
+
+                <v-spacer />
+
+                <v-tooltip text="Open an existing project (.unipept)">
+                    <template v-slot:activator="{ props }">
+                        <upload-analysis-button
+                            v-bind="props"
+                            :projects="projects"
+                            :loading="loading"
+                            @project:upload="uploadProject"
+                        />
+                    </template>
+                </v-tooltip>
             </v-card-title>
 
-            <div v-if="loading" class="d-flex justify-center">
+            <div v-if="loading" class="d-flex flex-column justify-center align-center h-100">
                 <v-progress-circular color="primary" indeterminate />
             </div>
 
@@ -23,7 +36,7 @@
                         variant="flat"
                         density="compact"
                     >
-                        <v-card-text class="d-flex align-center gap-2">
+                        <v-card-text class="d-flex align-center gap-2 py-3">
                             <v-icon size="20" class="mr-5">mdi-folder-outline</v-icon>
                             <div>
                                 <div>{{ item.name }}</div>
@@ -35,7 +48,6 @@
                             </div>
 
                             <v-spacer />
-
 
                             <v-btn
                                 variant="text"
@@ -109,15 +121,19 @@
 import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
 import {useElementBounding} from "@vueuse/core";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
+import UploadAnalysisButton from "@/components/analysis/multi/UploadAnalysisButton.vue";
+import {load} from "webfontloader";
 
 const props = defineProps<{
     height: number,
     projects: { name: string, totalPeptides: number, lastAccessed: Date }[],
-    loading: boolean
+    loading: boolean,
+    disabled: boolean
 }>();
 
 const emits = defineEmits<{
     (e: 'open', project: string): void
+    (e: 'upload', projectName: string, file: File): void
     (e: 'delete', project: string): void
 }>();
 
@@ -126,7 +142,7 @@ const { formatNumber } = useNumberFormatter();
 const header = useTemplateRef('header');
 const { height: headerHeight } = useElementBounding(header);
 
-const visibleCount = ref(5);
+const visibleCount = ref(4);
 const deleteDialogOpen = ref(false);
 const projectToDelete = ref<string>("");
 
@@ -144,6 +160,10 @@ const showMore = () => {
 
 const openProject = (projectName: string) => {
     emits('open', projectName)
+}
+
+const uploadProject = (projectName: string, file: File) => {
+    emits('upload', projectName, file);
 }
 
 const cancel = () => {
