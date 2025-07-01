@@ -23,29 +23,58 @@
             </a>
         </template>
         <template #item.samplesOccurrence="{ item }">
-            <div v-if="selectedAnalyses.length <= 5">
-                <span v-for="analysis of selectedAnalyses" :key="analysis.id">
-                    <v-tooltip v-if="analysis.lcaToPeptides!.has(item.id)" :text="`${item.name} is present in sample ${analysis.name}`">
-                        <template v-slot:activator="{ props }">
-                            <v-icon color="success" v-bind="props" class="mr-1" style="cursor: pointer;">
-                                mdi-check
-                            </v-icon>
-                        </template>
-                    </v-tooltip>
+            <span v-for="analysis of selectedAnalyses.slice(0, 4)" :key="analysis.id">
+                <v-tooltip v-if="analysis.lcaToPeptides!.has(item.id)" :text="`${item.name} is present in sample ${analysis.name}`">
+                    <template v-slot:activator="{ props }">
+                        <v-icon color="success" v-bind="props" class="mr-1" style="cursor: pointer;">
+                            mdi-check
+                        </v-icon>
+                    </template>
+                </v-tooltip>
 
-                    <v-tooltip v-else :text="`${item.name} was not found in sample ${analysis.name}`">
-                        <template v-slot:activator="{ props }">
-                            <v-icon color="error" v-bind="props" class="mr-1" style="cursor: pointer;">
-                                mdi-close
-                            </v-icon>
-                        </template>
-                    </v-tooltip>
-                </span>
-            </div>
-            <div v-else>
-                {{ item.samplesOccurrence }}/{{ selectedAnalyses.length }}
-            </div>
+                <v-tooltip v-else :text="`${item.name} was not found in sample ${analysis.name}`">
+                    <template v-slot:activator="{ props }">
+                        <v-icon color="error" v-bind="props" class="mr-1" style="cursor: pointer;">
+                            mdi-close
+                        </v-icon>
+                    </template>
+                </v-tooltip>
+            </span>
+            <span v-if="selectedAnalyses.length > 4">
+                <v-tooltip>
+                    <template v-slot:activator="{ props }">
+                        <v-chip
+                            v-bind="props"
+                            variant="tonal"
+                            density="compact"
+                            style="cursor: pointer;"
+                        >
+                            +{{ selectedAnalyses.length - 4 }}
+                        </v-chip>
+                    </template>
+
+                    <ul class="pa-0 ma-0"
+                        style="list-style-type:none;">
+                        <li v-for="analysis of selectedAnalyses.slice(4)" :key="analysis.id">
+                            <span v-if="analysis.lcaToPeptides!.has(item.id)">
+                                <v-icon color="success" class="mr-1" style="cursor: pointer;">
+                                    mdi-check
+                                </v-icon>
+                                {{ item.name }} is present in sample {{ analysis.name }}
+                            </span>
+
+                            <span v-else>
+                                <v-icon color="error" class="mr-1" style="cursor: pointer;">
+                                    mdi-close
+                                </v-icon>
+                                {{ item.name }} was not found in sample {{ analysis.name }}
+                            </span>
+                        </li>
+                    </ul>
+                </v-tooltip>
+            </span>
         </template>
+
         <template #item.averageAbundance = "{ item }">
             <div
                 :style="{

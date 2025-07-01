@@ -179,7 +179,7 @@ const peptonizerJobs = computed(() => {
     }, 0);
 });
 
-const headers = [
+const headers: any = [
     { title: 'Group', value: 'name' },
     { title: 'Samples', value: 'sampleCount', align: "end" },
     { title: 'Peptides', value: 'peptides', align: "end" },

@@ -33,18 +33,23 @@
         </div>
     </div>
 
-
     <div :style="`width: ${containerWidth}px;`" class="d-flex">
         <div :style="`width: ${rowLabelWidth}px;`"></div>
-        <v-btn
-            color="primary"
-            :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
-            variant="tonal"
-            size="small"
-            @click="addRows()"
-        >
-            <v-icon>mdi-plus</v-icon>
-        </v-btn>
+        <v-menu location="top center" :close-on-content-click="false">
+            <template v-slot:activator="{ props }">
+                <v-btn
+                    color="primary"
+                    v-bind="props"
+                    :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
+                    variant="tonal"
+                    size="small"
+                    @click="addRows()"
+                >
+                    <v-icon>mdi-plus</v-icon>
+                </v-btn>
+            </template>
+            <slot name="row-selector"></slot>
+        </v-menu>
     </div>
 </template>
 
@@ -56,10 +61,10 @@ const {
     data,
     rowNames,
     colNames,
-    cellSize = 50,
-    cellSpacing = 6,
+    cellSize = 40,
+    cellSpacing = 4,
     labelSpacing = 10,
-    labelFontSize = 16,
+    labelFontSize = 14,
     labelFontFamily = "Roboto, sans-serif",
     labelFontWeight = "500",
     labelColor = "#353535",
@@ -128,7 +133,8 @@ const containerWidth = computed(() => {
 });
 
 const containerHeight = computed(() => {
-    return colLabelHeight.value + labelSpacing + rowNames.length * cellSize + (rowNames.length - 1) * cellSpacing;
+    // Add 2 pixels for the cell highlight stroke width
+    return colLabelHeight.value + rowNames.length * cellSize + (rowNames.length - 1) * cellSpacing + 2;
 });
 
 const colorInterpolator = d3.interpolateLab(d3.lab(minColor), d3.lab(maxColor));
@@ -271,10 +277,11 @@ const renderColumnLabels = (svgElement: d3.Selection<SVGSVGElement, unknown, nul
         .attr("data-col-label", (d, i) => i)
         .text(d => ellipsizeString(d, labelFontSize, labelFontFamily, labelFontWeight, (colLabelHeight.value / Math.cos((1 / 4) * Math.PI)) - 2 * labelSpacing))
         .attr("text-anchor", "end")
+        .attr("dominant-baseline", "hanging")
         .attr("x", (d, i) => i * (cellSize + cellSpacing) + cellSize / 2)
         .attr("y", colLabelHeight.value - labelSpacing)
         .attr("dy", ".35em")
-        .attr("transform", (d, i) => `rotate(45, ${i * (cellSize + cellSpacing) + cellSize / 2}, ${colLabelHeight.value - labelSpacing})`);
+        .attr("transform", (d, i) => `translate(0, -${labelSpacing}) rotate(45, ${i * (cellSize + cellSpacing) + cellSize / 2}, ${colLabelHeight.value - labelSpacing})`);
 };
 
 const renderRowLabels = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undefined>) => {

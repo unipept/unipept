@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-unipept-card>
+        <v-unipept-card :disabled="disabled">
             <v-card-title>
                 <h2>New here? Try a sample dataset</h2>
             </v-card-title>
@@ -48,7 +48,6 @@
                         >
                             <v-unipept-card
                                 class="d-flex flex-row align-center"
-                                @click="selectSample(sample)"
                                 style="min-height: 100%;"
                             >
                                 <div>
@@ -57,14 +56,26 @@
                                     </v-card-title>
                                     <v-card-text style="padding-top: 0 !important;">
                                         <div class="text-body-2 mb-2">{{ sample.reference }}</div>
-                                        <v-btn
-                                            color="primary"
-                                            variant="text"
-                                            style="z-index: 10000"
-                                            @click.stop="openReference(sample)"
-                                        >
-                                            View Article
-                                        </v-btn>
+                                        <div class="d-flex justify-end">
+                                            <v-btn
+                                                color="primary"
+                                                variant="text"
+                                                style="z-index: 10000"
+                                                @click.stop="openReference(sample)"
+                                            >
+                                                View Article
+                                            </v-btn>
+
+                                            <v-btn
+                                                class="ms-1"
+                                                color="primary"
+                                                variant="tonal"
+                                                style="z-index: 10000"
+                                                @click="selectSample(sample)"
+                                            >
+                                                Load sample
+                                            </v-btn>
+                                        </div>
                                     </v-card-text>
                                 </div>
                             </v-unipept-card>
@@ -80,8 +91,9 @@
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {ref} from "vue";
 
-const { samples } = defineProps<{
-    samples: SampleData[]
+const { samples, disabled = false } = defineProps<{
+    samples: SampleData[],
+    disabled?: boolean
 }>();
 
 const emits = defineEmits<{

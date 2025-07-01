@@ -16,7 +16,7 @@ self.onmessage = async (event) => {
 }
 
 const process = async({
-    peptideTable,
+    peptideTableTransferable,
     goOntology,
     ecOntology,
     iprOntology,
@@ -59,6 +59,10 @@ const process = async({
     const sanitizeRegex = new RegExp(`${separator}`, "g");
 
     const result: string[][] = [ generateHeader() ];
+
+    const peptideTable = ShareableMap.fromTransferableState<string, number>(peptideTableTransferable);
+
+    console.log(peptideTable);
 
     for (const [peptide, peptideCount] of peptideTable) {
         const row = [peptide];
