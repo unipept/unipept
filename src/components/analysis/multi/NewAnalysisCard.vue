@@ -66,12 +66,10 @@
 <script setup lang="ts">
 import {ref} from "vue";
 
-const props = withDefaults(defineProps<{
+const { projects, disabled = false } = defineProps<{
     projects: { name: string, lastAccessed: Date }[],
     disabled?: boolean
-}>(), {
-    disabled: false
-});
+}>();
 
 const emits = defineEmits<{
     (e: 'project:new', projectName: string): void
@@ -82,7 +80,7 @@ const newDialogOpen = ref(false);
 const projectName = ref('');
 
 const projectExists = (name: string) => {
-    return props.projects.some(project => project.name === name);
+    return projects.some(project => project.name === name);
 };
 
 const cancel = () => {

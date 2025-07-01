@@ -91,12 +91,10 @@
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {ref} from "vue";
 
-const { samples } = withDefaults(defineProps<{
+const { samples, disabled = false } = defineProps<{
     samples: SampleData[],
     disabled?: boolean
-}>(), {
-    disabled: false
-});
+}>();
 
 const emits = defineEmits<{
     (e: "select", sample: SampleData): void;

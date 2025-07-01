@@ -74,11 +74,9 @@
 import {ref} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 
-const props = withDefaults(defineProps<{
+const { disabled = false } = defineProps<{
     disabled?: boolean
-}>(), {
-    disabled: false
-});
+}>();
 
 const emits = defineEmits<{
     (e: "analyze", rawPeptides: string, config: AnalysisConfig): void;

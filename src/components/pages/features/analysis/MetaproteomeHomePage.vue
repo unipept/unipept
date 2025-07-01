@@ -4,7 +4,7 @@
             <v-col cols="6">
                 <div ref="firstColumn">
                     <quick-analysis-card
-                        :disabled="loadingProject || loadingSampleData"
+                        :disabled="loadingProject"
                         @analyze="quickAnalyze"
                     />
 
@@ -21,7 +21,7 @@
                 <div ref="topCard">
                     <new-analysis-card
                         :projects="projects"
-                        :disabled="loadingProject || loadingSampleData"
+                        :disabled="loadingProject"
                         @project:new="advancedAnalyze"
                     />
                 </div>
@@ -30,7 +30,7 @@
                     class="mt-5"
                     :height="bottomCardHeight"
                     :projects="projects"
-                    :disabled="loadingProject || loadingSampleData"
+                    :disabled="loadingProject"
                     :loading="loadingProject"
                     @open="loadFromIndexedDB"
                     @upload="importProject"
