@@ -30,13 +30,72 @@
             </template>
 
             <template #visualization>
-                <div ref="heatmapWrapper" class="mx-4 mb-4" style="padding-top: 50px;">
-                    <heatmap
-                        :data="randomRows"
-                        :row-names="randomRowNames"
-                        :col-names="colNames"
-                    />
-                </div>
+                <v-row style="padding-top: 50px;" class="ma-0">
+                    <v-col :cols="6">
+                        <div ref="heatmapWrapper" class="mx-4 mb-4">
+                            <heatmap
+                            :data="randomRows"
+                            :row-names="randomRowNames"
+                            :col-names="colNames"
+                            >
+                                <template #row-selector>
+                                    <v-unipept-card style="width: 800px;" elevation="10">
+                                        <v-card-title>
+                                            <div class="text-h5">Add rows</div>
+                                        </v-card-title>
+                                        <v-card-text style="padding-top: 4px !important;">
+                                            <v-text-field
+                                                v-model="featureSearchValue"
+                                                density="compact"
+                                                append-inner-icon="mdi-magnify"
+                                                label="Search"
+                                                variant="outlined"
+                                                @click.stop
+                                            />
+                                            <v-data-table
+                                                :items="matchingItems"
+                                                :headers="featureTableHeaders"
+                                                density="compact"
+                                                items-per-page="5"
+                                                :items-per-page-options="[5, 10, -1]"
+                                            >
+                                                <template #item.action="{ item }">
+                                                    <v-btn
+                                                        color="primary"
+                                                        density="compact"
+                                                        variant="text"
+                                                        prepend-icon="mdi-plus"
+                                                        text="Add"
+                                                    >
+                                                    </v-btn>
+                                                </template>
+                                            </v-data-table>
+                                        </v-card-text>
+                                    </v-unipept-card>
+                                </template>
+                            </heatmap>
+                        </div>
+                    </v-col>
+                    <v-col :cols="6">
+
+
+                        <v-unipept-card class="mr-4">
+                            <v-card-title>
+                                <div class="text-h5">Cell details</div>
+                            </v-card-title>
+                            <v-card-text>
+                                <v-empty-state
+                                    icon="mdi-cursor-default-click"
+                                    color="primary"
+                                    title="No cell selected"
+                                    text="Select a cell from the heatmap on the left to get a detailed information overview."
+                                />
+                            </v-card-text>
+                        </v-unipept-card>
+
+                    </v-col>
+                </v-row>
+
             </template>
         </visualization-controls>
     </div>
@@ -51,10 +110,16 @@
 
 <script setup lang="ts">
 import VisualizationControls from "@/components/results/taxonomic/VisualizationControls.vue";
-import {computed, nextTick, onMounted, Ref, ref, watch} from "vue";
+import {computed, ComputedRef, nextTick, onMounted, Ref, ref, watch} from "vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import DownloadImage from "@/components/image/DownloadImage.vue";
 import Heatmap from "@/components/visualization/heatmap/Heatmap.vue";
+
+interface FeatureItem {
+    name: string,
+    matchingSamples: number,
+    averageRelativeAbundance: number
+}
 
 const useAbsoluteValues = ref(false);
 
@@ -74,6 +139,36 @@ const featureTypes: string[] = [
 ];
 
 const selectedFeatureType: Ref<string> = ref(featureTypes[0]);
+
+const featureSearchValue: Ref<string> = ref("");
+
+const featureTableHeaders: any = [
+    {
+        title: "Name",
+        align: "start",
+        value: "name",
+        sortable: true,
+        width: "60%"
+    }, {
+        title: "Matching samples",
+        align: "center",
+        value: "matchingSamples",
+        sortable: true,
+        width: "15%"
+    }, {
+        title: "Avg. Rel. Abundance",
+        align: "end",
+        value: "averageRelativeAbundance",
+        sortable: true,
+        width: "15%"
+    }, {
+        title: "",
+        align: "center",
+        sortable: false,
+        value: "action",
+        width: "10%"
+    }
+];
 
 // Temporary generate 10 random rows with data that can be used for the heatmap visualization
 const randomRows: Ref<number[][]> = ref([]);
@@ -119,6 +214,42 @@ watch(() => props.analyses, async () => {
     await nextTick();
     svg.value = heatmapWrapper.value?.querySelector("svg") as SVGElement;
 }, { immediate: true });
+
+const matchingItems: ComputedRef<FeatureItem[]> = computed(() => {
+    if (selectedFeatureType.value === "NCBI Taxonomy") {
+        // TODO: instead of only showing the lowest common ancestor here, we should also properly take into account
+        // TODO: higher ranks using the NCBI tree that can be selected (and correctly propagate their counts).
+
+        // Maps LCA taxon ID onto it's peptide count and sample count
+        const features = new Map<number, FeatureItem>();
+
+        for (const analysis of props.analyses) {
+            const ncbiOntology = analysis.ontologyStore.ncbiOntology;
+            for (const [lca, lcaCount] of analysis.lcaTable!.counts) {
+                const taxonObj = ncbiOntology.get(lca);
+
+                if (!taxonObj || !taxonObj.name.toLowerCase().includes(featureSearchValue.value.toLowerCase())) {
+                    continue;
+                }
+
+                if (!features.has(lca)) {
+                    features.set(lca, {
+                        name: taxonObj.name,
+                        matchingSamples: 1,
+                        averageRelativeAbundance: 0
+                    });
+                } else {
+                    const featureObj = features.get(lca)!;
+                    featureObj.matchingSamples += 1;
+                }
+            }
+        }
+
+        return [...features.values()];
+    }
+
+    return [];
+});
 </script>
 
 <style>

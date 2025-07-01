@@ -33,18 +33,23 @@
         </div>
     </div>
 
-
     <div :style="`width: ${containerWidth}px;`" class="d-flex">
         <div :style="`width: ${rowLabelWidth}px;`"></div>
-        <v-btn
-            color="primary"
-            :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
-            variant="tonal"
-            size="small"
-            @click="addRows()"
-        >
-            <v-icon>mdi-plus</v-icon>
-        </v-btn>
+        <v-menu location="top center" :close-on-content-click="false">
+            <template v-slot:activator="{ props }">
+                <v-btn
+                    color="primary"
+                    v-bind="props"
+                    :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
+                    variant="tonal"
+                    size="small"
+                    @click="addRows()"
+                >
+                    <v-icon>mdi-plus</v-icon>
+                </v-btn>
+            </template>
+            <slot name="row-selector"></slot>
+        </v-menu>
     </div>
 </template>
 
@@ -128,7 +133,8 @@ const containerWidth = computed(() => {
 });
 
 const containerHeight = computed(() => {
-    return colLabelHeight.value + rowNames.length * cellSize + (rowNames.length - 1) * cellSpacing;
+    // Add 2 pixels for the cell highlight stroke width
+    return colLabelHeight.value + rowNames.length * cellSize + (rowNames.length - 1) * cellSpacing + 2;
 });
 
 const colorInterpolator = d3.interpolateLab(d3.lab(minColor), d3.lab(maxColor));

@@ -8,13 +8,13 @@
 
     <v-list
         v-model:opened="expanded"
-        v-model:selected="selected"
         class="py-0"
         color="primary"
         selectable
         :select-strategy="multiSelect ? 'classic' : 'single-leaf'"
         open-strategy="multiple"
         :mandatory="!multiSelect"
+        v-model:selected="selected"
         @update:selected="selectItem"
     >
         <filesystem-group
@@ -83,6 +83,14 @@ const removeGroup = (groupId: string) => {
 };
 
 const selectItem = (newSelected: (SingleAnalysisStore | string)[]) => {
+    // for (const newItem of newSelected) {
+    //     if (newItem && typeof newItem === 'object' && '$id' in newItem) {
+    //         console.log("Selecting item:");
+    //         console.log(newItem);
+    //         // This is most likely a pinia store
+    //         selected.value.push(newSelected as unknown as SingleAnalysisStore);
+    //     }
+    // }
     if (typeof newSelected[0] === 'string') {
         // We have to set the selected value to itself to trigger the watcher
         selected.value = [ ...selected.value ];
