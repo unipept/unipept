@@ -59,15 +59,26 @@
                         </v-card-text>
                     </v-card>
 
-                    <v-btn
-                        v-if="hasMore && (index === visibleProjects.length - 1)"
-                        class="ms-5"
-                        variant="text"
-                        color="primary"
-                        @click="showMore"
-                    >
-                        Show more
-                    </v-btn>
+                    <div class="d-flex justify-center" v-if="index === visibleProjects.length - 1">
+                        <v-btn
+                            :disabled="!hasMore"
+                            class="ms-5 mr-4"
+                            variant="text"
+                            color="primary"
+                            @click="showMore"
+                        >
+                            Show more
+                        </v-btn>
+                        <v-btn
+                            variant="text"
+                            color="error"
+                            prepend-icon="mdi-delete-sweep"
+                            @click="deleteAllDialogOpen = true"
+                        >
+                            Delete all
+                        </v-btn>
+                    </div>
+
                 </template>
             </v-virtual-scroll>
 
@@ -88,7 +99,7 @@
             max-width="600"
             persistent
         >
-            <v-unipept-card>
+            <v-unipept-card color="error" variant="tonal">
                 <v-card-title class="text-h6 font-weight-bold">
                     Delete project
                 </v-card-title>
@@ -98,22 +109,46 @@
                         Are you sure you want to delete the project <strong>{{ projectToDelete }}</strong>?
                         This action is <b>irreversible</b>.
                     </p>
-
-                    <v-alert type="warning" class="mt-4">
-                        Deleting this project will remove all associated data and results.
-                    </v-alert>
                 </v-card-text>
 
                 <v-card-actions class="justify-end">
-                    <v-btn variant="text" @click="cancel">Cancel</v-btn>
+                    <v-btn variant="text" @click="cancel" color="black">Cancel</v-btn>
                     <v-btn
                         color="error"
-                        text="Delete"
+                        text="Yes, delete project"
                         @click="confirmDeleteProject"
                     />
                 </v-card-actions>
             </v-unipept-card>
         </v-dialog>
+
+        <v-dialog
+                v-model="deleteAllDialogOpen"
+                max-width="600"
+                persistent
+            >
+                <v-unipept-card color="error" variant="tonal">
+                    <v-card-title class="text-h6 font-weight-bold">
+                        Delete all recent projects?
+                    </v-card-title>
+
+                    <v-card-text class="pb-0">
+                        <p>
+                            Are you sure you want to delete all recent projects?
+                            This action is <b>irreversible</b>.
+                        </p>
+                    </v-card-text>
+
+                    <v-card-actions class="justify-end">
+                        <v-btn variant="text" @click="cancel" color="black">Cancel</v-btn>
+                        <v-btn
+                            color="error"
+                            text="Yes, delete all"
+                            @click="confirmDeleteAllProjects"
+                        />
+                    </v-card-actions>
+                </v-unipept-card>
+            </v-dialog>
     </div>
 </template>
 
@@ -144,6 +179,7 @@ const { height: headerHeight } = useElementBounding(header);
 
 const visibleCount = ref(4);
 const deleteDialogOpen = ref(false);
+const deleteAllDialogOpen = ref(false);
 const projectToDelete = ref<string>("");
 
 const sortedProjects = computed(() => {
@@ -167,6 +203,7 @@ const uploadProject = (projectName: string, file: File) => {
 }
 
 const cancel = () => {
+    deleteAllDialogOpen.value = false;
     deleteDialogOpen.value = false;
     projectToDelete.value = "";
 }
@@ -179,6 +216,13 @@ const deleteProject = (projectName: string) => {
 const confirmDeleteProject = () => {
     emits('delete', projectToDelete.value);
     deleteDialogOpen.value = false;
+}
+
+const confirmDeleteAllProjects = () => {
+    for (const project of sortedProjects.value) {
+        emits('delete', project.name);
+    }
+    deleteAllDialogOpen.value = false;
 }
 </script>
 
