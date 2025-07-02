@@ -1,12 +1,19 @@
 <template>
     <div class="d-flex">
+        <div
+            style="position: absolute; top: 50%; left: 25%; transform: translate(-50%, -75%); z-index: 10000; max-width: 300px;"
+            class="font-weight-bold text-center"
+        >
+            Click the button below to create a new heatmap and add rows
+        </div>
+
         <div ref="heatmapContainer">
         </div>
 
         <!-- Controls to the right of the visualization -->
         <div>
             <div :style="`height: ${colLabelHeight}px;`"></div>
-            <v-hover v-for="(rowName, i) in rowNames" :key="rowName">
+            <v-hover v-if="!placeholder" v-for="(rowName, i) in rowNames" :key="rowName">
                 <template v-slot:default="{ isHovering, props: hooveringProps }">
                     <v-tooltip text="Remove row from heatmap" location="right" open-delay="0">
                         <template v-slot:activator="{ props: tooltipProps }">
@@ -69,7 +76,8 @@ const {
     labelFontWeight = "500",
     labelColor = "#353535",
     minColor = "#EEEEEE",
-    maxColor = "#2196F3"
+    maxColor = "#2196F3",
+    placeholder = false
 } = defineProps<{
     // All cells (with a value between 0 and 1) that should be rendered in the heatmap.
     data: number[][],
@@ -94,7 +102,9 @@ const {
     // Fill color of cells corresponding to value 0.0
     minColor?: string,
     // Fill color of cells corresponding to value 1.0
-    maxColor?: string
+    maxColor?: string,
+    // Should the heatmap be shown in placeholder mode (and thus made semi-blurred)?
+    placeholder: boolean
 }>();
 
 const emits = defineEmits<{
@@ -166,6 +176,10 @@ const stopGhostingRow = (rowIdx: number) => {
 }
 
 const highlightCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
+    if (placeholder) {
+        return;
+    }
+
     d3.selectAll(".unipept-heatmap .cell").classed("ghost", true);
     d3.select(currentCell).classed("ghost", false);
     d3.select(currentCell).classed("highlighted-cell", true);
@@ -226,6 +240,8 @@ const ellipsizeString = (
 }
 
 const renderHeatmap = () => {
+    console.log(data);
+
     // Clear the heatmap container
     d3.select(heatmapContainer.value!)
         .selectAll("*")
@@ -234,6 +250,7 @@ const renderHeatmap = () => {
     const svg = d3.select(heatmapContainer.value!)
         .append("svg")
         .classed(className, true)
+        .classed('placeholder-mode', placeholder)
         .attr("version", "1.1")
         .attr("xmlns", "http://www.w3.org/2000/svg")
         .attr("viewBox", `0 0 ${containerWidth.value} ${containerHeight.value}`)
@@ -396,6 +413,12 @@ watch(() => data, () => {
 .unipept-heatmap .highlighted-cell {
     stroke-width: 2px;
     stroke: gray;
+}
+
+.unipept-heatmap.placeholder-mode {
+    filter: blur(4px);
+    opacity: 0.3;
+    pointer-events: none;
 }
 </style>
 

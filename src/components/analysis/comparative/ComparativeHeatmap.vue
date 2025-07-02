@@ -34,9 +34,10 @@
                     <v-col :cols="6">
                         <div ref="heatmapWrapper" class="mx-4 mb-4">
                             <heatmap
-                            :data="randomRows"
-                            :row-names="randomRowNames"
-                            :col-names="colNames"
+                                :data="rows.length === 0 ? placeholderRows : rows"
+                                :row-names="rows.length === 0 ? placeholderRowNames : rowNames"
+                                :col-names="colNames"
+                                :placeholder="rows.length === 0"
                             >
                                 <template #row-selector>
                                     <v-unipept-card style="width: 800px;" elevation="10">
@@ -170,10 +171,27 @@ const featureTableHeaders: any = [
     }
 ];
 
-// Temporary generate 10 random rows with data that can be used for the heatmap visualization
-const randomRows: Ref<number[][]> = ref([]);
 
-const randomRowNames = [
+const rows: Ref<number[][]> = ref([]);
+
+const rowNames: Ref<string[]> = ref([]);
+
+const colNames = computed(() => props.analyses.map(a => a.name));
+
+// When no rows are selected by the user, we show a placeholder heatmap in gray scale, containing random row values
+const placeholderRows: ComputedRef<number[][]> = computed(() => {
+    const rows = [];
+    for (let i = 0; i < 10; i++) {
+        const row = [];
+        for (let j = 0; j < props.analyses.length; j++) {
+            row.push(Math.random())
+        }
+        rows.push(row);
+    }
+    return rows;
+});
+
+const placeholderRowNames: string[] = [
     "Escherichia coli",
     "Staphylococcus aureus",
     "Bacillus subtilis",
@@ -185,30 +203,6 @@ const randomRowNames = [
     "Clostridium difficile",
     "Helicobacter pylori"
 ];
-
-const colNames = computed(() => props.analyses.map(a => a.name));
-
-onMounted(() => {
-    randomRows.value = [];
-    for (let i = 0; i < 10; i++) {
-        const row = [];
-        for (let j = 0; j < props.analyses.length; j++) {
-            row.push(Math.random());
-        }
-        randomRows.value.push(row);
-    }
-});
-
-watch(() => props.analyses, () => {
-    randomRows.value = [];
-    for (let i = 0; i < 10; i++) {
-        const row = [];
-        for (let j = 0; j < props.analyses.length; j++) {
-            row.push(Math.random());
-        }
-        randomRows.value.push(row);
-    }
-});
 
 watch(() => props.analyses, async () => {
     await nextTick();
