@@ -31,8 +31,8 @@
             </template>
 
             <template #visualization>
-                <v-row style="padding-top: 50px;" class="ma-0">
-                    <v-col :cols="6">
+                <div style="padding-top: 50px;" class="ma-0 d-flex ga-8">
+                    <div>
                         <div ref="heatmapWrapper" class="mx-4 mb-4">
                             <heatmap
                                 :data="rows"
@@ -43,7 +43,7 @@
                                 <template #row-selector>
                                     <v-unipept-card style="width: 800px;" elevation="10">
                                         <v-card-title>
-                                            <div class="text-h5">Add rows</div>
+                                            <div class="text-h5">Add {{ selectedTaxonomicRank }}</div>
                                         </v-card-title>
                                         <v-card-text style="padding-top: 4px !important;">
                                             <v-text-field
@@ -59,12 +59,14 @@
                                                 :headers="featureTableHeaders"
                                                 :sort-by="sortByItems"
                                                 multi-sort
-                                                items-per-page="5"
+                                                :items-per-page="currentItemsPerPage"
                                                 :items-per-page-options="[5, 10, -1]"
                                                 density="compact"
                                                 :custom-key-sort="{
                                                     'matchingSamples': customMatchingSamplesSort
                                                 }"
+                                                :page="currentTablePage"
+                                                @update:current-items="updateVisibleItems"
                                             >
                                                 <template #item.matchingSamples="{ item }">
                                                     {{ item.matchingSamples.length }}
@@ -72,44 +74,89 @@
                                                 <template #item.averageRelativeAbundance="{ item }">
                                                     {{ (item.averageRelativeAbundance * 100).toFixed(2) }}%
                                                 </template>
-                                                <template #item.action="{ item }">
-                                                    <v-btn
-                                                        color="primary"
-                                                        density="compact"
-                                                        variant="text"
-                                                        prepend-icon="mdi-plus"
-                                                        text="Add"
-                                                        @click="addRow(item)"
-                                                    >
-                                                    </v-btn>
+                                                <template #header.action>
+                                                    <v-tooltip v-if="allInPageSelected">
+                                                        <template v-slot:activator="{ props }">
+                                                            <v-btn
+                                                                style="width: 120px;"
+                                                                color="error"
+                                                                density="compact"
+                                                                variant="tonal"
+                                                                prepend-icon="mdi-minus"
+                                                                text="Drop all"
+                                                                v-bind="props"
+                                                                @click="removeRows(visibleItems)"
+                                                            />
+                                                        </template>
+                                                        <span>Drop all items from the heatmap</span>
+                                                    </v-tooltip>
+                                                    <v-tooltip v-else>
+                                                        <template v-slot:activator="{ props }">
+                                                            <v-btn
+                                                                style="width: 120px;"
+                                                                color="primary"
+                                                                density="compact"
+                                                                variant="tonal"
+                                                                prepend-icon="mdi-plus"
+                                                                text="Add all"
+                                                                v-bind="props"
+                                                                @click="addRows(visibleItems)"
+                                                            />
+                                                        </template>
+                                                        <span>Add all items to the heatmap</span>
+                                                    </v-tooltip>
                                                 </template>
+                                                <template #item.action="{ item }">
+                                                    <v-tooltip v-if="rowNames.includes(item.name)">
+                                                        <template v-slot:activator="{ props }">
+                                                            <v-btn
+                                                                style="width: 120px;"
+                                                                color="error"
+                                                                density="compact"
+                                                                variant="tonal"
+                                                                prepend-icon="mdi-minus"
+                                                                text="Drop"
+                                                                @click="removeRow(rowNames.indexOf(item.name))"
+                                                                v-bind="props"
+                                                            />
+                                                        </template>
+                                                        <span>Remove item from the heatmap</span>
+                                                    </v-tooltip>
+                                                    <v-tooltip v-else>
+                                                        <template v-slot:activator="{ props }">
+                                                            <v-btn
+                                                                style="width: 120px;"
+                                                                color="primary"
+                                                                density="compact"
+                                                                variant="tonal"
+                                                                prepend-icon="mdi-plus"
+                                                                text="Add"
+                                                                @click="addRow(item)"
+                                                                v-bind="props"
+                                                            />
+                                                        </template>
+                                                        <span>Add item to the heatmap</span>
+                                                    </v-tooltip>
+                                                </template>
+
                                             </v-data-table>
                                         </v-card-text>
                                     </v-unipept-card>
                                 </template>
                             </heatmap>
                         </div>
-                    </v-col>
-                    <v-col :cols="6">
-
-
-                        <v-unipept-card class="mr-4">
-                            <v-card-title>
-                                <div class="text-h5">Cell details</div>
-                            </v-card-title>
-                            <v-card-text>
-                                <v-empty-state
-                                    icon="mdi-cursor-default-click"
-                                    color="primary"
-                                    title="No cell selected"
-                                    text="Select a cell from the heatmap on the left to get a detailed information overview."
-                                />
-                            </v-card-text>
-                        </v-unipept-card>
-
-                    </v-col>
-                </v-row>
-
+                    </div>
+                    <v-divider vertical class="mb-2"/>
+                    <div class="flex-grow-1">
+<!--                        <div class="text-h5 mt-2">Cell details</div>-->
+                        <v-empty-state
+                            icon="mdi-cursor-default-click"
+                            color="grey-lighten-1"
+                            title="No cell selected"
+                            text="Select a cell from the heatmap on the left to get a detailed information overview."
+                        />
+                    </div>
+                </div>
             </template>
         </visualization-controls>
     </div>
@@ -170,25 +217,41 @@ const selectedTaxonomicRank: Ref<string> = ref("species");
 
 const featureSearchValue: Ref<string> = ref("");
 
+const currentTablePage = ref(1);
+const currentItemsPerPage = ref(5);
+
+const visibleItems: Ref<FeatureSummary[]> = ref([]);
+
+const updateVisibleItems = (currentItems: any[]) => {
+    visibleItems.value = currentItems.map(i => i.raw);
+}
+
+/**
+ * Returns true if all the items of the currently shown row in the data table are already selected for the heatmap.
+ */
+const allInPageSelected = computed(() => {
+    return visibleItems.value.every(summary => rowNames.value.includes(summary.name));
+});
+
 const featureTableHeaders: any = [
     {
         title: "Name",
         align: "start",
         value: "name",
         sortable: true,
-        width: "60%"
+        width: "40%"
     }, {
         title: "Matching Samples",
         align: "end",
         value: "matchingSamples",
         sortable: true,
-        width: "15%"
+        width: "25%"
     }, {
         title: "Avg. Rel. Abundance",
         align: "end",
         value: "averageRelativeAbundance",
         sortable: true,
-        width: "15%"
+        width: "25%"
     }, {
         title: "",
         align: "center",
@@ -245,6 +308,9 @@ const initializeData = () => {
         }
         return b.averageRelativeAbundance - a.averageRelativeAbundance;
     }).slice(0, 5);
+
+    rows.value = [];
+    rowNames.value = [];
 
     for (const feature of topFeatures) {
         addRow(feature);
@@ -340,9 +406,26 @@ const addRow = (summary: FeatureSummary) => {
     rowNames.value.push(summary.name);
 };
 
+const addRows = (rows: FeatureSummary[]) => {
+    for (const row of rows) {
+        if (!rowNames.value.includes(row.name)) {
+            addRow(row);
+        }
+    }
+}
+
 const removeRow = (index: number) => {
     rows.value.splice(index, 1);
     rowNames.value.splice(index, 1);
+}
+
+const removeRows = (rows: FeatureSummary[]) => {
+    for (const row of rows) {
+        const idx = rowNames.value.indexOf(row.name);
+        if (idx !== -1) {
+            removeRow(rowNames.value.indexOf(row.name));
+        }
+    }
 }
 
 const debouncedInit = useDebounceFn(initializeData, 100);

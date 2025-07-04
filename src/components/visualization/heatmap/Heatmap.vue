@@ -36,7 +36,7 @@
     <div :style="`width: ${containerWidth}px;`" class="d-flex">
         <div :style="`width: ${rowLabelWidth}px;`">
         </div>
-        <v-menu location="bottom center" :close-on-content-click="false">
+        <v-menu location="right top" :close-on-content-click="false" :offset="12">
             <template v-slot:activator="{ props }">
                 <v-btn
                     color="primary"
@@ -382,7 +382,7 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
         });
 };
 
-const debouncedRender = useDebounceFn(renderHeatmap, 100);
+const debouncedRender = useDebounceFn(renderHeatmap, 20);
 
 onMounted(() => {
     debouncedRender();
