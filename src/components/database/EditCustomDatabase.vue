@@ -2,6 +2,7 @@
     <v-dialog
         v-model="dialogOpen"
         max-width="1800px"
+        scrollable
     >
         <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex align-center">
@@ -19,7 +20,7 @@
 
             <v-divider />
 
-            <v-card-text>
+            <v-card-text class="pb-1">
                 <v-form v-model="isValidDatabaseName">
                     <v-row>
                         <v-col cols="12">
@@ -41,19 +42,31 @@
                     </v-row>
                 </v-form>
 
-                <div
+                <taxa-browser
                     v-if="filterSelection === FilterSelection.Manually"
-                    class="pa-0"
-                >
-                    <taxa-browser v-model="selectedTaxa" class="mb-4" />
+                    v-model="selectedTaxa"
+                />
 
-                    <v-btn
-                        color="primary"
-                        variant="text"
-                        text="Cancel"
-                        @click="dialogOpen = false"
-                    />
+                <reference-proteome-browser
+                    v-else-if="filterSelection === FilterSelection.ReferenceProteomes"
+                    v-model="selectedProteomes"
+                />
 
+                <protein-browser
+                    v-else
+                    v-model="selectedProteins"
+                />
+            </v-card-text>
+
+            <v-card-actions class="pa-5 pt-4 justify-start">
+                <v-btn
+                    color="primary"
+                    variant="text"
+                    text="Cancel"
+                    @click="dialogOpen = false"
+                />
+
+                <div v-if="filterSelection === FilterSelection.Manually">
                     <v-btn
                         color="primary"
                         variant="tonal"
@@ -70,15 +83,6 @@
                 </div>
 
                 <div v-else-if="filterSelection === FilterSelection.ReferenceProteomes">
-                    <reference-proteome-browser v-model="selectedProteomes" class="mb-4" />
-
-                    <v-btn
-                        color="primary"
-                        variant="text"
-                        text="Cancel"
-                        @click="dialogOpen = false"
-                    />
-
                     <v-btn
                         color="primary"
                         variant="tonal"
@@ -95,15 +99,6 @@
                 </div>
 
                 <div v-else>
-                    <protein-browser v-model="selectedProteins" class="mb-4" />
-
-                    <v-btn
-                        color="primary"
-                        variant="text"
-                        text="Cancel"
-                        @click="dialogOpen = false"
-                    />
-
                     <v-btn
                         color="primary"
                         variant="tonal"
@@ -118,7 +113,7 @@
                         @confirm="updateProteinDatabase"
                     />
                 </div>
-            </v-card-text>
+            </v-card-actions>
         </v-unipept-card>
     </v-dialog>
 </template>
