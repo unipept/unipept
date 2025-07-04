@@ -3,6 +3,19 @@
         <div ref="heatmapContainer">
         </div>
 
+        <v-tooltip
+            :model-value="tooltipActive"
+            :target="[tooltipPosition.x, tooltipPosition.y]"
+            :offset="20"
+            location="right"
+        >
+            <slot
+                name="tooltip-content"
+                :selected-row="highlightedCell.rowIdx"
+                :selected-col="highlightedCell.colIdx"
+            />
+        </v-tooltip>
+
         <!-- Controls to the right of the visualization -->
         <div>
             <div :style="`height: ${colLabelHeight}px;`"></div>
@@ -57,8 +70,8 @@
 
 <script setup lang="ts">
 import * as d3 from 'd3';
-import {computed, ComputedRef, onMounted, ref, watch} from "vue";
-import {useDebounceFn} from "@vueuse/core";
+import {computed, ComputedRef, onMounted, Ref, ref, watch} from "vue";
+import {useDebounce, useDebounceFn} from "@vueuse/core";
 
 const {
     data,
@@ -72,7 +85,8 @@ const {
     labelFontWeight = "500",
     labelColor = "#353535",
     minColor = "#EEEEEE",
-    maxColor = "#2196F3"
+    maxColor = "#2196F3",
+    tooltipDelay = 500
 } = defineProps<{
     // All cells (with a value between 0 and 1) that should be rendered in the heatmap.
     data: number[][],
@@ -97,7 +111,9 @@ const {
     // Fill color of cells corresponding to value 0.0
     minColor?: string,
     // Fill color of cells corresponding to value 1.0
-    maxColor?: string
+    maxColor?: string,
+    // Before open delay of the tooltip
+    tooltipDelay?: number,
 }>();
 
 const emits = defineEmits<{
@@ -109,6 +125,13 @@ const emits = defineEmits<{
 }>();
 
 const className: string = "unipept-heatmap";
+
+const tooltipActive: Ref<boolean> = ref(false);
+const tooltipPosition: Ref<{ x: number, y: number }> = ref({ x: 0, y: 0 });
+const highlightedCell: Ref<{ rowIdx: number, colIdx: number }> = ref({
+    rowIdx: -1,
+    colIdx: -1
+});
 
 const heatmapContainer = ref<HTMLElement>();
 
@@ -189,6 +212,32 @@ const stopHighlightingCell = (currentCell: HTMLElement, rowIdx: number, colIdx: 
     d3.selectAll(".unipept-heatmap .row-label").classed("ghost", false);
     d3.selectAll(".unipept-heatmap .header-label").classed("ghost", false);
     d3.select(".unipept-heatmap .highlighted-cell").classed("highlighted-cell", false);
+}
+
+let tooltipTimeout: NodeJS.Timeout | undefined;
+
+const showTooltip = (event: MouseEvent, rowIdx: number, colIdx: number) => {
+    tooltipPosition.value.x = event.clientX;
+    tooltipPosition.value.y = event.clientY;
+
+    highlightedCell.value.rowIdx = rowIdx;
+    highlightedCell.value.colIdx = colIdx;
+
+    tooltipTimeout = setTimeout(() => tooltipActive.value = true, tooltipDelay);
+}
+
+const moveTooltip = (event: MouseEvent) => {
+    tooltipPosition.value.x = event.clientX;
+    tooltipPosition.value.y = event.clientY;
+}
+
+const hideTooltip = () => {
+    if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+        tooltipTimeout = undefined;
+    }
+
+    tooltipActive.value = false;
 }
 
 const computeTextWidth = (
@@ -362,6 +411,10 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
             const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
             highlightCell(cell, rowIdx, colIdx);
+            showTooltip(event, rowIdx, colIdx);
+        })
+        .on("mousemove", (event: MouseEvent, d: any) => {
+            moveTooltip(event);
         })
         .on("mouseleave", (event: MouseEvent, d: any) => {
             // Find the corresponding visible cell
@@ -371,6 +424,7 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
             const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
             stopHighlightingCell(cell, rowIdx, colIdx);
+            hideTooltip();
         })
         .on("click", (event: MouseEvent, d: any) => {
             // Find the corresponding visible cell

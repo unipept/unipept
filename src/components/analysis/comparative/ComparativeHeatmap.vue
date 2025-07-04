@@ -40,6 +40,17 @@
                                 :col-names="colNames"
                                 @deselect-row="removeRow"
                             >
+                                <template #tooltip-content="{ selectedRow, selectedCol }">
+                                    <template v-if="selectedCol !== -1 && selectedRow !== -1">
+                                        <div class="text-subtitle-1">{{ analyses[selectedCol].name }} • {{ rowNames[selectedRow] }}</div>
+                                        <div>
+                                            <span class="font-weight-bold">Absolute peptide count:</span> {{ getFeatureItem(selectedRow, selectedCol)?.peptideCount || 0 }} peptides
+                                        </div>
+                                        <div>
+                                            <span class="font-weight-bold">Relative abundance:</span> {{ ((getFeatureItem(selectedRow, selectedCol)?.relativeAbundance || 0) * 100).toFixed(2) }}%
+                                        </div>
+                                    </template>
+                                </template>
                                 <template #row-selector>
                                     <v-unipept-card style="width: 800px;" elevation="10">
                                         <v-card-title>
@@ -290,6 +301,11 @@ const colNames = computed(() => props.analyses.map(a => a.name));
 
 const featureItems: Ref<Map<string, FeatureItem<NcbiTaxon>[]>> = ref(new Map());
 const featureSummaries: Ref<Map<number, FeatureSummary>> = ref(new Map());
+
+const getFeatureItem = (rowIdx: number, colIdx: number): FeatureItem<NcbiTaxon> | undefined => {
+    const analysis = props.analyses[colIdx];
+    return featureItems.value.get(analysis.id)?.find(item => item.data.name === rowNames.value[rowIdx]);
+}
 
 /**
  * This function regenerates all input data for the heatmap and should be called whenever the user selects a different
