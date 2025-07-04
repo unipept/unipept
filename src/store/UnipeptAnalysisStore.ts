@@ -2,7 +2,7 @@ import {defineStore} from "pinia";
 import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 import localforage from "localforage";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
-import {computed, ref} from "vue";
+import {computed} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 import useProjectExport from "@/composables/useProjectExport";
@@ -109,7 +109,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     watchDebounced([ project, customDatabases, appState ], async () => {
-        if (!isDemoMode.value) {
+        if (!isDemoMode.value && project.name) {
             let totalPeptides = 0;
             for (const group of project.groups) {
                 for (const analysis of group.analyses) {

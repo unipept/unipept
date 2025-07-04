@@ -54,8 +54,7 @@ const { projectExists: exists } = defineProps<{
 
 const projectName = ref('');
 
-const projectExists = asyncComputed(() => exists(projectName.value), {
-    initialValue: false,
+const projectExists = asyncComputed(() => exists(projectName.value), false, {
     lazy: true
 });
 
