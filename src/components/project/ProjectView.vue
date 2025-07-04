@@ -28,8 +28,20 @@
             v-if="isDemoMode"
             type="info"
         >
-            You are currently in <b>demo</b> mode. Changes made to the project will not be saved. To save your changes, please create a new project.
+            You are currently in <b>demo</b> mode. Changes made to the project will not be saved.
+            To save your changes, click
+            <span
+                class="text-white text-decoration-underline font-weight-bold cursor-pointer"
+                @click="newDialogOpen = true"
+            >here</span>
+            to create a new project.
         </v-alert>
+
+        <new-project-dialog
+            v-model="newDialogOpen"
+            :project-exists="projectExists"
+            @project:new="convertToProject"
+        />
     </v-container>
 
     <v-container
@@ -66,6 +78,10 @@ import {DEFAULT_NEW_GROUP_NAME, ProjectAnalysisStore} from "@/store/ProjectAnaly
 import EmptyProjectPlaceholder from "@/components/project/EmptyProjectPlaceholder.vue";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import ManageSampleGroupDialog from "@/components/sample/ManageSampleGroupDialog.vue";
+import NewProjectDialog from "@/components/analysis/multi/NewProjectDialog.vue";
+import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
+
+const { getProjects } = useUnipeptAnalysisStore();
 
 const { project, isDemoMode = false, multiSelect = false } = defineProps<{
     project: ProjectAnalysisStore;
@@ -76,6 +92,8 @@ const { project, isDemoMode = false, multiSelect = false } = defineProps<{
 const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses", { required: true });
 const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-group", { required: true });
 const manageSamples = defineModel<boolean | undefined>("manage-samples", { default: false, required: false });
+
+const newDialogOpen = ref(false);
 
 const addGroup = (name: string) => {
     project.addGroup(name);
@@ -142,6 +160,16 @@ const selectFirstAnalysis = () => {
 const selectGroup = (groupId: string) => {
     selectedGroup.value = project.getGroup(groupId);
 }
+
+const projectExists = async (name: string) => {
+    const projects = await getProjects();
+    return projects.some(project => project.name === name);
+};
+
+const convertToProject = (projectName: string) => {
+    project.setName(projectName);
+    project.setDemoMode(false);
+};
 
 onMounted(() => {
     if (selectedAnalyses.value.length === 0) {

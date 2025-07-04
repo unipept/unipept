@@ -23,48 +23,17 @@
             </v-card-text>
         </v-unipept-card>
 
-        <v-dialog
+        <new-project-dialog
             v-model="newDialogOpen"
-            max-width="600"
-            persistent
-            @keydown.enter="() => projectName && !projectExists(projectName) && newProject()"
-        >
-            <v-unipept-card>
-                <v-card-title class="text-h6 font-weight-bold">
-                    Start a new project
-                </v-card-title>
-
-                <v-card-text class="pb-0">
-                    <v-text-field
-                        v-model="projectName"
-                        label="Project name"
-                        variant="outlined"
-                        color="primary"
-                        placeholder="Enter a name for your project"
-                        required
-                        :rules="[
-                            v => !!v || 'Project name is required',
-                            v => !projectExists(v) || 'Project name already exists'
-                        ]"
-                    />
-                </v-card-text>
-
-                <v-card-actions class="justify-end">
-                    <v-btn variant="text" @click="cancel">Cancel</v-btn>
-                    <v-btn
-                        color="primary"
-                        text="Create project"
-                        :disabled="!projectName || projectExists(projectName)"
-                        @click="newProject"
-                    />
-                </v-card-actions>
-            </v-unipept-card>
-        </v-dialog>
+            :project-exists="projectExists"
+            @project:new="newProject"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
 import {ref} from "vue";
+import NewProjectDialog from "@/components/analysis/multi/NewProjectDialog.vue";
 
 const { projects, disabled = false } = defineProps<{
     projects: { name: string, lastAccessed: Date }[],
@@ -77,21 +46,12 @@ const emits = defineEmits<{
 
 const newDialogOpen = ref(false);
 
-const projectName = ref('');
-
 const projectExists = (name: string) => {
     return projects.some(project => project.name === name);
 };
 
-const cancel = () => {
-    newDialogOpen.value = false;
-    projectName.value = '';
-};
-
-const newProject = () => {
-    newDialogOpen.value = false;
-    emits('project:new', projectName.value);
-    projectName.value = '';
+const newProject = (projectName: string) => {
+    emits('project:new', projectName);
 };
 </script>
 

@@ -30,7 +30,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const customDatabases = useCustomFilterStore();
     const appState = useAppStateStore();
 
-    const isDemoMode = ref<boolean>(false);
+    const isDemoMode = computed(() => project.isDemoMode);
 
     const getProjects = async () => {
         const keys = await store.keys();
@@ -45,14 +45,13 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     const loadNewProject = async (projectName: string) => {
-        isDemoMode.value = false;
         appState.clear();
         project.clear();
         project.setName(projectName);
+        project.setDemoMode(false);
     }
 
     const loadProjectFromStorage = async (projectName: string) => {
-        isDemoMode.value = false;
         const value: StoreValue | null = await store.getItem(projectName);
         if (value !== null) {
             appState.clear();
@@ -62,12 +61,12 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
             project.setImportedData(processedImport.project);
             project.setName(projectName);
+            project.setDemoMode(false);
             appState.setImportedData(processedImport.appState, project);
         }
     }
 
     const loadProjectFromFile = async (projectName: string, file: File) => {
-        isDemoMode.value = false;
         appState.clear();
         project.clear();
 
@@ -75,15 +74,16 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
         project.setImportedData(processedImport.project);
         project.setName(projectName);
+        project.setDemoMode(false);
         appState.setImportedData(processedImport.appState, project);
     }
 
     const loadProjectFromSample = async (sample: SampleData) => {
-        isDemoMode.value = true;
         appState.clear();
         project.clear();
 
         project.setName("Demo project");
+        project.setDemoMode(true);
         const groupId = project.addGroup(sample.environment);
         for (const dataset of sample.datasets) {
             project.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), {
@@ -96,10 +96,10 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     const loadProjectFromPeptides = async (rawPeptides: string, config: AnalysisConfig) => {
-        isDemoMode.value = true;
         appState.clear();
         project.clear();
-        project.setName("Quick analysis")
+        project.setName("Quick analysis");
+        project.setDemoMode(true);
         const groupId = project.addGroup("Group");
         project.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     }
