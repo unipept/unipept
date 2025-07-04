@@ -19,10 +19,19 @@
                         hide-details
                     />
                 </v-list-item>
-                <v-list-item>
+                <v-list-item class="mb-n2">
                     <v-checkbox
                         v-model="useAbsoluteValues"
                         label="Use absolute peptide counts"
+                        color="primary"
+                        density="compact"
+                        hide-details
+                    />
+                </v-list-item>
+                <v-list-item style="height: 36px;">
+                    <v-checkbox
+                        v-model="rescaleHeatmapColors"
+                        label="Rescale colors?"
                         color="primary"
                         density="compact"
                         hide-details
@@ -35,7 +44,7 @@
                     <div>
                         <div ref="heatmapWrapper" class="mx-4 mb-4">
                             <heatmap
-                                :data="rows"
+                                :data="rescaledRows"
                                 :row-names="rowNames"
                                 :col-names="colNames"
                                 @deselect-row="removeRow"
@@ -210,6 +219,7 @@ interface FeatureItem<T> {
 }
 
 const useAbsoluteValues = ref(false);
+const rescaleHeatmapColors = ref(false);
 
 const downloadImageModalOpen = ref(false);
 
@@ -294,6 +304,35 @@ const customMatchingSamplesSort = (a: string[], b: string[]) => {
 };
 
 const rows: Ref<number[][]> = ref([]);
+
+const rescaledRows: ComputedRef<number[][]> = computed(() => {
+    if (rescaleHeatmapColors.value) {
+        // We should normalize the colors in the heatmap according to the min / max value in the grid
+        let minValue = 1;
+        let maxValue = 0;
+
+        for (const row of rows.value) {
+            minValue = Math.min(minValue, ...row);
+            maxValue = Math.max(maxValue, ...row);
+        }
+
+        const rescaled: number[][] = [];
+
+        for (const row of rows.value) {
+            const rescaledRow: number[] = [];
+            for (const value of row) {
+                rescaledRow.push((value - minValue) / (maxValue - minValue));
+            }
+            rescaled.push(rescaledRow);
+        }
+
+        return rescaled;
+    } else {
+        // No rescaling needs to be applied; return the original, raw rows
+        return rows.value;
+    }
+});
+
 const rowNames: Ref<string[]> = ref([]);
 
 // The columns of the heatmap always correspond to the selected analyses
@@ -346,7 +385,7 @@ const computeFeatureObjects = () => {
         const ncbiOntology = analysis.ontologyStore.ncbiOntology;
         const features: FeatureItem<NcbiTaxon>[] = [];
 
-        let maxCount: number = 0;
+        let totalCount: number = 0;
 
         analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
             if (x && x.extra.rank === selectedTaxonomicRank.value) {
@@ -356,9 +395,7 @@ const computeFeatureObjects = () => {
                     return;
                 }
 
-                if (x.count > maxCount) {
-                    maxCount = x.count;
-                }
+                totalCount += x.count;
 
                 features.push({
                     id: x.id,
@@ -372,7 +409,7 @@ const computeFeatureObjects = () => {
 
         // At this point, we actually know the max peptide count and we can actually compute the relative abundance.
         for (const featureItem of features) {
-            featureItem.relativeAbundance = featureItem.peptideCount / maxCount;
+            featureItem.relativeAbundance = featureItem.peptideCount / totalCount;
         }
 
         featuresPerAnalysis.set(analysis.id, features);
@@ -456,12 +493,15 @@ watch(() => selectedTaxonomicRank, () => {
 
 watch(() => props.analyses, () => {
     debouncedInit();
-})
+});
 
-watch(() => props.analyses, async () => {
+watch(() => rescaledRows, async () => {
     await nextTick();
-    svg.value = heatmapWrapper.value?.querySelector("svg") as SVGElement;
-}, { immediate: true });
+    // Wait a little bit for the svg to be rendered
+    setTimeout(() => {
+        svg.value = heatmapWrapper.value?.querySelector("svg") as SVGElement;
+    }, 100);
+}, { deep: true });
 </script>
 
 <style>
