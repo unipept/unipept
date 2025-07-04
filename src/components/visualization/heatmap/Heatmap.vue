@@ -1,19 +1,12 @@
 <template>
     <div class="d-flex">
-        <div
-            style="position: absolute; top: 50%; left: 25%; transform: translate(-50%, -75%); z-index: 10000; max-width: 300px;"
-            class="font-weight-bold text-center"
-        >
-            Click the button below to create a new heatmap and add rows
-        </div>
-
         <div ref="heatmapContainer">
         </div>
 
         <!-- Controls to the right of the visualization -->
         <div>
             <div :style="`height: ${colLabelHeight}px;`"></div>
-            <v-hover v-if="!placeholder" v-for="(rowName, i) in rowNames" :key="rowName">
+            <v-hover v-for="(rowName, i) in rowNames" :key="rowName">
                 <template v-slot:default="{ isHovering, props: hooveringProps }">
                     <v-tooltip text="Remove row from heatmap" location="right" open-delay="0">
                         <template v-slot:activator="{ props: tooltipProps }">
@@ -41,18 +34,20 @@
     </div>
 
     <div :style="`width: ${containerWidth}px;`" class="d-flex">
-        <div :style="`width: ${rowLabelWidth}px;`"></div>
-        <v-menu location="top center" :close-on-content-click="false">
+        <div :style="`width: ${rowLabelWidth}px;`">
+        </div>
+        <v-menu location="bottom center" :close-on-content-click="false">
             <template v-slot:activator="{ props }">
                 <v-btn
                     color="primary"
                     v-bind="props"
                     :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
-                    variant="tonal"
                     size="small"
+                    variant="elevated"
                     @click="addRows()"
+                    prepend-icon="mdi-plus"
+                    text="Add species"
                 >
-                    <v-icon>mdi-plus</v-icon>
                 </v-btn>
             </template>
             <slot name="row-selector"></slot>
@@ -63,6 +58,7 @@
 <script setup lang="ts">
 import * as d3 from 'd3';
 import {computed, ComputedRef, onMounted, ref, watch} from "vue";
+import {useDebounceFn} from "@vueuse/core";
 
 const {
     data,
@@ -76,8 +72,7 @@ const {
     labelFontWeight = "500",
     labelColor = "#353535",
     minColor = "#EEEEEE",
-    maxColor = "#2196F3",
-    placeholder = false
+    maxColor = "#2196F3"
 } = defineProps<{
     // All cells (with a value between 0 and 1) that should be rendered in the heatmap.
     data: number[][],
@@ -102,9 +97,7 @@ const {
     // Fill color of cells corresponding to value 0.0
     minColor?: string,
     // Fill color of cells corresponding to value 1.0
-    maxColor?: string,
-    // Should the heatmap be shown in placeholder mode (and thus made semi-blurred)?
-    placeholder: boolean
+    maxColor?: string
 }>();
 
 const emits = defineEmits<{
@@ -125,6 +118,10 @@ const heatmapContainer = ref<HTMLElement>();
  * width.
  */
 const rowLabelWidth: ComputedRef<number> = computed(() => {
+    if (rowNames.length === 0) {
+        return 250;
+    }
+
     return Math.min(
         Math.max(...rowNames.map((name: string) => computeTextWidth(name, labelFontSize, labelFontFamily, labelFontWeight))) + 2 * labelSpacing,
         250
@@ -176,10 +173,6 @@ const stopGhostingRow = (rowIdx: number) => {
 }
 
 const highlightCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
-    if (placeholder) {
-        return;
-    }
-
     d3.selectAll(".unipept-heatmap .cell").classed("ghost", true);
     d3.select(currentCell).classed("ghost", false);
     d3.select(currentCell).classed("highlighted-cell", true);
@@ -240,8 +233,6 @@ const ellipsizeString = (
 }
 
 const renderHeatmap = () => {
-    console.log(data);
-
     // Clear the heatmap container
     d3.select(heatmapContainer.value!)
         .selectAll("*")
@@ -250,7 +241,6 @@ const renderHeatmap = () => {
     const svg = d3.select(heatmapContainer.value!)
         .append("svg")
         .classed(className, true)
-        .classed('placeholder-mode', placeholder)
         .attr("version", "1.1")
         .attr("xmlns", "http://www.w3.org/2000/svg")
         .attr("viewBox", `0 0 ${containerWidth.value} ${containerHeight.value}`)
@@ -273,9 +263,14 @@ const renderHeatmap = () => {
             `
         );
 
-    renderColumnLabels(svg);
-    renderRowLabels(svg);
-    renderGrid(svg);
+    if (colNames.length > 0) {
+        renderColumnLabels(svg);
+    }
+
+    if (rowNames.length > 0) {
+        renderRowLabels(svg);
+        renderGrid(svg);
+    }
 };
 
 const renderColumnLabels = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undefined>) => {
@@ -387,21 +382,23 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
         });
 };
 
+const debouncedRender = useDebounceFn(renderHeatmap, 100);
+
 onMounted(() => {
-    renderHeatmap();
+    debouncedRender();
 });
 
 watch(() => rowNames, () => {
-    renderHeatmap();
-});
+    debouncedRender();
+}, { deep: true });
 
 watch(() => colNames, () => {
-    renderHeatmap();
-});
+    debouncedRender();
+}, { deep: true });
 
 watch(() => data, () => {
-    renderHeatmap();
-});
+    debouncedRender();
+}, { deep: true });
 </script>
 
 <style>
@@ -413,12 +410,6 @@ watch(() => data, () => {
 .unipept-heatmap .highlighted-cell {
     stroke-width: 2px;
     stroke: gray;
-}
-
-.unipept-heatmap.placeholder-mode {
-    filter: blur(4px);
-    opacity: 0.3;
-    pointer-events: none;
 }
 </style>
 

@@ -11,10 +11,11 @@
                 </v-list-item>
                 <v-list-item>
                     <v-select
-                        label="Feature type"
+                        label="Rank"
                         density="comfortable"
-                        :items="featureTypes"
-                        v-model="selectedFeatureType"
+                        variant="underlined"
+                        :items="taxonomicRankOptions"
+                        v-model="selectedTaxonomicRank"
                         hide-details
                     />
                 </v-list-item>
@@ -34,10 +35,10 @@
                     <v-col :cols="6">
                         <div ref="heatmapWrapper" class="mx-4 mb-4">
                             <heatmap
-                                :data="rows.length === 0 ? placeholderRows : rows"
-                                :row-names="rows.length === 0 ? placeholderRowNames : rowNames"
+                                :data="rows"
+                                :row-names="rowNames"
                                 :col-names="colNames"
-                                :placeholder="rows.length === 0"
+                                @deselect-row="removeRow"
                             >
                                 <template #row-selector>
                                     <v-unipept-card style="width: 800px;" elevation="10">
@@ -54,12 +55,23 @@
                                                 @click.stop
                                             />
                                             <v-data-table
-                                                :items="matchingItems"
+                                                :items="[...featureSummaries.values()]"
                                                 :headers="featureTableHeaders"
-                                                density="compact"
+                                                :sort-by="sortByItems"
+                                                multi-sort
                                                 items-per-page="5"
                                                 :items-per-page-options="[5, 10, -1]"
+                                                density="compact"
+                                                :custom-key-sort="{
+                                                    'matchingSamples': customMatchingSamplesSort
+                                                }"
                                             >
+                                                <template #item.matchingSamples="{ item }">
+                                                    {{ item.matchingSamples.length }}
+                                                </template>
+                                                <template #item.averageRelativeAbundance="{ item }">
+                                                    {{ (item.averageRelativeAbundance * 100).toFixed(2) }}%
+                                                </template>
                                                 <template #item.action="{ item }">
                                                     <v-btn
                                                         color="primary"
@@ -67,6 +79,7 @@
                                                         variant="text"
                                                         prepend-icon="mdi-plus"
                                                         text="Add"
+                                                        @click="addRow(item)"
                                                     >
                                                     </v-btn>
                                                 </template>
@@ -115,11 +128,27 @@ import {computed, ComputedRef, nextTick, onMounted, Ref, ref, watch} from "vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import DownloadImage from "@/components/image/DownloadImage.vue";
 import Heatmap from "@/components/visualization/heatmap/Heatmap.vue";
+import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
+import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+import {useDebounceFn} from "@vueuse/core";
 
-interface FeatureItem {
+interface FeatureSummary {
     name: string,
-    matchingSamples: number,
-    averageRelativeAbundance: number
+    matchingSamples: string[],
+    averageRelativeAbundance: number,
+    // Maps analysis ID onto the corresponding feature item
+    items: Map<string, FeatureItem<NcbiTaxon>>
+}
+
+interface FeatureItem<T> {
+    id: number,
+    // Absolute count of peptides directly associated to this feature item.
+    peptideCount: number,
+    // Number between 0 and 1 (both inclusive) that indicates the normalized abundance of this feature item in
+    // comparison with all its other items in the same category.
+    relativeAbundance: number,
+    data: T
 }
 
 const useAbsoluteValues = ref(false);
@@ -133,13 +162,11 @@ const props = defineProps<{
     analyses: SingleAnalysisStore[]
 }>();
 
-const featureTypes: string[] = [
-    "NCBI Taxonomy",
-    "Gene Ontology",
-    "EC Numbers"
-];
+const taxonomicRankOptions: Ref<string[]> = ref(
+    Object.values(NcbiRank)
+);
 
-const selectedFeatureType: Ref<string> = ref(featureTypes[0]);
+const selectedTaxonomicRank: Ref<string> = ref("species");
 
 const featureSearchValue: Ref<string> = ref("");
 
@@ -151,8 +178,8 @@ const featureTableHeaders: any = [
         sortable: true,
         width: "60%"
     }, {
-        title: "Matching samples",
-        align: "center",
+        title: "Matching Samples",
+        align: "end",
         value: "matchingSamples",
         sortable: true,
         width: "15%"
@@ -171,79 +198,171 @@ const featureTableHeaders: any = [
     }
 ];
 
+const sortByItems: Ref<SortItem[]> = ref([
+    {
+        key: 'matchingSamples',
+        order: 'desc'
+    }, {
+        key: 'averageRelativeAbundance',
+        order: 'desc'
+    }
+]);
+
+const customMatchingSamplesSort = (a: string[], b: string[]) => {
+    const valueA = a.length;
+    const valueB = b.length;
+
+    if (valueA === valueB) {
+        return 0
+    } else {
+        return valueA < valueB ? -1 : 1;
+    }
+};
 
 const rows: Ref<number[][]> = ref([]);
-
 const rowNames: Ref<string[]> = ref([]);
 
+// The columns of the heatmap always correspond to the selected analyses
 const colNames = computed(() => props.analyses.map(a => a.name));
 
-// When no rows are selected by the user, we show a placeholder heatmap in gray scale, containing random row values
-const placeholderRows: ComputedRef<number[][]> = computed(() => {
-    const rows = [];
-    for (let i = 0; i < 10; i++) {
-        const row = [];
-        for (let j = 0; j < props.analyses.length; j++) {
-            row.push(Math.random())
+const featureItems: Ref<Map<string, FeatureItem<NcbiTaxon>[]>> = ref(new Map());
+const featureSummaries: Ref<Map<number, FeatureSummary>> = ref(new Map());
+
+/**
+ * This function regenerates all input data for the heatmap and should be called whenever the user selects a different
+ * feature source (i.e. changes the rank, ...) or when the user selects a different collection of samples for the
+ * comparison.
+ */
+const initializeData = () => {
+    // Recompute the features
+    featureItems.value = computeFeatureObjects();
+    featureSummaries.value = summarizeFeatures(featureItems.value);
+
+    // Select the top 5 most abundant features for the initial state of the heatmap.
+    const topFeatures = [...featureSummaries.value.values()].sort((a, b) => {
+        if (b.matchingSamples.length !== a.matchingSamples.length) {
+            return b.matchingSamples.length - a.matchingSamples.length;
         }
-        rows.push(row);
+        return b.averageRelativeAbundance - a.averageRelativeAbundance;
+    }).slice(0, 5);
+
+    for (const feature of topFeatures) {
+        addRow(feature);
     }
-    return rows;
+};
+
+/**
+ * Construct the data objects for the currently selected samples and settings for this comparative heatmap. These
+ * objects are structured per analysis (and includes all objects that are actually associated with the selected analysis
+ * and the currently configured filters).
+ */
+const computeFeatureObjects = () => {
+    // Maps analysis ID onto a list of its computed feature objects.
+    const featuresPerAnalysis: Map<string, FeatureItem<NcbiTaxon>[]> = new Map();
+
+    for (const analysis of props.analyses) {
+        const ncbiOntology = analysis.ontologyStore.ncbiOntology;
+        const features: FeatureItem<NcbiTaxon>[] = [];
+
+        let maxCount: number = 0;
+
+        analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
+            if (x && x.extra.rank === selectedTaxonomicRank.value) {
+                const taxonObj = ncbiOntology.get(x.id);
+
+                if (!taxonObj || !taxonObj.name.toLowerCase().includes(featureSearchValue.value.toLowerCase())) {
+                    return;
+                }
+
+                if (x.count > maxCount) {
+                    maxCount = x.count;
+                }
+
+                features.push({
+                    id: x.id,
+                    peptideCount: x.count,
+                    // Temporary set this to 0, will be recomputed later when the max peptide count is known.
+                    relativeAbundance: 0,
+                    data: taxonObj
+                });
+            }
+        });
+
+        // At this point, we actually know the max peptide count and we can actually compute the relative abundance.
+        for (const featureItem of features) {
+            featureItem.relativeAbundance = featureItem.peptideCount / maxCount;
+        }
+
+        featuresPerAnalysis.set(analysis.id, features);
+    }
+
+    return featuresPerAnalysis;
+}
+
+/**
+ *
+ * @param featuresPerAnalysis
+ */
+const summarizeFeatures = (
+    featuresPerAnalysis: Map<string, FeatureItem<NcbiTaxon>[]>
+): Map<number, FeatureSummary> => {
+    const features = new Map<number, FeatureSummary>();
+
+    for (const [analysisId, featureItems] of featuresPerAnalysis) {
+        for (const featureItem of featureItems) {
+            if (!features.has(featureItem.id)) {
+                features.set(featureItem.id, {
+                    name: featureItem.data.name,
+                    matchingSamples: [analysisId],
+                    averageRelativeAbundance: featureItem.relativeAbundance,
+                    items: new Map<string, FeatureItem<NcbiTaxon>>([[analysisId, featureItem]])
+                });
+            } else {
+                const featureObj = features.get(featureItem.id)!;
+                featureObj.averageRelativeAbundance = ((featureObj.averageRelativeAbundance * featureObj.matchingSamples.length) + featureItem.relativeAbundance) / (featureObj.matchingSamples.length + 1);
+                featureObj.matchingSamples.push(analysisId);
+                featureObj.items.set(analysisId, featureItem);
+            }
+        }
+    }
+
+    return features;
+}
+
+const addRow = (summary: FeatureSummary) => {
+    const rowData = [];
+
+    for (const analysis of props.analyses) {
+        rowData.push(summary.items.get(analysis.id)?.relativeAbundance || 0);
+    }
+
+    rows.value.push(rowData);
+    rowNames.value.push(summary.name);
+};
+
+const removeRow = (index: number) => {
+    rows.value.splice(index, 1);
+    rowNames.value.splice(index, 1);
+}
+
+const debouncedInit = useDebounceFn(initializeData, 100);
+
+onMounted(() => {
+    debouncedInit();
 });
 
-const placeholderRowNames: string[] = [
-    "Escherichia coli",
-    "Staphylococcus aureus",
-    "Bacillus subtilis",
-    "Salmonella enterica",
-    "Pseudomonas aeruginosa",
-    "Streptococcus pneumoniae",
-    "Mycobacterium tuberculosis",
-    "Lactobacillus acidophilus",
-    "Clostridium difficile",
-    "Helicobacter pylori"
-];
+watch(() => selectedTaxonomicRank, () => {
+    debouncedInit();
+});
+
+watch(() => props.analyses, () => {
+    debouncedInit();
+})
 
 watch(() => props.analyses, async () => {
     await nextTick();
     svg.value = heatmapWrapper.value?.querySelector("svg") as SVGElement;
 }, { immediate: true });
-
-const matchingItems: ComputedRef<FeatureItem[]> = computed(() => {
-    if (selectedFeatureType.value === "NCBI Taxonomy") {
-        // TODO: instead of only showing the lowest common ancestor here, we should also properly take into account
-        // TODO: higher ranks using the NCBI tree that can be selected (and correctly propagate their counts).
-
-        // Maps LCA taxon ID onto it's peptide count and sample count
-        const features = new Map<number, FeatureItem>();
-
-        for (const analysis of props.analyses) {
-            const ncbiOntology = analysis.ontologyStore.ncbiOntology;
-            for (const [lca, lcaCount] of analysis.lcaTable!.counts) {
-                const taxonObj = ncbiOntology.get(lca);
-
-                if (!taxonObj || !taxonObj.name.toLowerCase().includes(featureSearchValue.value.toLowerCase())) {
-                    continue;
-                }
-
-                if (!features.has(lca)) {
-                    features.set(lca, {
-                        name: taxonObj.name,
-                        matchingSamples: 1,
-                        averageRelativeAbundance: 0
-                    });
-                } else {
-                    const featureObj = features.get(lca)!;
-                    featureObj.matchingSamples += 1;
-                }
-            }
-        }
-
-        return [...features.values()];
-    }
-
-    return [];
-});
 </script>
 
 <style>

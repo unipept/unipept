@@ -119,16 +119,16 @@
     const initializeSpeciesBar = () => {
         const createdBars = [];
         for (const analysis of props.analyses) {
-            const nodesAtSpecies: NcbiTreeNode[] = [];
+            const nodesAtRank: NcbiTreeNode[] = [];
             analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
                 if (x && x.extra.rank === selectedTaxonomicRank.value) {
-                    nodesAtSpecies.push(x);
+                    nodesAtRank.push(x);
                 }
             });
 
             const items: BarItem[] = [];
 
-            for (const speciesNode of nodesAtSpecies) {
+            for (const speciesNode of nodesAtRank) {
                 items.push({
                     label: speciesNode.name,
                     counts: speciesNode.count
