@@ -14,7 +14,7 @@
                     <v-unipept-card class="step-card">
                         <v-card-title class="step-title">
                             <v-icon color="primary" class="mr-2">mdi-folder-plus</v-icon>
-                            Step 1: Create a new group
+                            Step 1: Create a group
                         </v-card-title>
 
                         <v-card-text>

@@ -96,7 +96,9 @@ const manageSamples = defineModel<boolean | undefined>("manage-samples", { defau
 const newDialogOpen = ref(false);
 
 const addGroup = (name: string) => {
-    project.addGroup(name);
+    const groupId = project.addGroup(name);
+    selectGroup(groupId);
+    manageSamples.value = true;
 }
 
 const updateGroup = (groupId: string, updatedName: string) => {
