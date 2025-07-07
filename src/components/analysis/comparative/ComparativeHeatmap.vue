@@ -19,12 +19,15 @@
                         hide-details
                     />
                 </v-list-item>
-                <v-list-item class="mb-n2">
-                    <v-checkbox
-                        v-model="useRelativeAbundances"
-                        label="Use relative abundances"
-                        color="primary"
-                        density="compact"
+                <v-list-item class="mt-2">
+                    <v-select
+                        label="Normalization"
+                        density="comfortable"
+                        variant="underlined"
+                        :items="normalizationTypes"
+                        item-title="description"
+                        item-value="type"
+                        v-model="selectedNormalizationType"
                         hide-details
                     />
                 </v-list-item>
@@ -57,7 +60,10 @@
                                             <span class="font-weight-bold">Absolute peptide count:</span> {{ rows[selectedRow].peptideCount[selectedCol] }} peptides
                                         </div>
                                         <div>
-                                            <span class="font-weight-bold">Relative abundance:</span> {{ (rows[selectedRow].relativeAbundances[selectedCol] * 100).toFixed(2) }}%
+                                            <span class="font-weight-bold">Relative abundance:</span>
+                                            {{
+                                                (rows[selectedRow].columnWiseAbundances[selectedCol] * 100).toFixed(2)
+                                            }}%
                                         </div>
                                     </template>
                                 </template>
@@ -203,17 +209,8 @@
                                                 height="20"
                                                 color="primary"
                                             >
-                                                <span
-                                                    v-if="useFixedColorScale"
-                                                    :style="{ 'font-size': '12px' }"
-                                                >
+                                                <span :style="{ 'font-size': '12px' }">
                                                     {{ item.label }}
-                                                </span>
-                                                <span
-                                                    v-else
-                                                    :style="{ 'font-size': '12px' }"
-                                                >
-                                                    {{ (item.abundance * 100).toFixed(2) }}% ({{ item.label }})
                                                 </span>
                                             </v-progress-linear>
                                         </td>
@@ -254,22 +251,38 @@ import {useDebounceFn} from "@vueuse/core";
 
 type FeatureId = number | string;
 
-interface FeatureItem<T> {
-    id: FeatureId,
-    // Absolute count of peptides directly associated to this feature item.
-    peptideCount: number,
-    // Number between 0 and 1 (both inclusive) that indicates the normalized abundance of this feature item in
-    // comparison with all its other items in the same category.
-    relativeAbundance: number,
-    data: T
-}
-
 /**
  * ** General settings for the comparative heatmap **
  */
 
 const useFixedColorScale = ref(true);
-const useRelativeAbundances = ref(true);
+
+enum NormalizationType {
+    ColumnWise,
+    RowWise,
+    None
+}
+
+interface NormalizationItem {
+    type: NormalizationType,
+    description: string
+}
+
+const normalizationTypes: Ref<NormalizationItem[]> = ref([
+    {
+        type: NormalizationType.ColumnWise,
+        description: "Normalize per sample (column-wise)"
+    },
+    {
+        type: NormalizationType.RowWise,
+        description: "Normalize per organism (row-wise)"
+    },
+    {
+        type: NormalizationType.None,
+        description: "No normalization"
+    }
+]);
+const selectedNormalizationType: Ref<NormalizationType> = ref(NormalizationType.ColumnWise);
 
 const downloadImageModalOpen = ref(false);
 
@@ -297,24 +310,35 @@ interface FeatureData {
     name: string,
     matchingSamples: number,
     /**
-     * An array with the same length as the amount of selected samples. Order of these values is the same as the sample
-     * order.
+     * An array with the same length as the amount of selected samples.
+     *
+     * Each item in this array corresponds to analysis at that position in the analyses prop.
      */
     peptideCount: number[],
     /**
-     * An array with the same length as the amount of selected samples. Order of these abundances is the same as the
-     * sample order.
+     * Array with peptide counts normalized over all rows (i.e. column-wise normalization). Divides each organism’s
+     * abundance by the total peptide count in its sample. This shows the organism’s relative importance within each
+     * sample, making samples comparable even when they differ in size or sequencing depth.
+     *
+     * Each item in this array corresponds to analysis at that position in the analyses prop.
      */
-    relativeAbundances: number[]
+    columnWiseAbundances: number[],
+    /**
+     * Divides each abundance value by the total count for that organism across all samples. This highlights how an
+     * organism’s signal is distributed across the dataset, helping you detect condition- or sample-specific expression
+     * patterns.
+     *
+     * Each item in this array corresponds to analysis at that position in the analyses prop.
+     */
+    rowWiseAbundances: number[]
 }
 
 const featureItems: ComputedRef<Map<FeatureId, FeatureData>> = computed(() => {
     const items = new Map<FeatureId, FeatureData>();
+    const totalPeptideCountPerSample = new Array(props.analyses.length).fill(0);
 
     for (const [analysisIdx, analysis] of props.analyses.entries()) {
         const ncbiOntology = analysis.ontologyStore.ncbiOntology;
-
-        let totalCount: number = 0;
 
         const taxaIds: number[] = [];
 
@@ -333,7 +357,8 @@ const featureItems: ComputedRef<Map<FeatureId, FeatureData>> = computed(() => {
                         name: taxonObj.name,
                         matchingSamples: 0,
                         peptideCount: new Array(props.analyses.length).fill(0),
-                        relativeAbundances: new Array(props.analyses.length).fill(0)
+                        columnWiseAbundances: new Array(props.analyses.length).fill(0),
+                        rowWiseAbundances: new Array(props.analyses.length).fill(0)
                     });
                 }
 
@@ -341,17 +366,21 @@ const featureItems: ComputedRef<Map<FeatureId, FeatureData>> = computed(() => {
 
                 dataObj.matchingSamples += 1;
                 dataObj.peptideCount[analysisIdx] = x.count;
-                totalCount += x.count;
                 taxaIds.push(taxonObj.id);
+                totalPeptideCountPerSample[analysisIdx] += x.count;
             }
         });
+    }
 
-        // Now that we have all of these, we can also compute the relative abundance and update the data objects
-        // constructed in the previous step.
-        for (const taxonId of taxaIds) {
-            const dataObj = items.get(taxonId)!;
-            dataObj.relativeAbundances[analysisIdx] = dataObj.peptideCount[analysisIdx] / totalCount;
+    // Now that we have all information, we can compute the relative abundance values
+    for (const [taxonId, dataObj] of items.entries()) {
+        for (let analysisIdx = 0; analysisIdx < props.analyses.length; analysisIdx++) {
+            dataObj.columnWiseAbundances[analysisIdx] = dataObj.peptideCount[analysisIdx] / totalPeptideCountPerSample[analysisIdx];
         }
+
+        // Compute the sum of this row
+        const rowSum = dataObj.peptideCount.reduce((a, b) => a + b, 0);
+        dataObj.rowWiseAbundances = dataObj.peptideCount.map(x => x / rowSum);
     }
 
     return items;
@@ -369,28 +398,59 @@ const colNames: ComputedRef<string[]> = computed(() => props.analyses.map(a => a
  * and take into account the normalization settings that are selected by the end user.
  */
 const rowData: ComputedRef<number[][]> = computed(() => {
-    if (useRelativeAbundances.value) {
+    if (selectedNormalizationType.value === NormalizationType.None) {
+        // We still need to map these values to the [0, 1]-range for the visualization itself.
+        let minimum = Number.POSITIVE_INFINITY;
+        let maximum = 0;
+
         if (useFixedColorScale.value) {
-            return rows.value.map(row => [...row.relativeAbundances]);
+            // We look for the global minimum and maximum and use that to generate the [0, 1]-values
+            for (const [taxonId, dataObj] of featureItems.value.entries()) {
+                minimum = Math.min(minimum, ...dataObj.peptideCount);
+                maximum = Math.max(maximum, ...dataObj.peptideCount);
+            }
         } else {
-            // We have to recompute the max and min of all selected relative abundances for the actual visualization
+            // We only look for the minimum and maximum amongst the visible cells
+            for (const row of rows.value) {
+                minimum = Math.min(minimum, ...row.peptideCount);
+                maximum = Math.max(maximum, ...row.peptideCount);
+            }
+        }
+
+        // Now we do the actual computation to map all values within the desired range
+        return rows.value.map(row => row.peptideCount.map(x => (x - minimum) / (maximum - minimum)));
+    } else if (selectedNormalizationType.value === NormalizationType.ColumnWise) {
+        if (useFixedColorScale.value) {
+            // We can simply return the pre-computed column-wise abundances
+            return rows.value.map(row => row.columnWiseAbundances);
+        } else {
+            // We have to find the min and max of the column-wise abundances and remap those to the [0, 1]-range
             let minValue = 1;
             let maxValue = 0;
 
             for (const row of rows.value) {
-                minValue = Math.min(minValue, ...row.relativeAbundances);
-                maxValue = Math.max(maxValue, ...row.relativeAbundances);
+                minValue = Math.min(minValue, ...row.columnWiseAbundances);
+                maxValue = Math.max(maxValue, ...row.columnWiseAbundances);
             }
 
-            return rows.value.map(row => row.relativeAbundances.map(x => (x - minValue) / (maxValue - minValue)));
+            return rows.value.map(row => row.columnWiseAbundances.map(x => (x - minValue) / (maxValue - minValue)));
         }
     } else {
         if (useFixedColorScale.value) {
-            return [];
+            return rows.value.map(row => [...row.rowWiseAbundances]);
+        } else {
+            // We have to find the min and max of the column-wise abundances and remap those to the [0, 1]-range
+            let minValue = 1;
+            let maxValue = 0;
+
+            for (const row of rows.value) {
+                minValue = Math.min(minValue, ...row.rowWiseAbundances);
+                maxValue = Math.max(maxValue, ...row.rowWiseAbundances);
+            }
+
+            return rows.value.map(row => row.rowWiseAbundances.map(x => (x - minValue) / (maxValue - minValue)));
         }
     }
-
-    return [];
 });
 
 /**
@@ -457,7 +517,7 @@ const tableFeatures: ComputedRef<TableFeature[]> = computed(() => {
             id: x.id,
             name: x.name,
             matchingSamples: x.matchingSamples,
-            averageRelativeAbundance: x.relativeAbundances.reduce((a, b) => a + b, 0) / x.matchingSamples
+            averageRelativeAbundance: x.columnWiseAbundances.reduce((a, b) => a + b, 0) / x.matchingSamples
         }
     })];
 });
@@ -491,8 +551,8 @@ const selectedCellSummary: ComputedRef<{ sampleName: string, label: string, abun
     for (const [col, analysis] of props.analyses.entries()) {
         output.push({
             sampleName: analysis.name,
-            label: (rows.value[selectedCell.value.rowIdx].relativeAbundances[col] * 100).toFixed(2) + "%",
-            abundance: rowData.value[selectedCell.value.rowIdx][col]
+            label: (rows.value[selectedCell.value.rowIdx].columnWiseAbundances[col] * 100).toFixed(2) + "%",
+            abundance: rows.value[selectedCell.value.rowIdx].columnWiseAbundances[col]
         })
     }
 
