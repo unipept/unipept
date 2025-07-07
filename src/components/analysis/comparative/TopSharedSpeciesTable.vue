@@ -64,7 +64,7 @@
                             </span>
 
                             <span v-else>
-                                <v-icon color="error" class="mr-1" style="cursor: pointer;">
+                                <v-icon color="red" class="mr-1" style="cursor: pointer;">
                                     mdi-close
                                 </v-icon>
                                 {{ item.name }} was not found in sample {{ analysis.name }}

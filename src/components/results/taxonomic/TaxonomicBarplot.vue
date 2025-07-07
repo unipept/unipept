@@ -32,7 +32,7 @@
                         v-model="taxonCount"
                     />
                 </v-list-item>
-                <v-list-item>
+                <v-list-item class="mb-n2">
                     <v-checkbox
                         v-model="useAbsoluteValues"
                         label="Use absolute peptide counts"

@@ -86,6 +86,7 @@ const {
     labelColor = "#353535",
     minColor = "#EEEEEE",
     maxColor = "#2196F3",
+    selectedStrokeColor = "black",
     tooltipDelay = 500
 } = defineProps<{
     // All cells (with a value between 0 and 1) that should be rendered in the heatmap.
@@ -112,6 +113,8 @@ const {
     minColor?: string,
     // Fill color of cells corresponding to value 1.0
     maxColor?: string,
+    // Color of the stroke of a selected cell. Should ideally be a bit darker than the maxColor.
+    selectedStrokeColor?: string,
     // Before open delay of the tooltip
     tooltipDelay?: number,
 }>();
@@ -121,7 +124,6 @@ const emits = defineEmits<{
     (e: 'deselect-col', colIdx: number): void;
     (e: 'select-rows'): void;
     (e: 'select-cols'): void;
-    (e: 'click-cell', rowIdx: number, colIdx: number): void;
 }>();
 
 const className: string = "unipept-heatmap";
@@ -132,6 +134,7 @@ const highlightedCell: Ref<{ rowIdx: number, colIdx: number }> = ref({
     rowIdx: -1,
     colIdx: -1
 });
+const selectedCell = defineModel("selected-cell", { default: { rowIdx: -1, colIdx: -1 } });
 
 const heatmapContainer = ref<HTMLElement>();
 
@@ -212,6 +215,17 @@ const stopHighlightingCell = (currentCell: HTMLElement, rowIdx: number, colIdx: 
     d3.selectAll(".unipept-heatmap .row-label").classed("ghost", false);
     d3.selectAll(".unipept-heatmap .header-label").classed("ghost", false);
     d3.select(".unipept-heatmap .highlighted-cell").classed("highlighted-cell", false);
+}
+
+const selectCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
+    d3.selectAll(".unipept-heatmap .cell").classed("selected-cell", false);
+    d3.select(currentCell).classed("selected-cell", true);
+    selectedCell.value = { rowIdx, colIdx };
+}
+
+const stopSelectedCell = () => {
+    d3.selectAll(".unipept-heatmap .cell").classed("selected-cell", false);
+    selectedCell.value = { rowIdx: -1, colIdx: -1 };
 }
 
 let tooltipTimeout: NodeJS.Timeout | undefined;
@@ -431,8 +445,14 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
             const overlay = event.target as HTMLElement;
             const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
             const rowIdx = parseInt(overlay.parentElement!.getAttribute("data-row-item")!);
+            const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
-            emits("click-cell", rowIdx, colIdx);
+            // Toggle the cell selection if it has already been selected by the user
+            if (selectedCell.value.rowIdx === rowIdx && selectedCell.value.colIdx === colIdx) {
+                stopSelectedCell();
+            } else {
+                selectCell(cell, rowIdx, colIdx);
+            }
         });
 };
 
@@ -464,6 +484,11 @@ watch(() => data, () => {
 .unipept-heatmap .highlighted-cell {
     stroke-width: 2px;
     stroke: gray;
+}
+
+.unipept-heatmap .selected-cell {
+    stroke-width: 2px;
+    stroke: v-bind(selectedStrokeColor);
 }
 </style>
 

@@ -19,16 +19,7 @@
                         hide-details
                     />
                 </v-list-item>
-                <v-list-item class="mb-n2">
-                    <v-checkbox
-                        v-model="useAbsoluteValues"
-                        label="Use absolute peptide counts"
-                        color="primary"
-                        density="compact"
-                        hide-details
-                    />
-                </v-list-item>
-                <v-list-item style="height: 36px;">
+                <v-list-item>
                     <v-checkbox
                         v-model="rescaleHeatmapColors"
                         label="Rescale colors?"
@@ -48,6 +39,7 @@
                                 :row-names="rowNames"
                                 :col-names="colNames"
                                 @deselect-row="removeRow"
+                                v-model:selected-cell="selectedCell"
                             >
                                 <template #tooltip-content="{ selectedRow, selectedCol }">
                                     <template v-if="selectedCol !== -1 && selectedRow !== -1">
@@ -167,14 +159,68 @@
                         </div>
                     </div>
                     <v-divider vertical class="mb-2"/>
-                    <div class="flex-grow-1">
-<!--                        <div class="text-h5 mt-2">Cell details</div>-->
+                    <div class="flex-grow-1 mr-8">
                         <v-empty-state
+                            v-if="selectedCell.rowIdx === -1"
                             icon="mdi-cursor-default-click"
                             color="grey-lighten-1"
                             title="No cell selected"
                             text="Select a cell from the heatmap on the left to get a detailed information overview."
                         />
+                        <div v-else>
+                            <div class="d-flex align-center my-2">
+                                <div class="text-h5">{{ colNames[selectedCell.colIdx] }} • {{ rowNames[selectedCell.rowIdx] }}</div>
+                            </div>
+                            <h3 class="mb-2">
+                                Cell details
+                            </h3>
+                            <h3 class="mb-2">
+                                {{ selectedTaxonomicRank.charAt(0).toUpperCase() + selectedTaxonomicRank.slice(1) }}
+                                abundance across samples
+                            </h3>
+                            <div>
+                                <table style="width: 100%; table-layout: fixed;">
+                                    <colgroup>
+                                        <col style="width: 200px;">
+                                        <col style="width: auto;">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr v-for="(item, idx) of selectedCellSummary!" :key="idx">
+                                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                            <span style="font-size: 14px;">
+                                                {{ item.sampleName }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <v-progress-linear
+                                                :model-value="item.abundance * 100"
+                                                height="20"
+                                                color="primary"
+                                            >
+                                                <span
+                                                    v-if="rescaleHeatmapColors"
+                                                    :style="{ 'font-size': '12px' }"
+                                                >
+                                                        {{ (item.abundance * 100).toFixed(2) }}% ({{ item.label }})
+                                                    </span>
+                                                <span
+                                                    v-else
+                                                    :style="{ 'font-size': '12px' }"
+                                                >
+                                                    {{ item.label }}
+                                                </span>
+                                            </v-progress-linear>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+<!--                            <h3 class="mt-4">Associated peptides</h3>-->
+<!--                            <v-data-table>-->
+
+<!--                            </v-data-table>-->
+                        </div>
                     </div>
                 </div>
             </template>
@@ -218,7 +264,6 @@ interface FeatureItem<T> {
     data: T
 }
 
-const useAbsoluteValues = ref(false);
 const rescaleHeatmapColors = ref(false);
 
 const downloadImageModalOpen = ref(false);
@@ -233,6 +278,8 @@ const props = defineProps<{
 const taxonomicRankOptions: Ref<string[]> = ref(
     Object.values(NcbiRank)
 );
+
+const selectedCell: Ref<{rowIdx: number, colIdx: number}> = ref({rowIdx: -1, colIdx: -1});
 
 const selectedTaxonomicRank: Ref<string> = ref("species");
 
@@ -338,13 +385,42 @@ const rowNames: Ref<string[]> = ref([]);
 // The columns of the heatmap always correspond to the selected analyses
 const colNames = computed(() => props.analyses.map(a => a.name));
 
+// Maps analysis ID onto all feature items for that analysis (i.e. all of it's taxa)
 const featureItems: Ref<Map<string, FeatureItem<NcbiTaxon>[]>> = ref(new Map());
+// Maps an LCA ID onto the corresponding summary over all analyses
 const featureSummaries: Ref<Map<number, FeatureSummary>> = ref(new Map());
 
 const getFeatureItem = (rowIdx: number, colIdx: number): FeatureItem<NcbiTaxon> | undefined => {
     const analysis = props.analyses[colIdx];
     return featureItems.value.get(analysis.id)?.find(item => item.data.name === rowNames.value[rowIdx]);
 }
+
+const selectedCellSummary: ComputedRef<{ sampleName: string, label: string, abundance: number }[] | undefined> = computed(() => {
+    if (selectedCell.value.rowIdx === -1 || selectedCell.value.colIdx === -1) {
+        return undefined;
+    }
+
+
+    const lcaId = getFeatureItem(selectedCell.value.rowIdx, selectedCell.value.colIdx)?.id;
+
+    if (!lcaId) {
+        return undefined;
+    }
+
+    const output = [];
+
+    const items = featureSummaries.value.get(lcaId)?.items;
+    for (const [col, analysis] of props.analyses.entries()) {
+        const dataPoint = items?.get(analysis.id)
+        output.push({
+            sampleName: analysis.name,
+            label: ((dataPoint?.relativeAbundance || 0) * 100).toFixed(2) + "%",
+            abundance: rescaledRows.value[selectedCell.value.rowIdx][col]
+        });
+    }
+
+    return output.sort((a: { sampleName: string, label: string, abundance: number }, b: { sampleName: string, label: string, abundance: number }) => b.abundance - a.abundance);
+});
 
 /**
  * This function regenerates all input data for the heatmap and should be called whenever the user selects a different
@@ -480,6 +556,10 @@ const removeRows = (rows: FeatureSummary[]) => {
         }
     }
 }
+
+const cellClicked = (rowIdx: number, colIdx: number) => {
+
+};
 
 const debouncedInit = useDebounceFn(initializeData, 100);
 
