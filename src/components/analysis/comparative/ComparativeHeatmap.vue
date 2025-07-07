@@ -19,10 +19,19 @@
                         hide-details
                     />
                 </v-list-item>
+                <v-list-item class="mb-n2">
+                    <v-checkbox
+                        v-model="useRelativeAbundances"
+                        label="Use relative abundances"
+                        color="primary"
+                        density="compact"
+                        hide-details
+                    />
+                </v-list-item>
                 <v-list-item>
                     <v-checkbox
-                        v-model="rescaleHeatmapColors"
-                        label="Rescale colors?"
+                        v-model="useFixedColorScale"
+                        label="Use fixed color scale"
                         color="primary"
                         density="compact"
                         hide-details
@@ -35,7 +44,7 @@
                     <div>
                         <div ref="heatmapWrapper" class="mx-4 mb-4">
                             <heatmap
-                                :data="rescaledRows"
+                                :data="rowData"
                                 :row-names="rowNames"
                                 :col-names="colNames"
                                 @deselect-row="removeRow"
@@ -45,10 +54,10 @@
                                     <template v-if="selectedCol !== -1 && selectedRow !== -1">
                                         <div class="text-subtitle-1">{{ analyses[selectedCol].name }} • {{ rowNames[selectedRow] }}</div>
                                         <div>
-                                            <span class="font-weight-bold">Absolute peptide count:</span> {{ getFeatureItem(selectedRow, selectedCol)?.peptideCount || 0 }} peptides
+                                            <span class="font-weight-bold">Absolute peptide count:</span> {{ rows[selectedRow].peptideCount[selectedCol] }} peptides
                                         </div>
                                         <div>
-                                            <span class="font-weight-bold">Relative abundance:</span> {{ ((getFeatureItem(selectedRow, selectedCol)?.relativeAbundance || 0) * 100).toFixed(2) }}%
+                                            <span class="font-weight-bold">Relative abundance:</span> {{ (rows[selectedRow].relativeAbundances[selectedCol] * 100).toFixed(2) }}%
                                         </div>
                                     </template>
                                 </template>
@@ -67,21 +76,18 @@
                                                 @click.stop
                                             />
                                             <v-data-table
-                                                :items="[...featureSummaries.values()]"
+                                                :items="tableFeatures"
                                                 :headers="featureTableHeaders"
                                                 :sort-by="sortByItems"
                                                 multi-sort
                                                 :items-per-page="currentItemsPerPage"
                                                 :items-per-page-options="[5, 10, -1]"
                                                 density="compact"
-                                                :custom-key-sort="{
-                                                    'matchingSamples': customMatchingSamplesSort
-                                                }"
                                                 :page="currentTablePage"
                                                 @update:current-items="updateVisibleItems"
                                             >
                                                 <template #item.matchingSamples="{ item }">
-                                                    {{ item.matchingSamples.length }}
+                                                    {{ item.matchingSamples }}
                                                 </template>
                                                 <template #item.averageRelativeAbundance="{ item }">
                                                     {{ (item.averageRelativeAbundance * 100).toFixed(2) }}%
@@ -198,16 +204,16 @@
                                                 color="primary"
                                             >
                                                 <span
-                                                    v-if="rescaleHeatmapColors"
+                                                    v-if="useFixedColorScale"
                                                     :style="{ 'font-size': '12px' }"
                                                 >
-                                                        {{ (item.abundance * 100).toFixed(2) }}% ({{ item.label }})
-                                                    </span>
+                                                    {{ item.label }}
+                                                </span>
                                                 <span
                                                     v-else
                                                     :style="{ 'font-size': '12px' }"
                                                 >
-                                                    {{ item.label }}
+                                                    {{ (item.abundance * 100).toFixed(2) }}% ({{ item.label }})
                                                 </span>
                                             </v-progress-linear>
                                         </td>
@@ -246,16 +252,10 @@ import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
 import {useDebounceFn} from "@vueuse/core";
 
-interface FeatureSummary {
-    name: string,
-    matchingSamples: string[],
-    averageRelativeAbundance: number,
-    // Maps analysis ID onto the corresponding feature item
-    items: Map<string, FeatureItem<NcbiTaxon>>
-}
+type FeatureId = number | string;
 
 interface FeatureItem<T> {
-    id: number,
+    id: FeatureId,
     // Absolute count of peptides directly associated to this feature item.
     peptideCount: number,
     // Number between 0 and 1 (both inclusive) that indicates the normalized abundance of this feature item in
@@ -264,7 +264,12 @@ interface FeatureItem<T> {
     data: T
 }
 
-const rescaleHeatmapColors = ref(false);
+/**
+ * ** General settings for the comparative heatmap **
+ */
+
+const useFixedColorScale = ref(true);
+const useRelativeAbundances = ref(true);
 
 const downloadImageModalOpen = ref(false);
 
@@ -278,28 +283,130 @@ const props = defineProps<{
 const taxonomicRankOptions: Ref<string[]> = ref(
     Object.values(NcbiRank)
 );
-
-const selectedCell: Ref<{rowIdx: number, colIdx: number}> = ref({rowIdx: -1, colIdx: -1});
-
 const selectedTaxonomicRank: Ref<string> = ref("species");
 
-const featureSearchValue: Ref<string> = ref("");
-
-const currentTablePage = ref(1);
-const currentItemsPerPage = ref(5);
-
-const visibleItems: Ref<FeatureSummary[]> = ref([]);
-
-const updateVisibleItems = (currentItems: any[]) => {
-    visibleItems.value = currentItems.map(i => i.raw);
-}
+/**
+ * ** Props and data required for rendering the heatmap itself **
+ */
 
 /**
- * Returns true if all the items of the currently shown row in the data table are already selected for the heatmap.
+ * Data that can directly be visualized by the heatmap.
  */
-const allInPageSelected = computed(() => {
-    return visibleItems.value.every(summary => rowNames.value.includes(summary.name));
+interface FeatureData {
+    id: FeatureId,
+    name: string,
+    matchingSamples: number,
+    /**
+     * An array with the same length as the amount of selected samples. Order of these values is the same as the sample
+     * order.
+     */
+    peptideCount: number[],
+    /**
+     * An array with the same length as the amount of selected samples. Order of these abundances is the same as the
+     * sample order.
+     */
+    relativeAbundances: number[]
+}
+
+const featureItems: ComputedRef<Map<FeatureId, FeatureData>> = computed(() => {
+    const items = new Map<FeatureId, FeatureData>();
+
+    for (const [analysisIdx, analysis] of props.analyses.entries()) {
+        const ncbiOntology = analysis.ontologyStore.ncbiOntology;
+
+        let totalCount: number = 0;
+
+        const taxaIds: number[] = [];
+
+        // First we retrieve some basic information of all organisms of the selected rank type
+        analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
+            if (x && x.extra.rank === selectedTaxonomicRank.value) {
+                const taxonObj = ncbiOntology.get(x.id);
+
+                if (!taxonObj || !taxonObj.name.toLowerCase().includes(featureSearchValue.value.toLowerCase())) {
+                    return;
+                }
+
+                if (!items.has(taxonObj.id)) {
+                    items.set(taxonObj.id, {
+                        id: taxonObj.id,
+                        name: taxonObj.name,
+                        matchingSamples: 0,
+                        peptideCount: new Array(props.analyses.length).fill(0),
+                        relativeAbundances: new Array(props.analyses.length).fill(0)
+                    });
+                }
+
+                const dataObj = items.get(taxonObj.id)!;
+
+                dataObj.matchingSamples += 1;
+                dataObj.peptideCount[analysisIdx] = x.count;
+                totalCount += x.count;
+                taxaIds.push(taxonObj.id);
+            }
+        });
+
+        // Now that we have all of these, we can also compute the relative abundance and update the data objects
+        // constructed in the previous step.
+        for (const taxonId of taxaIds) {
+            const dataObj = items.get(taxonId)!;
+            dataObj.relativeAbundances[analysisIdx] = dataObj.peptideCount[analysisIdx] / totalCount;
+        }
+    }
+
+    return items;
 });
+
+// Keeps track of the LCA ids that are selected by the user.
+const selectedIds: Ref<FeatureId[]> = ref([]);
+
+const rows: ComputedRef<FeatureData[]> = computed(() => selectedIds.value.map(id => featureItems.value.get(id)!));
+const rowNames: ComputedRef<string[]> = computed(() => rows.value.map(x => x.name));
+const colNames: ComputedRef<string[]> = computed(() => props.analyses.map(a => a.name));
+
+/**
+ * Computes the actual values that should be rendered by the heatmap. All returned values are in the [0, 1] range
+ * and take into account the normalization settings that are selected by the end user.
+ */
+const rowData: ComputedRef<number[][]> = computed(() => {
+    if (useRelativeAbundances.value) {
+        if (useFixedColorScale.value) {
+            return rows.value.map(row => [...row.relativeAbundances]);
+        } else {
+            // We have to recompute the max and min of all selected relative abundances for the actual visualization
+            let minValue = 1;
+            let maxValue = 0;
+
+            for (const row of rows.value) {
+                minValue = Math.min(minValue, ...row.relativeAbundances);
+                maxValue = Math.max(maxValue, ...row.relativeAbundances);
+            }
+
+            return rows.value.map(row => row.relativeAbundances.map(x => (x - minValue) / (maxValue - minValue)));
+        }
+    } else {
+        if (useFixedColorScale.value) {
+            return [];
+        }
+    }
+
+    return [];
+});
+
+/**
+ * ** Data and settings for row selection data table **
+ */
+
+/**
+ * This interface defines the type of objects that rendered by the "row selection" data table (which allows users
+ * to add or remove rows from the heatmap).
+ */
+interface TableFeature {
+    id: FeatureId,
+    name: string,
+    matchingSamples: number,
+    averageRelativeAbundance: number
+}
 
 const featureTableHeaders: any = [
     {
@@ -339,84 +446,54 @@ const sortByItems: Ref<SortItem[]> = ref([
     }
 ]);
 
-const customMatchingSamplesSort = (a: string[], b: string[]) => {
-    const valueA = a.length;
-    const valueB = b.length;
+const featureSearchValue: Ref<string> = ref("");
 
-    if (valueA === valueB) {
-        return 0
-    } else {
-        return valueA < valueB ? -1 : 1;
-    }
-};
+const currentTablePage = ref(1);
+const currentItemsPerPage = ref(5);
 
-const rows: Ref<number[][]> = ref([]);
-
-const rescaledRows: ComputedRef<number[][]> = computed(() => {
-    if (rescaleHeatmapColors.value) {
-        // We should normalize the colors in the heatmap according to the min / max value in the grid
-        let minValue = 1;
-        let maxValue = 0;
-
-        for (const row of rows.value) {
-            minValue = Math.min(minValue, ...row);
-            maxValue = Math.max(maxValue, ...row);
+const tableFeatures: ComputedRef<TableFeature[]> = computed(() => {
+    return [...featureItems.value.values().map(x => {
+        return {
+            id: x.id,
+            name: x.name,
+            matchingSamples: x.matchingSamples,
+            averageRelativeAbundance: x.relativeAbundances.reduce((a, b) => a + b, 0) / x.matchingSamples
         }
-
-        const rescaled: number[][] = [];
-
-        for (const row of rows.value) {
-            const rescaledRow: number[] = [];
-            for (const value of row) {
-                rescaledRow.push((value - minValue) / (maxValue - minValue));
-            }
-            rescaled.push(rescaledRow);
-        }
-
-        return rescaled;
-    } else {
-        // No rescaling needs to be applied; return the original, raw rows
-        return rows.value;
-    }
+    })];
 });
 
-const rowNames: Ref<string[]> = ref([]);
+const visibleItems: Ref<TableFeature[]> = ref([]);
 
-// The columns of the heatmap always correspond to the selected analyses
-const colNames = computed(() => props.analyses.map(a => a.name));
-
-// Maps analysis ID onto all feature items for that analysis (i.e. all of it's taxa)
-const featureItems: Ref<Map<string, FeatureItem<NcbiTaxon>[]>> = ref(new Map());
-// Maps an LCA ID onto the corresponding summary over all analyses
-const featureSummaries: Ref<Map<number, FeatureSummary>> = ref(new Map());
-
-const getFeatureItem = (rowIdx: number, colIdx: number): FeatureItem<NcbiTaxon> | undefined => {
-    const analysis = props.analyses[colIdx];
-    return featureItems.value.get(analysis.id)?.find(item => item.data.name === rowNames.value[rowIdx]);
+const updateVisibleItems = (currentItems: any[]) => {
+    visibleItems.value = currentItems.map(i => i.raw);
 }
+
+/**
+ * Returns true if all the items of the currently shown row in the data table are already selected for the heatmap.
+ */
+const allInPageSelected = computed(() => {
+    return visibleItems.value.every(summary => rowNames.value.includes(summary.name));
+});
+
+/**
+ * ** Props and data that correspond to the currently selected cell details and overview. **
+ */
+
+const selectedCell: Ref<{rowIdx: number, colIdx: number}> = ref({rowIdx: -1, colIdx: -1});
 
 const selectedCellSummary: ComputedRef<{ sampleName: string, label: string, abundance: number }[] | undefined> = computed(() => {
     if (selectedCell.value.rowIdx === -1 || selectedCell.value.colIdx === -1) {
         return undefined;
     }
 
-
-    const lcaId = getFeatureItem(selectedCell.value.rowIdx, selectedCell.value.colIdx)?.id;
-
-    if (!lcaId) {
-        return undefined;
-    }
-
     const output = [];
 
-    const items = featureSummaries.value.get(lcaId)?.items;
     for (const [col, analysis] of props.analyses.entries()) {
-        const dataPoint = items?.get(analysis.id)
         output.push({
             sampleName: analysis.name,
-            label: ((dataPoint?.relativeAbundance || 0) * 100).toFixed(2) + "%",
-            abundance: rescaledRows.value[selectedCell.value.rowIdx][col]
-        });
+            label: (rows.value[selectedCell.value.rowIdx].relativeAbundances[col] * 100).toFixed(2) + "%",
+            abundance: rowData.value[selectedCell.value.rowIdx][col]
+        })
     }
 
     return output.sort((a: { sampleName: string, label: string, abundance: number }, b: { sampleName: string, label: string, abundance: number }) => b.abundance - a.abundance);
@@ -428,127 +505,32 @@ const selectedCellSummary: ComputedRef<{ sampleName: string, label: string, abun
  * comparison.
  */
 const initializeData = () => {
-    // Recompute the features
-    featureItems.value = computeFeatureObjects();
-    featureSummaries.value = summarizeFeatures(featureItems.value);
-
     // Select the top 5 most abundant features for the initial state of the heatmap.
-    const topFeatures = [...featureSummaries.value.values()].sort((a, b) => {
-        if (b.matchingSamples.length !== a.matchingSamples.length) {
-            return b.matchingSamples.length - a.matchingSamples.length;
+    selectedIds.value = tableFeatures.value.toSorted((a, b) => {
+        if (b.matchingSamples !== a.matchingSamples) {
+            return b.matchingSamples - a.matchingSamples;
         }
         return b.averageRelativeAbundance - a.averageRelativeAbundance;
-    }).slice(0, 5);
+    }).slice(0, 5).map(i => i.id);
+};
 
-    rows.value = [];
-    rowNames.value = [];
-
-    for (const feature of topFeatures) {
-        addRow(feature);
+const addRow = (feature: TableFeature) => {
+    if (!selectedIds.value.includes(feature.id)) {
+        selectedIds.value.push(feature.id);
     }
 };
 
-/**
- * Construct the data objects for the currently selected samples and settings for this comparative heatmap. These
- * objects are structured per analysis (and includes all objects that are actually associated with the selected analysis
- * and the currently configured filters).
- */
-const computeFeatureObjects = () => {
-    // Maps analysis ID onto a list of its computed feature objects.
-    const featuresPerAnalysis: Map<string, FeatureItem<NcbiTaxon>[]> = new Map();
-
-    for (const analysis of props.analyses) {
-        const ncbiOntology = analysis.ontologyStore.ncbiOntology;
-        const features: FeatureItem<NcbiTaxon>[] = [];
-
-        let totalCount: number = 0;
-
-        analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
-            if (x && x.extra.rank === selectedTaxonomicRank.value) {
-                const taxonObj = ncbiOntology.get(x.id);
-
-                if (!taxonObj || !taxonObj.name.toLowerCase().includes(featureSearchValue.value.toLowerCase())) {
-                    return;
-                }
-
-                totalCount += x.count;
-
-                features.push({
-                    id: x.id,
-                    peptideCount: x.count,
-                    // Temporary set this to 0, will be recomputed later when the max peptide count is known.
-                    relativeAbundance: 0,
-                    data: taxonObj
-                });
-            }
-        });
-
-        // At this point, we actually know the max peptide count and we can actually compute the relative abundance.
-        for (const featureItem of features) {
-            featureItem.relativeAbundance = featureItem.peptideCount / totalCount;
-        }
-
-        featuresPerAnalysis.set(analysis.id, features);
-    }
-
-    return featuresPerAnalysis;
-}
-
-/**
- *
- * @param featuresPerAnalysis
- */
-const summarizeFeatures = (
-    featuresPerAnalysis: Map<string, FeatureItem<NcbiTaxon>[]>
-): Map<number, FeatureSummary> => {
-    const features = new Map<number, FeatureSummary>();
-
-    for (const [analysisId, featureItems] of featuresPerAnalysis) {
-        for (const featureItem of featureItems) {
-            if (!features.has(featureItem.id)) {
-                features.set(featureItem.id, {
-                    name: featureItem.data.name,
-                    matchingSamples: [analysisId],
-                    averageRelativeAbundance: featureItem.relativeAbundance,
-                    items: new Map<string, FeatureItem<NcbiTaxon>>([[analysisId, featureItem]])
-                });
-            } else {
-                const featureObj = features.get(featureItem.id)!;
-                featureObj.averageRelativeAbundance = ((featureObj.averageRelativeAbundance * featureObj.matchingSamples.length) + featureItem.relativeAbundance) / (featureObj.matchingSamples.length + 1);
-                featureObj.matchingSamples.push(analysisId);
-                featureObj.items.set(analysisId, featureItem);
-            }
-        }
-    }
-
-    return features;
-}
-
-const addRow = (summary: FeatureSummary) => {
-    const rowData = [];
-
-    for (const analysis of props.analyses) {
-        rowData.push(summary.items.get(analysis.id)?.relativeAbundance || 0);
-    }
-
-    rows.value.push(rowData);
-    rowNames.value.push(summary.name);
-};
-
-const addRows = (rows: FeatureSummary[]) => {
+const addRows = (rows: TableFeature[]) => {
     for (const row of rows) {
-        if (!rowNames.value.includes(row.name)) {
-            addRow(row);
-        }
+        addRow(row);
     }
 }
 
 const removeRow = (index: number) => {
     rows.value.splice(index, 1);
-    rowNames.value.splice(index, 1);
 }
 
-const removeRows = (rows: FeatureSummary[]) => {
+const removeRows = (rows: TableFeature[]) => {
     for (const row of rows) {
         const idx = rowNames.value.indexOf(row.name);
         if (idx !== -1) {
@@ -556,10 +538,6 @@ const removeRows = (rows: FeatureSummary[]) => {
         }
     }
 }
-
-const cellClicked = (rowIdx: number, colIdx: number) => {
-
-};
 
 const debouncedInit = useDebounceFn(initializeData, 100);
 
@@ -575,7 +553,7 @@ watch(() => props.analyses, () => {
     debouncedInit();
 });
 
-watch(() => rescaledRows, async () => {
+watch(() => rowData, async () => {
     await nextTick();
     // Wait a little bit for the svg to be rendered
     setTimeout(() => {
