@@ -43,186 +43,304 @@
             </template>
 
             <template #visualization>
-                <div style="padding-top: 50px;" class="ma-0 d-flex ga-8">
-                    <div>
-                        <div ref="heatmapWrapper" class="mx-4 mb-4">
-                            <heatmap
-                                :data="rowData"
-                                :row-names="rowNames"
-                                :col-names="colNames"
-                                @deselect-row="removeRow"
-                                v-model:selected-cell="selectedCell"
-                            >
-                                <template #tooltip-content="{ selectedRow, selectedCol }">
-                                    <template v-if="selectedCol !== -1 && selectedRow !== -1">
-                                        <div class="text-subtitle-1">{{ analyses[selectedCol].name }} • {{ rowNames[selectedRow] }}</div>
-                                        <div>
-                                            <span class="font-weight-bold">Absolute peptide count:</span> {{ rows[selectedRow].peptideCount[selectedCol] }} peptides
-                                        </div>
-                                        <div>
-                                            <span class="font-weight-bold">Relative abundance:</span>
-                                            {{
-                                                (rows[selectedRow].columnWiseAbundances[selectedCol] * 100).toFixed(2)
-                                            }}%
-                                        </div>
-                                    </template>
-                                </template>
-                                <template #row-selector>
-                                    <v-unipept-card style="width: 800px;" elevation="10">
-                                        <v-card-title>
-                                            <div class="text-h5">Add {{ selectedTaxonomicRank }}</div>
-                                        </v-card-title>
-                                        <v-card-text style="padding-top: 4px !important;">
-                                            <v-text-field
-                                                v-model="featureSearchValue"
-                                                density="compact"
-                                                append-inner-icon="mdi-magnify"
-                                                label="Search"
-                                                variant="outlined"
-                                                @click.stop
-                                            />
-                                            <v-data-table
-                                                :items="tableFeatures"
-                                                :headers="featureTableHeaders"
-                                                :sort-by="sortByItems"
-                                                multi-sort
-                                                :items-per-page="currentItemsPerPage"
-                                                :items-per-page-options="[5, 10, -1]"
-                                                density="compact"
-                                                :page="currentTablePage"
-                                                @update:current-items="updateVisibleItems"
-                                            >
-                                                <template #item.matchingSamples="{ item }">
-                                                    {{ item.matchingSamples }}
-                                                </template>
-                                                <template #item.averageRelativeAbundance="{ item }">
-                                                    {{ (item.averageRelativeAbundance * 100).toFixed(2) }}%
-                                                </template>
-                                                <template #header.action>
-                                                    <v-tooltip v-if="allInPageSelected">
-                                                        <template v-slot:activator="{ props }">
-                                                            <v-btn
-                                                                style="width: 120px;"
-                                                                color="error"
-                                                                density="compact"
-                                                                variant="tonal"
-                                                                prepend-icon="mdi-minus"
-                                                                text="Drop all"
-                                                                v-bind="props"
-                                                                @click="removeRows(visibleItems)"
-                                                            />
-                                                        </template>
-                                                        <span>Drop all items from the heatmap</span>
-                                                    </v-tooltip>
-                                                    <v-tooltip v-else>
-                                                        <template v-slot:activator="{ props }">
-                                                            <v-btn
-                                                                style="width: 120px;"
-                                                                color="primary"
-                                                                density="compact"
-                                                                variant="tonal"
-                                                                prepend-icon="mdi-plus"
-                                                                text="Add all"
-                                                                v-bind="props"
-                                                                @click="addRows(visibleItems)"
-                                                            />
-                                                        </template>
-                                                        <span>Add all items to the heatmap</span>
-                                                    </v-tooltip>
-                                                </template>
-                                                <template #item.action="{ item }">
-                                                    <v-tooltip v-if="rowNames.includes(item.name)">
-                                                        <template v-slot:activator="{ props }">
-                                                            <v-btn
-                                                                style="width: 120px;"
-                                                                color="error"
-                                                                density="compact"
-                                                                variant="tonal"
-                                                                prepend-icon="mdi-minus"
-                                                                text="Drop"
-                                                                @click="removeRow(rowNames.indexOf(item.name))"
-                                                                v-bind="props"
-                                                            />
-                                                        </template>
-                                                        <span>Remove item from the heatmap</span>
-                                                    </v-tooltip>
-                                                    <v-tooltip v-else>
-                                                        <template v-slot:activator="{ props }">
-                                                            <v-btn
-                                                                style="width: 120px;"
-                                                                color="primary"
-                                                                density="compact"
-                                                                variant="tonal"
-                                                                prepend-icon="mdi-plus"
-                                                                text="Add"
-                                                                @click="addRow(item)"
-                                                                v-bind="props"
-                                                            />
-                                                        </template>
-                                                        <span>Add item to the heatmap</span>
-                                                    </v-tooltip>
-                                                </template>
-
-                                            </v-data-table>
-                                        </v-card-text>
-                                    </v-unipept-card>
-                                </template>
-                            </heatmap>
-                        </div>
-                    </div>
-                    <v-divider vertical class="mb-2"/>
-                    <div class="flex-grow-1 mr-8">
-                        <v-empty-state
-                            v-if="selectedCell.rowIdx === -1"
-                            icon="mdi-cursor-default-click"
-                            color="grey-lighten-1"
-                            title="No cell selected"
-                            text="Select a cell from the heatmap on the left to get a detailed information overview."
-                        />
-                        <div v-else>
-                            <div class="d-flex align-center my-2">
-                                <div class="text-h5">{{ colNames[selectedCell.colIdx] }} • {{ rowNames[selectedCell.rowIdx] }}</div>
+                <div style="padding-top: 50px;">
+                    <div class="mx-4 mb-6">
+                        <v-alert title="Heatmap settings" icon="mdi-cog" color="grey-lighten-4">
+                            <div style="font-size: 14px;">
+                                These settings directly affect how your metaproteomics samples are processed and displayed. Changes will immediately update the heatmap visualization.
                             </div>
-                            <h3 class="mb-2">
-                                Cell details
-                            </h3>
-                            <h3 class="mb-2">
-                                {{ selectedTaxonomicRank.charAt(0).toUpperCase() + selectedTaxonomicRank.slice(1) }}
-                                abundance across samples
-                            </h3>
+                            <v-row class="mt-1">
+                                <v-col :cols="4">
+                                    <v-select
+                                        label="Rank"
+                                        density="comfortable"
+                                        variant="underlined"
+                                        :items="taxonomicRankOptions"
+                                        v-model="selectedTaxonomicRank"
+                                        persistent-hint
+                                        hint="Level of taxonomic classification to display"
+                                    />
+                                </v-col>
+                                <v-col :cols="4">
+                                    <v-select
+                                        label="Normalization"
+                                        density="comfortable"
+                                        variant="underlined"
+                                        :items="normalizationTypes"
+                                        item-title="description"
+                                        item-value="type"
+                                        v-model="selectedNormalizationType"
+                                        persistent-hint
+                                        hint="How to standardize abundance values across samples or organisms"
+                                    />
+                                </v-col>
+                                <v-col :cols="4">
+                                    <v-checkbox
+                                        v-model="useFixedColorScale"
+                                        label="Use fixed color scale"
+                                        variant="underlined"
+                                        color="primary"
+                                        density="compact"
+                                        persistent-hint
+                                        hint="Maintain consistent color mapping across different datasets"
+                                    />
+                                </v-col>
+                            </v-row>
+                        </v-alert>
+
+                        <v-alert title="Understanding data normalization" icon="mdi-information-outline" class="mt-2" color="grey-lighten-4">
+                            <div style="font-size: 14px;" class="mb-4">
+                                Unipept offers three normalization methods to gain different insights into your data.
+                                Each method provides a unique perspective on how your samples relate to each other.
+                            </div>
+
                             <div>
-                                <table style="width: 100%; table-layout: fixed;">
-                                    <colgroup>
-                                        <col style="width: 200px;">
-                                        <col style="width: auto;">
-                                    </colgroup>
-                                    <tbody>
-                                    <tr v-for="(item, idx) of selectedCellSummary!" :key="idx">
-                                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                            <span style="font-size: 14px;">
-                                                {{ item.sampleName }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <v-progress-linear
-                                                :model-value="item.abundance * 100"
-                                                height="20"
-                                                color="primary"
-                                            >
-                                                <span :style="{ 'font-size': '12px' }">
-                                                    {{ item.label }}
-                                                </span>
-                                            </v-progress-linear>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-
+                                <div class="font-weight-bold">1. Normalize per sample (column-wise)</div>
+                                <div class="font-italic">&quot;What proportion of this sample is made up by each organism?&quot;</div>
+                                <v-row>
+                                    <v-col :cols="12" class="ml-1 mb-4">
+                                        <ul>
+                                            <li>
+                                                Each column is normalized independently. This means that values in the
+                                                heatmap reflect <span class="font-weight-bold">the fraction of each sample</span> that is made up of each
+                                                organism.
+                                            </li>
+                                            <li>
+                                                Ideal for spotting which organisms are <span class="font-weight-bold">most or least abundant in a sample</span>.
+                                            </li>
+                                        </ul>
+                                    </v-col>
+                                </v-row>
                             </div>
-<!--                            <h3 class="mt-4">Associated peptides</h3>-->
-<!--                            <v-data-table>-->
 
-<!--                            </v-data-table>-->
+                            <div>
+                                <div class="font-weight-bold">2. Normalize per organism (row-wise)</div>
+                                <div class="font-italic">&quot;In which sample does an organism live?&quot;</div>
+                                <v-row>
+                                    <v-col :cols="12" class="ml-1 mb-4">
+                                        <ul>
+                                            <li>
+                                                Row normalization <span class="font-weight-bold">flattens absolute differences</span> between organisms but
+                                                highlights how each one is distributed across samples.
+                                            </li>
+                                            <li>
+                                                Ideal for spotting organisms that are <span class="font-weight-bold">enriched or depleted</span> in specific
+                                                conditions (e.g. healthy vs disease).
+                                            </li>
+                                            <li>
+                                                Be careful! Row normalization <span class="font-weight-bold">hides global abundance differences</span>.
+                                            </li>
+                                        </ul>
+                                    </v-col>
+                                </v-row>
+                            </div>
+
+                            <div>
+                                <div class="font-weight-bold">3. No normalization</div>
+                                <div class="font-italic">&quot;How much of each organism was found?&quot;</div>
+                                <div></div>
+                                <v-row>
+                                    <v-col :cols="12" class="ml-1">
+                                        <ul>
+                                            <li>
+                                                No scaling or transformation is applied to the data. The bigger the
+                                                original number, the higher its signal in the heatmap will be.
+                                            </li>
+                                            <li>
+                                                Watch out! Can be misleading when <span class="font-weight-bold">total sample size differs</span> a lot.
+                                            </li>
+                                        </ul>
+                                    </v-col>
+                                </v-row>
+                            </div>
+                        </v-alert>
+                    </div>
+
+                    <div class="ma-0 d-flex ga-8">
+                        <div class="mx-4">
+                            <div ref="heatmapWrapper" class="mb-4">
+                                <heatmap
+                                    :data="rowData"
+                                    :row-names="rowNames"
+                                    :col-names="colNames"
+                                    @deselect-row="removeRow"
+                                    v-model:selected-cell="selectedCell"
+                                >
+                                    <template #tooltip-content="{ selectedRow, selectedCol }">
+                                        <template v-if="selectedCol !== -1 && selectedRow !== -1">
+                                            <div class="text-subtitle-1">{{ analyses[selectedCol].name }} • {{ rowNames[selectedRow] }}</div>
+                                            <div>
+                                                <span class="font-weight-bold">{{ rows[selectedRow].peptideCount[selectedCol] }} peptides</span>
+                                                in {{ props.analyses[selectedCol].name }} linked to {{ selectedTaxonomicRank }}
+                                                <span class="font-italic">{{ rows[selectedRow].name }}</span>
+                                            </div>
+                                            <div>
+                                                Corresponds to
+                                                <span class="font-weight-bold">{{(rows[selectedRow].columnWiseAbundances[selectedCol] * 100).toFixed(2) }}%</span>
+                                                of all species for this sample.
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <template #row-selector>
+                                        <v-unipept-card style="width: 800px;" elevation="10">
+                                            <v-card-title>
+                                                <div class="text-h5">Add {{ selectedTaxonomicRank }}</div>
+                                            </v-card-title>
+                                            <v-card-text style="padding-top: 4px !important;">
+                                                <v-text-field
+                                                    v-model="featureSearchValue"
+                                                    density="compact"
+                                                    append-inner-icon="mdi-magnify"
+                                                    label="Search"
+                                                    variant="outlined"
+                                                    @click.stop
+                                                />
+                                                <v-data-table
+                                                    :items="tableFeatures"
+                                                    :headers="featureTableHeaders"
+                                                    :sort-by="sortByItems"
+                                                    multi-sort
+                                                    :items-per-page="currentItemsPerPage"
+                                                    :items-per-page-options="[5, 10, -1]"
+                                                    density="compact"
+                                                    :page="currentTablePage"
+                                                    @update:current-items="updateVisibleItems"
+                                                >
+                                                    <template #item.matchingSamples="{ item }">
+                                                        {{ item.matchingSamples }}
+                                                    </template>
+                                                    <template #item.averageRelativeAbundance="{ item }">
+                                                        {{ (item.averageRelativeAbundance * 100).toFixed(2) }}%
+                                                    </template>
+                                                    <template #header.action>
+                                                        <v-tooltip v-if="allInPageSelected">
+                                                            <template v-slot:activator="{ props }">
+                                                                <v-btn
+                                                                    style="width: 120px;"
+                                                                    color="error"
+                                                                    density="compact"
+                                                                    variant="tonal"
+                                                                    prepend-icon="mdi-minus"
+                                                                    text="Drop all"
+                                                                    v-bind="props"
+                                                                    @click="removeRows(visibleItems)"
+                                                                />
+                                                            </template>
+                                                            <span>Drop all items from the heatmap</span>
+                                                        </v-tooltip>
+                                                        <v-tooltip v-else>
+                                                            <template v-slot:activator="{ props }">
+                                                                <v-btn
+                                                                    style="width: 120px;"
+                                                                    color="primary"
+                                                                    density="compact"
+                                                                    variant="tonal"
+                                                                    prepend-icon="mdi-plus"
+                                                                    text="Add all"
+                                                                    v-bind="props"
+                                                                    @click="addRows(visibleItems)"
+                                                                />
+                                                            </template>
+                                                            <span>Add all items to the heatmap</span>
+                                                        </v-tooltip>
+                                                    </template>
+                                                    <template #item.action="{ item }">
+                                                        <v-tooltip v-if="rowNames.includes(item.name)">
+                                                            <template v-slot:activator="{ props }">
+                                                                <v-btn
+                                                                    style="width: 120px;"
+                                                                    color="error"
+                                                                    density="compact"
+                                                                    variant="tonal"
+                                                                    prepend-icon="mdi-minus"
+                                                                    text="Drop"
+                                                                    @click="removeRow(rowNames.indexOf(item.name))"
+                                                                    v-bind="props"
+                                                                />
+                                                            </template>
+                                                            <span>Remove item from the heatmap</span>
+                                                        </v-tooltip>
+                                                        <v-tooltip v-else>
+                                                            <template v-slot:activator="{ props }">
+                                                                <v-btn
+                                                                    style="width: 120px;"
+                                                                    color="primary"
+                                                                    density="compact"
+                                                                    variant="tonal"
+                                                                    prepend-icon="mdi-plus"
+                                                                    text="Add"
+                                                                    @click="addRow(item)"
+                                                                    v-bind="props"
+                                                                />
+                                                            </template>
+                                                            <span>Add item to the heatmap</span>
+                                                        </v-tooltip>
+                                                    </template>
+
+                                                </v-data-table>
+                                            </v-card-text>
+                                        </v-unipept-card>
+                                    </template>
+                                </heatmap>
+                            </div>
+                        </div>
+                        <v-divider vertical class="mb-2"/>
+                        <div class="flex-grow-1 mr-8">
+                            <v-empty-state
+                                v-if="selectedCell.rowIdx === -1"
+                                icon="mdi-cursor-default-click"
+                                color="grey-lighten-1"
+                                title="No cell selected"
+                                text="Select a cell from the heatmap on the left to get a detailed information overview."
+                            />
+                            <div v-else>
+                                <div class="d-flex align-center my-2">
+                                    <div class="text-h5">{{ colNames[selectedCell.colIdx] }} • {{ rowNames[selectedCell.rowIdx] }}</div>
+                                </div>
+                                <h3 class="mb-1">
+                                    {{ selectedTaxonomicRank.charAt(0).toUpperCase() + selectedTaxonomicRank.slice(1) }}
+                                    abundance across samples
+                                </h3>
+                                <div>
+                                    <table style="width: 100%; table-layout: fixed;">
+                                        <colgroup>
+                                            <col style="width: 200px;">
+                                            <col style="width: auto;">
+                                        </colgroup>
+                                        <tbody>
+                                        <tr v-for="(item, idx) of selectedCellSummary!" :key="idx">
+                                            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                <span style="font-size: 14px;" :class="idx === selectedCell.colIdx ? 'font-weight-bold' : ''">
+                                                    {{ item.sampleName }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <v-progress-linear
+                                                    :model-value="item.abundance * 100"
+                                                    height="20"
+                                                    :color="idx === selectedCell.colIdx ? 'primary' : 'grey'"
+                                                >
+                                                    <span :style="{ 'font-size': '12px' }">
+                                                        {{ item.label }}
+                                                    </span>
+                                                </v-progress-linear>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h3 class="mt-4 mb-1">
+                                    {{ selectedTaxonomicRank.charAt(0).toUpperCase() + selectedTaxonomicRank.slice(1) }}
+                                    abundance within sample
+                                </h3>
+
+
+    <!--                            <h3 class="mt-4">Associated peptides</h3>-->
+    <!--                            <v-data-table>-->
+
+    <!--                            </v-data-table>-->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -509,7 +627,7 @@ const sortByItems: Ref<SortItem[]> = ref([
 const featureSearchValue: Ref<string> = ref("");
 
 const currentTablePage = ref(1);
-const currentItemsPerPage = ref(5);
+const currentItemsPerPage = ref(10);
 
 const tableFeatures: ComputedRef<TableFeature[]> = computed(() => {
     return [...featureItems.value.values().map(x => {
@@ -565,13 +683,13 @@ const selectedCellSummary: ComputedRef<{ sampleName: string, label: string, abun
  * comparison.
  */
 const initializeData = () => {
-    // Select the top 5 most abundant features for the initial state of the heatmap.
+    // Select the top 10 most abundant features for the initial state of the heatmap.
     selectedIds.value = tableFeatures.value.toSorted((a, b) => {
         if (b.matchingSamples !== a.matchingSamples) {
             return b.matchingSamples - a.matchingSamples;
         }
         return b.averageRelativeAbundance - a.averageRelativeAbundance;
-    }).slice(0, 5).map(i => i.id);
+    }).slice(0, 10).map(i => i.id);
 };
 
 const addRow = (feature: TableFeature) => {
@@ -587,7 +705,16 @@ const addRows = (rows: TableFeature[]) => {
 }
 
 const removeRow = (index: number) => {
-    rows.value.splice(index, 1);
+    if (selectedCell.value.rowIdx === index) {
+         selectedCell.value.rowIdx = -1;
+         selectedCell.value.colIdx = -1;
+    }
+
+    if (selectedCell.value.rowIdx > index) {
+        selectedCell.value.rowIdx -= 1;
+    }
+
+    selectedIds.value.splice(index, 1);
 }
 
 const removeRows = (rows: TableFeature[]) => {

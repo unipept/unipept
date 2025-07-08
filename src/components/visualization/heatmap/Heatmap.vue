@@ -219,12 +219,22 @@ const stopHighlightingCell = (currentCell: HTMLElement, rowIdx: number, colIdx: 
 
 const selectCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
     d3.selectAll(".unipept-heatmap .cell").classed("selected-cell", false);
+    d3.selectAll(".unipept-heatmap .row-label").classed("selected-label", false);
+    d3.selectAll(".unipept-heatmap .header-label").classed("selected-label", false);
+
     d3.select(currentCell).classed("selected-cell", true);
+
+    d3.selectAll("text[data-row-label='" + rowIdx + "']").classed("selected-label", true);
+    d3.selectAll("text[data-col-label='" + colIdx + "']").classed("selected-label", true);
+
+
     selectedCell.value = { rowIdx, colIdx };
 }
 
 const stopSelectedCell = () => {
     d3.selectAll(".unipept-heatmap .cell").classed("selected-cell", false);
+    d3.selectAll(".unipept-heatmap .row-label").classed("selected-label", false);
+    d3.selectAll(".unipept-heatmap .header-label").classed("selected-label", false);
     selectedCell.value = { rowIdx: -1, colIdx: -1 };
 }
 
@@ -454,6 +464,17 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
                 selectCell(cell, rowIdx, colIdx);
             }
         });
+    
+    if (selectedCell.value.rowIdx !== -1 && selectedCell.value.colIdx !== -1) {
+        // Find the row element with the data attribute for the selected row
+        const row = document.querySelector(`g[data-row-item="${selectedCell.value.rowIdx}"]`);
+        // Find the cell within that row that has the matching column data attribute
+        const cell = row?.querySelector(`rect[data-col-item="${selectedCell.value.colIdx}"]`) as HTMLElement;
+
+        if (cell) {
+            selectCell(cell, selectedCell.value.rowIdx, selectedCell.value.colIdx);
+        }
+    }
 };
 
 const debouncedRender = useDebounceFn(renderHeatmap, 20);
@@ -489,6 +510,10 @@ watch(() => data, () => {
 .unipept-heatmap .selected-cell {
     stroke-width: 2px;
     stroke: v-bind(selectedStrokeColor);
+}
+
+.unipept-heatmap .selected-label {
+    text-decoration: underline;
 }
 </style>
 
