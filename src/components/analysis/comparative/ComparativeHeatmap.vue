@@ -163,7 +163,16 @@
                     <div class="ma-0 d-flex ga-8">
                         <div class="mx-4">
                             <div ref="heatmapWrapper" class="mb-4">
+                                <v-empty-state
+                                    v-if="rowData.length === 0"
+                                    icon="mdi-table-question"
+                                    color="grey-lighten-1"
+                                    title="No data available"
+                                    text="Change your selection to get data for the heatmap. This can happen if the selected taxonomic rank is not found in the sample selection."
+                                />
+
                                 <heatmap
+                                    v-else
                                     :data="rowData"
                                     :row-names="rowNames"
                                     :col-names="colNames"
@@ -483,7 +492,9 @@ interface FeatureData {
     rowWiseAbundances: number[]
 }
 
-const featureItems: ComputedRef<Map<FeatureId, FeatureData>> = computed(() => {
+const featureItems: Ref<Map<FeatureId, FeatureData>> = ref(new Map());
+
+const computeFeatureItems: () => Map<FeatureId, FeatureData> = () => {
     const items = new Map<FeatureId, FeatureData>();
     const totalPeptideCountPerSample = new Array(props.analyses.length).fill(0);
 
@@ -525,21 +536,25 @@ const featureItems: ComputedRef<Map<FeatureId, FeatureData>> = computed(() => {
     // Now that we have all information, we can compute the relative abundance values
     for (const [taxonId, dataObj] of items.entries()) {
         for (let analysisIdx = 0; analysisIdx < props.analyses.length; analysisIdx++) {
-            dataObj.columnWiseAbundances[analysisIdx] = dataObj.peptideCount[analysisIdx] / totalPeptideCountPerSample[analysisIdx];
+            if (totalPeptideCountPerSample[analysisIdx] === 0) {
+                dataObj.columnWiseAbundances[analysisIdx] = 0;
+            } else {
+                dataObj.columnWiseAbundances[analysisIdx] = dataObj.peptideCount[analysisIdx] / totalPeptideCountPerSample[analysisIdx];
+            }
         }
 
         // Compute the sum of this row
         const rowSum = dataObj.peptideCount.reduce((a, b) => a + b, 0);
-        dataObj.rowWiseAbundances = dataObj.peptideCount.map(x => x / rowSum);
+        dataObj.rowWiseAbundances = dataObj.peptideCount.map(x => rowSum === 0 ? 0 : (x / rowSum));
     }
 
     return items;
-});
+};
 
 // Keeps track of the LCA ids that are selected by the user.
 const selectedIds: Ref<FeatureId[]> = ref([]);
 
-const rows: ComputedRef<FeatureData[]> = computed(() => selectedIds.value.map(id => featureItems.value.get(id)!));
+const rows: Ref<FeatureData[]> = ref([]);
 const rowNames: ComputedRef<string[]> = computed(() => rows.value.map(x => x.name));
 const colNames: ComputedRef<string[]> = computed(() => props.analyses.map(a => a.name));
 
@@ -669,14 +684,14 @@ const currentTablePage = ref(1);
 const currentItemsPerPage = ref(10);
 
 const tableFeatures: ComputedRef<TableFeature[]> = computed(() => {
-    return [...featureItems.value.values().map(x => {
+    return [...featureItems.value.values()].map(x => {
         return {
             id: x.id,
             name: x.name,
             matchingSamples: x.matchingSamples,
             averageRelativeAbundance: x.columnWiseAbundances.reduce((a, b) => a + b, 0) / x.matchingSamples
         }
-    })];
+    });
 });
 
 const visibleItems: Ref<TableFeature[]> = ref([]);
@@ -741,6 +756,8 @@ const selectedCellOrganismSummary: ComputedRef<{ organismName: string, label: st
  * comparison.
  */
 const initializeData = () => {
+    featureItems.value = computeFeatureItems();
+
     // Select the top 10 most abundant features for the initial state of the heatmap.
     selectedIds.value = tableFeatures.value.toSorted((a, b) => {
         if (b.matchingSamples !== a.matchingSamples) {
@@ -748,6 +765,8 @@ const initializeData = () => {
         }
         return b.averageRelativeAbundance - a.averageRelativeAbundance;
     }).slice(0, 10).map(i => i.id);
+
+    rows.value = selectedIds.value.map(id => featureItems.value.get(id)!);
 };
 
 const addRow = (feature: TableFeature) => {
@@ -790,7 +809,7 @@ onMounted(() => {
     debouncedInit();
 });
 
-watch(() => selectedTaxonomicRank, () => {
+watch(() => selectedTaxonomicRank.value, () => {
     debouncedInit();
 });
 
