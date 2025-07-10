@@ -2,158 +2,141 @@
     <div>
         <visualization-controls
             caption="Hover over the cells to see more details"
-            :settings="true"
+            :settings="false"
             :download="() => downloadImageModalOpen = true"
         >
-            <template #settings>
-                <v-list-item>
-                    Heatmap settings
-                </v-list-item>
-                <v-list-item>
-                    <v-select
-                        label="Rank"
-                        density="comfortable"
-                        variant="underlined"
-                        :items="taxonomicRankOptions"
-                        v-model="selectedTaxonomicRank"
-                        hide-details
-                    />
-                </v-list-item>
-                <v-list-item class="mt-2">
-                    <v-select
-                        label="Normalization"
-                        density="comfortable"
-                        variant="underlined"
-                        :items="normalizationTypes"
-                        item-title="description"
-                        item-value="type"
-                        v-model="selectedNormalizationType"
-                        hide-details
-                    />
-                </v-list-item>
-                <v-list-item>
-                    <v-checkbox
-                        v-model="useFixedColorScale"
-                        label="Use fixed color scale"
-                        color="primary"
-                        density="compact"
-                        hide-details
-                    />
-                </v-list-item>
-            </template>
-
             <template #visualization>
                 <div style="padding-top: 50px;">
                     <div class="mx-4 mb-6">
-                        <v-alert title="Heatmap settings" icon="mdi-cog" color="grey-lighten-4">
-                            <div style="font-size: 14px;">
-                                These settings directly affect how your metaproteomics samples are processed and displayed. Changes will immediately update the heatmap visualization.
-                            </div>
-                            <v-row class="mt-1">
-                                <v-col :cols="4">
-                                    <v-select
-                                        label="Rank"
-                                        density="comfortable"
-                                        variant="underlined"
-                                        :items="taxonomicRankOptions"
-                                        v-model="selectedTaxonomicRank"
-                                        persistent-hint
-                                        hint="Level of taxonomic classification to display"
-                                    />
-                                </v-col>
-                                <v-col :cols="4">
-                                    <v-select
-                                        label="Normalization"
-                                        density="comfortable"
-                                        variant="underlined"
-                                        :items="normalizationTypes"
-                                        item-title="description"
-                                        item-value="type"
-                                        v-model="selectedNormalizationType"
-                                        persistent-hint
-                                        hint="How to standardize abundance values across samples or organisms"
-                                    />
-                                </v-col>
-                                <v-col :cols="4">
-                                    <v-checkbox
-                                        v-model="useFixedColorScale"
-                                        label="Use fixed color scale"
-                                        variant="underlined"
-                                        color="primary"
-                                        density="compact"
-                                        persistent-hint
-                                        hint="Maintain consistent color mapping across different datasets"
-                                    />
-                                </v-col>
-                            </v-row>
-                        </v-alert>
+                        <v-expansion-panels color="grey-lighten-4">
+                            <v-expansion-panel>
+                                <v-expansion-panel-title>
+                                    <v-icon class="mr-2">
+                                        mdi-cog
+                                    </v-icon>
+                                    Heatmap settings
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <div style="font-size: 14px;">
+                                        These settings directly affect how your metaproteomics samples are processed and displayed. Changes will immediately update the heatmap visualization.
+                                    </div>
+                                    <v-row class="mt-1">
+                                        <v-col :cols="4">
+                                            <v-select
+                                                label="Rank"
+                                                density="comfortable"
+                                                variant="underlined"
+                                                :items="taxonomicRankOptions"
+                                                v-model="selectedTaxonomicRank"
+                                                persistent-hint
+                                                hint="Level of taxonomic classification to display"
+                                            />
+                                        </v-col>
+                                        <v-col :cols="4">
+                                            <v-select
+                                                label="Normalization"
+                                                density="comfortable"
+                                                variant="underlined"
+                                                :items="transformationTypes"
+                                                item-title="description"
+                                                item-value="type"
+                                                v-model="selectedNormalizationType"
+                                                persistent-hint
+                                                hint="How to standardize abundance values across samples or organisms"
+                                            />
+                                        </v-col>
+                                        <v-col :cols="4">
+                                            <v-checkbox
+                                                v-model="useFixedColorScale"
+                                                label="Use fixed color scale"
+                                                variant="underlined"
+                                                color="primary"
+                                                density="compact"
+                                                persistent-hint
+                                                hint="Maintain consistent color mapping across different datasets"
+                                            />
+                                        </v-col>
+                                    </v-row>
 
-                        <v-alert title="Understanding data normalization" icon="mdi-information-outline" class="mt-2" color="grey-lighten-4">
-                            <div style="font-size: 14px;" class="mb-4">
-                                Unipept offers three normalization methods to gain different insights into your data.
-                                Each method provides a unique perspective on how your samples relate to each other.
-                            </div>
+                                    <div class="mt-4">
+                                        <div style="font-size: 14px;">
+                                            <v-icon class="mr-2">
+                                                mdi-information-outline
+                                            </v-icon>
+                                            Understanding data normalization
+                                            <v-icon class="float-right">
+                                                mdi-chevron-down
+                                            </v-icon>
+                                        </div>
 
-                            <div>
-                                <div class="font-weight-bold">1. Normalize per sample (column-wise)</div>
-                                <div class="font-italic">&quot;What proportion of this sample is made up by each organism?&quot;</div>
-                                <v-row>
-                                    <v-col :cols="12" class="ml-1 mb-4">
-                                        <ul>
-                                            <li>
-                                                Each column is normalized independently. This means that values in the
-                                                heatmap reflect <span class="font-weight-bold">the fraction of each sample</span> that is made up of each
-                                                organism.
-                                            </li>
-                                            <li>
-                                                Ideal for spotting which organisms are <span class="font-weight-bold">most or least abundant in a sample</span>.
-                                            </li>
-                                        </ul>
-                                    </v-col>
-                                </v-row>
-                            </div>
+                                        <div class="my-4">
+                                            Unipept offers three normalization methods to gain different insights into your data.
+                                            Each method provides a unique perspective on how your samples relate to each other.
+                                        </div>
 
-                            <div>
-                                <div class="font-weight-bold">2. Normalize per organism (row-wise)</div>
-                                <div class="font-italic">&quot;In which sample does an organism live?&quot;</div>
-                                <v-row>
-                                    <v-col :cols="12" class="ml-1 mb-4">
-                                        <ul>
-                                            <li>
-                                                Row normalization <span class="font-weight-bold">flattens absolute differences</span> between organisms but
-                                                highlights how each one is distributed across samples.
-                                            </li>
-                                            <li>
-                                                Ideal for spotting organisms that are <span class="font-weight-bold">enriched or depleted</span> in specific
-                                                conditions (e.g. healthy vs disease).
-                                            </li>
-                                            <li>
-                                                Be careful! Row normalization <span class="font-weight-bold">hides global abundance differences</span>.
-                                            </li>
-                                        </ul>
-                                    </v-col>
-                                </v-row>
-                            </div>
+                                        <div>
+                                            <div class="font-weight-bold">1. Normalize per sample (column-wise)</div>
+                                            <div class="font-italic">&quot;What proportion of this sample is made up by each organism?&quot;</div>
+                                            <v-row>
+                                                <v-col :cols="12" class="ml-1 mb-4">
+                                                    <ul>
+                                                        <li>
+                                                            Each column is normalized independently. This means that values in the
+                                                            heatmap reflect <span class="font-weight-bold">the fraction of each sample</span> that is made up of each
+                                                            organism.
+                                                        </li>
+                                                        <li>
+                                                            Ideal for spotting which organisms are <span class="font-weight-bold">most or least abundant in a sample</span>.
+                                                        </li>
+                                                    </ul>
+                                                </v-col>
+                                            </v-row>
+                                        </div>
 
-                            <div>
-                                <div class="font-weight-bold">3. No normalization</div>
-                                <div class="font-italic">&quot;How much of each organism was found?&quot;</div>
-                                <div></div>
-                                <v-row>
-                                    <v-col :cols="12" class="ml-1">
-                                        <ul>
-                                            <li>
-                                                No scaling or transformation is applied to the data. The bigger the
-                                                original number, the higher its signal in the heatmap will be.
-                                            </li>
-                                            <li>
-                                                Watch out! Can be misleading when <span class="font-weight-bold">total sample size differs</span> a lot.
-                                            </li>
-                                        </ul>
-                                    </v-col>
-                                </v-row>
-                            </div>
-                        </v-alert>
+                                        <div>
+                                            <div class="font-weight-bold">2. Normalize per organism (row-wise)</div>
+                                            <div class="font-italic">&quot;In which sample does an organism live?&quot;</div>
+                                            <v-row>
+                                                <v-col :cols="12" class="ml-1 mb-4">
+                                                    <ul>
+                                                        <li>
+                                                            Row normalization <span class="font-weight-bold">flattens absolute differences</span> between organisms but
+                                                            highlights how each one is distributed across samples.
+                                                        </li>
+                                                        <li>
+                                                            Ideal for spotting organisms that are <span class="font-weight-bold">enriched or depleted</span> in specific
+                                                            conditions (e.g. healthy vs disease).
+                                                        </li>
+                                                        <li>
+                                                            Be careful! Row normalization <span class="font-weight-bold">hides global abundance differences</span>.
+                                                        </li>
+                                                    </ul>
+                                                </v-col>
+                                            </v-row>
+                                        </div>
+
+                                        <div>
+                                            <div class="font-weight-bold">3. No normalization</div>
+                                            <div class="font-italic">&quot;How much of each organism was found?&quot;</div>
+                                            <div></div>
+                                            <v-row>
+                                                <v-col :cols="12" class="ml-1">
+                                                    <ul>
+                                                        <li>
+                                                            No scaling or transformation is applied to the data. The bigger the
+                                                            original number, the higher its signal in the heatmap will be.
+                                                        </li>
+                                                        <li>
+                                                            Watch out! Can be misleading when <span class="font-weight-bold">total sample size differs</span> a lot.
+                                                        </li>
+                                                    </ul>
+                                                </v-col>
+                                            </v-row>
+                                        </div>
+                                    </div>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
                     </div>
 
                     <div class="ma-0 d-flex ga-8">
@@ -366,6 +349,7 @@ import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
 import {useDebounceFn} from "@vueuse/core";
+import {transform} from "async";
 
 type FeatureId = number | string;
 
@@ -375,32 +359,32 @@ type FeatureId = number | string;
 
 const useFixedColorScale = ref(true);
 
-enum NormalizationType {
-    ColumnWise,
-    RowWise,
+enum TransformationType {
+    RelativePerSample,
+    RelativePerOrganism,
     None
 }
 
-interface NormalizationItem {
-    type: NormalizationType,
+interface TransformationItem {
+    type: TransformationType,
     description: string
 }
 
-const normalizationTypes: Ref<NormalizationItem[]> = ref([
+const transformationTypes: Ref<TransformationItem[]> = ref([
     {
-        type: NormalizationType.ColumnWise,
-        description: "Normalize per sample (column-wise)"
+        type: TransformationType.RelativePerSample,
+        description: "Use percentages per sample (column-based)"
     },
     {
-        type: NormalizationType.RowWise,
-        description: "Normalize per organism (row-wise)"
+        type: TransformationType.RelativePerOrganism,
+        description: "Use percentages per organism (row-based)"
     },
     {
-        type: NormalizationType.None,
-        description: "No normalization"
+        type: TransformationType.None,
+        description: "No transformation"
     }
 ]);
-const selectedNormalizationType: Ref<NormalizationType> = ref(NormalizationType.ColumnWise);
+const selectedNormalizationType: Ref<TransformationType> = ref(TransformationType.RelativePerSample);
 
 const downloadImageModalOpen = ref(false);
 
@@ -515,8 +499,10 @@ const colNames: ComputedRef<string[]> = computed(() => props.analyses.map(a => a
  * Computes the actual values that should be rendered by the heatmap. All returned values are in the [0, 1] range
  * and take into account the normalization settings that are selected by the end user.
  */
-const rowData: ComputedRef<number[][]> = computed(() => {
-    if (selectedNormalizationType.value === NormalizationType.None) {
+const rowData: ComputedRef<{ value: number, label: string }[][]> = computed(() => {
+    let transformedRows: number[][];
+
+    if (selectedNormalizationType.value === TransformationType.None) {
         // We still need to map these values to the [0, 1]-range for the visualization itself.
         let minimum = Number.POSITIVE_INFINITY;
         let maximum = 0;
@@ -536,11 +522,11 @@ const rowData: ComputedRef<number[][]> = computed(() => {
         }
 
         // Now we do the actual computation to map all values within the desired range
-        return rows.value.map(row => row.peptideCount.map(x => (x - minimum) / (maximum - minimum)));
-    } else if (selectedNormalizationType.value === NormalizationType.ColumnWise) {
+        transformedRows = rows.value.map(row => row.peptideCount.map(x => (x - minimum) / (maximum - minimum)));
+    } else if (selectedNormalizationType.value === TransformationType.RelativePerSample) {
         if (useFixedColorScale.value) {
             // We can simply return the pre-computed column-wise abundances
-            return rows.value.map(row => row.columnWiseAbundances);
+            transformedRows = rows.value.map(row => row.columnWiseAbundances);
         } else {
             // We have to find the min and max of the column-wise abundances and remap those to the [0, 1]-range
             let minValue = 1;
@@ -551,11 +537,11 @@ const rowData: ComputedRef<number[][]> = computed(() => {
                 maxValue = Math.max(maxValue, ...row.columnWiseAbundances);
             }
 
-            return rows.value.map(row => row.columnWiseAbundances.map(x => (x - minValue) / (maxValue - minValue)));
+            transformedRows = rows.value.map(row => row.columnWiseAbundances.map(x => (x - minValue) / (maxValue - minValue)));
         }
     } else {
         if (useFixedColorScale.value) {
-            return rows.value.map(row => [...row.rowWiseAbundances]);
+            transformedRows = rows.value.map(row => [...row.rowWiseAbundances]);
         } else {
             // We have to find the min and max of the column-wise abundances and remap those to the [0, 1]-range
             let minValue = 1;
@@ -566,9 +552,11 @@ const rowData: ComputedRef<number[][]> = computed(() => {
                 maxValue = Math.max(maxValue, ...row.rowWiseAbundances);
             }
 
-            return rows.value.map(row => row.rowWiseAbundances.map(x => (x - minValue) / (maxValue - minValue)));
+            transformedRows = rows.value.map(row => row.rowWiseAbundances.map(x => (x - minValue) / (maxValue - minValue)));
         }
     }
+
+    return transformedRows.map(row => row.map((x, i) => ({ value: x, label: `${(x * 100).toFixed(2)}%` })));
 });
 
 /**

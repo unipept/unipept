@@ -36,7 +36,7 @@
                                     :color="isHovering ? 'error' : 'grey-lighten-2'"
                                     style="transition: color 0.2s"
                                 >
-                                    mdi-minus-circle-outline
+                                    mdi-delete-outline
                                 </v-icon>
                             </div>
                         </template>
@@ -77,8 +77,10 @@ const {
     data,
     rowNames,
     colNames,
+    showCellLabels = true,
     cellSize = 40,
     cellSpacing = 4,
+    cellFontSize = 10,
     labelSpacing = 10,
     labelFontSize = 14,
     labelFontFamily = "Roboto, sans-serif",
@@ -90,15 +92,19 @@ const {
     tooltipDelay = 500
 } = defineProps<{
     // All cells (with a value between 0 and 1) that should be rendered in the heatmap.
-    data: number[][],
+    data: { value: number, label: string | undefined }[][],
     // Names of all the rows that are displayed in the heatmap.
     rowNames: string[],
     // Names of all the columns that are displayed in the heatmap.
     colNames: string[],
+    // Show value labels inside each cell
+    showCellLabels?: boolean,
     // Width and height of a single cell of the heatmap in pixels.
     cellSize?: number,
     // Spacing (in pixels) between successive cells in the heatmap (both horizontally and vertically).
     cellSpacing?: number,
+    // Font size of the labels rendered inside the cells
+    cellFontSize?: number,
     // Spacing (in pixels) between labels and the visualization (both for the rows and columns)
     labelSpacing?: number,
     // Font size (in pixels) for all labels in the visualization.
@@ -198,10 +204,15 @@ const stopGhostingRow = (rowIdx: number) => {
     d3.selectAll("text[data-row-label='" + rowIdx + "']").classed("ghost", false);
 }
 
-const highlightCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
+const highlightCell = (cellOverlay: HTMLElement, rowIdx: number, colIdx: number) => {
     d3.selectAll(".unipept-heatmap .cell").classed("ghost", true);
-    d3.select(currentCell).classed("ghost", false);
-    d3.select(currentCell).classed("highlighted-cell", true);
+
+    const cellItem = cellOverlay.parentElement!.querySelector(`rect[data-col-item="${colIdx}"]`) as HTMLElement;
+    const cellText = cellOverlay.parentElement!.querySelector(`text[data-col-item="${colIdx}"]`) as HTMLElement;
+
+    d3.select(cellItem).classed("ghost", false);
+    d3.select(cellText).classed("ghost", false);
+    d3.select(cellItem).classed("highlighted-cell", true);
 
     d3.selectAll(".unipept-heatmap .row-label").classed("ghost", true);
     d3.selectAll("text[data-row-label='" + rowIdx + "']").classed("ghost", false);
@@ -210,7 +221,7 @@ const highlightCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number)
     d3.selectAll("text[data-col-label='" + colIdx + "']").classed("ghost", false);
 }
 
-const stopHighlightingCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
+const stopHighlightingCell = (cellOverlay: HTMLElement, rowIdx: number, colIdx: number) => {
     d3.selectAll(".unipept-heatmap .cell").classed("ghost", false);
     d3.selectAll(".unipept-heatmap .row-label").classed("ghost", false);
     d3.selectAll(".unipept-heatmap .header-label").classed("ghost", false);
@@ -411,9 +422,25 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
         .attr("x", (d, i) => i * (cellSize + cellSpacing))
         .attr("y", 0)
         .attr("rx", 4)
-        .attr("fill", (d) => colorInterpolator(d))
+        .attr("fill", (d) => colorInterpolator(d.value))
         .attr("data-col-item", (d, i) => i)
         .classed("cell", true);
+
+    if (showCellLabels) {
+        rows.selectAll("text")
+            .data(d => d)
+            .enter()
+            .append("text")
+            .attr("font-size", cellFontSize)
+            .attr("fill", labelColor)
+            .text(d => d.label || "")
+            .attr("x", (d, i) => i * (cellSize + cellSpacing) + cellSize / 2)
+            .attr("y", cellSize / 2)
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .attr("data-col-item", (d, i) => i)
+            .classed("cell", true)
+    }
 
     // Then add invisible, slightly larger rectangles on top for the mouse events
     rows.selectAll(".cell-overlay")
@@ -432,9 +459,8 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
             const overlay = event.target as HTMLElement;
             const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
             const rowIdx = parseInt(overlay.parentElement!.getAttribute("data-row-item")!);
-            const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
-            highlightCell(cell, rowIdx, colIdx);
+            highlightCell(overlay, rowIdx, colIdx);
             showTooltip(event, rowIdx, colIdx);
         })
         .on("mousemove", (event: MouseEvent, d: any) => {
@@ -445,9 +471,8 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
             const overlay = event.target as HTMLElement;
             const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
             const rowIdx = parseInt(overlay.parentElement!.getAttribute("data-row-item")!);
-            const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
-            stopHighlightingCell(cell, rowIdx, colIdx);
+            stopHighlightingCell(overlay, rowIdx, colIdx);
             hideTooltip();
         })
         .on("click", (event: MouseEvent, d: any) => {
