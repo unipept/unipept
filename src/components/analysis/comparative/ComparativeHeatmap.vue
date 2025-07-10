@@ -21,7 +21,7 @@
                                         These settings directly affect how your metaproteomics samples are processed and displayed. Changes will immediately update the heatmap visualization.
                                     </div>
                                     <v-row class="mt-1">
-                                        <v-col :cols="4">
+                                        <v-col :cols="6">
                                             <v-select
                                                 label="Rank"
                                                 density="comfortable"
@@ -32,9 +32,9 @@
                                                 hint="Level of taxonomic classification to display"
                                             />
                                         </v-col>
-                                        <v-col :cols="4">
+                                        <v-col :cols="6">
                                             <v-select
-                                                label="Normalization"
+                                                label="Use percentages"
                                                 density="comfortable"
                                                 variant="underlined"
                                                 :items="transformationTypes"
@@ -42,10 +42,10 @@
                                                 item-value="type"
                                                 v-model="selectedNormalizationType"
                                                 persistent-hint
-                                                hint="How to standardize abundance values across samples or organisms"
+                                                hint="Convert raw counts to percentages for more meaningful comparisons between samples of different sizes"
                                             />
                                         </v-col>
-                                        <v-col :cols="4">
+                                        <v-col :cols="6">
                                             <v-checkbox
                                                 v-model="useFixedColorScale"
                                                 label="Use fixed color scale"
@@ -56,9 +56,18 @@
                                                 hint="Maintain consistent color mapping across different datasets"
                                             />
                                         </v-col>
+                                        <v-col :cols="6">
+                                            <v-checkbox
+                                                v-model="showCellLabels"
+                                                label="Show labels in cells"
+                                                variant="underlined"
+                                                color="primary"
+                                                density="compact"
+                                            />
+                                        </v-col>
                                     </v-row>
 
-                                    <div class="mt-4">
+                                    <div class="mt-4" v-if="false">
                                         <div style="font-size: 14px;">
                                             <v-icon class="mr-2">
                                                 mdi-information-outline
@@ -146,6 +155,7 @@
                                     :data="rowData"
                                     :row-names="rowNames"
                                     :col-names="colNames"
+                                    :show-cell-labels="showCellLabels"
                                     @deselect-row="removeRow"
                                     v-model:selected-cell="selectedCell"
                                 >
@@ -358,6 +368,7 @@ type FeatureId = number | string;
  */
 
 const useFixedColorScale = ref(true);
+const showCellLabels = ref(true);
 
 enum TransformationType {
     RelativePerSample,
@@ -522,7 +533,10 @@ const rowData: ComputedRef<{ value: number, label: string }[][]> = computed(() =
         }
 
         // Now we do the actual computation to map all values within the desired range
-        transformedRows = rows.value.map(row => row.peptideCount.map(x => (x - minimum) / (maximum - minimum)));
+        return rows.value.map(row => row.peptideCount.map(x => {
+            const val = (x - minimum) / (maximum - minimum);
+            return { value: val, label: `${x}` };
+        }));
     } else if (selectedNormalizationType.value === TransformationType.RelativePerSample) {
         if (useFixedColorScale.value) {
             // We can simply return the pre-computed column-wise abundances

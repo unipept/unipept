@@ -78,7 +78,7 @@ const {
     rowNames,
     colNames,
     showCellLabels = true,
-    cellSize = 40,
+    cellSize = 45,
     cellSpacing = 4,
     cellFontSize = 10,
     labelSpacing = 10,
@@ -516,7 +516,7 @@ watch(() => colNames, () => {
     debouncedRender();
 }, { deep: true });
 
-watch(() => data, () => {
+watch(() => [ data, showCellLabels ], () => {
     debouncedRender();
 }, { deep: true });
 </script>
