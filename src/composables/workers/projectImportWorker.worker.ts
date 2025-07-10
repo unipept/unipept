@@ -38,8 +38,13 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
     for (const group of metadata.groups) {
         for (const analysis of group.analyses) {
             // Update the buffer assignments
-            analysis.indexBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.index`)?.async("arraybuffer") || undefined);
-            analysis.dataBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.data`)?.async("arraybuffer") || undefined);
+            const indexBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.index`)?.async("arraybuffer") || undefined);
+            const dataBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.data`)?.async("arraybuffer") || undefined);
+
+            analysis.peptideToDataTransferable = {
+                indexBuffer,
+                dataBuffer
+            };
         }
     }
 

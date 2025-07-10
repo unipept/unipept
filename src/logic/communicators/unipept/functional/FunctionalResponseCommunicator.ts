@@ -53,7 +53,7 @@ export default abstract class FunctionalResponseCommunicator<T extends Functiona
         const codesToProcess = codes.filter(code => !alreadyProcessedCodes.has(code));
 
         for (let i = 0; i < codesToProcess.length; i += this.batchSize) {
-            const payload = this.createPayload(codes.slice(i, i + this.batchSize));
+            const payload = this.createPayload(codesToProcess.slice(i, i + this.batchSize));
             const res = await NetworkUtils.postJSON(`${this.apiBaseUrl}${this.endpoint}`, payload);
 
             for (const response of this.transformResponse(res)) {

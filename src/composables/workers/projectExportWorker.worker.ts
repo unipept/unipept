@@ -38,7 +38,6 @@ const process = async ({ project, appState }: ProjectExportData) => {
                 // Write the regular ArrayBuffers to file
                 buffers.file(`${analysis.id}.index`, indexArrayBuffer, { binary: true });
                 buffers.file(`${analysis.id}.data`, dataArrayBuffer, { binary: true });
-
             }
         }
     }
