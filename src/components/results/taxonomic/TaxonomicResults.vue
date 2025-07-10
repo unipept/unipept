@@ -51,7 +51,7 @@
                     <treeview :ncbi-root="analysis.ncbiTree!" />
                 </v-tabs-window-item>
 
-                <v-tabs-window-item class="fixed-height">
+                <v-tabs-window-item style="height: 600px;">
                     <taxonomic-barplot :analyses="[analysis]" />
                 </v-tabs-window-item>
 

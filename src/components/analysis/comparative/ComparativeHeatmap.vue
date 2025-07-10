@@ -8,8 +8,8 @@
             <template #visualization>
                 <div style="padding-top: 50px;">
                     <div class="mx-4 mb-6">
-                        <v-expansion-panels color="grey-lighten-4">
-                            <v-expansion-panel>
+                        <v-expansion-panels color="grey-lighten-4" v-model="settingsPanelOpen">
+                            <v-expansion-panel value="settings">
                                 <v-expansion-panel-title>
                                     <v-icon class="mr-2">
                                         mdi-cog
@@ -393,7 +393,8 @@ type FeatureId = number | string;
 const useFixedColorScale = ref(true);
 const showCellLabels = ref(true);
 
-const showAlertContent = ref(true);
+const settingsPanelOpen: Ref<string[]> = ref(["settings"]);
+const showAlertContent = ref(false);
 
 enum TransformationType {
     RelativePerSample,

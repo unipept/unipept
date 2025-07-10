@@ -2,59 +2,71 @@
     <div>
         <visualization-controls
             caption="Hover over the bars to see more details"
-            :settings="true"
             :download="() => downloadImageModalOpen = true"
         >
-            <template #settings>
-                <v-list-item>
-                    Barplot settings
-                </v-list-item>
-                <v-list-item class="mb-4">
-                    <v-select
-                        v-model="selectedTaxonomicRank"
-                        :items="taxonomicRankOptions"
-                        label="Rank"
-                        hide-details
-                        variant="underlined"
-                        density="comfortable"
-                    />
-                </v-list-item>
-                <v-list-item class="mb-n4">
-                    <v-number-input
-                        :reverse="false"
-                        label="Taxa"
-                        :min="1"
-                        :max="20"
-                        :hideInput="false"
-                        :inset="false"
-                        variant="underlined"
-                        density="comfortable"
-                        v-model="taxonCount"
-                    />
-                </v-list-item>
-                <v-list-item class="mb-n2">
-                    <v-checkbox
-                        v-model="useAbsoluteValues"
-                        label="Use absolute peptide counts"
-                        color="primary"
-                        density="compact"
-                        hide-details
-                    />
-                </v-list-item>
-                <v-list-item>
-                    <v-checkbox
-                        v-model="showTooltips"
-                        label="Show tooltip on hoover"
-                        color="primary"
-                        density="compact"
-                        hide-details
-                    />
-                </v-list-item>
-            </template>
 
             <template #visualization>
-                <div ref="barplotWrapper" style="padding-top: 50px;">
-                    <barplot :bars="barData" :settings="barplotSettings" />
+                <div style="padding-top: 50px;">
+                    <div class="mx-4">
+                        <v-expansion-panels color="grey-lighten-4" class="mb-4" v-model="settingsPanelOpen">
+                            <v-expansion-panel value="settings">
+                                <v-expansion-panel-title>
+                                    <v-icon class="mr-2">
+                                        mdi-cog
+                                    </v-icon>
+                                    Barplot settings
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-row class="mt-1">
+                                        <v-col :cols="3">
+                                            <v-select
+                                                v-model="selectedTaxonomicRank"
+                                                :items="taxonomicRankOptions"
+                                                label="Rank"
+                                                hide-details
+                                                variant="underlined"
+                                                density="comfortable"
+                                            />
+                                        </v-col>
+                                        <v-col :cols="3">
+                                            <v-number-input
+                                                :reverse="false"
+                                                label="Taxa"
+                                                :min="1"
+                                                :max="20"
+                                                :hideInput="false"
+                                                :inset="false"
+                                                variant="underlined"
+                                                density="comfortable"
+                                                v-model="taxonCount"
+                                            />
+                                        </v-col>
+                                        <v-col :cols="3">
+                                            <v-checkbox
+                                                v-model="useAbsoluteValues"
+                                                label="Use absolute peptide counts"
+                                                color="primary"
+                                                density="compact"
+                                                hide-details
+                                            />
+                                        </v-col>
+                                        <v-col :cols="3">
+                                            <v-checkbox
+                                                v-model="showTooltips"
+                                                label="Show tooltip on hoover"
+                                                color="primary"
+                                                density="compact"
+                                                hide-details
+                                            />
+                                        </v-col>
+                                    </v-row>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                    </div>
+                    <div ref="barplotWrapper">
+                        <barplot :bars="barData" :settings="barplotSettings" />
+                    </div>
                 </div>
             </template>
         </visualization-controls>
@@ -82,6 +94,8 @@
         analyses: SingleAnalysisStore[],
         comparative?: boolean
     }>(), { comparative: false });
+
+    const settingsPanelOpen: Ref<string[]> = ref(["settings"]);
 
     const taxonomicRankOptions: Ref<string[]> = ref(
         Object.values(NcbiRank)
