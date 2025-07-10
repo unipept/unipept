@@ -22,6 +22,7 @@
     "html-to-image": "^1.11.11",
     "jszip": "^3.10.1",
     "localforage": "^1.10.0",
+    "lru-cache-idb": "^0.5.2",
     "marked": "^15.0.10",
     "peptonizer": "file:./peptonizer-v0.0.31.tgz",
     "pinia": "^3.0.2",
