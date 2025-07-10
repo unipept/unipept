@@ -17,9 +17,89 @@
                                     Heatmap settings
                                 </v-expansion-panel-title>
                                 <v-expansion-panel-text>
-                                    <div style="font-size: 14px;">
-                                        These settings directly affect how your metaproteomics samples are processed and displayed. Changes will immediately update the heatmap visualization.
-                                    </div>
+                                    <v-alert icon="mdi-help-circle-outline" class="mb-2">
+                                        <v-alert-title @click="showAlertContent = !showAlertContent" style="cursor: pointer;">
+                                            <div class="d-flex" style="width: 100%;">
+                                                <div class="flex-grow-1">Relative or absolute peptide counts?</div>
+                                                <v-icon v-if="showAlertContent" class="float-end">
+                                                    mdi-chevron-up
+                                                </v-icon>
+                                                <v-icon v-else class="float-end">
+                                                    mdi-chevron-down
+                                                </v-icon>
+                                            </div>
+                                        </v-alert-title>
+                                        <div v-if="showAlertContent">
+                                            <div class="my-4">
+                                                Unipept offers three normalization methods to gain different insights into your data.
+                                                Each method provides a unique perspective on how your samples relate to each other.
+                                            </div>
+
+                                            <div>
+                                                <div class="font-weight-bold">1. Use percentages per sample (column-based)</div>
+                                                <div class="font-italic">&quot;What proportion of this sample is made up by each organism?&quot;</div>
+                                                <v-row>
+                                                    <v-col :cols="12" class="ml-1 mb-4">
+                                                        <ul>
+                                                            <li>
+                                                                Each column is normalized independently. This means that values in the
+                                                                heatmap reflect <span class="font-weight-bold">the fraction of each sample</span> that is made up of each
+                                                                organism.
+                                                            </li>
+                                                            <li>
+                                                                Ideal for spotting which organisms are <span class="font-weight-bold">most or least abundant in a sample</span>.
+                                                            </li>
+                                                        </ul>
+                                                    </v-col>
+                                                </v-row>
+                                            </div>
+
+                                            <div>
+                                                <div class="font-weight-bold">2. Use percentages per organism (row-based)</div>
+                                                <div class="font-italic">&quot;In which sample does an organism live?&quot;</div>
+                                                <v-row>
+                                                    <v-col :cols="12" class="ml-1 mb-4">
+                                                        <ul>
+                                                            <li>
+                                                                Relative peptide counts are individually computed per row.
+                                                                Absolute differences between organisms are flattened, but this method <span class="font-weight-bold">highlights how each organism is distributed across samples</span>.
+                                                            </li>
+                                                            <li>
+                                                                Ideal for spotting organisms that are <span class="font-weight-bold">enriched or depleted</span> in specific
+                                                                conditions (e.g. healthy vs disease).
+                                                            </li>
+                                                        </ul>
+                                                    </v-col>
+                                                </v-row>
+                                            </div>
+
+                                            <div>
+                                                <div class="font-weight-bold">3. Use absolute peptide counts (no-transformation)</div>
+                                                <div class="font-italic">&quot;How much of each organism was found?&quot;</div>
+                                                <v-row>
+                                                    <v-col :cols="12" class="ml-1">
+                                                        <ul>
+                                                            <li>
+                                                                No scaling or transformation is applied to the data. The bigger the
+                                                                original number, the higher its signal in the heatmap will be.
+                                                            </li>
+                                                            <li>
+                                                                Watch out! Can be misleading when <span class="font-weight-bold">total sample size differs</span> a lot.
+                                                            </li>
+                                                        </ul>
+                                                    </v-col>
+                                                </v-row>
+                                            </div>
+
+                                            <div class="d-flex justify-center mt-4">
+                                                <v-btn @click="showAlertContent = false" variant="text">
+                                                    <v-icon>mdi-chevron-up</v-icon>
+                                                    <span>Hide</span>
+                                                </v-btn>
+                                            </div>
+                                        </div>
+                                    </v-alert>
+
                                     <v-row class="mt-1">
                                         <v-col :cols="6">
                                             <v-select
@@ -66,83 +146,6 @@
                                             />
                                         </v-col>
                                     </v-row>
-
-                                    <div class="mt-4" v-if="false">
-                                        <div style="font-size: 14px;">
-                                            <v-icon class="mr-2">
-                                                mdi-information-outline
-                                            </v-icon>
-                                            Understanding data normalization
-                                            <v-icon class="float-right">
-                                                mdi-chevron-down
-                                            </v-icon>
-                                        </div>
-
-                                        <div class="my-4">
-                                            Unipept offers three normalization methods to gain different insights into your data.
-                                            Each method provides a unique perspective on how your samples relate to each other.
-                                        </div>
-
-                                        <div>
-                                            <div class="font-weight-bold">1. Normalize per sample (column-wise)</div>
-                                            <div class="font-italic">&quot;What proportion of this sample is made up by each organism?&quot;</div>
-                                            <v-row>
-                                                <v-col :cols="12" class="ml-1 mb-4">
-                                                    <ul>
-                                                        <li>
-                                                            Each column is normalized independently. This means that values in the
-                                                            heatmap reflect <span class="font-weight-bold">the fraction of each sample</span> that is made up of each
-                                                            organism.
-                                                        </li>
-                                                        <li>
-                                                            Ideal for spotting which organisms are <span class="font-weight-bold">most or least abundant in a sample</span>.
-                                                        </li>
-                                                    </ul>
-                                                </v-col>
-                                            </v-row>
-                                        </div>
-
-                                        <div>
-                                            <div class="font-weight-bold">2. Normalize per organism (row-wise)</div>
-                                            <div class="font-italic">&quot;In which sample does an organism live?&quot;</div>
-                                            <v-row>
-                                                <v-col :cols="12" class="ml-1 mb-4">
-                                                    <ul>
-                                                        <li>
-                                                            Row normalization <span class="font-weight-bold">flattens absolute differences</span> between organisms but
-                                                            highlights how each one is distributed across samples.
-                                                        </li>
-                                                        <li>
-                                                            Ideal for spotting organisms that are <span class="font-weight-bold">enriched or depleted</span> in specific
-                                                            conditions (e.g. healthy vs disease).
-                                                        </li>
-                                                        <li>
-                                                            Be careful! Row normalization <span class="font-weight-bold">hides global abundance differences</span>.
-                                                        </li>
-                                                    </ul>
-                                                </v-col>
-                                            </v-row>
-                                        </div>
-
-                                        <div>
-                                            <div class="font-weight-bold">3. No normalization</div>
-                                            <div class="font-italic">&quot;How much of each organism was found?&quot;</div>
-                                            <div></div>
-                                            <v-row>
-                                                <v-col :cols="12" class="ml-1">
-                                                    <ul>
-                                                        <li>
-                                                            No scaling or transformation is applied to the data. The bigger the
-                                                            original number, the higher its signal in the heatmap will be.
-                                                        </li>
-                                                        <li>
-                                                            Watch out! Can be misleading when <span class="font-weight-bold">total sample size differs</span> a lot.
-                                                        </li>
-                                                    </ul>
-                                                </v-col>
-                                            </v-row>
-                                        </div>
-                                    </div>
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
                         </v-expansion-panels>
@@ -370,6 +373,8 @@ type FeatureId = number | string;
 const useFixedColorScale = ref(true);
 const showCellLabels = ref(true);
 
+const showAlertContent = ref(true);
+
 enum TransformationType {
     RelativePerSample,
     RelativePerOrganism,
@@ -392,7 +397,7 @@ const transformationTypes: Ref<TransformationItem[]> = ref([
     },
     {
         type: TransformationType.None,
-        description: "No transformation"
+        description: "Use absolute peptide counts (no-transformation)"
     }
 ]);
 const selectedNormalizationType: Ref<TransformationType> = ref(TransformationType.RelativePerSample);
