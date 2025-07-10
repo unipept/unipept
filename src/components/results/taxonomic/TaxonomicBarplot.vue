@@ -77,7 +77,7 @@
                         <template v-if="highlightedData">
                             <div class="text-subtitle-1">{{ highlightedData.organismName }}</div>
                             <div v-for="organismValue of highlightedData.organismValues" :key="organismValue.sampleName">
-                                <span class="font-weight-bold"> {{ organismValue.sampleName }}:</span>
+                                <span :class="{'font-weight-bold': organismValue.isHighlighted}"> {{ organismValue.sampleName }}:</span>
                                 {{ organismValue.organismLabel }}
                             </div>
                         </template>
@@ -153,7 +153,7 @@
 
     const highlightedData = ref<{
         organismName: string,
-        organismValues: { sampleName: string, organismLabel: string }[]
+        organismValues: { sampleName: string, organismLabel: string, isHighlighted: boolean }[]
     } | undefined>(undefined);
 
     const tooltipDelay = 500;
@@ -162,7 +162,13 @@
     barplotSettings.value.mouseIn = (bars: Bar[], barIndex: number, itemIndex: number, mousePosition: { x: number, y: number }) => {
         highlightedData.value = {
             organismName: bars[barIndex].items[itemIndex].label,
-            organismValues: bars.map(b => { return { sampleName: b.label, organismLabel: `${b.items[itemIndex].counts.toFixed(2)} %` } })
+            organismValues: bars.map((b, idx) => {
+                return {
+                    sampleName: b.label,
+                    organismLabel: useAbsoluteValues.value ? `${b.items[itemIndex].counts} peptides`:`${b.items[itemIndex].counts.toFixed(2)}%`,
+                    isHighlighted: idx === barIndex
+                }
+            })
         }
 
         tooltipPosition.value = mousePosition;
