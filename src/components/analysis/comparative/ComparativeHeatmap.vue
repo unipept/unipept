@@ -17,10 +17,10 @@
                                     Heatmap settings
                                 </v-expansion-panel-title>
                                 <v-expansion-panel-text>
-                                    <v-alert icon="mdi-help-circle-outline" class="mb-2">
+                                    <v-alert icon="mdi-help-circle-outline" class="mb-2" density="compact">
                                         <v-alert-title @click="showAlertContent = !showAlertContent" style="cursor: pointer;">
                                             <div class="d-flex" style="width: 100%;">
-                                                <div class="flex-grow-1">Relative or absolute peptide counts?</div>
+                                                <div class="flex-grow-1" style="font-size: 16px;">Relative or absolute peptide counts?</div>
                                                 <v-icon v-if="showAlertContent" class="float-end">
                                                     mdi-chevron-up
                                                 </v-icon>
@@ -291,11 +291,10 @@
                             />
                             <div v-else>
                                 <div class="d-flex align-center my-2">
-                                    <div class="text-h5">{{ colNames[selectedCell.colIdx] }} • {{ rowNames[selectedCell.rowIdx] }}</div>
+                                    <div class="text-h5">{{ rowNames[selectedCell.rowIdx] }} in {{ colNames[selectedCell.colIdx] }}</div>
                                 </div>
                                 <h3 class="mb-1">
-                                    {{ selectedTaxonomicRank.charAt(0).toUpperCase() + selectedTaxonomicRank.slice(1) }}
-                                    abundance across samples
+                                    {{ rowNames[selectedCell.rowIdx] }} abundance across samples
                                 </h3>
                                 <div>
                                     <table style="width: 100%; table-layout: fixed;">
@@ -304,7 +303,7 @@
                                             <col style="width: auto;">
                                         </colgroup>
                                         <tbody>
-                                        <tr v-for="(item, idx) of selectedCellSummary!" :key="idx">
+                                        <tr v-for="(item, idx) of selectedCellSampleSummary!" :key="idx">
                                             <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                                 <span style="font-size: 14px;" :class="idx === selectedCell.colIdx ? 'font-weight-bold' : ''">
                                                     {{ item.sampleName }}
@@ -328,14 +327,35 @@
 
                                 <h3 class="mt-4 mb-1">
                                     {{ selectedTaxonomicRank.charAt(0).toUpperCase() + selectedTaxonomicRank.slice(1) }}
-                                    abundance within sample
+                                    abundance within
+                                    {{ colNames[selectedCell.colIdx] }}
                                 </h3>
-
-
-    <!--                            <h3 class="mt-4">Associated peptides</h3>-->
-    <!--                            <v-data-table>-->
-
-    <!--                            </v-data-table>-->
+                                <table style="width: 100%; table-layout: fixed;">
+                                    <colgroup>
+                                        <col style="width: 200px;">
+                                        <col style="width: auto;">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr v-for="(item, idx) of selectedCellOrganismSummary!" :key="idx">
+                                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                <span style="font-size: 14px;" :class="idx === selectedCell.rowIdx ? 'font-weight-bold' : ''">
+                                                    {{ item.organismName }}
+                                                </span>
+                                        </td>
+                                        <td>
+                                            <v-progress-linear
+                                                :model-value="item.abundance * 100"
+                                                height="20"
+                                                :color="idx === selectedCell.rowIdx ? 'primary' : 'grey'"
+                                            >
+                                                    <span :style="{ 'font-size': '12px' }">
+                                                        {{ item.label }}
+                                                    </span>
+                                            </v-progress-linear>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -666,7 +686,7 @@ const allInPageSelected = computed(() => {
 
 const selectedCell: Ref<{rowIdx: number, colIdx: number}> = ref({rowIdx: -1, colIdx: -1});
 
-const selectedCellSummary: ComputedRef<{ sampleName: string, label: string, abundance: number }[] | undefined> = computed(() => {
+const selectedCellSampleSummary: ComputedRef<{ sampleName: string, label: string, abundance: number }[] | undefined> = computed(() => {
     if (selectedCell.value.rowIdx === -1 || selectedCell.value.colIdx === -1) {
         return undefined;
     }
@@ -682,6 +702,25 @@ const selectedCellSummary: ComputedRef<{ sampleName: string, label: string, abun
     }
 
     return output.sort((a: { sampleName: string, label: string, abundance: number }, b: { sampleName: string, label: string, abundance: number }) => b.abundance - a.abundance);
+});
+
+const selectedCellOrganismSummary: ComputedRef<{ organismName: string, label: string, abundance: number }[] | undefined> = computed(() => {
+    if (selectedCell.value.rowIdx === -1 || selectedCell.value.colIdx === -1) {
+        return undefined;
+    }
+
+    const output = [];
+
+    for (const [row, organismId] of selectedIds.value.entries()) {
+        output.push({
+            organismName: rowNames.value[row],
+            label: (rows.value[row].columnWiseAbundances[selectedCell.value.colIdx] * 100).toFixed(2) + "%",
+            abundance: rows.value[row].columnWiseAbundances[selectedCell.value.colIdx]
+        })
+    }
+
+
+    return output.sort((a: { organismName: string, label: string, abundance: number }, b: { organismName: string, label: string, abundance: number }) => b.abundance - a.abundance);
 });
 
 /**
