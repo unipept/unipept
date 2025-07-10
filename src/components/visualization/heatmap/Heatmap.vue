@@ -89,6 +89,7 @@ const {
     minColor = "#EEEEEE",
     maxColor = "#2196F3",
     selectedStrokeColor = "black",
+    showTooltips = true,
     tooltipDelay = 500
 } = defineProps<{
     // All cells (with a value between 0 and 1) that should be rendered in the heatmap.
@@ -121,6 +122,8 @@ const {
     maxColor?: string,
     // Color of the stroke of a selected cell. Should ideally be a bit darker than the maxColor.
     selectedStrokeColor?: string,
+    // Show tooltips on hover?
+    showTooltips?: boolean,
     // Before open delay of the tooltip
     tooltipDelay?: number,
 }>();
@@ -258,7 +261,7 @@ const showTooltip = (event: MouseEvent, rowIdx: number, colIdx: number) => {
     highlightedCell.value.rowIdx = rowIdx;
     highlightedCell.value.colIdx = colIdx;
 
-    tooltipTimeout = setTimeout(() => tooltipActive.value = true, tooltipDelay);
+    tooltipTimeout = setTimeout(() => tooltipActive.value = showTooltips, tooltipDelay);
 }
 
 const moveTooltip = (event: MouseEvent) => {

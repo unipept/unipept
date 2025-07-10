@@ -52,7 +52,7 @@
                                         </v-col>
                                         <v-col :cols="3">
                                             <v-checkbox
-                                                v-model="showTooltips"
+                                                v-model="showTooltip"
                                                 label="Show tooltip on hoover"
                                                 color="primary"
                                                 density="compact"
@@ -67,6 +67,21 @@
                     <div ref="barplotWrapper">
                         <barplot :bars="barData" :settings="barplotSettings" />
                     </div>
+
+                    <v-tooltip
+                        :model-value="tooltipActive"
+                        :target="[tooltipPosition.x, tooltipPosition.y]"
+                        :offset="20"
+                        location="right"
+                    >
+                        <template v-if="highlightedData">
+                            <div class="text-subtitle-1">{{ highlightedData.organismName }}</div>
+                            <div v-for="organismValue of highlightedData.organismValues" :key="organismValue.sampleName">
+                                <span class="font-weight-bold"> {{ organismValue.sampleName }}:</span>
+                                {{ organismValue.organismLabel }}
+                            </div>
+                        </template>
+                    </v-tooltip>
                 </div>
             </template>
         </visualization-controls>
@@ -105,7 +120,11 @@
 
     const useAbsoluteValues = ref(false);
 
-    const showTooltips = ref(true);
+    // User setting that determines whether tooltips should be shown?
+    const showTooltip = ref(true);
+    // If the user is hovering over an item, the tooltip component should be active.
+    const tooltipActive = ref(false);
+    const tooltipPosition: Ref<{x: number, y: number}> = ref({x: 0, y: 0});
 
     const taxonCount = ref(15);
 
@@ -129,6 +148,43 @@
     barplotSettings.value.displayMode = "relative";
     barplotSettings.value.maxItems = taxonCount.value;
     barplotSettings.value.barHeight = 100;
+    // We take over the rendering of the tooltip ourselves and disable the built-in rendering.
+    barplotSettings.value.enableTooltips = false;
+
+    const highlightedData = ref<{
+        organismName: string,
+        organismValues: { sampleName: string, organismLabel: string }[]
+    } | undefined>(undefined);
+
+    const tooltipDelay = 500;
+    let tooltipTimeout: NodeJS.Timeout | undefined;
+
+    barplotSettings.value.mouseIn = (bars: Bar[], barIndex: number, itemIndex: number, mousePosition: { x: number, y: number }) => {
+        highlightedData.value = {
+            organismName: bars[barIndex].items[itemIndex].label,
+            organismValues: bars.map(b => { return { sampleName: b.label, organismLabel: `${b.items[itemIndex].counts.toFixed(2)} %` } })
+        }
+
+        tooltipPosition.value = mousePosition;
+        tooltipTimeout = setTimeout(() => tooltipActive.value = showTooltip.value, tooltipDelay);
+    }
+
+    barplotSettings.value.mouseMove = (bars: Bar[], barIndex: number, itemIndex: number, mousePosition: { x: number, y: number }) => {
+        tooltipPosition.value = mousePosition;
+    }
+
+    barplotSettings.value.mouseOut = (bars: Bar[], barIndex: number, itemIndex: number) => {
+        highlightedData.value = undefined;
+
+        if (tooltipTimeout) {
+            clearTimeout(tooltipTimeout);
+            tooltipTimeout = undefined;
+        }
+
+        tooltipActive.value = false;
+        tooltipPosition.value = {x: 0, y: 0};
+    }
+
 
     const initializeSpeciesBar = () => {
         const createdBars = [];
@@ -199,8 +255,7 @@
         initializeSpeciesBar();
     })
 
-    watch(showTooltips, () => {
-        barplotSettings.value.enableTooltips = showTooltips.value;
+    watch(showTooltip, () => {
         initializeSpeciesBar();
     })
 

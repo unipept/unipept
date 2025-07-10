@@ -17,7 +17,7 @@
                                     Heatmap settings
                                 </v-expansion-panel-title>
                                 <v-expansion-panel-text>
-                                    <v-alert icon="mdi-help-circle-outline" class="mb-2" density="compact">
+                                    <v-alert icon="mdi-help-circle-outline" class="my-2" density="compact">
                                         <v-alert-title @click="showAlertContent = !showAlertContent" style="cursor: pointer;">
                                             <div class="d-flex" style="width: 100%;">
                                                 <div class="flex-grow-1" style="font-size: 16px;">Relative or absolute peptide counts?</div>
@@ -125,7 +125,7 @@
                                                 hint="Convert raw counts to percentages for more meaningful comparisons between samples of different sizes"
                                             />
                                         </v-col>
-                                        <v-col :cols="6">
+                                        <v-col :cols="4">
                                             <v-checkbox
                                                 v-model="useFixedColorScale"
                                                 label="Use fixed color scale"
@@ -136,10 +136,19 @@
                                                 hint="Maintain consistent color mapping across different datasets"
                                             />
                                         </v-col>
-                                        <v-col :cols="6">
+                                        <v-col :cols="4">
                                             <v-checkbox
                                                 v-model="showCellLabels"
                                                 label="Show labels in cells"
+                                                variant="underlined"
+                                                color="primary"
+                                                density="compact"
+                                            />
+                                        </v-col>
+                                        <v-col :cols="4">
+                                            <v-checkbox
+                                                v-model="showTooltips"
+                                                label="Show tooltip on hoover"
                                                 variant="underlined"
                                                 color="primary"
                                                 density="compact"
@@ -159,12 +168,13 @@
                                     :row-names="rowNames"
                                     :col-names="colNames"
                                     :show-cell-labels="showCellLabels"
+                                    :show-tooltips="showTooltips"
                                     @deselect-row="removeRow"
                                     v-model:selected-cell="selectedCell"
                                 >
                                     <template #tooltip-content="{ selectedRow, selectedCol }">
                                         <template v-if="selectedCol !== -1 && selectedRow !== -1">
-                                            <div class="text-subtitle-1">{{ analyses[selectedCol].name }} • {{ rowNames[selectedRow] }}</div>
+                                            <div class="text-subtitle-1"><span class="font-italic">{{ rowNames[selectedRow] }}</span> in {{ analyses[selectedCol].name }}</div>
                                             <div>
                                                 <span class="font-weight-bold">{{ rows[selectedRow].peptideCount[selectedCol] }} peptides</span>
                                                 in {{ props.analyses[selectedCol].name }} linked to {{ selectedTaxonomicRank }}
@@ -291,10 +301,10 @@
                             />
                             <div v-else>
                                 <div class="d-flex align-center my-2">
-                                    <div class="text-h5">{{ rowNames[selectedCell.rowIdx] }} in {{ colNames[selectedCell.colIdx] }}</div>
+                                    <div class="text-h5"><span class="font-italic">{{ rowNames[selectedCell.rowIdx] }}</span> in {{ colNames[selectedCell.colIdx] }}</div>
                                 </div>
                                 <h3 class="mb-1">
-                                    {{ rowNames[selectedCell.rowIdx] }} abundance across samples
+                                    <span class="font-italic">{{ rowNames[selectedCell.rowIdx] }}</span> abundance across samples
                                 </h3>
                                 <div>
                                     <table style="width: 100%; table-layout: fixed;">
@@ -392,6 +402,7 @@ type FeatureId = number | string;
 
 const useFixedColorScale = ref(true);
 const showCellLabels = ref(true);
+const showTooltips = ref(true);
 
 const settingsPanelOpen: Ref<string[]> = ref(["settings"]);
 const showAlertContent = ref(false);
