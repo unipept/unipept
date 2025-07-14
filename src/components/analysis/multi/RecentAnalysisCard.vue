@@ -62,7 +62,6 @@
                 </v-virtual-scroll>
 
                 <div
-                    v-if="projects.length > visibleProjects.length"
                     ref="footer"
                     class="pb-2"
                 >
@@ -71,6 +70,7 @@
                     <div class="d-flex align-center">
                         <div class="d-flex justify-center flex-grow-1">
                             <v-btn
+                                v-if="projects.length > visibleProjects.length"
                                 :disabled="!hasMore"
                                 class="ms-5 mr-4"
                                 variant="text"
