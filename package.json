@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@babel/types": "^7.21.4",
-    "@types/node": "^22.13.8",
+    "@types/node": "^24.0.8",
     "@types/webfontloader": "^1.6.35",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
@@ -49,10 +49,10 @@
     "eslint-plugin-vue": "^9.0.0",
     "sass": "^1.66.1",
     "sass-loader": "^16.0.2",
-    "typescript": "^5.0.0",
-    "vite": "^6.2.6",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
     "vite-plugin-vuetify": "^2.1.1",
-    "vue-eslint-parser": "^10.1.1",
+    "vue-eslint-parser": "^10.1.4",
     "vue-tsc": "^2.2.0"
   }
 }
