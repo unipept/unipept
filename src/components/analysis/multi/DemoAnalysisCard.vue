@@ -17,6 +17,7 @@
                         color="primary"
                         variant="tonal"
                         text="Select a demo project"
+                        :loading="loading"
                         @click="dialogOpen = true"
                     />
                 </div>
@@ -91,8 +92,9 @@
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {ref} from "vue";
 
-const { samples, disabled = false } = defineProps<{
+const { samples, loading = false, disabled = false } = defineProps<{
     samples: SampleData[],
+    loading?: boolean,
     disabled?: boolean
 }>();
 
@@ -100,12 +102,12 @@ const emits = defineEmits<{
     (e: "select", sample: SampleData): void;
 }>();
 
+const dialogOpen = ref(false);
+
 const selectSample = (sample: SampleData) => {
     dialogOpen.value = false;
     emits("select", sample);
 };
-
-const dialogOpen = ref(false);
 
 const openReference = (sample: SampleData) => {
     window.open(sample.url, "_blank");

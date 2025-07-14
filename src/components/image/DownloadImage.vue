@@ -18,6 +18,7 @@
                     <v-card
                         class="pa-2"
                         width="60%"
+                        style="max-height: 400px;"
                         variant="outlined"
                     >
                         <v-img

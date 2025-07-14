@@ -24,46 +24,53 @@
                 <v-progress-circular color="primary" indeterminate />
             </div>
 
-            <v-virtual-scroll
-                v-else-if="projects.length > 0"
-                :items="visibleProjects"
-                :height="height - headerHeight - 15"
-            >
-                <template #default="{ item, index }">
-                    <v-card
-                        class="project-card mb-1 ps-2"
-                        @click="openProject(item.name)"
-                        variant="flat"
-                        density="compact"
-                    >
-                        <v-card-text class="d-flex align-center gap-2 py-3">
-                            <v-icon size="20" class="mr-5">mdi-folder-outline</v-icon>
-                            <div>
-                                <div>{{ item.name }}</div>
-                                <div class="text-subtitle-2">
-                                    <span>Last opened on {{ item.lastAccessed.toLocaleDateString() }}</span>
-                                    <span class="mx-2">•</span>
-                                    <span>{{ formatNumber(item.totalPeptides) }} peptides</span>
+            <div v-else-if="projects.length > 0">
+                <v-virtual-scroll
+                    :items="visibleProjects"
+                    :height="height - headerHeight - footerHeight"
+                >
+                    <template #default="{ item, index }">
+                        <v-card
+                            class="project-card mb-1 ps-2"
+                            @click="openProject(item.name)"
+                            variant="flat"
+                            density="compact"
+                        >
+                            <v-card-text class="d-flex align-center gap-2 py-3">
+                                <v-icon size="20" class="mr-5">mdi-folder-outline</v-icon>
+                                <div>
+                                    <div>{{ item.name }}</div>
+                                    <div class="text-subtitle-2">
+                                        <span>Last opened on {{ item.lastAccessed.toLocaleDateString() }}</span>
+                                        <span class="mx-2">•</span>
+                                        <span>{{ formatNumber(item.totalPeptides) }} peptides</span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <v-spacer />
+                                <v-spacer />
 
-                            <v-btn
-                                variant="text"
-                                class="me-2"
-                                color="error"
-                                icon="mdi-delete"
-                                @click.stop="deleteProject(item.name)"
-                            />
-                        </v-card-text>
-                    </v-card>
+                                <v-btn
+                                    variant="text"
+                                    class="me-2"
+                                    color="error"
+                                    icon="mdi-delete"
+                                    @click.stop="deleteProject(item.name)"
+                                />
+                            </v-card-text>
+                        </v-card>
+                    </template>
+                </v-virtual-scroll>
 
-                    <v-divider v-if="index === visibleProjects.length - 1" class="mx-5" />
+                <div
+                    ref="footer"
+                    class="pb-2"
+                >
+                    <v-divider class="mx-5" />
 
-                    <div v-if="index === visibleProjects.length - 1" class="d-flex align-center">
+                    <div class="d-flex align-center">
                         <div class="d-flex justify-center flex-grow-1">
                             <v-btn
+                                v-if="projects.length > visibleProjects.length"
                                 :disabled="!hasMore"
                                 class="ms-5 mr-4"
                                 variant="text"
@@ -87,8 +94,8 @@
                             </template>
                         </v-tooltip>
                     </div>
-                </template>
-            </v-virtual-scroll>
+                </div>
+            </div>
 
             <v-card
                 v-else
@@ -183,9 +190,11 @@ const emits = defineEmits<{
 const { formatNumber } = useNumberFormatter();
 
 const header = useTemplateRef('header');
+const footer = useTemplateRef('footer');
 const { height: headerHeight } = useElementBounding(header);
+const { height: footerHeight } = useElementBounding(footer);
 
-const visibleCount = ref(4);
+const visibleCount = ref(5);
 const deleteDialogOpen = ref(false);
 const deleteAllDialogOpen = ref(false);
 const projectToDelete = ref<string>("");

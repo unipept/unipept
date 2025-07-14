@@ -2,59 +2,86 @@
     <div>
         <visualization-controls
             caption="Hover over the bars to see more details"
-            :settings="true"
             :download="() => downloadImageModalOpen = true"
         >
-            <template #settings>
-                <v-list-item>
-                    Barplot settings
-                </v-list-item>
-                <v-list-item class="mb-4">
-                    <v-select
-                        v-model="selectedTaxonomicRank"
-                        :items="taxonomicRankOptions"
-                        label="Rank"
-                        hide-details
-                        variant="underlined"
-                        density="comfortable"
-                    />
-                </v-list-item>
-                <v-list-item class="mb-n4">
-                    <v-number-input
-                        :reverse="false"
-                        label="Taxa"
-                        :min="1"
-                        :max="20"
-                        :hideInput="false"
-                        :inset="false"
-                        variant="underlined"
-                        density="comfortable"
-                        v-model="taxonCount"
-                    />
-                </v-list-item>
-                <v-list-item>
-                    <v-checkbox
-                        v-model="useAbsoluteValues"
-                        label="Use absolute peptide counts"
-                        color="primary"
-                        density="compact"
-                        hide-details
-                    />
-                </v-list-item>
-                <v-list-item>
-                    <v-checkbox
-                        v-model="showTooltips"
-                        label="Show tooltip on hoover"
-                        color="primary"
-                        density="compact"
-                        hide-details
-                    />
-                </v-list-item>
-            </template>
 
             <template #visualization>
-                <div ref="barplotWrapper" style="padding-top: 50px;">
-                    <barplot :bars="barData" :settings="barplotSettings" />
+                <div style="padding-top: 50px;">
+                    <div class="mx-4">
+                        <v-expansion-panels color="grey-lighten-4" class="mb-4" v-model="settingsPanelOpen">
+                            <v-expansion-panel value="settings">
+                                <v-expansion-panel-title>
+                                    <v-icon class="mr-2">
+                                        mdi-cog
+                                    </v-icon>
+                                    Barplot settings
+                                </v-expansion-panel-title>
+                                <v-expansion-panel-text>
+                                    <v-row class="mt-1">
+                                        <v-col :cols="3">
+                                            <v-select
+                                                v-model="selectedTaxonomicRank"
+                                                :items="taxonomicRankOptions"
+                                                label="Rank"
+                                                hide-details
+                                                variant="underlined"
+                                                density="comfortable"
+                                            />
+                                        </v-col>
+                                        <v-col :cols="3">
+                                            <v-number-input
+                                                :reverse="false"
+                                                label="Taxa"
+                                                :min="1"
+                                                :max="20"
+                                                :hideInput="false"
+                                                :inset="false"
+                                                variant="underlined"
+                                                density="comfortable"
+                                                v-model="taxonCount"
+                                            />
+                                        </v-col>
+                                        <v-col :cols="3">
+                                            <v-checkbox
+                                                v-model="useAbsoluteValues"
+                                                label="Use absolute peptide counts"
+                                                color="primary"
+                                                density="compact"
+                                                hide-details
+                                            />
+                                        </v-col>
+                                        <v-col :cols="3">
+                                            <v-checkbox
+                                                v-model="showTooltip"
+                                                label="Show tooltip on hoover"
+                                                color="primary"
+                                                density="compact"
+                                                hide-details
+                                            />
+                                        </v-col>
+                                    </v-row>
+                                </v-expansion-panel-text>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                    </div>
+                    <div ref="barplotWrapper">
+                        <barplot :bars="barData" :settings="barplotSettings" />
+                    </div>
+
+                    <v-tooltip
+                        :model-value="tooltipActive"
+                        :target="[tooltipPosition.x, tooltipPosition.y]"
+                        :offset="20"
+                        location="right"
+                    >
+                        <template v-if="highlightedData">
+                            <div class="text-subtitle-1">{{ highlightedData.organismName }}</div>
+                            <div v-for="organismValue of highlightedData.organismValues" :key="organismValue.sampleName">
+                                <span :class="{'font-weight-bold': organismValue.isHighlighted}"> {{ organismValue.sampleName }}:</span>
+                                {{ organismValue.organismLabel }}
+                            </div>
+                        </template>
+                    </v-tooltip>
                 </div>
             </template>
         </visualization-controls>
@@ -83,6 +110,8 @@
         comparative?: boolean
     }>(), { comparative: false });
 
+    const settingsPanelOpen: Ref<string[]> = ref(["settings"]);
+
     const taxonomicRankOptions: Ref<string[]> = ref(
         Object.values(NcbiRank)
     );
@@ -91,7 +120,11 @@
 
     const useAbsoluteValues = ref(false);
 
-    const showTooltips = ref(true);
+    // User setting that determines whether tooltips should be shown?
+    const showTooltip = ref(true);
+    // If the user is hovering over an item, the tooltip component should be active.
+    const tooltipActive = ref(false);
+    const tooltipPosition: Ref<{x: number, y: number}> = ref({x: 0, y: 0});
 
     const taxonCount = ref(15);
 
@@ -115,20 +148,63 @@
     barplotSettings.value.displayMode = "relative";
     barplotSettings.value.maxItems = taxonCount.value;
     barplotSettings.value.barHeight = 100;
+    // We take over the rendering of the tooltip ourselves and disable the built-in rendering.
+    barplotSettings.value.enableTooltips = false;
+
+    const highlightedData = ref<{
+        organismName: string,
+        organismValues: { sampleName: string, organismLabel: string, isHighlighted: boolean }[]
+    } | undefined>(undefined);
+
+    const tooltipDelay = 500;
+    let tooltipTimeout: NodeJS.Timeout | undefined;
+
+    barplotSettings.value.mouseIn = (bars: Bar[], barIndex: number, itemIndex: number, mousePosition: { x: number, y: number }) => {
+        highlightedData.value = {
+            organismName: bars[barIndex].items[itemIndex].label,
+            organismValues: bars.map((b, idx) => {
+                return {
+                    sampleName: b.label,
+                    organismLabel: useAbsoluteValues.value ? `${b.items[itemIndex].counts} peptides`:`${b.items[itemIndex].counts.toFixed(2)}%`,
+                    isHighlighted: idx === barIndex
+                }
+            })
+        }
+
+        tooltipPosition.value = mousePosition;
+        tooltipTimeout = setTimeout(() => tooltipActive.value = showTooltip.value, tooltipDelay);
+    }
+
+    barplotSettings.value.mouseMove = (bars: Bar[], barIndex: number, itemIndex: number, mousePosition: { x: number, y: number }) => {
+        tooltipPosition.value = mousePosition;
+    }
+
+    barplotSettings.value.mouseOut = (bars: Bar[], barIndex: number, itemIndex: number) => {
+        highlightedData.value = undefined;
+
+        if (tooltipTimeout) {
+            clearTimeout(tooltipTimeout);
+            tooltipTimeout = undefined;
+        }
+
+        tooltipActive.value = false;
+        tooltipPosition.value = {x: 0, y: 0};
+    }
+
 
     const initializeSpeciesBar = () => {
         const createdBars = [];
         for (const analysis of props.analyses) {
-            const nodesAtSpecies: NcbiTreeNode[] = [];
+            const nodesAtRank: NcbiTreeNode[] = [];
             analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
                 if (x && x.extra.rank === selectedTaxonomicRank.value) {
-                    nodesAtSpecies.push(x);
+                    nodesAtRank.push(x);
                 }
             });
 
             const items: BarItem[] = [];
 
-            for (const speciesNode of nodesAtSpecies) {
+            for (const speciesNode of nodesAtRank) {
                 items.push({
                     label: speciesNode.name,
                     counts: speciesNode.count
@@ -185,8 +261,7 @@
         initializeSpeciesBar();
     })
 
-    watch(showTooltips, () => {
-        barplotSettings.value.enableTooltips = showTooltips.value;
+    watch(showTooltip, () => {
         initializeSpeciesBar();
     })
 

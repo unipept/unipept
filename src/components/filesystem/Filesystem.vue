@@ -22,6 +22,7 @@
 
         <v-list-item
             v-if="!project.groups || project.groups.length === 0"
+            class="text-center"
             style="pointer-events: none"
             density="compact"
         >

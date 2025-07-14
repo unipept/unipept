@@ -4,7 +4,6 @@
         v-model:selected-analyses="singleAnalysisState.selectedAnalyses"
         v-model:selected-group="singleAnalysisState.selectedGroup"
         :project="project"
-        :is-demo-mode="isDemoMode"
     >
         <template v-if="project && !project.empty">
             <div v-if="selectedAnalysisFailed">
@@ -100,10 +99,7 @@ export interface Sample {
     rawPeptides: string;
 }
 
-const {
-    project,
-    isDemoMode
-} = useUnipeptAnalysisStore();
+const { project } = useUnipeptAnalysisStore();
 
 const {
     singleAnalysisState

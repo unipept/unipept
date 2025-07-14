@@ -20,7 +20,7 @@
                 Matched peptides
             </th>
             <th class="text-right">
-                Search peptides
+                Sample size
             </th>
             <th class="text-right">
                 Match ratio

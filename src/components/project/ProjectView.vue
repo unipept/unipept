@@ -25,7 +25,7 @@
 
     <v-container class="py-0" fluid>
         <v-alert
-            v-if="isDemoMode"
+            v-if="project.isDemoMode"
             type="info"
         >
             You are currently in <b>demo</b> mode. Changes made to the project will not be saved.
@@ -57,9 +57,9 @@
         <slot></slot>
         
         <manage-sample-group-dialog
-            v-if="selectedGroup"
+            v-if="groupToManage"
             v-model="manageSamples"
-            :group="selectedGroup"
+            :group="groupToManage"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -83,9 +83,8 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
 const { getProjects } = useUnipeptAnalysisStore();
 
-const { project, isDemoMode = false, multiSelect = false } = defineProps<{
+const { project, multiSelect = false } = defineProps<{
     project: ProjectAnalysisStore;
-    isDemoMode?: boolean;
     multiSelect?: boolean;
 }>();
 
@@ -94,9 +93,12 @@ const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-grou
 const manageSamples = defineModel<boolean | undefined>("manage-samples", { default: false, required: false });
 
 const newDialogOpen = ref(false);
+const groupToManage = ref<GroupAnalysisStore | undefined>();
 
 const addGroup = (name: string) => {
-    project.addGroup(name);
+    const groupId = project.addGroup(name);
+    groupToManage.value = project.getGroup(groupId);
+    manageSamples.value = true;
 }
 
 const updateGroup = (groupId: string, updatedName: string) => {
@@ -107,7 +109,6 @@ const removeGroup = (groupId: string) => {
     project.removeGroup(groupId);
     selectFirstAnalysis();
 }
-
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
     const wasEmpty = project.empty;

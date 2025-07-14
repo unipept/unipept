@@ -3,6 +3,19 @@
         <div ref="heatmapContainer">
         </div>
 
+        <v-tooltip
+            :model-value="tooltipActive"
+            :target="[tooltipPosition.x, tooltipPosition.y]"
+            :offset="20"
+            location="right"
+        >
+            <slot
+                name="tooltip-content"
+                :selected-row="highlightedCell.rowIdx"
+                :selected-col="highlightedCell.colIdx"
+            />
+        </v-tooltip>
+
         <!-- Controls to the right of the visualization -->
         <div>
             <div :style="`height: ${colLabelHeight}px;`"></div>
@@ -23,7 +36,7 @@
                                     :color="isHovering ? 'error' : 'grey-lighten-2'"
                                     style="transition: color 0.2s"
                                 >
-                                    mdi-minus-circle-outline
+                                    mdi-delete-outline
                                 </v-icon>
                             </div>
                         </template>
@@ -34,18 +47,20 @@
     </div>
 
     <div :style="`width: ${containerWidth}px;`" class="d-flex">
-        <div :style="`width: ${rowLabelWidth}px;`"></div>
-        <v-menu location="top center" :close-on-content-click="false">
+        <div :style="`width: ${rowLabelWidth}px;`">
+        </div>
+        <v-menu location="right top" :close-on-content-click="false" :offset="12">
             <template v-slot:activator="{ props }">
                 <v-btn
                     color="primary"
                     v-bind="props"
                     :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
-                    variant="tonal"
                     size="small"
+                    variant="elevated"
                     @click="addRows()"
+                    prepend-icon="mdi-plus"
+                    text="Add species"
                 >
-                    <v-icon>mdi-plus</v-icon>
                 </v-btn>
             </template>
             <slot name="row-selector"></slot>
@@ -55,32 +70,42 @@
 
 <script setup lang="ts">
 import * as d3 from 'd3';
-import {computed, ComputedRef, onMounted, ref, watch} from "vue";
+import {computed, ComputedRef, onMounted, Ref, ref, watch} from "vue";
+import {useDebounce, useDebounceFn} from "@vueuse/core";
 
 const {
     data,
     rowNames,
     colNames,
-    cellSize = 40,
+    showCellLabels = true,
+    cellSize = 45,
     cellSpacing = 4,
+    cellFontSize = 10,
     labelSpacing = 10,
     labelFontSize = 14,
     labelFontFamily = "Roboto, sans-serif",
     labelFontWeight = "500",
     labelColor = "#353535",
     minColor = "#EEEEEE",
-    maxColor = "#2196F3"
+    maxColor = "#2196F3",
+    selectedStrokeColor = "black",
+    showTooltips = true,
+    tooltipDelay = 500
 } = defineProps<{
     // All cells (with a value between 0 and 1) that should be rendered in the heatmap.
-    data: number[][],
+    data: { value: number, label: string | undefined }[][],
     // Names of all the rows that are displayed in the heatmap.
     rowNames: string[],
     // Names of all the columns that are displayed in the heatmap.
     colNames: string[],
+    // Show value labels inside each cell
+    showCellLabels?: boolean,
     // Width and height of a single cell of the heatmap in pixels.
     cellSize?: number,
     // Spacing (in pixels) between successive cells in the heatmap (both horizontally and vertically).
     cellSpacing?: number,
+    // Font size of the labels rendered inside the cells
+    cellFontSize?: number,
     // Spacing (in pixels) between labels and the visualization (both for the rows and columns)
     labelSpacing?: number,
     // Font size (in pixels) for all labels in the visualization.
@@ -94,7 +119,13 @@ const {
     // Fill color of cells corresponding to value 0.0
     minColor?: string,
     // Fill color of cells corresponding to value 1.0
-    maxColor?: string
+    maxColor?: string,
+    // Color of the stroke of a selected cell. Should ideally be a bit darker than the maxColor.
+    selectedStrokeColor?: string,
+    // Show tooltips on hover?
+    showTooltips?: boolean,
+    // Before open delay of the tooltip
+    tooltipDelay?: number,
 }>();
 
 const emits = defineEmits<{
@@ -102,10 +133,17 @@ const emits = defineEmits<{
     (e: 'deselect-col', colIdx: number): void;
     (e: 'select-rows'): void;
     (e: 'select-cols'): void;
-    (e: 'click-cell', rowIdx: number, colIdx: number): void;
 }>();
 
 const className: string = "unipept-heatmap";
+
+const tooltipActive: Ref<boolean> = ref(false);
+const tooltipPosition: Ref<{ x: number, y: number }> = ref({ x: 0, y: 0 });
+const highlightedCell: Ref<{ rowIdx: number, colIdx: number }> = ref({
+    rowIdx: -1,
+    colIdx: -1
+});
+const selectedCell = defineModel("selected-cell", { default: { rowIdx: -1, colIdx: -1 } });
 
 const heatmapContainer = ref<HTMLElement>();
 
@@ -115,6 +153,10 @@ const heatmapContainer = ref<HTMLElement>();
  * width.
  */
 const rowLabelWidth: ComputedRef<number> = computed(() => {
+    if (rowNames.length === 0) {
+        return 250;
+    }
+
     return Math.min(
         Math.max(...rowNames.map((name: string) => computeTextWidth(name, labelFontSize, labelFontFamily, labelFontWeight))) + 2 * labelSpacing,
         250
@@ -165,10 +207,15 @@ const stopGhostingRow = (rowIdx: number) => {
     d3.selectAll("text[data-row-label='" + rowIdx + "']").classed("ghost", false);
 }
 
-const highlightCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
+const highlightCell = (cellOverlay: HTMLElement, rowIdx: number, colIdx: number) => {
     d3.selectAll(".unipept-heatmap .cell").classed("ghost", true);
-    d3.select(currentCell).classed("ghost", false);
-    d3.select(currentCell).classed("highlighted-cell", true);
+
+    const cellItem = cellOverlay.parentElement!.querySelector(`rect[data-col-item="${colIdx}"]`) as HTMLElement;
+    const cellText = cellOverlay.parentElement!.querySelector(`text[data-col-item="${colIdx}"]`) as HTMLElement;
+
+    d3.select(cellItem).classed("ghost", false);
+    d3.select(cellText).classed("ghost", false);
+    d3.select(cellItem).classed("highlighted-cell", true);
 
     d3.selectAll(".unipept-heatmap .row-label").classed("ghost", true);
     d3.selectAll("text[data-row-label='" + rowIdx + "']").classed("ghost", false);
@@ -177,11 +224,58 @@ const highlightCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number)
     d3.selectAll("text[data-col-label='" + colIdx + "']").classed("ghost", false);
 }
 
-const stopHighlightingCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
+const stopHighlightingCell = (cellOverlay: HTMLElement, rowIdx: number, colIdx: number) => {
     d3.selectAll(".unipept-heatmap .cell").classed("ghost", false);
     d3.selectAll(".unipept-heatmap .row-label").classed("ghost", false);
     d3.selectAll(".unipept-heatmap .header-label").classed("ghost", false);
     d3.select(".unipept-heatmap .highlighted-cell").classed("highlighted-cell", false);
+}
+
+const selectCell = (currentCell: HTMLElement, rowIdx: number, colIdx: number) => {
+    d3.selectAll(".unipept-heatmap .cell").classed("selected-cell", false);
+    d3.selectAll(".unipept-heatmap .row-label").classed("selected-label", false);
+    d3.selectAll(".unipept-heatmap .header-label").classed("selected-label", false);
+
+    d3.select(currentCell).classed("selected-cell", true);
+
+    d3.selectAll("text[data-row-label='" + rowIdx + "']").classed("selected-label", true);
+    d3.selectAll("text[data-col-label='" + colIdx + "']").classed("selected-label", true);
+
+
+    selectedCell.value = { rowIdx, colIdx };
+}
+
+const stopSelectedCell = () => {
+    d3.selectAll(".unipept-heatmap .cell").classed("selected-cell", false);
+    d3.selectAll(".unipept-heatmap .row-label").classed("selected-label", false);
+    d3.selectAll(".unipept-heatmap .header-label").classed("selected-label", false);
+    selectedCell.value = { rowIdx: -1, colIdx: -1 };
+}
+
+let tooltipTimeout: NodeJS.Timeout | undefined;
+
+const showTooltip = (event: MouseEvent, rowIdx: number, colIdx: number) => {
+    tooltipPosition.value.x = event.clientX;
+    tooltipPosition.value.y = event.clientY;
+
+    highlightedCell.value.rowIdx = rowIdx;
+    highlightedCell.value.colIdx = colIdx;
+
+    tooltipTimeout = setTimeout(() => tooltipActive.value = showTooltips, tooltipDelay);
+}
+
+const moveTooltip = (event: MouseEvent) => {
+    tooltipPosition.value.x = event.clientX;
+    tooltipPosition.value.y = event.clientY;
+}
+
+const hideTooltip = () => {
+    if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+        tooltipTimeout = undefined;
+    }
+
+    tooltipActive.value = false;
 }
 
 const computeTextWidth = (
@@ -256,9 +350,14 @@ const renderHeatmap = () => {
             `
         );
 
-    renderColumnLabels(svg);
-    renderRowLabels(svg);
-    renderGrid(svg);
+    if (colNames.length > 0) {
+        renderColumnLabels(svg);
+    }
+
+    if (rowNames.length > 0) {
+        renderRowLabels(svg);
+        renderGrid(svg);
+    }
 };
 
 const renderColumnLabels = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undefined>) => {
@@ -326,9 +425,25 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
         .attr("x", (d, i) => i * (cellSize + cellSpacing))
         .attr("y", 0)
         .attr("rx", 4)
-        .attr("fill", (d) => colorInterpolator(d))
+        .attr("fill", (d) => colorInterpolator(d.value))
         .attr("data-col-item", (d, i) => i)
         .classed("cell", true);
+
+    if (showCellLabels) {
+        rows.selectAll("text")
+            .data(d => d)
+            .enter()
+            .append("text")
+            .attr("font-size", cellFontSize)
+            .attr("fill", labelColor)
+            .text(d => d.label || "")
+            .attr("x", (d, i) => i * (cellSize + cellSpacing) + cellSize / 2)
+            .attr("y", cellSize / 2)
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .attr("data-col-item", (d, i) => i)
+            .classed("cell", true)
+    }
 
     // Then add invisible, slightly larger rectangles on top for the mouse events
     rows.selectAll(".cell-overlay")
@@ -347,44 +462,66 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
             const overlay = event.target as HTMLElement;
             const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
             const rowIdx = parseInt(overlay.parentElement!.getAttribute("data-row-item")!);
-            const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
-            highlightCell(cell, rowIdx, colIdx);
+            highlightCell(overlay, rowIdx, colIdx);
+            showTooltip(event, rowIdx, colIdx);
+        })
+        .on("mousemove", (event: MouseEvent, d: any) => {
+            moveTooltip(event);
         })
         .on("mouseleave", (event: MouseEvent, d: any) => {
             // Find the corresponding visible cell
             const overlay = event.target as HTMLElement;
             const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
             const rowIdx = parseInt(overlay.parentElement!.getAttribute("data-row-item")!);
-            const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
-            stopHighlightingCell(cell, rowIdx, colIdx);
+            stopHighlightingCell(overlay, rowIdx, colIdx);
+            hideTooltip();
         })
         .on("click", (event: MouseEvent, d: any) => {
             // Find the corresponding visible cell
             const overlay = event.target as HTMLElement;
             const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
             const rowIdx = parseInt(overlay.parentElement!.getAttribute("data-row-item")!);
+            const cell = overlay.parentElement!.querySelector(`.cell[data-col-item="${colIdx}"]`) as HTMLElement;
 
-            emits("click-cell", rowIdx, colIdx);
+            // Toggle the cell selection if it has already been selected by the user
+            if (selectedCell.value.rowIdx === rowIdx && selectedCell.value.colIdx === colIdx) {
+                stopSelectedCell();
+            } else {
+                selectCell(cell, rowIdx, colIdx);
+            }
         });
+    
+    if (selectedCell.value.rowIdx !== -1 && selectedCell.value.colIdx !== -1) {
+        // Find the row element with the data attribute for the selected row
+        const row = document.querySelector(`g[data-row-item="${selectedCell.value.rowIdx}"]`);
+        // Find the cell within that row that has the matching column data attribute
+        const cell = row?.querySelector(`rect[data-col-item="${selectedCell.value.colIdx}"]`) as HTMLElement;
+
+        if (cell) {
+            selectCell(cell, selectedCell.value.rowIdx, selectedCell.value.colIdx);
+        }
+    }
 };
 
+const debouncedRender = useDebounceFn(renderHeatmap, 20);
+
 onMounted(() => {
-    renderHeatmap();
+    debouncedRender();
 });
 
 watch(() => rowNames, () => {
-    renderHeatmap();
-});
+    debouncedRender();
+}, { deep: true });
 
 watch(() => colNames, () => {
-    renderHeatmap();
-});
+    debouncedRender();
+}, { deep: true });
 
-watch(() => data, () => {
-    renderHeatmap();
-});
+watch(() => [ data, showCellLabels ], () => {
+    debouncedRender();
+}, { deep: true });
 </script>
 
 <style>
@@ -396,6 +533,15 @@ watch(() => data, () => {
 .unipept-heatmap .highlighted-cell {
     stroke-width: 2px;
     stroke: gray;
+}
+
+.unipept-heatmap .selected-cell {
+    stroke-width: 2px;
+    stroke: v-bind(selectedStrokeColor);
+}
+
+.unipept-heatmap .selected-label {
+    text-decoration: underline;
 }
 </style>
 
