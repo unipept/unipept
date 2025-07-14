@@ -2,7 +2,7 @@ import {defineStore} from "pinia";
 import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 import localforage from "localforage";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
-import {computed, ref} from "vue";
+import {computed} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 import useProjectExport from "@/composables/useProjectExport";
@@ -30,12 +30,6 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const customDatabases = useCustomFilterStore();
     const appState = useAppStateStore();
 
-    const _projectName = ref<string>("");
-
-    const isDemoMode = computed(() => {
-        return _projectName.value === "";
-    });
-
     const getProjects = async () => {
         const keys = await store.keys();
         return await Promise.all(keys.map(async (key) => {
@@ -49,15 +43,13 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     const loadNewProject = async (projectName: string) => {
-        _projectName.value = projectName;
-
         appState.clear();
         project.clear();
+        project.setName(projectName);
+        project.setDemoMode(false);
     }
 
     const loadProjectFromStorage = async (projectName: string) => {
-        _projectName.value = projectName;
-
         const value: StoreValue | null = await store.getItem(projectName);
         if (value !== null) {
             appState.clear();
@@ -65,33 +57,31 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
             const processedImport = await blobToStore(value.project);
 
-            console.log(processedImport);
-
             project.setImportedData(processedImport.project);
+            project.setName(projectName);
+            project.setDemoMode(false);
             appState.setImportedData(processedImport.appState, project);
         }
     }
 
     const loadProjectFromFile = async (projectName: string, file: File) => {
-        _projectName.value = projectName;
-
         appState.clear();
         project.clear();
 
         const processedImport = await blobToStore(file);
 
-        console.log(processedImport);
-
         project.setImportedData(processedImport.project);
+        project.setName(projectName);
+        project.setDemoMode(false);
         appState.setImportedData(processedImport.appState, project);
     }
 
     const loadProjectFromSample = async (sample: SampleData) => {
-        _projectName.value = "";
-
         appState.clear();
         project.clear();
 
+        project.setName("Demo project");
+        project.setDemoMode(true);
         const groupId = project.addGroup(sample.environment);
         for (const dataset of sample.datasets) {
             project.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), {
@@ -104,11 +94,11 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     const loadProjectFromPeptides = async (rawPeptides: string, config: AnalysisConfig) => {
-        _projectName.value = "";
-
         appState.clear();
         project.clear();
-        const groupId = project.addGroup("Quick analysis");
+        project.setName("Quick analysis");
+        project.setDemoMode(true);
+        const groupId = project.addGroup("Group");
         project.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
     }
 
@@ -117,7 +107,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     watchDebounced([ project, customDatabases, appState ], async () => {
-        if (!isDemoMode.value) {
+        if (!project.isDemoMode && project.name) {
             let totalPeptides = 0;
             for (const group of project.groups) {
                 for (const analysis of group.analyses) {
@@ -127,7 +117,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
             const processedBlob = await storeToBlob(project, appState);
 
-            await store.setItem(_projectName.value, {
+            await store.setItem(project.name, {
                 lastAccessed: Date.now(),
                 totalPeptides: totalPeptides,
                 project: processedBlob.content,
@@ -137,7 +127,6 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
     return {
         project,
-        isDemoMode,
 
         getProjects,
         loadNewProject,

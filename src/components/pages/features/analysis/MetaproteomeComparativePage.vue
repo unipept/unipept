@@ -4,7 +4,6 @@
         v-model:selected-analyses="comparativeAnalysisState.selectedAnalyses"
         v-model:selected-group="comparativeAnalysisState.selectedGroup"
         :project="project"
-        :is-demo-mode="isDemoMode"
         :multi-select="true"
     >
         <template v-if="!project.empty">
@@ -78,10 +77,7 @@ import ComparativeHeatmap from "@/components/analysis/comparative/ComparativeHea
 const manageSamplesDialogOpen = ref(false);
 const selectedComparativeTab = ref(0);
 
-const {
-    project,
-    isDemoMode
-} = useUnipeptAnalysisStore();
+const { project } = useUnipeptAnalysisStore();
 
 const {
     comparativeAnalysisState,

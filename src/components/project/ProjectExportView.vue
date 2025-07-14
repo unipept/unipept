@@ -3,7 +3,7 @@
         <v-unipept-card class="mb-6">
             <v-card-title class="text-h5 font-weight-bold mb-2">
                 <v-icon icon="mdi-file-download-outline" size="30" class="me-2" color="primary"/>
-                Export Project Overview
+                Export Project
             </v-card-title>
             <v-card-text>
                 <p>
@@ -96,7 +96,7 @@
                 variant="tonal"
                 @click="exportProject"
                 prepend-icon="mdi-download"
-                text="Download Project Export"
+                text="Export Project"
                 :loading="preparingExport"
             />
         </v-row>

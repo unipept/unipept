@@ -1,11 +1,4 @@
 <template>
-    <div
-        v-if="!project.groups || project.groups.length === 0"
-        class="mt-4 d-flex justify-center"
-    >
-        No samples added yet...
-    </div>
-
     <v-list
         v-model:opened="expanded"
         class="py-0"
@@ -17,7 +10,27 @@
         v-model:selected="selected"
         @update:selected="selectItem"
     >
+        <v-list-item
+            v-if="project.name"
+            style="pointer-events: none"
+            base-color="primary"
+            variant="tonal"
+            density="compact"
+        >
+            {{ project.name }}
+        </v-list-item>
+
+        <v-list-item
+            v-if="!project.groups || project.groups.length === 0"
+            class="text-center"
+            style="pointer-events: none"
+            density="compact"
+        >
+            No samples added yet...
+        </v-list-item>
+
         <filesystem-group
+            v-else
             v-for="group in project.groups"
             :key="group.id"
             :group="group"

@@ -25,11 +25,23 @@
 
     <v-container class="py-0" fluid>
         <v-alert
-            v-if="isDemoMode"
+            v-if="project.isDemoMode"
             type="info"
         >
-            You are currently in <b>demo</b> mode. Changes made to the project will not be saved. To save your changes, please create a new project.
+            You are currently in <b>demo</b> mode. Changes made to the project will not be saved.
+            To save your changes, click
+            <span
+                class="text-white text-decoration-underline font-weight-bold cursor-pointer"
+                @click="newDialogOpen = true"
+            >here</span>
+            to create a new project.
         </v-alert>
+
+        <new-project-dialog
+            v-model="newDialogOpen"
+            :project-exists="projectExists"
+            @project:new="convertToProject"
+        />
     </v-container>
 
     <v-container
@@ -45,9 +57,9 @@
         <slot></slot>
         
         <manage-sample-group-dialog
-            v-if="selectedGroup"
+            v-if="groupToManage"
             v-model="manageSamples"
-            :group="selectedGroup"
+            :group="groupToManage"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -66,10 +78,13 @@ import {DEFAULT_NEW_GROUP_NAME, ProjectAnalysisStore} from "@/store/ProjectAnaly
 import EmptyProjectPlaceholder from "@/components/project/EmptyProjectPlaceholder.vue";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import ManageSampleGroupDialog from "@/components/sample/ManageSampleGroupDialog.vue";
+import NewProjectDialog from "@/components/analysis/multi/NewProjectDialog.vue";
+import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
-const { project, isDemoMode = false, multiSelect = false } = defineProps<{
+const { getProjects } = useUnipeptAnalysisStore();
+
+const { project, multiSelect = false } = defineProps<{
     project: ProjectAnalysisStore;
-    isDemoMode?: boolean;
     multiSelect?: boolean;
 }>();
 
@@ -77,8 +92,13 @@ const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses",
 const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-group", { required: true });
 const manageSamples = defineModel<boolean | undefined>("manage-samples", { default: false, required: false });
 
+const newDialogOpen = ref(false);
+const groupToManage = ref<GroupAnalysisStore | undefined>();
+
 const addGroup = (name: string) => {
-    project.addGroup(name);
+    const groupId = project.addGroup(name);
+    groupToManage.value = project.getGroup(groupId);
+    manageSamples.value = true;
 }
 
 const updateGroup = (groupId: string, updatedName: string) => {
@@ -89,7 +109,6 @@ const removeGroup = (groupId: string) => {
     project.removeGroup(groupId);
     selectFirstAnalysis();
 }
-
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
     const wasEmpty = project.empty;
@@ -142,6 +161,16 @@ const selectFirstAnalysis = () => {
 const selectGroup = (groupId: string) => {
     selectedGroup.value = project.getGroup(groupId);
 }
+
+const projectExists = async (name: string) => {
+    const projects = await getProjects();
+    return projects.some(project => project.name === name);
+};
+
+const convertToProject = (projectName: string) => {
+    project.setName(projectName);
+    project.setDemoMode(false);
+};
 
 onMounted(() => {
     if (selectedAnalyses.value.length === 0) {
