@@ -16,7 +16,7 @@ export interface SinglePageState {
 }
 
 const useAppStateStore = defineStore('appStateStore', () => {
-    const { project, isDemoMode } = useUnipeptAnalysisStore();
+    const { project } = useUnipeptAnalysisStore();
 
     const comparativeAnalysisState: Ref<ComparativePageState> = ref({
         selectedAnalyses: [],
@@ -70,7 +70,6 @@ const useAppStateStore = defineStore('appStateStore', () => {
 
     return {
         project,
-        isDemoMode,
 
         comparativeAnalysisState,
         singleAnalysisState,

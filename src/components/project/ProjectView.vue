@@ -25,7 +25,7 @@
 
     <v-container class="py-0" fluid>
         <v-alert
-            v-if="isDemoMode"
+            v-if="project.isDemoMode"
             type="info"
         >
             You are currently in <b>demo</b> mode. Changes made to the project will not be saved.
@@ -83,9 +83,8 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 
 const { getProjects } = useUnipeptAnalysisStore();
 
-const { project, isDemoMode = false, multiSelect = false } = defineProps<{
+const { project, multiSelect = false } = defineProps<{
     project: ProjectAnalysisStore;
-    isDemoMode?: boolean;
     multiSelect?: boolean;
 }>();
 

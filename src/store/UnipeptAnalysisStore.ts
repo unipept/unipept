@@ -30,8 +30,6 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const customDatabases = useCustomFilterStore();
     const appState = useAppStateStore();
 
-    const isDemoMode = computed(() => project.isDemoMode);
-
     const getProjects = async () => {
         const keys = await store.keys();
         return await Promise.all(keys.map(async (key) => {
@@ -109,7 +107,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     watchDebounced([ project, customDatabases, appState ], async () => {
-        if (!isDemoMode.value && project.name) {
+        if (!project.isDemoMode && project.name) {
             let totalPeptides = 0;
             for (const group of project.groups) {
                 for (const analysis of group.analyses) {
@@ -129,7 +127,6 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
     return {
         project,
-        isDemoMode,
 
         getProjects,
         loadNewProject,
