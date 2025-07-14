@@ -124,7 +124,7 @@ export default class NcbiResponseCommunicator {
             );
 
             for (const response of res) {
-                await NcbiResponseCommunicator.lruCache.set(`${uniprotVersion}__${this.apiBaseUrl}__ncbi__${codesToProcess[i]}`, response);
+                await NcbiResponseCommunicator.lruCache.set(`${uniprotVersion}__${this.apiBaseUrl}__ncbi__${response["id"]}`, response);
             }
 
             responses.push(...res);
