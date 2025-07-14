@@ -123,6 +123,10 @@ export default class NcbiResponseCommunicator {
                 data
             );
 
+            for (const response of res) {
+                await NcbiResponseCommunicator.lruCache.set(`${uniprotVersion}__${this.apiBaseUrl}__ncbi__${codesToProcess[i]}`, response);
+            }
+
             responses.push(...res);
         }
 
