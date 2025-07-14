@@ -817,7 +817,7 @@ watch(() => props.analyses, () => {
     debouncedInit();
 });
 
-watch(() => rowData, async () => {
+watch(() => [rowData, useFixedColorScale, showCellLabels], async () => {
     await nextTick();
     // Wait a little bit for the svg to be rendered
     setTimeout(() => {
