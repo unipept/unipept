@@ -57,9 +57,9 @@
         <slot></slot>
         
         <manage-sample-group-dialog
-            v-if="selectedGroup"
+            v-if="groupToManage"
             v-model="manageSamples"
-            :group="selectedGroup"
+            :group="groupToManage"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -94,9 +94,12 @@ const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-grou
 const manageSamples = defineModel<boolean | undefined>("manage-samples", { default: false, required: false });
 
 const newDialogOpen = ref(false);
+const groupToManage = ref<GroupAnalysisStore | undefined>();
 
 const addGroup = (name: string) => {
-    project.addGroup(name);
+    const groupId = project.addGroup(name);
+    groupToManage.value = project.getGroup(groupId);
+    manageSamples.value = true;
 }
 
 const updateGroup = (groupId: string, updatedName: string) => {
@@ -107,7 +110,6 @@ const removeGroup = (groupId: string) => {
     project.removeGroup(groupId);
     selectFirstAnalysis();
 }
-
 
 const addSample = (groupId: string, sample: SampleTableItem) => {
     const wasEmpty = project.empty;
