@@ -132,17 +132,7 @@ const databaseToManipulate = ref<string>('');
 const taxonCounts = ref<Map<string, string>>(new Map());
 const proteinCounts = ref<Map<string, string>>(new Map());
 
-const amountOfLinkedSamples = computed(() => {
-    let count = 0;
-    for (const group of project.groups) {
-        for (const analysis of group.analyses) {
-            if (analysis.config.database === databaseToManipulate.value) {
-                count++;
-            }
-        }
-    }
-    return count;
-});
+const amountOfLinkedSamples = computed(() => computeSampleCount(databaseToManipulate.value));
 
 const databases = computed(() => {
     return customFilterStore.filters.map(id => {
@@ -153,6 +143,7 @@ const databases = computed(() => {
             type: showFilterType(filter.filter),
             taxaCount: taxonCounts.value.get(id) || 'computing...',
             proteinCount: proteinCounts.value.get(id) || 'computing...',
+            sampleCount: computeSampleCount(id),
         };
     });
 });
@@ -207,11 +198,24 @@ const computeProteinCount = async (filter: Filter) => {
     }
 };
 
+const computeSampleCount = (filterId: string): number => {
+    let count = 0;
+    for (const group of project.groups) {
+        for (const analysis of group.analyses) {
+            if (analysis.config.database === filterId) {
+                count++;
+            }
+        }
+    }
+    return count;
+};
+
 const tableHeaders: any = [
     { title: 'Name', key: 'name' },
     { title: 'Type', key: 'type' },
     { title: '# Taxa', key: 'taxaCount', align: "end" },
     { title: '# Proteins', key: 'proteinCount', align: "end" },
+    { title: '# Samples', key: 'sampleCount', align: "end" },
     { title: 'Actions', key: 'actions', align: "end", sortable: false },
 ];
 
