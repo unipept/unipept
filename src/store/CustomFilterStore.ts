@@ -19,7 +19,7 @@ export interface Filter {
 
 const useCustomFilterStore = defineStore('customFilterStore', () => {
     const _filters = ref<Map<string, Filter>>(new Map());
-    _filters.value.set(UNIPROT_ID, { filter: FilterType.UniProtKB, name: 'UniProtKB -  TODO' });
+    _filters.value.set(UNIPROT_ID, { filter: FilterType.UniProtKB, name: 'UniProtKB' });
 
     const filters = computed(() => [ ..._filters.value.keys() ]);
     const filterNames = computed(() => [ ..._filters.value.values() ].map(f => f.name));
@@ -57,7 +57,7 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
 
     const clear = () => {
         _filters.value.clear();
-        _filters.value.set(UNIPROT_ID, { filter: FilterType.UniProtKB, name: 'UniProtKB - TODO' });
+        _filters.value.set(UNIPROT_ID, { filter: FilterType.UniProtKB, name: 'UniProtKB' });
     }
 
     const exportStore = (): CustomFilterStoreImport => {
