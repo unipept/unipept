@@ -292,7 +292,11 @@ const duplicateDatabase = (id: string) => {
     }
 
     const newName = `${filter.name} - copy ${counter}`;
-    const newId = customFilterStore.addFilter({ ...filter, name: newName });
+    const newId = customFilterStore.addFilter({
+        ...filter,
+        name: newName,
+        data: [ ...filter.data ]
+    });
     taxonCounts.value.set(newId, taxonCounts.value.get(id)!);
     proteinCounts.value.set(newId, proteinCounts.value.get(id)!);
 };
