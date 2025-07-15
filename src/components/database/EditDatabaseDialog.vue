@@ -6,7 +6,7 @@
             </v-card-title>
             <v-card-text class="pb-0">
                 <p>
-                    Are you sure you want to update this custom database <strong>{{ database }}</strong>?
+                    Are you sure you want to update this custom database <strong>{{ databaseName }}</strong>?
                     This action is <b>irreversible</b>.
                 </p>
                 <v-alert type="warning" class="mt-4">
@@ -23,7 +23,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import {defineProps, defineEmits, computed} from 'vue';
+import useCustomFilterStore from "@/store/CustomFilterStore";
+
+const customFilterStore = useCustomFilterStore();
 
 const dialogOpen = defineModel<boolean>();
 
@@ -34,6 +37,8 @@ const props = defineProps<{
 const emit = defineEmits({
     confirm: () => true,
 });
+
+const databaseName = computed(() => customFilterStore.getFilterNameById(props.database));
 
 const cancel = () => {
     dialogOpen.value = false;

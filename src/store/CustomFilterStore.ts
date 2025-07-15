@@ -1,5 +1,8 @@
 import {defineStore} from "pinia";
 import {computed, ref, toRaw} from "vue";
+import {v4 as uuidv4} from "uuid";
+
+export const UNIPROT_ID = 'UniProtKB';
 
 export enum FilterType {
     Taxon,
@@ -10,39 +13,51 @@ export enum FilterType {
 
 export interface Filter {
     filter: FilterType;
+    name: string;
     data?: number[] | string[];
 }
 
 const useCustomFilterStore = defineStore('customFilterStore', () => {
     const _filters = ref<Map<string, Filter>>(new Map());
-    _filters.value.set('UniProtKB', { filter: FilterType.UniProtKB });
+    _filters.value.set(UNIPROT_ID, { filter: FilterType.UniProtKB, name: 'UniProtKB -  TODO' });
 
     const filters = computed(() => [ ..._filters.value.keys() ]);
+    const filterNames = computed(() => [ ..._filters.value.values() ].map(f => f.name));
 
-    const getFilter = (key: string): Filter | undefined => {
-        return _filters.value.get(key);
+    const getFilterNameById = (id: string): string | undefined => {
+        const filter = _filters.value.get(id);
+        return filter ? filter.name : undefined;
     }
 
-    const addFilter = (key: string, filter: Filter) => {
-        _filters.value.set(key, filter);
+    const getFilterById = (id: string): Filter | undefined => {
+        return _filters.value.get(id);
     }
 
-    const removeFilter = (key: string) => {
-        _filters.value.delete(key);
+    const addFilter = (filter: Filter): string => {
+        const filterId = uuidv4();
+        _filters.value.set(filterId, filter);
+        return filterId;
     }
 
-    const hasFilter = (key: string): boolean => {
-        return _filters.value.has(key);
+    const removeFilterById = (id: string) => {
+        _filters.value.delete(id);
     }
 
-    const updateFilter = (oldKey: string, newKey: string, newFilter: Filter) => {
-        _filters.value.delete(oldKey);
-        _filters.value.set(newKey, newFilter);
+    const hasFilterById = (id: string): boolean => {
+        return _filters.value.has(id);
+    }
+
+    const hasFilterByName = (name: string): boolean => {
+        return [ ..._filters.value.values() ].filter(f => f.name === name).length > 0;
+    }
+
+    const updateFilterById = (id: string, newFilter: Filter) => {
+        _filters.value.set(id, newFilter);
     }
 
     const clear = () => {
         _filters.value.clear();
-        _filters.value.set('UniProtKB', { filter: FilterType.UniProtKB });
+        _filters.value.set(UNIPROT_ID, { filter: FilterType.UniProtKB, name: 'UniProtKB - TODO' });
     }
 
     const exportStore = (): CustomFilterStoreImport => {
@@ -59,12 +74,15 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
 
     return {
         filters,
+        filterNames,
 
-        getFilter,
+        getFilterNameById,
+        getFilterById,
         addFilter,
-        removeFilter,
-        hasFilter,
-        updateFilter,
+        removeFilterById,
+        hasFilterById,
+        hasFilterByName,
+        updateFilterById,
         clear,
         exportStore,
         setImportedData

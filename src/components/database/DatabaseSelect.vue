@@ -1,13 +1,5 @@
 <template>
-    <v-text-field
-        v-if="readonly"
-        v-bind="selectProps"
-        density="compact"
-        style="pointer-events: none"
-    />
-
     <v-select
-        v-else
         v-model="selectedDatabase"
         v-bind="selectProps"
         :items="filterItems"
@@ -42,7 +34,7 @@
 <script setup lang="ts">
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
 import {computed, ref} from "vue";
-import useCustomFilterStore from "@/store/CustomFilterStore";
+import useCustomFilterStore, {Filter} from "@/store/CustomFilterStore";
 
 const customFilterStore = useCustomFilterStore();
 
@@ -62,10 +54,12 @@ const selectProps = withDefaults(defineProps<{
 
 const createDatabaseOpen = ref(false);
 
-const filterItems = computed(() => customFilterStore.filters);
+const filterItems = computed(() => customFilterStore.filters
+    .map(customFilterStore.getFilterById)
+    .map(f => ({ title: f.name, value: f.id }))
+)
 
-const createFilter = (name: string, filter: any) => {
-    customFilterStore.addFilter(name, filter);
-    selectedDatabase.value = name;
+const createFilter = (filter: Filter) => {
+    selectedDatabase.value = customFilterStore.addFilter(filter);
 };
 </script>

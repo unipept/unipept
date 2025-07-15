@@ -91,7 +91,7 @@
                             color="grey"
                         />
                         <span>
-                            Selected database: {{ analysis.config.database }}
+                            Selected database: {{ databaseName }}
                         </span>
                     </div>
 
@@ -140,7 +140,9 @@ import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDi
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
+import useCustomFilterStore from "@/store/CustomFilterStore";
 
+const customFilterStore = useCustomFilterStore();
 const { displayPercentage } = usePercentage();
 const { generateExport } = usePeptideExport();
 const { download: downloadCsv } = useCsvDownload();
@@ -157,9 +159,9 @@ const emits = defineEmits<{
 
 const showMissingPeptides = ref(false);
 
-const missedPeptides = computed(() => {
-    return analysis.peptideTrust!.missedPeptides;
-});
+const databaseName = computed(() => customFilterStore.getFilterById(analysis.config.database).name);
+
+const missedPeptides = computed(() => analysis.peptideTrust!.missedPeptides);
 
 let peptideExportContent: string[][] = [];
 let exportDelimiter: string = "";

@@ -4,7 +4,7 @@ import localforage from "localforage";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {computed} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
-import useCustomFilterStore from "@/store/CustomFilterStore";
+import useCustomFilterStore, {UNIPROT_ID} from "@/store/CustomFilterStore";
 import useProjectExport from "@/composables/useProjectExport";
 import useProjectImport from "@/composables/useProjectImport";
 import useAppStateStore from "@/store/AppStateStore";
@@ -88,7 +88,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
                 equate: true,
                 filter: true,
                 missed: true,
-                database: "UniProtKB"
+                database: UNIPROT_ID
             });
         }
     }

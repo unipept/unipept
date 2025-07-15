@@ -34,7 +34,7 @@
                                     persistent-hint
                                     :rules="[
                                         v => !!v || 'Provide a valid name for your database',
-                                        v => (!customFilterStore.hasFilter(v) || name === v) || 'A filter with this name already exists'
+                                        v => (!customFilterStore.hasFilterByName(v) || filter.name === v) || 'A filter with this name already exists'
                                     ]"
                                 />
                             </div>
@@ -77,7 +77,7 @@
 
                     <edit-database-dialog
                         v-model="confirmDialogOpen"
-                        :database="name"
+                        :database="database"
                         @confirm="updateTaxonDatabase"
                     />
                 </div>
@@ -93,7 +93,7 @@
 
                     <edit-database-dialog
                         v-model="confirmDialogOpen"
-                        :database="name"
+                        :database="database"
                         @confirm="updateProteomeDatabase"
                     />
                 </div>
@@ -109,7 +109,7 @@
 
                     <edit-database-dialog
                         v-model="confirmDialogOpen"
-                        :database="name"
+                        :database="database"
                         @confirm="updateProteinDatabase"
                     />
                 </div>
@@ -120,7 +120,7 @@
 
 <script setup lang="ts">
 import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
 import Protein from "@/logic/ontology/proteins/Protein";
@@ -140,13 +140,14 @@ const customFilterStore = useCustomFilterStore();
 const dialogOpen = defineModel<boolean>();
 
 const props = defineProps<{
-    name: string,
-    filter: Filter | undefined,
+    database: string,
     amountOfLinkedSamples: number,
 }>();
 
 const emits = defineEmits<{
     (e: 'edit', name: string, filter: Filter): void,
+    (e: 'edit:name', newName: string): void,
+    (e: 'edit:filter', newFilter: Filter): void,
 }>();
 
 const confirmDialogOpen = ref(false);
@@ -158,6 +159,8 @@ const filterSelection = ref<FilterSelection>(FilterSelection.None);
 const selectedTaxa = ref<NcbiTaxon[]>([]);
 const selectedProteomes = ref<ReferenceProteome[]>([]);
 const selectedProteins = ref<Protein[]>([]);
+
+const filter = computed(() => ({ ...customFilterStore.getFilterById(props.database) }));
 
 const openConfirmDialog = (updateDatabaseCallback: () => void) => {
     if (props.amountOfLinkedSamples > 0) {
@@ -188,13 +191,13 @@ const updateProteinDatabase = () => {
 };
 
 watch(dialogOpen, async () => {
-    if (dialogOpen && props.filter) {
+    if (dialogOpen && filter.value) {
         selectedTaxa.value = [];
         selectedProteomes.value = [];
         selectedProteins.value = [];
         filterSelection.value = FilterSelection.None;
 
-        databaseName.value = props.name;
+        databaseName.value = filter.value.name;
 
         switch (props.filter.filter) {
             case FilterType.Taxon:
