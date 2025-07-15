@@ -75,13 +75,6 @@
             @create="confirmCreateDatabase"
         />
 
-<!--        <edit-custom-database-->
-<!--            v-model="editDatabaseDialogOpen"-->
-<!--            :database="databaseToManipulate"-->
-<!--            :amount-of-linked-samples="amountOfLinkedSamples"-->
-<!--            @edit="confirmEditDatabase"-->
-<!--        />-->
-
         <edit-custom-database-dialog
             v-model="editDatabaseDialogOpen"
             :database="databaseToManipulate"
@@ -211,12 +204,12 @@ const computeSampleCount = (filterId: string): number => {
 };
 
 const tableHeaders: any = [
-    { title: 'Name', key: 'name' },
-    { title: 'Type', key: 'type' },
-    { title: '# Taxa', key: 'taxaCount', align: "end" },
-    { title: '# Proteins', key: 'proteinCount', align: "end" },
-    { title: '# Samples', key: 'sampleCount', align: "end" },
-    { title: 'Actions', key: 'actions', align: "end", sortable: false },
+    { title: 'Name', key: 'name', width: '20%' },
+    { title: 'Type', key: 'type', width: '30%' },
+    { title: '# Taxa', key: 'taxaCount', align: "end", width: '15%' },
+    { title: '# Proteins', key: 'proteinCount', align: "end", width: '15%' },
+    { title: '# Samples', key: 'sampleCount', align: "end", width: '15%' },
+    { title: '', key: 'actions', align: "end", sortable: false },
 ];
 
 /**
