@@ -1,124 +1,101 @@
 <template>
-    <v-list-group :value="group.id">
-        <template #activator="{ props }">
-            <v-list-item
-                base-color="grey-darken-3"
-                color="none"
-                density="compact"
-                variant="tonal"
-            >
-                <template #title>
-                    <div v-bind="props">
-                        {{ group.name }}
-                    </div>
-                </template>
+    <v-divider class="mx-3"/>
 
-                <template #prepend="{ isOpen }">
-                    <v-icon
-                        v-if="isOpen"
-                        v-bind="props"
-                    >
-                        mdi-chevron-down
-                    </v-icon>
-                    <v-icon
-                        v-else
-                        v-bind="props"
-                    >
-                        mdi-chevron-right
-                    </v-icon>
-                </template>
-
-                <template #append>
-                    <v-icon
-                        color="grey-darken-3"
-                        icon="mdi-pencil"
-                        size="small"
-                        @click="manageSamplesDialogOpen = true"
-                    />
-                </template>
-            </v-list-item>
-        </template>
-
-        <v-list-item
-            v-for="analysis in group.analyses"
-            :key="analysis.id"
-            :value="analysis"
-            :title="analysis.name"
-            color="primary"
-            density="compact"
-        >
-            <template #prepend="{ isSelected }">
-                <v-tooltip
-                    v-if="analysis.intensities"
-                    text="Custom intensity scores for Peptonizer provided">
-                    <template #activator="{ props }">
-                        <v-icon
-                            v-if="isSelected"
-                            v-bind="props"
-                            icon="unipept:file-lightning-outline-check"
-                        />
-                        <v-icon
-                            v-else
-                            v-bind="props"
-                            icon="unipept:file-lightning-outline"
-                        />
-                    </template>
-                </v-tooltip>
-
-                <template v-else>
-                    <v-icon
-                        v-if="isSelected"
-                        icon="mdi-file-document-check-outline"
-                    />
-                    <v-icon
-                        v-else
-                        icon="mdi-file-document-outline"
-                    />
-                </template>
-            </template>
-            <template #append>
-                <v-icon
-                    v-if="analysis.status === AnalysisStatus.Pending"
-                    icon="mdi-clock-outline"
-                />
-
-                <v-progress-circular
-                    v-else-if="analysis.status === AnalysisStatus.Running"
-                    color="primary"
-                    size="20"
-                    width="3"
-                    indeterminate
-                />
-
-                <v-icon
-                    v-else-if="analysis.status === AnalysisStatus.Failed"
-                    color="error"
-                    icon="mdi-alert-circle"
-                />
-            </template>
-        </v-list-item>
-
-        <v-list-item
-            class="text-primary"
-            title="Add new sample"
-            color="primary"
-            density="compact"
-            prepend-icon="mdi-file-document-plus-outline"
-            :value="`button-${group.id}`"
-            :active="false"
+    <div class="d-flex flex-row align-center">
+        <v-list-subheader>{{ group.name }}</v-list-subheader>
+        <v-spacer></v-spacer>
+        <v-icon
+            class="pe-5"
+            color="grey-darken-2"
+            icon="mdi-pencil"
+            size="small"
             @click="manageSamplesDialogOpen = true"
         />
+    </div>
 
-        <manage-sample-group-dialog
-            v-model="manageSamplesDialogOpen"
-            :group="group"
-            @sample:add="addSample"
-            @sample:update="updateSample"
-            @sample:remove="removeSample"
-            @group:update="updateGroup"
-            @group:remove="removeGroup"
-        />
-    </v-list-group>
+    <v-list-item
+        v-for="analysis in group.analyses"
+        style="margin: 1px 2px;"
+        :key="analysis.id"
+        :value="analysis"
+        :title="analysis.name"
+        color="primary"
+        density="compact"
+        rounded
+    >
+        <template #prepend="{ isSelected }">
+            <v-tooltip
+                v-if="analysis.intensities"
+                text="Custom intensity scores for Peptonizer provided">
+                <template #activator="{ props }">
+                    <v-icon
+                        v-if="isSelected"
+                        v-bind="props"
+                        icon="unipept:file-lightning-outline-check"
+                    />
+                    <v-icon
+                        v-else
+                        v-bind="props"
+                        icon="unipept:file-lightning-outline"
+                    />
+                </template>
+            </v-tooltip>
+
+            <template v-else>
+                <v-icon
+                    v-if="isSelected"
+                    icon="mdi-file-document-check-outline"
+                />
+                <v-icon
+                    v-else
+                    icon="mdi-file-document-outline"
+                />
+            </template>
+        </template>
+        <template #append>
+            <v-icon
+                v-if="analysis.status === AnalysisStatus.Pending"
+                icon="mdi-clock-outline"
+            />
+
+            <v-progress-circular
+                v-else-if="analysis.status === AnalysisStatus.Running"
+                color="primary"
+                size="20"
+                width="3"
+                indeterminate
+            />
+
+            <v-icon
+                v-else-if="analysis.status === AnalysisStatus.Failed"
+                color="error"
+                icon="mdi-alert-circle"
+            />
+        </template>
+    </v-list-item>
+
+    <v-list-item
+        style="margin: 1px 2px;"
+        class="text-primary mb-3"
+        title="Add new sample"
+        color="primary"
+        density="compact"
+        rounded
+        prepend-icon="mdi-file-document-plus-outline"
+        :value="`button-${group.id}`"
+        :active="false"
+        @click="manageSamplesDialogOpen = true"
+    />
+
+    <manage-sample-group-dialog
+        v-model="manageSamplesDialogOpen"
+        :group="group"
+        @sample:add="addSample"
+        @sample:update="updateSample"
+        @sample:remove="removeSample"
+        @group:update="updateGroup"
+        @group:remove="removeGroup"
+    />
 </template>
 
 <script setup lang="ts">
@@ -161,5 +138,4 @@ const updateGroup = (groupId: string, updatedName: string) => {
 const removeGroup = (groupId: string) => {
     emits('group:remove', groupId);
 };
-
 </script>

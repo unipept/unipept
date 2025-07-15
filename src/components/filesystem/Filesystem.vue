@@ -10,15 +10,15 @@
         v-model:selected="selected"
         @update:selected="selectItem"
     >
-        <v-list-item
+        <v-list-subheader
             v-if="project.name"
-            style="pointer-events: none"
-            base-color="primary"
+            class="project-name mt-2 mb-1"
+            style="pointer-events: none; min-height: 40px;"
             variant="tonal"
             density="compact"
         >
             {{ project.name }}
-        </v-list-item>
+        </v-list-subheader>
 
         <v-list-item
             v-if="!project.groups || project.groups.length === 0"
@@ -118,3 +118,10 @@ onMounted(() => {
     expanded.value = project.groups.map(group => group.id);
 });
 </script>
+
+<style scoped>
+.project-name {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+</style>
