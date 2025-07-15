@@ -2,6 +2,7 @@
     <v-dialog
         v-model="dialogOpen"
         max-width="1800px"
+        scrollable
     >
         <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex align-center">
