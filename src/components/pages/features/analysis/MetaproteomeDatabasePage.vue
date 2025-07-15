@@ -2,7 +2,8 @@
     <v-container fluid>
         <database-overview
             :project="project"
-            @database:update="updateDatabase"
+            @database:update-name="updateDatabaseName"
+            @database:update-filter="updateDatabaseFilter"
             @database:delete="deleteDatabase"
         />
     </v-container>
@@ -17,8 +18,12 @@ import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 const project = useProjectAnalysisStore();
 const customFilterStore = useCustomFilterStore();
 
-const updateDatabase = async (id: string, newFilter: Filter) => {
+const updateDatabaseName = (id: string, newFilter: Filter) => {
     customFilterStore.updateFilterById(id, newFilter);
+}
+
+const updateDatabaseFilter = async (id: string, newFilter: Filter) => {
+    updateDatabaseName(id, newFilter);
 
     const reanalyse = [];
     for (const group of project.groups) {

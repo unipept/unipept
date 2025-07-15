@@ -75,11 +75,19 @@
             @create="confirmCreateDatabase"
         />
 
-        <edit-custom-database
+<!--        <edit-custom-database-->
+<!--            v-model="editDatabaseDialogOpen"-->
+<!--            :database="databaseToManipulate"-->
+<!--            :amount-of-linked-samples="amountOfLinkedSamples"-->
+<!--            @edit="confirmEditDatabase"-->
+<!--        />-->
+
+        <edit-taxon-database-dialog
             v-model="editDatabaseDialogOpen"
             :database="databaseToManipulate"
             :amount-of-linked-samples="amountOfLinkedSamples"
-            @edit="confirmEditDatabase"
+            @edit:name="confirmEditDatabaseName"
+            @edit:filter="confirmEditDatabaseFilter"
         />
     </div>
 </template>
@@ -98,6 +106,7 @@ import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue
 import DeleteDatabaseDialog from "@/components/database/DeleteDatabaseDialog.vue";
 import EditCustomDatabase from "@/components/database/EditCustomDatabase.vue";
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
+import EditTaxonDatabaseDialog from "@/components/database/edit/EditTaxonDatabaseDialog.vue";
 
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
@@ -112,7 +121,8 @@ const { project } = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'database:update', name: string, newName: string, newFilter: Filter): void,
+    (e: 'database:updateName', id: string, filter: Filter): void,
+    (e: 'database:updateFilter', id: string, filter: Filter): void,
     (e: 'database:delete', name: string): void,
 }>();
 
@@ -218,7 +228,11 @@ function smartRound(value: number): string {
     const absValue = Math.abs(value);
     const sign = value < 0 ? "-" : "";
 
-    if (absValue < 1000000) {
+    if (absValue < 1000) {
+        // Round to nearest hundred
+        const roundedHundreds = Math.round(absValue / 100);
+        return `${sign}${roundedHundreds}00`;
+    } else if (absValue < 1000000) {
         // Round to nearest thousand
         const roundedThousands = Math.round(absValue / 1000);
         return `${sign}${roundedThousands} thousand`;
@@ -235,12 +249,20 @@ const editDatabase = (id: string) => {
 };
 
 const confirmEditDatabase = async (filter: Filter) => {
-    emits('database:update', databaseToManipulate.value, filter);
-
     const taxonCount = await computeTaxonCount(filter);
     const proteinCount = await computeProteinCount(filter);
     taxonCounts.value.set(databaseToManipulate.value, `~ ${smartRound(taxonCount)}`);
     proteinCounts.value.set(databaseToManipulate.value, `~ ${smartRound(proteinCount)}`);
+};
+
+const confirmEditDatabaseName = (filter: Filter) => {
+    confirmEditDatabase(filter);
+    emits('database:updateName', databaseToManipulate.value, filter);
+};
+
+const confirmEditDatabaseFilter = (filter: Filter) => {
+    confirmEditDatabase(filter);
+    emits('database:updateFilter', databaseToManipulate.value, filter);
 };
 
 const deleteDatabase = (id: string) => {
