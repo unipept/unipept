@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
-import {computed, ref, toRaw, watch} from "vue";
+import {computed, onMounted, ref, toRaw, watch} from "vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
 import Protein from "@/logic/ontology/proteins/Protein";
@@ -85,7 +85,7 @@ import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import useProteinOntology from "@/composables/ontology/useProteinOntology";
 import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
-import EditDatabaseDialog from "@/components/database/EditDatabaseDialog.vue";
+import EditDatabaseDialog from "@/components/database/edit/EditDatabaseDialog.vue";
 
 const { ontology: ncbiOntology, update: updateNcbiOntology } = useNcbiOntology();
 const customFilterStore = useCustomFilterStore();
@@ -152,7 +152,7 @@ const updateDatabase = () => {
     });
 }
 
-watch(dialogOpen, async () => {
+const initializeDialog = async () => {
     if (dialogOpen && filter.value) {
         databaseName.value = filter.value.name;
 
@@ -160,5 +160,9 @@ watch(dialogOpen, async () => {
         await updateNcbiOntology(taxonData);
         selectedTaxa.value = taxonData.map(taxon => ncbiOntology.get(taxon)).filter(t => t !== undefined) || [];
     }
-});
+}
+
+watch(dialogOpen, initializeDialog);
+
+onMounted(initializeDialog);
 </script>

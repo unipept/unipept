@@ -82,7 +82,7 @@
 <!--            @edit="confirmEditDatabase"-->
 <!--        />-->
 
-        <edit-taxon-database-dialog
+        <edit-custom-database-dialog
             v-model="editDatabaseDialogOpen"
             :database="databaseToManipulate"
             :amount-of-linked-samples="amountOfLinkedSamples"
@@ -104,9 +104,8 @@ import useProteinOntology from "@/composables/ontology/useProteinOntology";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
 import DeleteDatabaseDialog from "@/components/database/DeleteDatabaseDialog.vue";
-import EditCustomDatabase from "@/components/database/EditCustomDatabase.vue";
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
-import EditTaxonDatabaseDialog from "@/components/database/edit/EditTaxonDatabaseDialog.vue";
+import EditCustomDatabaseDialog from "@/components/database/edit/EditCustomDatabase.vue";
 
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
@@ -228,7 +227,13 @@ function smartRound(value: number): string {
     const absValue = Math.abs(value);
     const sign = value < 0 ? "-" : "";
 
-    if (absValue < 1000) {
+    if (absValue < 10) {
+        return `${sign}${absValue}`;
+    } else if (absValue < 100) {
+        // Round to nearest ten
+        const roundedTens = Math.round(absValue / 10);
+        return `${sign}${roundedTens}0`;
+    } else if (absValue < 1000) {
         // Round to nearest hundred
         const roundedHundreds = Math.round(absValue / 100);
         return `${sign}${roundedHundreds}00`;
