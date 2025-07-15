@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed, onMounted, toRaw} from 'vue';
 import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
 import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomic/TaxonomyResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
@@ -292,7 +292,7 @@ const duplicateDatabase = (id: string) => {
     const newId = customFilterStore.addFilter({
         ...filter,
         name: newName,
-        data: [ ...filter.data ]
+        data: toRaw(filter.data),
     });
     taxonCounts.value.set(newId, taxonCounts.value.get(id)!);
     proteinCounts.value.set(newId, proteinCounts.value.get(id)!);

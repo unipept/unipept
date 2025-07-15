@@ -75,15 +75,9 @@
 
 <script setup lang="ts">
 import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
-import {computed, onMounted, ref, toRaw, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
-import Protein from "@/logic/ontology/proteins/Protein";
-import ProteinBrowser from "@/components/browsers/ProteinBrowser.vue";
-import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
 import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
-import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
-import useProteinOntology from "@/composables/ontology/useProteinOntology";
 import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 import EditDatabaseDialog from "@/components/database/edit/EditDatabaseDialog.vue";
 
@@ -112,7 +106,7 @@ const filter = computed(() => ({ ...customFilterStore.getFilterById(props.databa
 
 const confirmEdit = () => {
     // Ask the user for extra confirmation when the filter has been changed
-    if (props.amountOfLinkedSamples > 0 && checkDirtyFilter()) {
+    if (checkDirtyFilter()) {
         confirmDialogOpen.value = true;
         return;
     }
@@ -120,9 +114,9 @@ const confirmEdit = () => {
     // If only the name has changed, emit the name change directly
     if (databaseName.value !== filter.value.name) {
         emits('edit:name', {
-            ...filter.value,
+            filter: FilterType.Taxon,
             name: databaseName.value,
-            data: [ ...filter.value.data ],
+            data: [ ...filter.value?.data ?? [] ].filter(d => d !== undefined).map(d => parseInt(d.toString())),
         });
     }
 
@@ -140,13 +134,18 @@ const compareNumberOrStringArrays = (a: number[] | string[], b: number[] | strin
 
 const checkDirtyFilter = (): boolean => {
     const currentFilter = customFilterStore.getFilterById(props.database);
+
+    if (!currentFilter || !currentFilter.data) {
+        return true;
+    }
+
     return !compareNumberOrStringArrays(currentFilter.data, selectedTaxa.value.map(taxon => taxon.id));
 }
 
 const updateDatabase = () => {
     dialogOpen.value = false;
     emits('edit:filter', {
-        ...toRaw(filter.value),
+        filter: FilterType.Taxon,
         name: databaseName.value,
         data: selectedTaxa.value.map(taxon => taxon.id),
     });
@@ -154,7 +153,7 @@ const updateDatabase = () => {
 
 const initializeDialog = async () => {
     if (dialogOpen && filter.value) {
-        databaseName.value = filter.value.name;
+        databaseName.value = filter.value.name!;
 
         const taxonData = filter.value.data as number[];
         await updateNcbiOntology(taxonData);

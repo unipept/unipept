@@ -55,8 +55,10 @@ const selectProps = withDefaults(defineProps<{
 const createDatabaseOpen = ref(false);
 
 const filterItems = computed(() => customFilterStore.filters
-    .map(customFilterStore.getFilterById)
-    .map(f => ({ title: f.name, value: f.id }))
+    .map(id => ({
+        title: customFilterStore.getFilterById(id)!.name,
+        value: id,
+    }))
 )
 
 const createFilter = (filter: Filter) => {

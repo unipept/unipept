@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
-import {computed, onMounted, ref, toRaw, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
 import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
@@ -106,7 +106,7 @@ const filter = computed(() => ({ ...customFilterStore.getFilterById(props.databa
 
 const confirmEdit = () => {
     // Ask the user for extra confirmation when the filter has been changed
-    if (props.amountOfLinkedSamples > 0 && checkDirtyFilter()) {
+    if (checkDirtyFilter()) {
         confirmDialogOpen.value = true;
         return;
     }
@@ -114,9 +114,9 @@ const confirmEdit = () => {
     // If only the name has changed, emit the name change directly
     if (databaseName.value !== filter.value.name) {
         emits('edit:name', {
-            ...filter.value,
+            filter: FilterType.Proteome,
             name: databaseName.value,
-            data: [ ...filter.value.data ],
+            data: [ ...filter.value?.data ?? [] ].filter(d => d !== undefined).map(d => d.toString()),
         });
     }
 
@@ -134,13 +134,18 @@ const compareNumberOrStringArrays = (a: number[] | string[], b: number[] | strin
 
 const checkDirtyFilter = (): boolean => {
     const currentFilter = customFilterStore.getFilterById(props.database);
+
+    if (!currentFilter || !currentFilter.data) {
+        return true;
+    }
+
     return !compareNumberOrStringArrays(currentFilter.data, selectedProteomes.value.map(proteome => proteome.id));
 }
 
 const updateDatabase = () => {
     dialogOpen.value = false;
     emits('edit:filter', {
-        ...toRaw(filter.value),
+        filter: FilterType.Proteome,
         name: databaseName.value,
         data: selectedProteomes.value.map(proteome => proteome.id),
     });
@@ -148,7 +153,7 @@ const updateDatabase = () => {
 
 const initializeDialog = async () => {
     if (dialogOpen && filter.value) {
-        databaseName.value = filter.value.name;
+        databaseName.value = filter.value.name!;
 
         const proteomeData = filter.value.data as string[];
         await updateProteomeOntology(proteomeData);
