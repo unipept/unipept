@@ -10,16 +10,6 @@
         v-model:selected="selected"
         @update:selected="selectItem"
     >
-        <v-list-subheader
-            v-if="project.name"
-            class="project-name mt-2 mb-1"
-            style="pointer-events: none; min-height: 40px;"
-            variant="tonal"
-            density="compact"
-        >
-            {{ project.name }}
-        </v-list-subheader>
-
         <v-list-item
             v-if="!project.groups || project.groups.length === 0"
             class="text-center"
@@ -31,9 +21,10 @@
 
         <filesystem-group
             v-else
-            v-for="group in project.groups"
+            v-for="(group, i) in project.groups"
             :key="group.id"
             :group="group"
+            :show-divider="i > 0"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -118,10 +109,3 @@ onMounted(() => {
     expanded.value = project.groups.map(group => group.id);
 });
 </script>
-
-<style scoped>
-.project-name {
-    font-weight: bold;
-    font-size: 1.2em;
-}
-</style>

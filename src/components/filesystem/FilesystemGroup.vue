@@ -1,5 +1,5 @@
 <template>
-    <v-divider class="mx-3"/>
+    <v-divider v-if="showDivider" class="mx-3"/>
 
     <div class="d-flex flex-row align-center">
         <v-list-subheader>{{ group.name }}</v-list-subheader>
@@ -107,6 +107,7 @@ import {AnalysisStatus} from "@/store/AnalysisStatus";
 
 defineProps<{
     group: GroupAnalysisStore,
+    showDivider?: boolean
 }>();
 
 const emits = defineEmits<{
