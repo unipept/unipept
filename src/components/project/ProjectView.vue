@@ -1,5 +1,18 @@
 <template>
     <v-navigation-drawer permanent>
+        <template #prepend>
+            <v-list-subheader
+                v-if="project.name"
+                class="project-name mt-2 mb-1 px-3"
+                style="pointer-events: none; min-height: 40px;"
+                variant="tonal"
+                density="compact"
+            >
+                {{ project.name }}
+            </v-list-subheader>
+            <v-divider class="mx-3" />
+        </template>
+
         <filesystem
             v-model="selectedAnalyses"
             :project="project"
@@ -186,5 +199,10 @@ onMounted(() => {
 
 :deep(.v-list-item__spacer) {
     width: 5px !important;
+}
+
+.project-name {
+ font-weight: bold;
+ font-size: 1.2em;
 }
 </style>

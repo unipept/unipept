@@ -163,9 +163,18 @@
         highlightedData.value = {
             organismName: bars[barIndex].items[itemIndex].label,
             organismValues: bars.map((b, idx) => {
+                const indexInBar = b.items.findIndex(x => x.label === bars[barIndex].items[itemIndex].label);
+
+                let organismLabel: string;
+                if (indexInBar >= 0) {
+                    organismLabel = useAbsoluteValues.value ? `${b.items[indexInBar].counts} peptides`:`${b.items[indexInBar].counts.toFixed(2)}%`;
+                } else {
+                    organismLabel = useAbsoluteValues.value ? "0 peptides" : "0.00%";
+                }
+
                 return {
                     sampleName: b.label,
-                    organismLabel: useAbsoluteValues.value ? `${b.items[itemIndex].counts} peptides`:`${b.items[itemIndex].counts.toFixed(2)}%`,
+                    organismLabel,
                     isHighlighted: idx === barIndex
                 }
             })
