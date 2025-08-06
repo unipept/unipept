@@ -1,4 +1,5 @@
 <template>
+    <!-- @vue-ignore -->
     <project-view
         v-model:manage-samples="manageSamplesDialog"
         v-model:selected-analyses="singleAnalysisState.selectedAnalyses"
