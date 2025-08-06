@@ -66,6 +66,7 @@
                 <edit-database-dialog
                     v-model="confirmDialogOpen"
                     :database="database"
+                    :amount-of-linked-samples="amountOfLinkedSamples"
                     @confirm="updateDatabase"
                 />
             </v-card-actions>

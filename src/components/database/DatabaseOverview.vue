@@ -67,6 +67,7 @@
         <delete-database-dialog
             v-model="deleteDatabaseDialogOpen"
             :database="databaseToManipulate"
+            :amount-of-linked-samples="amountOfLinkedSamples"
             @confirm="confirmDeleteDatabase"
         />
 

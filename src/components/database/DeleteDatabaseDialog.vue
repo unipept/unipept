@@ -9,7 +9,7 @@
                     Are you sure you want to delete the custom database <strong>{{ databaseName }}</strong>?
                     This action is <b>irreversible</b>.
                 </p>
-                <v-alert type="warning" class="mt-4">
+                <v-alert v-if="amountOfLinkedSamples > 0" type="warning" class="mt-4">
                     Deleting this database will trigger a <em>reanalysis</em> of all samples that currently use this
                     database. The reanalysis will be performed using the default <strong>unfiltered UniProtKB</strong>
                     database.
@@ -33,6 +33,7 @@ const dialogOpen = defineModel<boolean>();
 
 const props = defineProps<{
     database: string,
+    amountOfLinkedSamples: number,
 }>();
 
 const emit = defineEmits({
