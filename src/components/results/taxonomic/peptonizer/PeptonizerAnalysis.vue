@@ -164,7 +164,6 @@ const props = defineProps<{
 const {generateExport: generatePeptonizerExport}  = usePeptonizerExport();
 const {download} = useCsvDownload();
 
-
 const peptonizerStep: Ref<number> = ref(1);
 
 const peptonizerRankOptions: Ref<string[]> = ref(

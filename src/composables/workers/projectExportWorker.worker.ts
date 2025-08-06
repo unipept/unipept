@@ -10,7 +10,7 @@ self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
 
-const process = async ({ project }: ProjectExportData) => {
+const process = async ({ project, appState }: ProjectExportData) => {
     const zipper = new JSZip();
 
     const buffers = zipper.folder("buffers");
@@ -38,7 +38,6 @@ const process = async ({ project }: ProjectExportData) => {
                 // Write the regular ArrayBuffers to file
                 buffers.file(`${analysis.id}.index`, indexArrayBuffer, { binary: true });
                 buffers.file(`${analysis.id}.data`, dataArrayBuffer, { binary: true });
-
             }
         }
     }
@@ -58,6 +57,7 @@ const process = async ({ project }: ProjectExportData) => {
     };
 
     zipper.file("metadata.json", JSON.stringify(metadata));
+    zipper.file("appstate.json", JSON.stringify(appState));
 
     const content = await zipper.generateAsync({ type: "blob" });
 

@@ -1,10 +1,11 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import ProjectWorkerWebWorker from "./workers/projectExportWorker.worker?worker&inline";
 import {ProjectAnalysisStore, ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
-import JSZip from "jszip";
+import {AppStateStore, AppStateStoreImport} from "@/store/AppStateStore";
 
 export interface ProjectExportData {
     project: ProjectAnalysisStoreImport;
+    appState: AppStateStoreImport;
 }
 
 export interface ProjectExportWorkerOutput {
@@ -16,9 +17,10 @@ export default function useProjectExport() {
         () => new ProjectWorkerWebWorker()
     );
 
-    const process = async (project: ProjectAnalysisStore) => {
+    const process = async (project: ProjectAnalysisStore, appState: AppStateStore) => {
         const data = project.exportStore();
-        return await post({ project: data });
+        const appStateData = appState.exportStore();
+        return await post({ project: data, appState: appStateData });
     };
 
     return {

@@ -2,7 +2,8 @@
     <v-container fluid>
         <database-overview
             :project="project"
-            @database:update="updateDatabase"
+            @database:update-name="updateDatabaseName"
+            @database:update-filter="updateDatabaseFilter"
             @database:delete="deleteDatabase"
         />
     </v-container>
@@ -10,24 +11,24 @@
 
 <script setup lang="ts">
 import DatabaseOverview from "@/components/database/DatabaseOverview.vue";
-import useCustomFilterStore, {Filter} from "@/store/CustomFilterStore";
+import useCustomFilterStore, {Filter, UNIPROT_ID} from "@/store/CustomFilterStore";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 
 const project = useProjectAnalysisStore();
 const customFilterStore = useCustomFilterStore();
 
-const updateDatabase = async (name: string, newName: string, newFilter: Filter) => {
-    customFilterStore.updateFilter(name, newName, newFilter);
+const updateDatabaseName = (id: string, newFilter: Filter) => {
+    customFilterStore.updateFilterById(id, newFilter);
+}
+
+const updateDatabaseFilter = async (id: string, newFilter: Filter) => {
+    updateDatabaseName(id, newFilter);
 
     const reanalyse = [];
     for (const group of project.groups) {
         for (const analysis of group.analyses) {
-            if (analysis.config.database === name) {
-                analysis.updateConfig({
-                    ...analysis.config,
-                    database: newName,
-                });
+            if (analysis.config.database === id) {
                 analysis.status = AnalysisStatus.Pending;
                 reanalyse.push(analysis);
             }
@@ -39,16 +40,16 @@ const updateDatabase = async (name: string, newName: string, newFilter: Filter) 
     }
 }
 
-const deleteDatabase = async (name: string) => {
-    customFilterStore.removeFilter(name);
+const deleteDatabase = async (id: string) => {
+    customFilterStore.removeFilterById(id);
 
     const reanalyse = [];
     for (const group of project.groups) {
         for (const analysis of group.analyses) {
-            if (analysis.config.database === name) {
+            if (analysis.config.database === id) {
                 analysis.updateConfig({
                     ...analysis.config,
-                    database: "UniProtKB",
+                    database: UNIPROT_ID,
                 });
                 analysis.status = AnalysisStatus.Pending;
                 reanalyse.push(analysis);

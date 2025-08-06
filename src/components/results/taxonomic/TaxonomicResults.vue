@@ -8,6 +8,7 @@
             <v-tab text="Sunburst" />
             <v-tab text="Treemap" />
             <v-tab text="Treeview" />
+            <v-tab text="Barplot" />
             <v-tab text="Hierarchical outline" />
             <v-tab text="Heatmap" />
             <v-tab>
@@ -50,6 +51,10 @@
                     <treeview :ncbi-root="analysis.ncbiTree!" />
                 </v-tabs-window-item>
 
+                <v-tabs-window-item style="height: 600px;">
+                    <taxonomic-barplot :analyses="[analysis]" />
+                </v-tabs-window-item>
+
                 <v-tabs-window-item>
                     <hierarchical-outline :analysis="analysis" />
                 </v-tabs-window-item>
@@ -85,6 +90,7 @@ import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import HierarchicalOutline from "@/components/results/taxonomic/HierarchicalOutline.vue";
 import HeatmapWizard from "@/components/results/taxonomic/heatmap/HeatmapWizard.vue";
 import PeptonizerAnalysis from "@/components/results/taxonomic/peptonizer/PeptonizerAnalysis.vue";
+import TaxonomicBarplot from "@/components/results/taxonomic/TaxonomicBarplot.vue";
 
 const props = defineProps<{
     analysis: SingleAnalysisStore

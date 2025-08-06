@@ -6,10 +6,10 @@
             </v-card-title>
             <v-card-text class="pb-0">
                 <p>
-                    Are you sure you want to delete the custom database <strong>{{ database }}</strong>?
+                    Are you sure you want to delete the custom database <strong>{{ databaseName }}</strong>?
                     This action is <b>irreversible</b>.
                 </p>
-                <v-alert type="warning" class="mt-4">
+                <v-alert v-if="amountOfLinkedSamples > 0" type="warning" class="mt-4">
                     Deleting this database will trigger a <em>reanalysis</em> of all samples that currently use this
                     database. The reanalysis will be performed using the default <strong>unfiltered UniProtKB</strong>
                     database.
@@ -24,17 +24,23 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import {defineProps, defineEmits, computed} from 'vue';
+import useCustomFilterStore from "@/store/CustomFilterStore";
+
+const customFilterStore = useCustomFilterStore();
 
 const dialogOpen = defineModel<boolean>();
 
 const props = defineProps<{
     database: string,
+    amountOfLinkedSamples: number,
 }>();
 
 const emit = defineEmits({
     confirm: () => true,
 });
+
+const databaseName = computed(() => customFilterStore.getFilterNameById(props.database));
 
 const cancel = () => {
     dialogOpen.value = false;

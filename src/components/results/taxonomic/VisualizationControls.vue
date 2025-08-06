@@ -11,7 +11,7 @@
                 {{ caption }}
             </span>
 
-            <v-menu v-if="settings">
+            <v-menu v-if="settings" :close-on-content-click="false">
                 <template #activator="{ props }">
                     <v-btn
                         class="ma-1"
@@ -21,8 +21,8 @@
                         :elevation="0"
                     />
                 </template>
-                <v-list>
-                    <slot name="settings" />
+                <v-list style="width: 350px; border-radius: 12px;">
+                    <slot name="settings"/>
                 </v-list>
             </v-menu>
 

@@ -173,7 +173,7 @@ const rankColors: string[] = [
     "green",
     "green-darken-4",
     "light-green",
-    "light-green-darken 4",
+    "light-green-darken-4",
     "lime-darken-1",
     "lime-darken-4",
     "amber",

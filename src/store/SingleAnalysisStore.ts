@@ -1,4 +1,4 @@
-import {computed, ref, watch} from "vue";
+import {computed, markRaw, ref, shallowRef, toRaw, watch} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/processing/peptide/usePeptideProcessor";
@@ -25,7 +25,7 @@ const useSingleAnalysisStore = (
     _config: AnalysisConfig,
     // Intensity values that can be used by the Peptonizer to improve accuracy of the analysis
     _peptideIntensities?: Map<string, number>
-) => defineStore(`singleSampleStore/${_id}`, () => {
+) => defineStore(`singleAnalysisStore/${_id}`, () => {
     const ontologyStore = useOntologyStore();
     const customFilterStore = useCustomFilterStore();
     const peptonizerStore = usePeptonizerStore(_id);
@@ -41,9 +41,9 @@ const useSingleAnalysisStore = (
 
     const id = ref<string>(_id);
     const name = ref<string>(_name);
-    const rawPeptides = ref<string>(_rawPeptides);
+    const rawPeptides = shallowRef<string>(_rawPeptides);
     const config = ref<AnalysisConfig>({ ..._config });
-    const intensities = ref<Map<string, number> | undefined>(_peptideIntensities);
+    const intensities = shallowRef<Map<string, number> | undefined>(_peptideIntensities);
 
     const taxonomicFilter = ref<number>(1);
     const functionalFilter = ref<number>(5);
@@ -51,7 +51,6 @@ const useSingleAnalysisStore = (
     // ===============================================================
     // ======================== PROCESSORS ===========================
     // ===============================================================
-
     const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered();
 
     const { databaseVersion, process: processMetadata } = useMetaData();
@@ -98,15 +97,9 @@ const useSingleAnalysisStore = (
         try {
             await processPeptides(peptides.value!, config.value.equate, config.value.filter);
 
-            console.log(`PeptideCounts index size: ${peptidesTable.value!.counts.toTransferableState().indexBuffer.byteLength / 1024 / 1024}MiB`);
-            console.log(`PeptideCounts data size: ${peptidesTable.value!.counts.toTransferableState().dataBuffer.byteLength / 1024 / 1024}MiB`);
-
             if (fetch) {
-                const filter = customFilterStore.getFilter(config.value.database);
+                const filter = customFilterStore.getFilterById(config.value.database);
                 await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, filter);
-
-                console.log(`Pept2Data index size: ${peptideToData.value!.toTransferableState().indexBuffer.byteLength / 1024 / 1024}MiB`);
-                console.log(`Pept2Data data size: ${peptideToData.value!.toTransferableState().dataBuffer.byteLength / 1024 / 1024}MiB`);
 
                 await processMetadata();
                 lastAnalysed.value = new Date();
@@ -197,12 +190,21 @@ const useSingleAnalysisStore = (
 
     const exportStore = (): SingleAnalysisStoreImport => {
         const peptideToDataTransferable = peptideToData.value?.toTransferableState();
+
+        const intensitiesObject: any = {};
+        if (intensities.value) {
+            for (const [key, value] of intensities.value) {
+                intensitiesObject[key] = value;
+            }
+        }
+        let intensitiesString: string = JSON.stringify(intensitiesObject);
+
         return {
             id: id.value,
             name: name.value,
             rawPeptides: rawPeptides.value,
             config: { ...config.value },
-            intensities: intensities.value,
+            intensities: intensitiesString,
             taxonomicFilter: taxonomicFilter.value,
             functionalFilter: functionalFilter.value,
             lastAnalysed: lastAnalysed.value,
@@ -216,7 +218,7 @@ const useSingleAnalysisStore = (
 
     const importStore = async () => {
         await analyse(peptideToData.value === undefined);
-        //await updateTaxonomicFilter(taxonomicFilter.value);
+        await updateTaxonomicFilter(taxonomicFilter.value);
     }
 
     const setImportedData = (storeImport: SingleAnalysisStoreImport) => {
@@ -228,7 +230,7 @@ const useSingleAnalysisStore = (
         databaseVersion.value = storeImport.databaseVersion;
 
         if (storeImport.peptideToDataTransferable) {
-            peptideToData.value = ShareableMap.fromTransferableState<string, PeptideData>(storeImport.peptideToDataTransferable, { serializer: new PeptideDataSerializer() });
+            peptideToData.value = markRaw(ShareableMap.fromTransferableState<string, PeptideData>(storeImport.peptideToDataTransferable, { serializer: new PeptideDataSerializer() }));
         }
 
         if (storeImport.peptonizer) {
@@ -269,6 +271,8 @@ const useSingleAnalysisStore = (
         peptideToLca,
         ncbiTree,
 
+        ontologyStore,
+
         peptonizerStore,
 
         analyse,
@@ -287,7 +291,8 @@ export interface SingleAnalysisStoreImport {
     name: string;
     rawPeptides: string;
     config: AnalysisConfig;
-    intensities: Map<string, number> | undefined;
+    // JSON-serialized version of the intensities map
+    intensities: string | undefined;
     taxonomicFilter: number;
     functionalFilter: number;
     lastAnalysed: Date | undefined;
@@ -297,12 +302,20 @@ export interface SingleAnalysisStoreImport {
 }
 
 export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImport) => {
+    let intensitiesMap: Map<string, number> | undefined;
+    if (storeImport.intensities && storeImport.intensities !== "{}") {
+        intensitiesMap = new Map<string, number>();
+        for (const [key, value] of Object.entries(JSON.parse(storeImport.intensities))) {
+            intensitiesMap.set(key, value as number);
+        }
+    }
+
     const store = useSingleAnalysisStore(
         storeImport.id,
         storeImport.name,
         storeImport.rawPeptides,
         storeImport.config,
-        storeImport.intensities === undefined ? undefined : new Map(storeImport.intensities)
+        storeImport.intensities === undefined ? undefined : intensitiesMap
     );
 
     store.setImportedData(storeImport);

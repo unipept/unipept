@@ -180,36 +180,42 @@ const headers: any = [
         title: "Peptide",
         align: "start",
         key: "peptide",
+        width: "25%",
         sortable: false
     },
     {
         title: "Occurrence",
         align: "start",
         key: "occurrence",
+        width: "10%",
         sortable: false
     },
     {
         title: "Lowest common ancestor",
         align: "start",
         key: "lca",
+        width: "30%",
         sortable: false
     },
     {
         title: "Rank",
         align: "start",
         key: "rank",
+        width: "15%",
         sortable: false
     },
     {
         title: "Annotations",
         align: "start",
         key: "faCounts",
+        width: "15%",
         sortable: false
     },
     {
         title: "",
         align: "start",
         key: "warning",
+        width: "5%",
         sortable: false
     }
 ];

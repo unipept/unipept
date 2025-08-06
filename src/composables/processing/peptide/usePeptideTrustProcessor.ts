@@ -2,7 +2,7 @@ import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideTrust from "@/types/PeptideTrust";
 import CountTable from "@/logic/processors/CountTable";
-import {ref, shallowRef} from "vue";
+import {markRaw, ref, shallowRef} from "vue";
 
 export default function usePeptideTrustProcessor() {
     const trust = shallowRef<PeptideTrust>();
@@ -22,11 +22,11 @@ export default function usePeptideTrustProcessor() {
             }
         }
 
-        trust.value = {
+        trust.value = markRaw({
             missedPeptides,
             matchedPeptides,
             searchedPeptides: countTable.totalCount
-        };
+        });
     }
 
     return {

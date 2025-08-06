@@ -1,13 +1,13 @@
 <template>
     <div>
-        <v-unipept-card>
+        <v-unipept-card :disabled="disabled">
             <v-card-title>
-                <h2>New here? Try a sample dataset</h2>
+                <h2>New here? Try a demo project</h2>
             </v-card-title>
 
             <v-card-text>
                 <p>
-                    If this is the first time you're using our application, we advise you to try a sample
+                    If this is the first time you're using our application, we advise you to try a demo
                     project and discover what this application can do for you.
                 </p>
 
@@ -16,7 +16,8 @@
                         class="float-right mt-1"
                         color="primary"
                         variant="tonal"
-                        text="Try a sample dataset"
+                        text="Select a demo project"
+                        :loading="loading"
                         @click="dialogOpen = true"
                     />
                 </div>
@@ -26,7 +27,7 @@
         <v-dialog v-model="dialogOpen">
             <v-unipept-card class="bg-mainBody">
                 <v-card-title class="d-flex align-center">
-                    <h2>Select a sample dataset</h2>
+                    <h2>Select a demo project</h2>
                     <v-spacer />
                     <v-btn
                         color="transparent"
@@ -48,7 +49,6 @@
                         >
                             <v-unipept-card
                                 class="d-flex flex-row align-center"
-                                @click="selectSample(sample)"
                                 style="min-height: 100%;"
                             >
                                 <div>
@@ -57,14 +57,26 @@
                                     </v-card-title>
                                     <v-card-text style="padding-top: 0 !important;">
                                         <div class="text-body-2 mb-2">{{ sample.reference }}</div>
-                                        <v-btn
-                                            color="primary"
-                                            variant="text"
-                                            style="z-index: 10000"
-                                            @click.stop="openReference(sample)"
-                                        >
-                                            View Article
-                                        </v-btn>
+                                        <div class="d-flex justify-end">
+                                            <v-btn
+                                                color="primary"
+                                                variant="text"
+                                                style="z-index: 10000"
+                                                @click.stop="openReference(sample)"
+                                            >
+                                                View Article
+                                            </v-btn>
+
+                                            <v-btn
+                                                class="ms-1"
+                                                color="primary"
+                                                variant="tonal"
+                                                style="z-index: 10000"
+                                                @click="selectSample(sample)"
+                                            >
+                                                Load project
+                                            </v-btn>
+                                        </div>
                                     </v-card-text>
                                 </div>
                             </v-unipept-card>
@@ -80,20 +92,22 @@
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {ref} from "vue";
 
-const { samples } = defineProps<{
-    samples: SampleData[]
+const { samples, loading = false, disabled = false } = defineProps<{
+    samples: SampleData[],
+    loading?: boolean,
+    disabled?: boolean
 }>();
 
 const emits = defineEmits<{
     (e: "select", sample: SampleData): void;
 }>();
 
+const dialogOpen = ref(false);
+
 const selectSample = (sample: SampleData) => {
     dialogOpen.value = false;
     emits("select", sample);
 };
-
-const dialogOpen = ref(false);
 
 const openReference = (sample: SampleData) => {
     window.open(sample.url, "_blank");

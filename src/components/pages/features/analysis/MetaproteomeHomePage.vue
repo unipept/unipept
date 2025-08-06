@@ -4,11 +4,14 @@
             <v-col cols="6">
                 <div ref="firstColumn">
                     <quick-analysis-card
+                        :disabled="loadingProject || loadingDemoProject"
                         @analyze="quickAnalyze"
                     />
 
                     <demo-analysis-card
                         class="mt-5"
+                        :loading="loadingDemoProject"
+                        :disabled="loadingProject || loadingSampleData || loadingDemoProject"
                         :samples="sampleDataStore.samples"
                         @select="demoAnalyze"
                     />
@@ -19,9 +22,8 @@
                 <div ref="topCard">
                     <new-analysis-card
                         :projects="projects"
-                        :loading="importingProject"
+                        :disabled="loadingProject || loadingDemoProject"
                         @project:new="advancedAnalyze"
-                        @project:open="importProject"
                     />
                 </div>
 
@@ -29,8 +31,10 @@
                     class="mt-5"
                     :height="bottomCardHeight"
                     :projects="projects"
+                    :disabled="loadingProject || loadingDemoProject"
                     :loading="loadingProject"
                     @open="loadFromIndexedDB"
+                    @upload="importProject"
                     @delete="deleteFromIndexedDB"
                 />
             </v-col>
@@ -74,7 +78,7 @@ const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.
 
 const loadingSampleData: Ref<boolean> = ref(true);
 const loadingProject: Ref<boolean> = ref(false);
-const importingProject: Ref<boolean> = ref(false);
+const loadingDemoProject: Ref<boolean> = ref(false);
 
 const projects = ref<{ name: string, totalPeptides: number, lastAccessed: Date }[]>([]);
 
@@ -85,11 +89,11 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
 }
 
 const importProject = async (projectName: string, file: File) => {
-    importingProject.value = true;
+    loadingProject.value = true;
     await loadProjectFromFile(projectName, file)
     await router.push({ name: "mpaSingle" });
     await startImport();
-    importingProject.value = false;
+    loadingProject.value = false;
 }
 
 const loadFromIndexedDB = async (projectName: string) => {
@@ -111,8 +115,10 @@ const advancedAnalyze = (projectName: string) => {
 }
 
 const demoAnalyze = async (sample: SampleData) => {
+    loadingDemoProject.value = true;
     await loadProjectFromSample(sample);
     await router.push({ name: "mpaSingle" });
+    loadingDemoProject.value = true;
     await startAnalysis();
 }
 

@@ -10,11 +10,11 @@
             </p>
 
             <v-row class="mt-5" justify="center">
-                <v-col cols="12" md="4" >
+                <v-col cols="12" md="4">
                     <v-unipept-card class="step-card">
                         <v-card-title class="step-title">
                             <v-icon color="primary" class="mr-2">mdi-folder-plus</v-icon>
-                            Step 1: Create a new group
+                            Step 1: Create a group
                         </v-card-title>
 
                         <v-card-text>
@@ -25,6 +25,7 @@
                             <div class="d-flex justify-center mt-5">
                                 <v-btn
                                     color="primary"
+                                    variant="tonal"
                                     text="Create Group"
                                     @click="addGroup(DEFAULT_NEW_GROUP_NAME)"
                                 />

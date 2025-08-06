@@ -1,27 +1,30 @@
 <template>
-    <div
-        v-if="!project.groups || project.groups.length === 0"
-        class="mt-4 d-flex justify-center"
-    >
-        No samples added yet...
-    </div>
-
     <v-list
         v-model:opened="expanded"
-        v-model:selected="selected"
         class="py-0"
         color="primary"
         selectable
-        select-strategy="single-leaf"
+        :select-strategy="multiSelect ? 'classic' : 'single-leaf'"
         open-strategy="multiple"
-        active-strategy="single-leaf"
-        mandatory
+        :mandatory="!multiSelect"
+        v-model:selected="selected"
         @update:selected="selectItem"
     >
+        <v-list-item
+            v-if="!project.groups || project.groups.length === 0"
+            class="text-center"
+            style="pointer-events: none"
+            density="compact"
+        >
+            No samples added yet...
+        </v-list-item>
+
         <filesystem-group
-            v-for="group in project.groups"
+            v-else
+            v-for="(group, i) in project.groups"
             :key="group.id"
             :group="group"
+            :show-divider="i > 0"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -40,8 +43,9 @@ import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 
 const selected = defineModel<SingleAnalysisStore[]>({ required: true });
 
-const { project } = defineProps<{
+const { project, multiSelect = false } = defineProps<{
     project: ProjectAnalysisStore;
+    multiSelect?: boolean
 }>();
 
 const emits = defineEmits<{
@@ -83,6 +87,14 @@ const removeGroup = (groupId: string) => {
 };
 
 const selectItem = (newSelected: (SingleAnalysisStore | string)[]) => {
+    // for (const newItem of newSelected) {
+    //     if (newItem && typeof newItem === 'object' && '$id' in newItem) {
+    //         console.log("Selecting item:");
+    //         console.log(newItem);
+    //         // This is most likely a pinia store
+    //         selected.value.push(newSelected as unknown as SingleAnalysisStore);
+    //     }
+    // }
     if (typeof newSelected[0] === 'string') {
         // We have to set the selected value to itself to trigger the watcher
         selected.value = [ ...selected.value ];

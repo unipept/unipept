@@ -18,6 +18,10 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     // ======================== REFERENCES ===========================
     // ===============================================================
 
+    const name = ref<string | undefined>(undefined);
+
+    const isDemoMode = ref<boolean>(false);
+
     const _groups = ref<Map<string, GroupAnalysisStore>>(new Map());
 
     // ===============================================================
@@ -31,6 +35,14 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     // ===============================================================
     // ========================== METHODS ============================
     // ===============================================================
+
+    const setName = (newName: string): void => {
+        name.value = newName;
+    }
+
+    const setDemoMode = (demoMode: boolean): void => {
+        isDemoMode.value = demoMode;
+    }
 
     const getGroup = (id: string): GroupAnalysisStore => {
         const group = _groups.value.get(id);
@@ -67,6 +79,7 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     };
 
     const clear = () => {
+
         _groups.value.forEach(group => group.clear());
         _groups.value.clear();
         customFilterStore.clear();
@@ -96,14 +109,19 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
         clear();
         useCustomFilterStoreImport(storeImport.filters);
         for (const group of storeImport.groups) {
-            _groups.value.set(group.id, useGroupAnalysisStoreImport(group));
+            const groupStore = useGroupAnalysisStoreImport(group);
+            _groups.value.set(group.id, groupStore);
         }
     }
 
     return {
+        name,
+        isDemoMode,
         groups,
         empty,
 
+        setName,
+        setDemoMode,
         getGroup,
         getFirstGroup,
         getFirstNonEmptyGroup,

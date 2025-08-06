@@ -18,6 +18,7 @@
                     <v-card
                         class="pa-2"
                         width="60%"
+                        style="max-height: 400px;"
                         variant="outlined"
                     >
                         <v-img
@@ -101,13 +102,22 @@ const supportedFormats = computed(() => {
 })
 
 const resolution = computed(() => {
-    const width = image.clientWidth;
-    const height = image.clientHeight;
+    let width: number;
+    let height: number;
+
+    if (image instanceof SVGSVGElement) {
+        width = image.viewBox.baseVal.width;
+        height = image.viewBox.baseVal.height;
+    } else {
+        width = image.clientWidth;
+        height = image.clientHeight;
+    }
+
     const factor = scalingFactorToNumber(selectedScalingFactor.value);
 
     return {
-        width: width * factor,
-        height: height * factor
+        width: Math.ceil(width * factor),
+        height: Math.ceil(height * factor)
     }
 })
 

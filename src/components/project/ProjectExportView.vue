@@ -3,7 +3,7 @@
         <v-unipept-card class="mb-6">
             <v-card-title class="text-h5 font-weight-bold mb-2">
                 <v-icon icon="mdi-file-download-outline" size="30" class="me-2" color="primary"/>
-                Export Project Overview
+                Export Project
             </v-card-title>
             <v-card-text>
                 <p>
@@ -79,13 +79,15 @@
                 Sample Statistics per Group
             </v-card-title>
 
-            <v-data-table
-                :headers="headers"
-                :items="groups"
-                item-value="name"
-                density="compact"
-                hide-default-footer
-            />
+            <v-card-text>
+                <v-data-table
+                    :headers="headers"
+                    :items="groups"
+                    item-value="name"
+                    density="compact"
+                    hide-default-footer
+                />
+            </v-card-text>
         </v-unipept-card>
 
         <v-row justify="center" class="mt-6">
@@ -94,7 +96,7 @@
                 variant="tonal"
                 @click="exportProject"
                 prepend-icon="mdi-download"
-                text="Download Project Export"
+                text="Export Project"
                 :loading="preparingExport"
             />
         </v-row>
@@ -108,6 +110,7 @@ import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
 import useProjectExport from "@/composables/useProjectExport";
+import useAppStateStore from "@/store/AppStateStore";
 
 const { formatNumber } = useNumberFormatter();
 
@@ -156,9 +159,9 @@ const groups = computed(() => project.groups.map(group => {
 
     return {
         name: group.name,
-        sampleCount: group.analyses.length,
-        peptides: group.analyses.reduce((total, analysis) => total + analysis.peptides.length, 0),
-        uniquePeptides: uniquePeptidesInGroup.size
+        sampleCount: formatNumber(group.analyses.length),
+        peptides: formatNumber(group.analyses.reduce((total, analysis) => total + analysis.peptides.length, 0)),
+        uniquePeptides: formatNumber(uniquePeptidesInGroup.size)
     };
 }));
 
@@ -176,12 +179,11 @@ const peptonizerJobs = computed(() => {
     }, 0);
 });
 
-const headers = [
-    { title: '', value: 'expand', width: '32px' },
+const headers: any = [
     { title: 'Group', value: 'name' },
-    { title: 'Samples', value: 'sampleCount' },
-    { title: 'Peptides', value: 'peptides' },
-    { title: 'Unique Peptides', value: 'uniquePeptides' }
+    { title: 'Samples', value: 'sampleCount', align: "end" },
+    { title: 'Peptides', value: 'peptides', align: "end" },
+    { title: 'Unique Peptides', value: 'uniquePeptides', align: "end" },
 ]
 
 const { process: processExport } = useProjectExport();
@@ -189,7 +191,9 @@ const { process: processExport } = useProjectExport();
 async function exportProject() {
     preparingExport.value = true;
 
-    const url = URL.createObjectURL((await processExport(project)).content);
+    const appState = useAppStateStore();
+
+    const url = URL.createObjectURL((await processExport(project, appState)).content);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'project.unipept';
