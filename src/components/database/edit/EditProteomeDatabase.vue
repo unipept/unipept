@@ -80,9 +80,11 @@ import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
 import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import EditDatabaseDialog from "@/components/database/edit/EditDatabaseDialog.vue";
+import useArrayCompare from "@/composables/useArrayCompare";
 
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
 const customFilterStore = useCustomFilterStore();
+const { compareNumberOrStringArrays } = useArrayCompare();
 
 const dialogOpen = defineModel<boolean>();
 
@@ -121,15 +123,6 @@ const confirmEdit = () => {
     }
 
     dialogOpen.value = false;
-}
-
-const compareNumberOrStringArrays = (a: number[] | string[], b: number[] | string[]) => {
-    if (a.length !== b.length) return false;
-
-    const aSorted = a.slice().sort();
-    const bSorted = b.slice().sort();
-
-    return aSorted.every((value, index) => value === bSorted[index]);
 }
 
 const checkDirtyFilter = (): boolean => {

@@ -80,9 +80,11 @@ import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 import EditDatabaseDialog from "@/components/database/edit/EditDatabaseDialog.vue";
+import useArrayCompare from "@/composables/useArrayCompare";
 
 const { ontology: ncbiOntology, update: updateNcbiOntology } = useNcbiOntology();
 const customFilterStore = useCustomFilterStore();
+const { compareNumberOrStringArrays } = useArrayCompare();
 
 const dialogOpen = defineModel<boolean>();
 
@@ -121,15 +123,6 @@ const confirmEdit = () => {
     }
 
     dialogOpen.value = false;
-}
-
-const compareNumberOrStringArrays = (a: number[] | string[], b: number[] | string[]) => {
-    if (a.length !== b.length) return false;
-
-    const aSorted = a.slice().sort();
-    const bSorted = b.slice().sort();
-
-    return aSorted.every((value, index) => value === bSorted[index]);
 }
 
 const checkDirtyFilter = (): boolean => {
