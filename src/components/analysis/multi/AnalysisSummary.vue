@@ -159,7 +159,7 @@ const emits = defineEmits<{
 
 const showMissingPeptides = ref(false);
 
-const databaseName = computed(() => customFilterStore.getFilterById(analysis.config.database)?.name || "Unknown database");
+const databaseName = computed(() => customFilterStore.getFilterNameById(analysis.config.database) || "Invalid database");
 
 const missedPeptides = computed(() => analysis.peptideTrust!.missedPeptides);
 
