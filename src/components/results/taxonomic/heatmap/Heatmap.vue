@@ -93,9 +93,7 @@ const redraw = () => {
     visualizationObject.value = createHeatmap();
 };
 
-const download = () => {
-    console.log("Download");
-};
+const download = () => {};
 
 const rotate = () => {
     rotated.value = !rotated.value;

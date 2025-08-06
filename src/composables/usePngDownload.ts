@@ -18,8 +18,6 @@ export default function usePngDownload() {
         // Serialize the SVG element to a string
         const svgString = new XMLSerializer().serializeToString(svgElement);
 
-        console.log(svgString);
-
         // Create a Blob object from the SVG string
         const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(svgBlob);

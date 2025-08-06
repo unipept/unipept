@@ -70,9 +70,9 @@
         <slot></slot>
         
         <manage-sample-group-dialog
-            v-if="groupToManage"
-            v-model="manageSamples"
-            :group="groupToManage"
+            v-if="manageSamples[1]"
+            v-model="manageSamples[0]"
+            :group="manageSamples[1]"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -103,15 +103,14 @@ const { project, multiSelect = false } = defineProps<{
 
 const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses", { required: true });
 const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-group", { required: true });
-const manageSamples = defineModel<boolean | undefined>("manage-samples", { default: false, required: false });
+// This model defines whether the manage samples dialog should be open, and which group should be managed by the dialog.
+const manageSamples = defineModel<[boolean, GroupAnalysisStore]>("manage-samples", { default: [false, undefined], required: false });
 
 const newDialogOpen = ref(false);
-const groupToManage = ref<GroupAnalysisStore | undefined>();
 
 const addGroup = (name: string) => {
     const groupId = project.addGroup(name);
-    groupToManage.value = project.getGroup(groupId);
-    manageSamples.value = true;
+    manageSamples.value = [true, project.getGroup(groupId)];
 }
 
 const updateGroup = (groupId: string, updatedName: string) => {

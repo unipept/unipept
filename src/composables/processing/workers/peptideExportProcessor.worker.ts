@@ -62,8 +62,6 @@ const process = async({
 
     const peptideTable = ShareableMap.fromTransferableState<string, number>(peptideTableTransferable);
 
-    console.log(peptideTable);
-
     for (const [peptide, peptideCount] of peptideTable) {
         const row = [peptide];
 

@@ -1,6 +1,6 @@
 <template>
     <project-view
-        v-model:manage-samples="manageSamplesDialogOpen"
+        v-model:manage-samples="manageSamplesDialog"
         v-model:selected-analyses="singleAnalysisState.selectedAnalyses"
         v-model:selected-group="singleAnalysisState.selectedGroup"
         :project="project"
@@ -65,7 +65,7 @@
                     v-if="singleAnalysisState.selectedGroup"
                     :analysis="selectedAnalysis"
                     :group="singleAnalysisState.selectedGroup"
-                    @edit="manageSamplesDialogOpen = true"
+                    @edit="manageSamplesDialog = [true, singleAnalysisState.selectedGroup]"
                 />
 
                 <taxonomic-results
@@ -105,7 +105,7 @@ const {
     singleAnalysisState
 } = useAppStateStore();
 
-const manageSamplesDialogOpen = ref(false);
+const manageSamplesDialog = ref([false, undefined]);
 
 const selectedAnalysis: ComputedRef = computed(() => singleAnalysisState.selectedAnalyses[0]);
 
