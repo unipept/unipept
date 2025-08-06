@@ -228,7 +228,6 @@
             });
         }
         barplotSettings.value.height = barplotSettings.value.barHeight * props.analyses.length + 100 + Math.ceil((taxonCount.value + 1) / 3) * 30;
-        console.log(JSON.stringify(createdBars));
         barData.value = createdBars;
     }
 
