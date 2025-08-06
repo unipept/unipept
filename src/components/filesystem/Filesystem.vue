@@ -11,16 +11,6 @@
         @update:selected="selectItem"
     >
         <v-list-item
-            v-if="project.name"
-            style="pointer-events: none"
-            base-color="primary"
-            variant="tonal"
-            density="compact"
-        >
-            {{ project.name }}
-        </v-list-item>
-
-        <v-list-item
             v-if="!project.groups || project.groups.length === 0"
             class="text-center"
             style="pointer-events: none"
@@ -31,9 +21,10 @@
 
         <filesystem-group
             v-else
-            v-for="group in project.groups"
+            v-for="(group, i) in project.groups"
             :key="group.id"
             :group="group"
+            :show-divider="i > 0"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
