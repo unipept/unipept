@@ -2,6 +2,7 @@
     <v-dialog
         v-model="dialogOpen"
         max-width="1800px"
+        scrollable
     >
         <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex align-center">
@@ -46,7 +47,7 @@
                                                     persistent-hint
                                                     :rules="[
                                                         v => !!v || 'Provide a valid name for your database',
-                                                        v => !customFilterStore.hasFilter(v) || 'A filter with this name already exists'
+                                                        v => !customFilterStore.hasFilterByName(v) || 'A filter with this name already exists'
                                                     ]"
                                                 />
                                             </div>
@@ -249,7 +250,7 @@ const customFilterStore = useCustomFilterStore();
 const dialogOpen = defineModel<boolean>();
 
 const emits = defineEmits<{
-    (e: 'create', name: string, filter: Filter): void,
+    (e: 'create', filter: Filter): void,
 }>();
 
 const databaseName = ref<string>("");
@@ -261,24 +262,27 @@ const selectedProteomes = ref<ReferenceProteome[]>([]);
 const selectedProteins = ref<Protein[]>([]);
 
 const buildTaxonDatabase = () => {
-    emits("create", databaseName.value, {
+    emits("create",{
         filter: FilterType.Taxon,
+        name: databaseName.value,
         data: selectedTaxa.value.map(taxon => taxon.id)
     });
     dialogOpen.value = false;
 };
 
 const buildProteomeDatabase = () => {
-    emits("create", databaseName.value, {
+    emits("create",{
         filter: FilterType.Proteome,
+        name: databaseName.value,
         data: selectedProteomes.value.map(proteome => proteome.id)
     });
     dialogOpen.value = false;
 };
 
 const buildProteinDatabase = () => {
-    emits("create", databaseName.value, {
+    emits("create",{
         filter: FilterType.Protein,
+        name: databaseName.value,
         data: selectedProteins.value.map(protein => protein.id)
     });
     dialogOpen.value = false;

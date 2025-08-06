@@ -98,7 +98,7 @@ const useSingleAnalysisStore = (
             await processPeptides(peptides.value!, config.value.equate, config.value.filter);
 
             if (fetch) {
-                const filter = customFilterStore.getFilter(config.value.database);
+                const filter = customFilterStore.getFilterById(config.value.database);
                 await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, filter);
 
                 await processMetadata();

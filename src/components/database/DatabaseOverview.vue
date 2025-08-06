@@ -29,7 +29,7 @@
                             class="me-2 cursor-pointer"
                             icon="mdi-pencil"
                             :disabled="item.type === 'N/A'"
-                            @click.stop="editDatabase(item.name)"
+                            @click.stop="editDatabase(item.id)"
                         />
 
                         <v-icon
@@ -38,7 +38,7 @@
                             class="me-2 cursor-pointer"
                             icon="mdi-content-copy"
                             :disabled="item.type === 'N/A'"
-                            @click.stop="duplicateDatabase(item.name)"
+                            @click.stop="duplicateDatabase(item.id)"
                         />
 
                         <v-icon
@@ -47,7 +47,7 @@
                             class="cursor-pointer"
                             icon="mdi-delete"
                             :disabled="item.type === 'N/A'"
-                            @click.stop="deleteDatabase(item.name)"
+                            @click.stop="deleteDatabase(item.id)"
                         />
                     </div>
                 </template>
@@ -67,7 +67,8 @@
         <delete-database-dialog
             v-model="deleteDatabaseDialogOpen"
             :database="databaseToManipulate"
-            @confirm="confirmDeleteDatabase(databaseToManipulate)"
+            :amount-of-linked-samples="amountOfLinkedSamples"
+            @confirm="confirmDeleteDatabase"
         />
 
         <create-custom-database
@@ -75,18 +76,18 @@
             @create="confirmCreateDatabase"
         />
 
-        <edit-custom-database
+        <edit-custom-database-dialog
             v-model="editDatabaseDialogOpen"
-            :name="databaseToManipulate"
-            :filter="customFilterStore.getFilter(databaseToManipulate)"
+            :database="databaseToManipulate"
             :amount-of-linked-samples="amountOfLinkedSamples"
-            @edit="confirmEditDatabase"
+            @edit:name="confirmEditDatabaseName"
+            @edit:filter="confirmEditDatabaseFilter"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed, onMounted, toRaw} from 'vue';
 import useCustomFilterStore, {Filter, FilterType} from "@/store/CustomFilterStore";
 import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomic/TaxonomyResponseCommunicator";
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
@@ -97,8 +98,8 @@ import useProteinOntology from "@/composables/ontology/useProteinOntology";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
 import DeleteDatabaseDialog from "@/components/database/DeleteDatabaseDialog.vue";
-import EditCustomDatabase from "@/components/database/EditCustomDatabase.vue";
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
+import EditCustomDatabaseDialog from "@/components/database/edit/EditCustomDatabase.vue";
 
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
@@ -113,7 +114,8 @@ const { project } = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'database:update', name: string, newName: string, newFilter: Filter): void,
+    (e: 'database:updateName', id: string, filter: Filter): void,
+    (e: 'database:updateFilter', id: string, filter: Filter): void,
     (e: 'database:delete', name: string): void,
 }>();
 
@@ -124,26 +126,18 @@ const databaseToManipulate = ref<string>('');
 const taxonCounts = ref<Map<string, string>>(new Map());
 const proteinCounts = ref<Map<string, string>>(new Map());
 
-const amountOfLinkedSamples = computed(() => {
-    let count = 0;
-    for (const group of project.groups) {
-        for (const analysis of group.analyses) {
-            if (analysis.config.database === databaseToManipulate.value) {
-                count++;
-            }
-        }
-    }
-    return count;
-});
+const amountOfLinkedSamples = computed(() => computeSampleCount(databaseToManipulate.value));
 
 const databases = computed(() => {
-    return customFilterStore.filters.map(name => {
-        const filter = customFilterStore.getFilter(name)!;
+    return customFilterStore.filters.map(id => {
+        const filter = customFilterStore.getFilterById(id)!;
         return {
-            name: name,
+            id: id,
+            name: filter.name,
             type: showFilterType(filter.filter),
-            taxaCount: taxonCounts.value.get(name) || 'computing...',
-            proteinCount: proteinCounts.value.get(name) || 'computing...',
+            taxaCount: taxonCounts.value.get(id) || 'computing...',
+            proteinCount: proteinCounts.value.get(id) || 'computing...',
+            sampleCount: computeSampleCount(id),
         };
     });
 });
@@ -198,18 +192,26 @@ const computeProteinCount = async (filter: Filter) => {
     }
 };
 
-const tableHeaders: any = [
-    { title: 'Name', key: 'name' },
-    { title: 'Type', key: 'type' },
-    { title: '# Taxa', key: 'taxaCount', align: "end" },
-    { title: '# Proteins', key: 'proteinCount', align: "end" },
-    { title: 'Actions', key: 'actions', align: "end", sortable: false },
-];
-
-const editDatabase = (name: string) => {
-    databaseToManipulate.value = name;
-    editDatabaseDialogOpen.value = true;
+const computeSampleCount = (filterId: string): number => {
+    let count = 0;
+    for (const group of project.groups) {
+        for (const analysis of group.analyses) {
+            if (analysis.config.database === filterId) {
+                count++;
+            }
+        }
+    }
+    return count;
 };
+
+const tableHeaders: any = [
+    { title: 'Name', key: 'name', width: '20%' },
+    { title: 'Type', key: 'type', width: '30%' },
+    { title: '# Taxa', key: 'taxaCount', align: "end", width: '15%' },
+    { title: '# Proteins', key: 'proteinCount', align: "end", width: '15%' },
+    { title: '# Samples', key: 'sampleCount', align: "end", width: '15%' },
+    { title: '', key: 'actions', align: "end", sortable: false },
+];
 
 /**
  * Rounds a number and returns a formatted string.
@@ -223,7 +225,17 @@ function smartRound(value: number): string {
     const absValue = Math.abs(value);
     const sign = value < 0 ? "-" : "";
 
-    if (absValue < 1000000) {
+    if (absValue < 10) {
+        return `${sign}${absValue}`;
+    } else if (absValue < 100) {
+        // Round to nearest ten
+        const roundedTens = Math.round(absValue / 10);
+        return `${sign}${roundedTens}0`;
+    } else if (absValue < 1000) {
+        // Round to nearest hundred
+        const roundedHundreds = Math.round(absValue / 100);
+        return `${sign}${roundedHundreds}00`;
+    } else if (absValue < 1000000) {
         // Round to nearest thousand
         const roundedThousands = Math.round(absValue / 1000);
         return `${sign}${roundedThousands} thousand`;
@@ -234,60 +246,76 @@ function smartRound(value: number): string {
     }
 }
 
-
-
-const confirmEditDatabase = async (name: string, filter: Filter) => {
-    emits('database:update', databaseToManipulate.value, name, filter);
-
-    const taxonCount = await computeTaxonCount(filter);
-    const proteinCount = await computeProteinCount(filter);
-    taxonCounts.value.set(name, `~ ${smartRound(taxonCount)}`);
-    proteinCounts.value.set(name, `~ ${smartRound(proteinCount)}`);
+const editDatabase = (id: string) => {
+    databaseToManipulate.value = id;
+    editDatabaseDialogOpen.value = true;
 };
 
-const deleteDatabase = (name: string) => {
-    databaseToManipulate.value = name;
+const confirmEditDatabase = async (filter: Filter) => {
+    const taxonCount = await computeTaxonCount(filter);
+    const proteinCount = await computeProteinCount(filter);
+    taxonCounts.value.set(databaseToManipulate.value, `~ ${smartRound(taxonCount)}`);
+    proteinCounts.value.set(databaseToManipulate.value, `~ ${smartRound(proteinCount)}`);
+};
+
+const confirmEditDatabaseName = (filter: Filter) => {
+    confirmEditDatabase(filter);
+    emits('database:updateName', databaseToManipulate.value, filter);
+};
+
+const confirmEditDatabaseFilter = (filter: Filter) => {
+    confirmEditDatabase(filter);
+    emits('database:updateFilter', databaseToManipulate.value, filter);
+};
+
+const deleteDatabase = (id: string) => {
+    databaseToManipulate.value = id;
     deleteDatabaseDialogOpen.value = true;
 };
 
-const confirmDeleteDatabase = (name: string) => {
-    emits('database:delete', name);
+const confirmDeleteDatabase = () => {
+    emits('database:delete', databaseToManipulate.value);
 
-    taxonCounts.value.delete(name);
-    proteinCounts.value.delete(name);
+    taxonCounts.value.delete(databaseToManipulate.value);
+    proteinCounts.value.delete(databaseToManipulate.value);
     databaseToManipulate.value = '';
 };
 
-const duplicateDatabase = (name: string) => {
+const duplicateDatabase = (id: string) => {
+    const filter = customFilterStore.getFilterById(id)!;
+
     let counter = 1;
-    while (customFilterStore.filters.find(s => s === `${name} - copy ${counter}`)) {
+    while (customFilterStore.filterNames.find(s => s === `${filter.name} - copy ${counter}`)) {
         counter++;
     }
 
-    const newName = `${name} - copy ${counter}`;
-    const filter = customFilterStore.getFilter(name)!;
-    customFilterStore.addFilter(newName, { ...filter });
-    taxonCounts.value.set(newName, taxonCounts.value.get(name)!);
-    proteinCounts.value.set(newName, proteinCounts.value.get(name)!);
+    const newName = `${filter.name} - copy ${counter}`;
+    const newId = customFilterStore.addFilter({
+        ...filter,
+        name: newName,
+        data: toRaw(filter.data),
+    });
+    taxonCounts.value.set(newId, taxonCounts.value.get(id)!);
+    proteinCounts.value.set(newId, proteinCounts.value.get(id)!);
 };
 
 const createDatabase = () => databaseDialogOpen.value = true;
 
-const confirmCreateDatabase = async (name: string, filter: Filter) => {
-    customFilterStore.addFilter(name, filter);
+const confirmCreateDatabase = async (filter: Filter) => {
+    const filterId = customFilterStore.addFilter(filter);
     const taxonCount = await computeTaxonCount(filter);
     const proteinCount = await computeProteinCount(filter);
-    taxonCounts.value.set(name, `~ ${smartRound(taxonCount)}`);
-    proteinCounts.value.set(name, `~ ${smartRound(proteinCount)}`);
+    taxonCounts.value.set(filterId, `~ ${smartRound(taxonCount)}`);
+    proteinCounts.value.set(filterId, `~ ${smartRound(proteinCount)}`);
 }
 
 const updateCounts = async () => {
-    for (const filterName of customFilterStore.filters) {
-        const filter = customFilterStore.getFilter(filterName)!;
+    for (const filterId of customFilterStore.filters) {
+        const filter = customFilterStore.getFilterById(filterId)!;
         const taxonCount = await computeTaxonCount(filter);
         const proteinCount = await computeProteinCount(filter);
-        taxonCounts.value.set(filterName, `~ ${smartRound(taxonCount)}`);
-        proteinCounts.value.set(filterName, `~ ${smartRound(proteinCount)}`);
+        taxonCounts.value.set(filterId, `~ ${smartRound(taxonCount)}`);
+        proteinCounts.value.set(filterId, `~ ${smartRound(proteinCount)}`);
     }
 }
 
