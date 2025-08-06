@@ -6,7 +6,6 @@ import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 
 export interface PeptideProcessorData {
     peptides: string[];
-    equate: boolean;
     filter: boolean;
 }
 
@@ -24,7 +23,7 @@ export default function usePeptideProcessor() {
 
     const process = async (peptides: string[], equate: boolean, filter: boolean) => {
         const { peptideCountsTransferable, totalPeptideCount } = await post({
-            peptides, equate, filter
+            peptides, filter
         });
 
         const countTableMap = ShareableMap.fromTransferableState<string, number>(peptideCountsTransferable);

@@ -12,10 +12,9 @@ self.onmessage = async (event) => {
 
 const process = async ({
     peptides,
-    equate,
     filter
 }: PeptideProcessorData) => {
-    peptides = preprocess(peptides, equate);
+    peptides = preprocess(peptides);
 
     const peptideCounts = new ShareableMap<string, number>();
     for (const peptide of peptides) {
@@ -32,10 +31,8 @@ const process = async ({
 }
 
 const preprocess = (
-    peptides: string[],
-    equate: boolean
+    peptides: string[]
 ) => {
     return peptides
-        .filter((p) => p.length >= 5)
-        .map(p => equate ? p.replace(/I/g, 'L') : p);
+        .filter((p) => p.length >= 5);
 }
