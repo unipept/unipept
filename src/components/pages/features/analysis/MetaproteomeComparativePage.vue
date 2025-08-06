@@ -1,5 +1,4 @@
 <template>
-    <!-- @vue-ignore -->
     <project-view
         v-model:manage-samples="manageSamplesDialogOpen"
         v-model:selected-analyses="comparativeAnalysisState.selectedAnalyses"
@@ -74,8 +73,9 @@ import NoSelectedSamplesPlaceholder from "@/components/analysis/comparative/NoSe
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import AnalysisSummaryProgress from "@/components/analysis/multi/AnalysisSummaryProgress.vue";
 import ComparativeHeatmap from "@/components/analysis/comparative/ComparativeHeatmap.vue";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 
-const manageSamplesDialogOpen = ref([false, undefined]);
+const manageSamplesDialogOpen: Ref<[boolean, GroupAnalysisStore | undefined]> = ref([false, undefined]);
 const selectedComparativeTab = ref(0);
 
 const { project } = useUnipeptAnalysisStore();

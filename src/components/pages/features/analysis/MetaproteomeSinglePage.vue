@@ -1,5 +1,4 @@
 <template>
-    <!-- @vue-ignore -->
     <project-view
         v-model:manage-samples="manageSamplesDialog"
         v-model:selected-analyses="singleAnalysisState.selectedAnalyses"
@@ -94,6 +93,7 @@ import MpaFunctionalResults from "@/components/results/functional/MpaFunctionalR
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import useAppStateStore from "@/store/AppStateStore";
 import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 
 export interface Sample {
     name: string;
@@ -106,7 +106,7 @@ const {
     singleAnalysisState
 } = useAppStateStore();
 
-const manageSamplesDialog = ref([false, undefined]);
+const manageSamplesDialog: Ref<[boolean, GroupAnalysisStore | undefined]> = ref([false, undefined]);
 
 const selectedAnalysis: ComputedRef = computed(() => singleAnalysisState.selectedAnalyses[0]);
 

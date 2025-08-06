@@ -104,7 +104,7 @@ const { project, multiSelect = false } = defineProps<{
 const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses", { required: true });
 const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-group", { required: true });
 // This model defines whether the manage samples dialog should be open, and which group should be managed by the dialog.
-const manageSamples = defineModel<[boolean, GroupAnalysisStore]>("manage-samples", { default: [false, undefined], required: false });
+const manageSamples = defineModel<[boolean, GroupAnalysisStore | undefined]>("manage-samples", { default: [false, undefined], required: false });
 
 const newDialogOpen = ref(false);
 
