@@ -196,7 +196,7 @@ async function exportProject() {
     const url = URL.createObjectURL((await processExport(project, appState)).content);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'project.unipept';
+    a.download = `${project.name}.unipept`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
