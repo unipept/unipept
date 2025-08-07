@@ -74,18 +74,18 @@
         </template>
     </v-list-item>
 
-    <v-list-item
-        style="margin: 1px 2px;"
-        class="text-primary mb-3"
-        title="Add new sample"
+    <v-btn
+        style="width: calc(100% - 4px); justify-content: flex-start; margin-left: 2px; margin-right: 2px;"
+        class="mb-3"
         color="primary"
-        density="compact"
-        rounded
-        prepend-icon="mdi-file-document-plus-outline"
-        :value="`button-${group.id}`"
-        :active="false"
+        variant="text"
         @click="manageSamplesDialogOpen = true"
-    />
+    >
+        <v-icon size="x-large" style="margin-right: 5px; opacity: 0.70;">mdi-file-document-plus-outline</v-icon>
+        <span style="text-transform: none; font-size: 16px; letter-spacing: normal; font-weight: 400;">
+            Add new sample
+        </span>
+    </v-btn>
 
     <manage-sample-group-dialog
         v-model="manageSamplesDialogOpen"

@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import FilesystemGroup from "@/components/filesystem/FilesystemGroup.vue";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, toRaw, watch} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
@@ -87,14 +87,6 @@ const removeGroup = (groupId: string) => {
 };
 
 const selectItem = (newSelected: (SingleAnalysisStore | string)[]) => {
-    // for (const newItem of newSelected) {
-    //     if (newItem && typeof newItem === 'object' && '$id' in newItem) {
-    //         console.log("Selecting item:");
-    //         console.log(newItem);
-    //         // This is most likely a pinia store
-    //         selected.value.push(newSelected as unknown as SingleAnalysisStore);
-    //     }
-    // }
     if (typeof newSelected[0] === 'string') {
         // We have to set the selected value to itself to trigger the watcher
         selected.value = [ ...selected.value ];
