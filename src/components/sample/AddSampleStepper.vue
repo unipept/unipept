@@ -339,7 +339,8 @@ const uploadFilesInBulk = async function() {
 
     for (const file of bulkFiles.value) {
         const peptides = await fileReader.readFile(file);
-        const sampleName = file.name;
+        // Remove the file extension from the file name
+        const sampleName = file.name.replace(/\.[^/.]+$/, "");
 
         const sample: SampleTableItem = {
             id: uuidv4(),

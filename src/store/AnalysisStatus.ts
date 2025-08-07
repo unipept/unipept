@@ -1,5 +1,6 @@
 export enum AnalysisStatus {
     Pending,
     Running,
-    Finished
+    Finished,
+    Failed
 }

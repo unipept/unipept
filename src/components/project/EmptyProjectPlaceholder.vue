@@ -10,23 +10,22 @@
             </p>
 
             <v-row class="mt-5" justify="center">
-                <v-col cols="12" md="4" >
+                <v-col cols="12" md="4">
                     <v-unipept-card class="step-card">
                         <v-card-title class="step-title">
                             <v-icon color="primary" class="mr-2">mdi-folder-plus</v-icon>
-                            Step 1: Create a new group
+                            Step 1: Create a group
                         </v-card-title>
 
                         <v-card-text>
                             <p>
                                 Start by creating a group. A group is a collection of samples you want to analyze together.
-                                Click the button below or use the bottom-left button.
                             </p>
 
                             <div class="d-flex justify-center mt-5">
                                 <v-btn
-                                    class=""
                                     color="primary"
+                                    variant="tonal"
                                     text="Create Group"
                                     @click="addGroup(DEFAULT_NEW_GROUP_NAME)"
                                 />
@@ -73,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { DEFAULT_NEW_GROUP_NAME } from "@/store/new/GroupAnalysisStore";
+import { DEFAULT_NEW_GROUP_NAME } from "@/store/ProjectAnalysisStore";
 
 const emits = defineEmits<{
     (e: 'group:add', name: string): void;

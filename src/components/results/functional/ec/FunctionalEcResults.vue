@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import EcResultsTable from "@/components/results/functional/ec/EcResultsTable.vue";
 import {computed, onMounted, ref, watch} from "vue";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import useEcTreeProcessor from "@/composables/processing/functional/useEcTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
@@ -64,7 +64,7 @@ const emits = defineEmits<{
     (e: 'downloadTable', item: EcResultsTableItem[]): void;
 }>();
 
-const items = computed(() => Array.from(data.ecTable!.entries()).map(([key, value]) => {
+const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([key, value]) => {
     return {
         code: key,
         name: getEcDefinition(key)?.name ?? "Unknown",

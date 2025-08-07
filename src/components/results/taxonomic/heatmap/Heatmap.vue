@@ -69,6 +69,7 @@ const createHeatmap = (): UnipeptHeatmap | undefined => {
     const settings = new HeatmapSettings();
     settings.width = width.value;
     settings.height = height.value;
+    settings.animationsEnabled = false;
     settings.dendrogramEnabled = true;
 
     const rowLabels = rotated.value ? props.columnLabels : props.rowLabels;
@@ -92,9 +93,7 @@ const redraw = () => {
     visualizationObject.value = createHeatmap();
 };
 
-const download = () => {
-    console.log("Download");
-};
+const download = () => {};
 
 const rotate = () => {
     rotated.value = !rotated.value;

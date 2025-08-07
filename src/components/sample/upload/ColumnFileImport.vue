@@ -302,7 +302,8 @@ const readFile = async function() {
         delimiter.value = detectedDelimiter;
     }
 
-    props.sample.name = props.columnFile.name;
+    // Remove the file extension from the file name
+    props.sample.name = props.columnFile.name.replace(/\.[^/.]+$/, "");;
 
     await parseContent();
 

@@ -1,27 +1,30 @@
 <template>
-    <div
-        v-if="!project.groups || project.groups.length === 0"
-        class="mt-4 d-flex justify-center"
-    >
-        No samples added yet...
-    </div>
-
     <v-list
         v-model:opened="expanded"
-        v-model:selected="selected"
         class="py-0"
         color="primary"
         selectable
-        select-strategy="single-leaf"
+        :select-strategy="multiSelect ? 'classic' : 'single-leaf'"
         open-strategy="multiple"
-        active-strategy="single-leaf"
-        mandatory
+        :mandatory="!multiSelect"
+        v-model:selected="selected"
         @update:selected="selectItem"
     >
+        <v-list-item
+            v-if="!project.groups || project.groups.length === 0"
+            class="text-center mt-4"
+            style="pointer-events: none"
+            density="compact"
+        >
+            No samples added yet...
+        </v-list-item>
+
         <filesystem-group
-            v-for="group in project.groups"
+            v-else
+            v-for="(group, i) in project.groups"
             :key="group.id"
             :group="group"
+            :show-divider="i > 0"
             @sample:add="addSample"
             @sample:update="updateSample"
             @sample:remove="removeSample"
@@ -33,15 +36,16 @@
 
 <script setup lang="ts">
 import FilesystemGroup from "@/components/filesystem/FilesystemGroup.vue";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, toRaw, watch} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import {GroupAnalysisStore} from "@/store/new/GroupAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
+import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 
 const selected = defineModel<SingleAnalysisStore[]>({ required: true });
 
-const { project } = defineProps<{
-    project: GroupAnalysisStore;
+const { project, multiSelect = false } = defineProps<{
+    project: ProjectAnalysisStore;
+    multiSelect?: boolean
 }>();
 
 const emits = defineEmits<{

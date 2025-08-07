@@ -94,11 +94,11 @@ export default class NcbiTreeNode implements DataNodeLike {
      * @param f The function to call
      * @return cs
      */
-    public callRecursivelyPostOder(f: (Node: NcbiTreeNode, any: any) => any): any {
+    public callRecursivelyPostOrder(f: (Node: NcbiTreeNode, any: any) => any): any {
         let childResults = [];
         if (this.children) {
             childResults = this.children.map(c =>
-                c.callRecursivelyPostOder(f));
+                c.callRecursivelyPostOrder(f));
         }
         return f(this, childResults);
     }

@@ -2,6 +2,7 @@ import EcResponseCommunicator from "@/logic/communicators/unipept/functional/EcR
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
 import {EcNamespace} from "@/logic/communicators/unipept/functional/EcResponse";
+import {markRaw} from "vue";
 
 export default function useEcOntology(
     baseUrl = DEFAULT_API_BASE_URL,
@@ -30,7 +31,7 @@ export default function useEcOntology(
     }
 
     return {
-        ontology,
+        ontology: markRaw(ontology),
         update
     }
 }

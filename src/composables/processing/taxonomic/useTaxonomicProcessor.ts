@@ -1,27 +1,26 @@
 import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import {ref} from "vue";
-import {ShareableMap} from "shared-memory-datastructures";
+import {markRaw, ref, shallowRef} from "vue";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import TaxonomicProcessorWebWorker from "../workers/taxonomicProcessor.worker.ts?worker";
+import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 
 export interface TaxonomicProcessorData {
     peptideCounts: Map<string, number>;
-    indexBuffer: ArrayBuffer;
-    dataBuffer: ArrayBuffer;
+    peptideDataTransferable: TransferableState;
 }
 
 export interface TaxonomicProcessorWorkerOutput {
-    countsPerLca: Map<number, number>;
+    countsPerLcaTransferable: TransferableState;
     lcaToPeptides: Map<number, string[]>;
     peptideToLca: Map<string, number>;
     annotatedCount: number;
 }
 
 export default function useTaxonomicProcessor() {
-    const countTable = ref<CountTable<number>>();
-    const lcaToPeptides = ref<Map<number, string[]>>();
-    const peptideToLca = ref<Map<string, number>>();
+    const countTable = shallowRef<CountTable<number>>();
+    const lcaToPeptides = shallowRef<Map<number, string[]>>();
+    const peptideToLca = shallowRef<Map<string, number>>();
 
     const { post } = useAsyncWebWorker<TaxonomicProcessorData, TaxonomicProcessorWorkerOutput>(
         () => new TaxonomicProcessorWebWorker()
@@ -31,17 +30,16 @@ export default function useTaxonomicProcessor() {
         peptideCounts: CountTable<string>,
         peptideData: ShareableMap<string, PeptideData>
     ) => {
-        const buffer = peptideData.getBuffers();
-
         const processed = await post({
-            peptideCounts: new Map(peptideCounts.entries()),
-            indexBuffer: buffer[0],
-            dataBuffer: buffer[1]
+            peptideCounts: new Map(peptideCounts.counts.entries()),
+            peptideDataTransferable: peptideData.toTransferableState()
         });
 
-        countTable.value = new CountTable(processed.countsPerLca, processed.annotatedCount);
-        lcaToPeptides.value = processed.lcaToPeptides;
-        peptideToLca.value = processed.peptideToLca;
+        const countTableMap = markRaw(ShareableMap.fromTransferableState<number, number>(processed.countsPerLcaTransferable));
+
+        countTable.value = markRaw(new CountTable(countTableMap, processed.annotatedCount));
+        lcaToPeptides.value = markRaw(processed.lcaToPeptides);
+        peptideToLca.value = markRaw(processed.peptideToLca);
     }
 
     return {

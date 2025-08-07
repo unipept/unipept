@@ -6,18 +6,22 @@ import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializ
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
+self.onunhandledrejection = (event) => {
+    // This will propagate to the main thread's `onerror` handler
+    throw event.reason;
+};
+
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
 
 const process = async({
-    peptideTable,
+    peptideTableTransferable,
     goOntology,
     ecOntology,
     iprOntology,
     ncbiOntology,
-    indexBuffer,
-    dataBuffer,
+    peptideDataTransferable,
     separator
 }: PeptideExportData): Promise<string[][]> => {
     const generateHeader = () => {
@@ -49,15 +53,14 @@ const process = async({
 
     const { displayPercentage } = usePercentage();
 
-    const peptideToData = new ShareableMap<string, PeptideData>(
-        0, 0, new PeptideDataSerializer()
-    );
-    peptideToData.setBuffers(indexBuffer, dataBuffer);
+    const peptideToData = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, {serializer: new PeptideDataSerializer()});
 
     // Make sure that the separator is not part of any of the values themselves
     const sanitizeRegex = new RegExp(`${separator}`, "g");
 
     const result: string[][] = [ generateHeader() ];
+
+    const peptideTable = ShareableMap.fromTransferableState<string, number>(peptideTableTransferable);
 
     for (const [peptide, peptideCount] of peptideTable) {
         const row = [peptide];

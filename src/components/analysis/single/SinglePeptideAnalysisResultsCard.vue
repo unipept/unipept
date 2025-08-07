@@ -41,6 +41,7 @@
             </v-window-item>
             <v-window-item value="go-terms">
                 <v-card-text>
+                    <!-- @vue-ignore -->
                     <functional-go-results
                         :data="goData"
                         :loading="assay.status! === AnalysisStatus.Running"
@@ -60,6 +61,7 @@
             </v-window-item>
             <v-window-item value="ec-numbers">
                 <v-card-text>
+                    <!-- @vue-ignore -->
                     <functional-ec-results
                         :data="ecData"
                         :loading="assay.status! === AnalysisStatus.Running"
@@ -79,6 +81,7 @@
             </v-window-item>
             <v-window-item value="interpro">
                 <v-card-text>
+                    <!-- @vue-ignore -->
                     <functional-ipr-results
                         :data="interproData"
                         :loading="assay.status! === AnalysisStatus.Running"
@@ -103,12 +106,12 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import MatchedProteinsTable from "@/components/tables/MatchedProteinsTable.vue";
-import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
+import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import LineageTable from "@/components/tables/LineageTable.vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import FunctionalGoResults from "@/components/results/functional/go/FunctionalGoResults.vue";
 import usePercentage from "@/composables/usePercentage";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
 import FunctionalEcResults from "@/components/results/functional/ec/FunctionalEcResults.vue";
 import FunctionalIprResults from "@/components/results/functional/ipr/FunctionalIprResults.vue";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
