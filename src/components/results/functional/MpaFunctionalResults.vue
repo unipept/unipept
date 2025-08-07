@@ -135,17 +135,17 @@ import {computed, ref} from "vue";
 import FunctionalGoResults from "@/components/results/functional/go/FunctionalGoResults.vue";
 import SortingPeptidesDialog from "@/components/results/functional/SortingPeptidesDialog.vue";
 import FunctionalEcResults from "@/components/results/functional/ec/FunctionalEcResults.vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import FunctionalIprResults from "@/components/results/functional/ipr/FunctionalIprResults.vue";
 import FilterFunctionalResults from "@/components/results/functional/FilterFunctionalResults.vue";
 import usePercentage from "@/composables/usePercentage";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
 import useCsvDownload from "@/composables/useCsvDownload";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue";
 import {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
 
@@ -198,7 +198,7 @@ const downloadGoItem = (item: GoResultsTableItem) => {
         const itemProteinCount = peptideData.go[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable!.get(peptide),
+            analysis.peptidesTable!.counts.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),
@@ -229,7 +229,7 @@ const downloadEcItem = (item: EcResultsTableItem) => {
         const itemProteinCount = peptideData!.ec[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable!.get(peptide),
+            analysis.peptidesTable!.counts.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),
@@ -261,7 +261,7 @@ const downloadInterproItem = (item: IprResultsTableItem) => {
         const itemProteinCount = peptideData!.ipr[item.code] ?? 0;
         return [
             peptide,
-            analysis.peptidesTable!.get(peptide),
+            analysis.peptidesTable!.counts.get(peptide),
             totalProteinCount,
             itemProteinCount,
             displayPercentage(itemProteinCount / totalProteinCount, Infinity),

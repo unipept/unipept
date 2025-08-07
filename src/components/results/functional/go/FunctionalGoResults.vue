@@ -85,7 +85,7 @@
 import GoResultsTable from "./GoResultsTable.vue";
 import {computed} from "vue";
 import QuickGoCard from "@/components/results/functional/go/QuickGoCard.vue";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import CountTable from "@/logic/processors/CountTable";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import GoTableData from "@/components/results/functional/go/GoTableData";
@@ -111,7 +111,7 @@ const cellularComponentItems = computed(() => getItems(data.goTable).filter(x =>
 const molecularFunctionItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
 
 const getItems = (items: CountTable<string>) => {
-    return Array.from(items.entries())
+    return Array.from(items.counts.entries())
         .map(([key, value]) => ({
             code: key,
             name: getGoDefinition(key)?.name ?? "Unknown",

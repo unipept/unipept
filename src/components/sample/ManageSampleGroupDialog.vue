@@ -87,7 +87,7 @@
                         text="Done"
                         variant="tonal"
                         :disabled="!isValid"
-                        @click="confirmChanges"
+                        @click="dialogOpen = false"
                     />
                 </div>
 
@@ -109,15 +109,17 @@
 <script setup lang="ts">
 import SampleTable from "@/components/sample/SampleTable.vue";
 import {computed, ref, watch} from "vue";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import RemoveGroupDialog from "@/components/sample/RemoveGroupDialog.vue";
 import AddSampleStepper from "@/components/sample/AddSampleStepper.vue";
 import UndoChangesDialog from "@/components/sample/UndoChangesDialog.vue";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
+import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 
 const dialogOpen = defineModel<boolean>();
 
 const { group } = defineProps<{
-    group: MultiAnalysisStore
+    group: GroupAnalysisStore
 }>();
 
 const emit = defineEmits<{
@@ -127,6 +129,16 @@ const emit = defineEmits<{
     (e: 'group:update', groupId: string, updatedName: string): void;
     (e: 'group:remove', groupId: string): void
 }>();
+
+const cloneOriginalSamples = (originalSamples: SingleAnalysisStore[]): SampleTableItem[] => {
+    return [...originalSamples].map(sample => ({
+        id: sample.id,
+        name: sample.name,
+        rawPeptides: sample.rawPeptides,
+        config: { ...sample.config },
+        intensities: sample.intensities
+    }));
+};
 
 // @ts-ignore At this point, TypeScript has issues figuring out that the parameter is actually of the correct type
 const samples = ref<SampleTableItem[]>(cloneOriginalSamples(group.analyses));
@@ -219,21 +231,6 @@ watch(dialogOpen, () => {
     }
     addingSample.value = false;
 });
-</script>
-
-<script lang="ts">
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
-import {SampleTableItem} from "@/components/sample/SampleTable.vue";
-
-const cloneOriginalSamples = (originalSamples: SingleAnalysisStore[]): SampleTableItem[] => {
-    return [...originalSamples].map(sample => ({
-        id: sample.id,
-        name: sample.name,
-        rawPeptides: sample.rawPeptides,
-        config: { ...sample.config },
-        intensities: sample.intensities
-    }));
-};
 
 const isDirty = (original: SingleAnalysisStore, current: SampleTableItem): boolean => {
     return original.name !== current.name

@@ -2,6 +2,7 @@ import GoResponseCommunicator from "@/logic/communicators/unipept/functional/GoR
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
+import {markRaw} from "vue";
 
 export default function useGoOntology(
     baseUrl = DEFAULT_API_BASE_URL,
@@ -30,7 +31,7 @@ export default function useGoOntology(
     }
 
     return {
-        ontology,
+        ontology: markRaw(ontology),
         update
     }
 }

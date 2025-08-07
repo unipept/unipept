@@ -6,7 +6,6 @@ import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
 import { defineConfig } from "vite"
 import { fileURLToPath, URL } from "node:url"
 
-
 // If the app is being deployed by GitHub Actions, we need to set the base URL to /unipept.
 const baseURL = process.env.CI ? "/unipept" : "/";
 
@@ -52,5 +51,9 @@ export default defineConfig({
     },
     server: {
         port: 3000,
+        headers: {
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "Cross-Origin-Embedder-Policy": "require-corp"
+        }
     }
 })
