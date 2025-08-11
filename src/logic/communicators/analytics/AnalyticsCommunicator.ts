@@ -29,11 +29,11 @@ export default class AnalyticsCommunicator {
         this.logEvent('create_new_project');
     }
 
-    public logLoadDemoProject(demoName: string) {
+    public logLoadDemoProject() {
         this.logEvent('load_demo_project');
     }
 
-    public logQuickAnalysis(peptideCount: number, config: any) {
+    public logQuickAnalysis() {
         this.logEvent('quick_analysis',);
     }
 

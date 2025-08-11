@@ -51,7 +51,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         
         // Track project creation
         const analyticsCommunicator = new AnalyticsCommunicator();
-        analyticsCommunicator.logCreateNewProject(projectName);
+        analyticsCommunicator.logCreateNewProject();
     }
 
     const loadProjectFromStorage = async (projectName: string) => {
@@ -69,7 +69,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
             
             // Track project loading
             const analyticsCommunicator = new AnalyticsCommunicator();
-            analyticsCommunicator.logLoadProjectFromStorage(projectName);
+            analyticsCommunicator.logLoadProjectFromStorage();
         }
     }
 
@@ -86,7 +86,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         
         // Track project loading from file
         const analyticsCommunicator = new AnalyticsCommunicator();
-        analyticsCommunicator.logLoadProjectFromFile(projectName);
+        analyticsCommunicator.logLoadProjectFromFile();
     }
 
     const loadProjectFromSample = async (sample: SampleData) => {
@@ -107,7 +107,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         
         // Track demo project loading
         const analyticsCommunicator = new AnalyticsCommunicator();
-        analyticsCommunicator.logLoadDemoProject(sample.environment);
+        analyticsCommunicator.logLoadDemoProject();
     }
 
     const loadProjectFromPeptides = async (rawPeptides: string, config: AnalysisConfig) => {
@@ -125,7 +125,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
             
         // Track quick analysis
         const analyticsCommunicator = new AnalyticsCommunicator();
-        analyticsCommunicator.logQuickAnalysis(peptideCount, config);
+        analyticsCommunicator.logQuickAnalysis();
     }
 
     const deleteProject = async (projectName: string) => {
