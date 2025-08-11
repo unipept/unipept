@@ -18,6 +18,58 @@ import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 
+// Static queue for processing analyses sequentially
+class AnalysisQueue {
+    private static instance: AnalysisQueue;
+    private queue: Array<() => Promise<void>> = [];
+    private isProcessing: boolean = false;
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    private constructor() {}
+
+    public static getInstance(): AnalysisQueue {
+        if (!AnalysisQueue.instance) {
+            AnalysisQueue.instance = new AnalysisQueue();
+        }
+        return AnalysisQueue.instance;
+    }
+
+    public enqueue(task: () => Promise<void>): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.queue.push(async () => {
+                try {
+                    await task();
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            });
+            
+            this.processQueue();
+        });
+    }
+
+    private async processQueue(): Promise<void> {
+        if (this.isProcessing || this.queue.length === 0) {
+            return;
+        }
+
+        this.isProcessing = true;
+        
+        try {
+            const task = this.queue.shift();
+            if (task) {
+                await task();
+            }
+        } finally {
+            this.isProcessing = false;
+            if (this.queue.length > 0) {
+                await this.processQueue();
+            }
+        }
+    }
+}
+
 const useSingleAnalysisStore = (
     _id: string,
     _name: string,
@@ -92,33 +144,40 @@ const useSingleAnalysisStore = (
     // ===============================================================
 
     const analyse = async (fetch: boolean = true) => {
-        status.value = AnalysisStatus.Running;
+        // Set status to running immediately to provide feedback to the user
+        status.value = AnalysisStatus.Pending;
 
         try {
-            await processPeptides(peptides.value!, config.value.equate, config.value.filter);
+            // Use the AnalysisQueue to ensure only one analysis runs at a time
+            await AnalysisQueue.getInstance().enqueue(async () => {
+                status.value = AnalysisStatus.Running;
 
-            if (fetch) {
-                const filter = customFilterStore.getFilterById(config.value.database);
-                await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, filter);
+                // The actual analysis logic
+                await processPeptides(peptides.value!, config.value.equate, config.value.filter);
 
-                await processMetadata();
-                lastAnalysed.value = new Date();
-            }
+                if (fetch) {
+                    const filter = customFilterStore.getFilterById(config.value.database);
+                    await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, filter);
 
-            processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
+                    await processMetadata();
+                    lastAnalysed.value = new Date();
+                }
 
-            await processLca(peptidesTable.value!, peptideToData.value!);
-            await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
-            await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
-            await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
+                processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
 
-            await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
-            await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
-            await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
-            await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.counts.keys()));
+                await processLca(peptidesTable.value!, peptideToData.value!);
+                await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
+                await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
+                await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
 
-            processNcbiTree(lcaTable.value!);
+                await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
+                await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
+                await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
+                await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.counts.keys()));
 
+                processNcbiTree(lcaTable.value!);
+            });
+            
             status.value = AnalysisStatus.Finished;
         } catch (error) {
             status.value = AnalysisStatus.Failed;

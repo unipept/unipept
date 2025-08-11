@@ -1,31 +1,31 @@
 <template>
     <v-table density="compact">
         <thead>
-        <tr>
-            <th class="text-left" style="width: 20px;">
-                <v-tooltip text="Drag-and-drop samples to reorder them">
-                    <template v-slot:activator="{ props }">
-                        <v-icon color="grey-darken-3" v-bind="props" style="cursor: pointer;">
-                            mdi-swap-vertical
-                        </v-icon>
-                    </template>
-                </v-tooltip>
-            </th>
-            <!-- Column reserved to display the primary sample star -->
-            <th class="text-center" style="width: 20px;"></th>
-            <th class="text-left">
-                Name
-            </th>
-            <th class="text-right">
-                Matched peptides
-            </th>
-            <th class="text-right">
-                Sample size
-            </th>
-            <th class="text-right">
-                Match ratio
-            </th>
-        </tr>
+            <tr>
+                <th class="text-left" style="width: 20px;">
+                    <v-tooltip text="Drag-and-drop samples to reorder them">
+                        <template v-slot:activator="{ props }">
+                            <v-icon color="grey-darken-3" v-bind="props" style="cursor: pointer;">
+                                mdi-swap-vertical
+                            </v-icon>
+                        </template>
+                    </v-tooltip>
+                </th>
+                <!-- Column reserved to display the primary sample star -->
+                <th class="text-center" style="width: 20px;"></th>
+                <th class="text-left">
+                    Name
+                </th>
+                <th class="text-right">
+                    Matched peptides
+                </th>
+                <th class="text-right">
+                    Sample size
+                </th>
+                <th class="text-right">
+                    Match ratio
+                </th>
+            </tr>
         </thead>
         <draggable v-model="selectedAnalyses" item-key="id" tag="tbody">
             <template #item="{ element, index }">
@@ -50,14 +50,14 @@
             </template>
         </draggable>
         <tfoot>
-        <tr class="summary-row font-weight-bold">
-            <td class="text-right"></td>
-            <td></td>
-            <td>{{ selectedAnalyses.length }} samples</td>
-            <td class="text-right">{{ formatNumber(totalMatchedPeptides) }} (Total)</td>
-            <td class="text-right">{{ formatNumber(totalSearchedPeptides) }} (Total)</td>
-            <td class="text-right">{{ averageMatchedPeptides.toFixed(2) }}% (Avg.)</td>
-        </tr>
+            <tr class="summary-row font-weight-bold">
+                <td class="text-right"></td>
+                <td></td>
+                <td>{{ selectedAnalyses.length }} samples</td>
+                <td class="text-right">{{ formatNumber(totalMatchedPeptides) }} (Total)</td>
+                <td class="text-right">{{ formatNumber(totalSearchedPeptides) }} (Total)</td>
+                <td class="text-right">{{ averageMatchedPeptides.toFixed(2) }}% (Avg.)</td>
+            </tr>
         </tfoot>
 
     </v-table>
