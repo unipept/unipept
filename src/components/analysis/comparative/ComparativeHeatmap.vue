@@ -322,24 +322,24 @@
                                             <col style="width: auto;">
                                         </colgroup>
                                         <tbody>
-                                        <tr v-for="(item, idx) of selectedCellSampleSummary!" :key="idx">
-                                            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                                <span style="font-size: 14px;" :class="idx === selectedCell.colIdx ? 'font-weight-bold' : ''">
-                                                    {{ item.sampleName }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <v-progress-linear
-                                                    :model-value="item.abundance * 100"
-                                                    height="20"
-                                                    :color="idx === selectedCell.colIdx ? 'primary' : 'grey'"
-                                                >
-                                                    <span :style="{ 'font-size': '12px' }">
-                                                        {{ item.label }}
+                                            <tr v-for="(item, idx) of selectedCellSampleSummary!" :key="idx">
+                                                <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                    <span style="font-size: 14px;" :class="idx === selectedCell.colIdx ? 'font-weight-bold' : ''">
+                                                        {{ item.sampleName }}
                                                     </span>
-                                                </v-progress-linear>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                                <td>
+                                                    <v-progress-linear
+                                                        :model-value="item.abundance * 100"
+                                                        height="20"
+                                                        :color="idx === selectedCell.colIdx ? 'primary' : 'grey'"
+                                                    >
+                                                        <span :style="{ 'font-size': '12px' }">
+                                                            {{ item.label }}
+                                                        </span>
+                                                    </v-progress-linear>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -355,24 +355,24 @@
                                         <col style="width: auto;">
                                     </colgroup>
                                     <tbody>
-                                    <tr v-for="(item, idx) of selectedCellOrganismSummary!" :key="idx">
-                                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        <tr v-for="(item, idx) of selectedCellOrganismSummary!" :key="idx">
+                                            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                                 <span style="font-size: 14px;" :class="idx === selectedCell.rowIdx ? 'font-weight-bold' : ''">
                                                     {{ item.organismName }}
                                                 </span>
-                                        </td>
-                                        <td>
-                                            <v-progress-linear
-                                                :model-value="item.abundance * 100"
-                                                height="20"
-                                                :color="idx === selectedCell.rowIdx ? 'primary' : 'grey'"
-                                            >
+                                            </td>
+                                            <td>
+                                                <v-progress-linear
+                                                    :model-value="item.abundance * 100"
+                                                    height="20"
+                                                    :color="idx === selectedCell.rowIdx ? 'primary' : 'grey'"
+                                                >
                                                     <span :style="{ 'font-size': '12px' }">
                                                         {{ item.label }}
                                                     </span>
-                                            </v-progress-linear>
-                                        </td>
-                                    </tr>
+                                                </v-progress-linear>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

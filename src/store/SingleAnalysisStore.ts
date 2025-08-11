@@ -24,6 +24,7 @@ class AnalysisQueue {
     private queue: Array<() => Promise<void>> = [];
     private isProcessing: boolean = false;
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() {}
 
     public static getInstance(): AnalysisQueue {

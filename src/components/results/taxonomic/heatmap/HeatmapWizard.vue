@@ -80,7 +80,7 @@
                     text="next"
                     :disabled="
                         currentStep === 1 && horizontalItems.length < 1 ||
-                        currentStep === 2 && verticalItems.length < 1
+                            currentStep === 2 && verticalItems.length < 1
                     "
                 />
             </template>
