@@ -11,7 +11,7 @@
             </v-tab>
         </v-tabs>
 
-        <v-card-text class="pb-0">
+        <v-card-text>
             <v-form
                 ref="form"
                 v-model="validForm"
@@ -51,7 +51,8 @@
                 <v-row>
                     <v-col
                         class="py-0"
-                        cols="6"
+                        cols="12"
+                        sm="6"
                     >
                         <v-tooltip text="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.">
                             <template #activator="{ props }">
@@ -60,17 +61,19 @@
                                     label="Equate I and L"
                                     v-bind="props"
                                     color="primary"
+                                    hide-details
                                 />
                             </template>
                         </v-tooltip>
                     </v-col>
 
                     <v-col
-                        class="d-flex"
-                        cols="6"
+                        cols="12"
+                        sm="6"
+                        class="pt-0 d-flex align-center justify-end"
                     >
-                        <v-spacer />
                         <v-btn
+                            class="w-100 w-sm-auto float-sm-right"
                             color="primary"
                             :disabled="!validForm"
                             prepend-icon="mdi-magnify"
