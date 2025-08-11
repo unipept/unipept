@@ -63,7 +63,13 @@ const onDragLeave = () => {
 const onDrop = (event: DragEvent) => {
     isDragging.value = false;
     if (event.dataTransfer?.files.length) {
-        selectedFiles.value = event.dataTransfer.files[0];
+        if (props.multiple) {
+            // Convert FileList to Array for multiple files
+            selectedFiles.value = Array.from(event.dataTransfer.files);
+        } else {
+            // Single file mode - just take the first file
+            selectedFiles.value = event.dataTransfer.files[0];
+        }
         onFileSelect();
     }
 };
