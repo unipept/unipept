@@ -244,6 +244,7 @@ import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBro
 import ProteinBrowser from "@/components/browsers/ProteinBrowser.vue";
 import Protein from "@/logic/ontology/proteins/Protein";
 import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 const customFilterStore = useCustomFilterStore();
 
@@ -267,6 +268,11 @@ const buildTaxonDatabase = () => {
         name: databaseName.value,
         data: selectedTaxa.value.map(taxon => taxon.id)
     });
+    
+    // Track custom database creation
+    const analyticsCommunicator = new AnalyticsCommunicator();
+    analyticsCommunicator.logCreateCustomDatabase("taxa_based");
+    
     dialogOpen.value = false;
 };
 
@@ -276,6 +282,11 @@ const buildProteomeDatabase = () => {
         name: databaseName.value,
         data: selectedProteomes.value.map(proteome => proteome.id)
     });
+    
+    // Track custom database creation
+    const analyticsCommunicator = new AnalyticsCommunicator();
+    analyticsCommunicator.logCreateCustomDatabase("reference_proteome_based");
+    
     dialogOpen.value = false;
 };
 
@@ -285,6 +296,11 @@ const buildProteinDatabase = () => {
         name: databaseName.value,
         data: selectedProteins.value.map(protein => protein.id)
     });
+    
+    // Track custom database creation
+    const analyticsCommunicator = new AnalyticsCommunicator();
+    analyticsCommunicator.logCreateCustomDatabase("protein_based");
+    
     dialogOpen.value = false;
 };
 

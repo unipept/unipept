@@ -75,6 +75,7 @@ import {computed, ref, watch} from "vue";
 import useSvgDownload from "@/composables/useSvgDownload";
 import usePngDownload from "@/composables/usePngDownload";
 import {toSvg} from "html-to-image";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 const { downloadSvg } = useSvgDownload();
 const { downloadPng, downloadDomPng } = usePngDownload();
@@ -122,12 +123,17 @@ const resolution = computed(() => {
 })
 
 const download = async () => {
+    const analyticsCommunicator = new AnalyticsCommunicator();
+
     if (image instanceof HTMLElement) {
         await downloadDomPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
+        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'html');
     } else if (selectedFormat.value === Format.SVG.valueOf()) {
         await downloadSvg(image, `${filename}.svg`);
+        analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'svg');
     } else {
         await downloadPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
+        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'svg');
     }
     dialogOpen.value = false;
 };

@@ -9,6 +9,7 @@ import useProjectExport from "@/composables/useProjectExport";
 import useProjectImport from "@/composables/useProjectImport";
 import useAppStateStore from "@/store/AppStateStore";
 import {watchDebounced} from "@vueuse/core";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 interface StoreValue {
     lastAccessed: number;
@@ -47,6 +48,10 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         project.clear();
         project.setName(projectName);
         project.setDemoMode(false);
+        
+        // Track project creation
+        const analyticsCommunicator = new AnalyticsCommunicator();
+        analyticsCommunicator.logCreateNewProject(projectName);
     }
 
     const loadProjectFromStorage = async (projectName: string) => {
@@ -61,6 +66,10 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
             project.setName(projectName);
             project.setDemoMode(false);
             appState.setImportedData(processedImport.appState, project);
+            
+            // Track project loading
+            const analyticsCommunicator = new AnalyticsCommunicator();
+            analyticsCommunicator.logLoadProjectFromStorage(projectName);
         }
     }
 
@@ -74,6 +83,10 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         project.setName(projectName);
         project.setDemoMode(false);
         appState.setImportedData(processedImport.appState, project);
+        
+        // Track project loading from file
+        const analyticsCommunicator = new AnalyticsCommunicator();
+        analyticsCommunicator.logLoadProjectFromFile(projectName);
     }
 
     const loadProjectFromSample = async (sample: SampleData) => {
@@ -91,6 +104,10 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
                 database: UNIPROT_ID
             });
         }
+        
+        // Track demo project loading
+        const analyticsCommunicator = new AnalyticsCommunicator();
+        analyticsCommunicator.logLoadDemoProject(sample.environment);
     }
 
     const loadProjectFromPeptides = async (rawPeptides: string, config: AnalysisConfig) => {
@@ -100,6 +117,15 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         project.setDemoMode(true);
         const groupId = project.addGroup("Group");
         project.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
+        
+        // Count the number of peptides
+        const peptideCount = rawPeptides.split(/\r?\n/)
+            .filter(line => line.trim().length > 0)
+            .length;
+            
+        // Track quick analysis
+        const analyticsCommunicator = new AnalyticsCommunicator();
+        analyticsCommunicator.logQuickAnalysis(peptideCount, config);
     }
 
     const deleteProject = async (projectName: string) => {

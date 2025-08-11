@@ -1,70 +1,56 @@
 declare const window: any;
 
 export default class AnalyticsCommunicator {
-    public async logRoute(route: any) {
-        // Log the path of the route
-        this.logPageView(route.path);
-
-        // Log the search parameters of a tpa search
-        // This is the only route that has parameters
-        if (Object.keys(route.params).length !== 0) {
-            this.logSearchTpa(route.params.sequence, route.query.equate === "true");
-        }
-    }
-
-    public logSearchMpa(sequenceAmount: number, equateIl: boolean, filterDuplicates: boolean, missedCleavages: boolean, reprocessed: boolean) {
-        // search_mpa is the event_name as defined in the Google Analytics dashboard
-        this.logEvent('search_mpa', {
-            event_name: 'mpa',
-            sequenceAmount: sequenceAmount,
-            equateIl: equateIl,
-            filterDuplicates: filterDuplicates,
-            // Always true!
-            missedCleavages: true,
-            reprocessed: reprocessed
-        });
-    }
-
-    public logDownloadMpa(format: string) {
-        // download_mpa is the event_name as defined in the Google Analytics dashboard
-        this.logEvent('download_mpa', { event_name: 'mpa', download_format: format });
-    }
-
     public logDownloadVisualization(analysis: string, format: string, visualisation: string) {
-        // download_visualisation is the event_name as defined in the Google Analytics dashboard
         this.logEvent('download_visualisation', {
-            event_name: 'visualisation',
             analysis: analysis,
             download_format: format,
             visualisation: visualisation
         });
     }
 
-    private logEvent(event_name: string, event_params: any) {
+    public logExportProject() {
+        this.logEvent('export_project', {});
+    }
+
+    public logCreateCustomDatabase(databaseType: string) {
+        this.logEvent('create_custom_database', { database_type: databaseType });
+    }
+
+    public logLoadProjectFromStorage() {
+        this.logEvent('load_project_from_storage');
+    }
+
+    public logLoadProjectFromFile() {
+        this.logEvent('load_project_from_file');
+    }
+
+    public logCreateNewProject() {
+        this.logEvent('create_new_project');
+    }
+
+    public logLoadDemoProject(demoName: string) {
+        this.logEvent('load_demo_project');
+    }
+
+    public logQuickAnalysis(peptideCount: number, config: any) {
+        this.logEvent('quick_analysis', { 
+            peptide_count: peptideCount,
+            equate_il: config.equate,
+            filter_duplicates: config.filter,
+            missed_cleavages: config.missed
+        });
+    }
+
+    private logEvent(event_name: string, event_params?: any) {
         if (process.env.NODE_ENV !== 'production') {
             // We are running the app in development mode and we don't want to log any requests...
             return;
         }
 
-        // @ts-ignore (TODO add to global types)
-        this.gtag('config', 'G-P3VRXFGD5B', { 'send_page_view': false });
-        // @ts-ignore (TODO add to global types)
-        this.gtag('event', event_name, event_params);
-    }
-
-    private logPageView(path: string) {
-        this.logEvent('page_view', { page_title: path });
-    }
-
-    private logSearchTpa(sequence: string, equateIl: boolean) {
-        // search_tpa is the event_name as defined in the Google Analytics dashboard
-        this.logEvent('search_tpa', { event_name: 'tpa', sequence: sequence, equateIl: equateIl });
-    }
-
-    private gtag() {
-        window.dataLayer = window.dataLayer || [];
-
-         
-        window.dataLayer.push(arguments);
+        // Use Umami's tracking function
+        if (window.umami && typeof window.umami.track === 'function') {
+            window.umami.track(event_name, event_params);
+        }
     }
 }

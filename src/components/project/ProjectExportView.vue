@@ -111,6 +111,7 @@ import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
 import useProjectExport from "@/composables/useProjectExport";
 import useAppStateStore from "@/store/AppStateStore";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 const { formatNumber } = useNumberFormatter();
 
@@ -192,6 +193,7 @@ async function exportProject() {
     preparingExport.value = true;
 
     const appState = useAppStateStore();
+    const analyticsCommunicator = new AnalyticsCommunicator();
 
     const url = URL.createObjectURL((await processExport(project, appState)).content);
     const a = document.createElement('a');
@@ -200,6 +202,9 @@ async function exportProject() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+
+    // Track the project export event
+    analyticsCommunicator.logExportProject();
 
     preparingExport.value = false;
 }

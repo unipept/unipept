@@ -151,6 +151,7 @@
 import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router'
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 const router = useRouter();
 
