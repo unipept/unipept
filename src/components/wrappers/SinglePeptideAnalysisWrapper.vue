@@ -1,5 +1,5 @@
 <template>
-    <div
+    <v-container
         v-if="analysisStore.status === AnalysisStatus.Finished"
     >
         <single-peptide-summary
@@ -18,7 +18,7 @@
             :tab="currentTab"
             @tab-update="currentTab = $event"
         />
-    </div>
+    </v-container>
 </template>
 
 <script setup lang="ts">
