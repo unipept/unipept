@@ -1,23 +1,27 @@
 <template>
     <div>
         <v-unipept-card :height="height" :disabled="disabled">
-            <v-card-title ref="header" class="d-flex">
-                <h2 class="font-weight-light">
-                    Load recent project
-                </h2>
-
-                <v-spacer />
-
-                <v-tooltip text="Open an existing project (.unipept)">
-                    <template v-slot:activator="{ props }">
-                        <upload-analysis-button
-                            v-bind="props"
-                            :projects="projects"
-                            :loading="loading"
-                            @project:upload="uploadProject"
-                        />
-                    </template>
-                </v-tooltip>
+            <v-card-title ref="header">
+                <v-row>
+                    <v-col cols="12" lg="8">
+                        <h2 class="font-weight-light">
+                            Load recent project
+                        </h2>
+                    </v-col>
+                    <v-col cols="12" lg="4" class="pt-0 pt-lg-4">
+                        <v-tooltip text="Open an existing project (.unipept)">
+                            <template v-slot:activator="{ props }">
+                                <upload-project-button
+                                    class="float-none float-lg-right w-xs-100 w-lg-auto"
+                                    v-bind="props"
+                                    :projects="projects"
+                                    :loading="loading"
+                                    @project:upload="uploadProject"
+                                />
+                            </template>
+                        </v-tooltip>
+                    </v-col>
+                </v-row>
             </v-card-title>
 
             <div v-if="loading" class="d-flex flex-column justify-center align-center h-100">
@@ -171,7 +175,7 @@
 import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
 import {useElementBounding} from "@vueuse/core";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
-import UploadAnalysisButton from "@/components/analysis/multi/UploadAnalysisButton.vue";
+import UploadProjectButton from "@/components/analysis/multi/UploadProjectButton.vue";
 import {load} from "webfontloader";
 
 const props = defineProps<{

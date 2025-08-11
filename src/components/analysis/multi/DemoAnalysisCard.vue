@@ -11,9 +11,9 @@
                     project and discover what this application can do for you.
                 </p>
 
-                <div class="d-flex float-right">
+                <div>
                     <v-btn
-                        class="float-right mt-1"
+                        class="w-100 w-lg-auto float-lg-right mt-1"
                         color="primary"
                         variant="tonal"
                         text="Select a demo project"
