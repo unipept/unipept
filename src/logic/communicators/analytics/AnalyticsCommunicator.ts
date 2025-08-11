@@ -18,11 +18,11 @@ export default class AnalyticsCommunicator {
     }
 
     public logLoadProjectFromStorage() {
-        this.logEvent('load_project_from_storage');
+        this.logEvent('load_project', { project_source: 'local_storage' });
     }
 
     public logLoadProjectFromFile() {
-        this.logEvent('load_project_from_file');
+        this.logEvent('load_project', { project_source: 'file' });
     }
 
     public logCreateNewProject() {
@@ -34,12 +34,7 @@ export default class AnalyticsCommunicator {
     }
 
     public logQuickAnalysis(peptideCount: number, config: any) {
-        this.logEvent('quick_analysis', { 
-            peptide_count: peptideCount,
-            equate_il: config.equate,
-            filter_duplicates: config.filter,
-            missed_cleavages: config.missed
-        });
+        this.logEvent('quick_analysis',);
     }
 
     private logEvent(event_name: string, event_params?: any) {
