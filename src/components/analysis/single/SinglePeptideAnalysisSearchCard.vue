@@ -51,8 +51,7 @@
                 <v-row>
                     <v-col
                         class="py-0"
-                        cols="12"
-                        md="6"
+                        cols="6"
                     >
                         <v-tooltip text="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.">
                             <template #activator="{ props }">
@@ -68,8 +67,7 @@
 
                     <v-col
                         class="d-flex"
-                        cols="12"
-                        md="6"
+                        cols="6"
                     >
                         <v-spacer />
                         <v-btn
