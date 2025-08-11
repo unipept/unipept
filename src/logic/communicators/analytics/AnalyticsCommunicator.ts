@@ -10,7 +10,7 @@ export default class AnalyticsCommunicator {
     }
 
     public logExportProject() {
-        this.logEvent('export_project', {});
+        this.logEvent('export_project');
     }
 
     public logCreateCustomDatabase(databaseType: string) {
@@ -34,7 +34,7 @@ export default class AnalyticsCommunicator {
     }
 
     public logQuickAnalysis() {
-        this.logEvent('quick_analysis',);
+        this.logEvent('quick_analysis');
     }
 
     private logEvent(event_name: string, event_params?: any) {

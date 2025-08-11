@@ -117,11 +117,6 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         project.setDemoMode(true);
         const groupId = project.addGroup("Group");
         project.getGroup(groupId)?.addAnalysis("Sample", rawPeptides, config);
-        
-        // Count the number of peptides
-        const peptideCount = rawPeptides.split(/\r?\n/)
-            .filter(line => line.trim().length > 0)
-            .length;
             
         // Track quick analysis
         const analyticsCommunicator = new AnalyticsCommunicator();
