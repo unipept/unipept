@@ -1,17 +1,50 @@
 <template>
-    <v-navigation-drawer permanent>
+    <!-- Persistent mobile toggle button that stays visible when drawer is closed -->
+    <v-btn
+        v-if="$vuetify.display.mobile && !drawerOpen"
+        icon
+        variant="tonal"
+        color="primary"
+        size="small"
+        class="mobile-drawer-toggle"
+        @click="drawerOpen = !drawerOpen"
+        style="position: fixed; bottom: 16px; right: 16px; z-index: 100;"
+    >
+        <v-icon>mdi-chevron-up</v-icon>
+    </v-btn>
+
+    <v-navigation-drawer
+        v-model="drawerOpen"
+        mobile-breakpoint="md"
+        :permanent="!$vuetify.display.mobile"
+        :temporary="$vuetify.display.mobile"
+        :location="$vuetify.display.mobile ? 'bottom' : undefined"
+    >
         <template #prepend>
-            <v-list-subheader
-                v-if="project.name"
-                class="project-name mt-2 mb-1 px-3"
-                style="pointer-events: none; min-height: 40px;"
-                variant="tonal"
-                density="compact"
-            >
-                {{ project.name }}
-            </v-list-subheader>
+            <div class="d-flex align-center">
+                <v-list-subheader
+                    v-if="project.name"
+                    class="project-name mt-2 mb-1 px-3 flex-grow-1"
+                    style="pointer-events: none; min-height: 40px;"
+                    variant="tonal"
+                    density="compact"
+                >
+                    {{ project.name }}
+                </v-list-subheader>
+                <v-btn
+                    v-if="$vuetify.display.mobile"
+                    icon
+                    variant="text"
+                    size="small"
+                    class="mr-2"
+                    @click="drawerOpen = !drawerOpen"
+                >
+                    <v-icon>mdi-chevron-down</v-icon>
+                </v-btn>
+            </div>
             <v-divider class="mx-3" />
         </template>
+
 
         <filesystem
             v-model="selectedAnalyses"
@@ -107,6 +140,8 @@ const selectedGroup = defineModel<GroupAnalysisStore | undefined>("selected-grou
 const manageSamples = defineModel<[boolean, GroupAnalysisStore | undefined]>("manage-samples", { default: [false, undefined], required: false });
 
 const newDialogOpen = ref(false);
+
+const drawerOpen = ref(false);
 
 const addGroup = (name: string) => {
     const groupId = project.addGroup(name);
