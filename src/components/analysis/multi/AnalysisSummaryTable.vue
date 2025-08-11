@@ -1,10 +1,12 @@
 <template>
     <v-data-table-server
+        mobile-breakpoint="md"
         :headers="headers"
         :items="shownItems"
         :items-per-page="5"
         :items-length="analysis.peptidesTable!.totalCount"
         density="compact"
+        :disable-sort="true"
         style="background-color: transparent"
         @update:options="computeShownItems"
     >
@@ -22,6 +24,7 @@
             <a
                 class="cursor-pointer"
                 @click="openPeptideAnalysis(item.peptide)"
+                :style="$vuetify.display.mobile ? 'display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' : ''"
             >
                 {{ item.peptide }}
             </a>
@@ -180,43 +183,37 @@ const headers: any = [
         title: "Peptide",
         align: "start",
         key: "peptide",
-        width: "25%",
-        sortable: false
+        width: "25%"
     },
     {
         title: "Occurrence",
         align: "start",
         key: "occurrence",
-        width: "10%",
-        sortable: false
+        width: "10%"
     },
     {
         title: "Lowest common ancestor",
         align: "start",
         key: "lca",
-        width: "30%",
-        sortable: false
+        width: "30%"
     },
     {
         title: "Rank",
         align: "start",
         key: "rank",
-        width: "15%",
-        sortable: false
+        width: "15%"
     },
     {
         title: "Annotations",
         align: "start",
         key: "faCounts",
-        width: "15%",
-        sortable: false
+        width: "15%"
     },
     {
         title: "",
         align: "start",
         key: "warning",
-        width: "5%",
-        sortable: false
+        width: "5%"
     }
 ];
 
