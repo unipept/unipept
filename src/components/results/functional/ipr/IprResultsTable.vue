@@ -10,9 +10,10 @@
         density="compact"
         :show-expand="data.ncbiTree !== undefined"
         @update:expanded="singleExpand"
+        mobile-breakpoint="md"
     >
         <template #header.action>
-            <v-tooltip text="Download table as CSV">
+            <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV">
                 <template #activator="{ props }">
                     <v-btn
                         v-bind="props"
@@ -24,6 +25,9 @@
                     />
                 </template>
             </v-tooltip>
+            <div v-else>
+                Download
+            </div>
         </template>
 
         <template #item.count="{ item }">
@@ -58,6 +62,19 @@
             <v-tooltip text="Download CSV summary of the filtered functional annotation">
                 <template #activator="{ props }">
                     <v-btn
+                        v-if="$vuetify.display.mobile"
+                        v-bind="props"
+                        color="primary"
+                        density="compact"
+                        variant="tonal"
+                        prepend-icon="mdi-download"
+                        text="CSV"
+                        class="w-100"
+                        style="height: 32px;"
+                        @click="downloadItem(item)"
+                    />
+                    <v-btn
+                        v-else
                         v-bind="props"
                         color="primary"
                         density="compact"
