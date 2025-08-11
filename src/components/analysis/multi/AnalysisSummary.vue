@@ -5,7 +5,7 @@
         </v-card-title>
         <v-card-text>
             <v-row class="mt-n6 d-flex align-center">
-                <v-col cols="8">
+                <v-col cols="12" lg="8">
                     <h2 class="pb-2">
                         Analysis summary
                     </h2>
@@ -35,7 +35,7 @@
                         </h1>
                     </template>
                 </v-col>
-                <v-col cols="4">
+                <v-col cols="12" lg="4">
                     <div class="mt-1">
                         <v-icon
                             class="ms-1"
@@ -71,7 +71,7 @@
                             <template #activator="{ props: tooltip }">
                                 <v-icon
                                     v-bind="tooltip"
-                                    class="ms-1"
+                                    class="ms-1 d-none d-lg-block"
                                     icon="mdi-information"
                                     size="small"
                                 />
@@ -108,14 +108,15 @@
                 </v-col>
             </v-row>
             <v-row>
+                <v-col cols="12" lg="8" class="pb-0">
+                    <h2>
+                        Peptide matches
+                    </h2>
+                </v-col>
+                <v-col cols="12" lg="4" class="pb-0 pb-1">
+                    <analysis-summary-export @prepareDownload="prepareDownload" @download="download" />
+                </v-col>
                 <v-col cols="12">
-                    <div class="d-flex">
-                        <h2 class="pb-2">
-                            Peptide matches
-                        </h2>
-                        <v-spacer />
-                        <analysis-summary-export @prepareDownload="prepareDownload" @download="download" />
-                    </div>
                     <analysis-summary-table :analysis="analysis" />
                 </v-col>
             </v-row>

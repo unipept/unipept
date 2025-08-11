@@ -8,6 +8,7 @@
             :src="asset"
             :alt="asset"
             :cover="!contain"
+            style="max-height: 300px;"
         />
 
         <v-card-title class="feature-title pa-4">
@@ -42,7 +43,7 @@ a {
     opacity: 0.70;
     background-color: black;
     color: white;
-    margin-top: -64px;
+    margin-top: -50px;
 }
 
 .equal {

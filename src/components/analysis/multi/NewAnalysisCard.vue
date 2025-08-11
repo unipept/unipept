@@ -10,9 +10,10 @@
                     Start from scratch with an empty project and analyse your own data.
                 </p>
 
-                <div class="d-flex float-right">
+                <div>
                     <v-btn
-                        class="mt-1 float-right"
+                        class="mt-1 w-100 w-lg-auto float-lg-right"
+                        style="width: 100%;"
                         variant="tonal"
                         color="primary"
                         text="Create new project"

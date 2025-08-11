@@ -63,7 +63,7 @@
                 color="primary"
                 variant="tonal"
                 text="Analyze"
-                class="float-right"
+                class="w-100 w-lg-auto float-lg-right mt-2"
                 @click="analyze"
             />
         </v-card-text>

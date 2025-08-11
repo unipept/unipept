@@ -2,7 +2,7 @@
     <div>
         <v-unipept-card :disabled="disabled">
             <v-card-title>
-                <h2>New here? Try a demo project</h2>
+                <h2 style="white-space: normal;">New here? Try a demo project</h2>
             </v-card-title>
 
             <v-card-text>
@@ -11,9 +11,9 @@
                     project and discover what this application can do for you.
                 </p>
 
-                <div class="d-flex float-right">
+                <div>
                     <v-btn
-                        class="float-right mt-1"
+                        class="w-100 w-lg-auto float-lg-right mt-1"
                         color="primary"
                         variant="tonal"
                         text="Select a demo project"
@@ -45,7 +45,7 @@
                             v-for="sample in samples"
                             :key="sample.id"
                             cols="12"
-                            sm="6"
+                            md="6"
                         >
                             <v-unipept-card
                                 class="d-flex flex-row align-center"
@@ -55,27 +55,27 @@
                                     <v-card-title class="text-primary">
                                         {{ sample.environment }}
                                     </v-card-title>
-                                    <v-card-text style="padding-top: 0 !important;">
+                                    <v-card-text style="padding-top: 0 !important;" class="mb-md-8">
                                         <div class="text-body-2 mb-2">{{ sample.reference }}</div>
-                                        <div class="d-flex justify-end">
-                                            <v-btn
-                                                color="primary"
-                                                variant="text"
-                                                style="z-index: 10000"
-                                                @click.stop="openReference(sample)"
-                                            >
-                                                View Article
-                                            </v-btn>
-
-                                            <v-btn
-                                                class="ms-1"
-                                                color="primary"
-                                                variant="tonal"
-                                                style="z-index: 10000"
-                                                @click="selectSample(sample)"
-                                            >
-                                                Load project
-                                            </v-btn>
+                                        <div>
+                                                <v-btn
+                                                    color="primary"
+                                                    class="w-100 float-md-right w-md-auto mb-1 mb-md-0"
+                                                    variant="text"
+                                                    style="z-index: 10000"
+                                                    @click.stop="openReference(sample)"
+                                                >
+                                                    View Article
+                                                </v-btn>
+                                                <v-btn
+                                                    class="w-100 w-md-auto float-md-right"
+                                                    color="primary"
+                                                    variant="tonal"
+                                                    style="z-index: 10000"
+                                                    @click="selectSample(sample)"
+                                                >
+                                                    Load project
+                                                </v-btn>
                                         </div>
                                     </v-card-text>
                                 </div>

@@ -26,7 +26,7 @@
             </span>
         </div>
         <v-row>
-            <v-col :cols="6">
+            <v-col :cols="12" md="6">
                 <div class="headline">
                     Biodiversity
                 </div>
@@ -66,7 +66,7 @@
                     </span>
                 </div>
             </v-col>
-            <v-col :cols="6">
+            <v-col :cols="12" md="6">
                 <div class="headline">
                     Function
                 </div>

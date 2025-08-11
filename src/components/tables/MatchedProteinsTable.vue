@@ -20,6 +20,7 @@
                 :search="filter"
                 :custom-filter="filterByValue"
                 :loading="assay.status === AnalysisStatus.Running"
+                mobile-breakpoint="md"
                 show-expand
             >
                 <template #item.uniprotAccessionId="{ item }">
