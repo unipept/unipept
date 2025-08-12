@@ -772,6 +772,7 @@ const initializeData = () => {
 const addRow = (feature: TableFeature) => {
     if (!selectedIds.value.includes(feature.id)) {
         selectedIds.value.push(feature.id);
+        rows.value = selectedIds.value.map(id => featureItems.value.get(id)!);
     }
 };
 
@@ -792,6 +793,8 @@ const removeRow = (index: number) => {
     }
 
     selectedIds.value.splice(index, 1);
+    visibleItems.value.splice(index, 1);
+    rows.value = selectedIds.value.map(id => featureItems.value.get(id)!);
 }
 
 const removeRows = (rows: TableFeature[]) => {
