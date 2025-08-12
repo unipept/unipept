@@ -141,7 +141,7 @@ const manageSamples = defineModel<[boolean, GroupAnalysisStore | undefined]>("ma
 
 const newDialogOpen = ref(false);
 
-const drawerOpen = ref(false);
+const drawerOpen = ref(true);
 
 const addGroup = (name: string) => {
     const groupId = project.addGroup(name);
