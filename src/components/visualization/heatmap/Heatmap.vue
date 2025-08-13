@@ -59,7 +59,7 @@
                     variant="elevated"
                     @click="addRows()"
                     prepend-icon="mdi-plus"
-                    text="Add species"
+                    :text="addRowButtonLabel"
                 >
                 </v-btn>
             </template>
@@ -77,6 +77,7 @@ const {
     data,
     rowNames,
     colNames,
+    addRowButtonLabel,
     showCellLabels = true,
     cellSize = 45,
     cellSpacing = 4,
@@ -98,6 +99,8 @@ const {
     rowNames: string[],
     // Names of all the columns that are displayed in the heatmap.
     colNames: string[],
+    // Which label should be used for the "add row" button?
+    addRowButtonLabel: string,
     // Show value labels inside each cell
     showCellLabels?: boolean,
     // Width and height of a single cell of the heatmap in pixels.

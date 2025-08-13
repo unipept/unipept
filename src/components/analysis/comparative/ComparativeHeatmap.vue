@@ -176,6 +176,7 @@
                                     :data="rowData"
                                     :row-names="rowNames"
                                     :col-names="colNames"
+                                    :add-row-button-label="`Add ${selectedTaxonomicRank}`"
                                     :show-cell-labels="showCellLabels"
                                     :show-tooltips="showTooltips"
                                     @deselect-row="removeRow"
