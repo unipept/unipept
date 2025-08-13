@@ -72,7 +72,7 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import NoSelectedSamplesPlaceholder from "@/components/analysis/comparative/NoSelectedSamplesPlaceholder.vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import AnalysisSummaryProgress from "@/components/analysis/multi/AnalysisSummaryProgress.vue";
-import ComparativeHeatmap from "@/components/analysis/comparative/ComparativeHeatmap.vue";
+import ComparativeHeatmap from "@/components/analysis/comparative/heatmap/ComparativeHeatmap.vue";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 
 const manageSamplesDialogOpen: Ref<[boolean, GroupAnalysisStore | undefined]> = ref([false, undefined]);
