@@ -1,7 +1,7 @@
 <template>
     <!-- Persistent mobile toggle button that stays visible when drawer is closed -->
     <v-btn
-        v-if="$vuetify.display.mobile && !drawerOpen"
+        v-if="$vuetify.display.smAndDown && !drawerOpen"
         icon
         variant="tonal"
         color="primary"
@@ -15,10 +15,10 @@
 
     <v-navigation-drawer
         v-model="drawerOpen"
-        mobile-breakpoint="md"
-        :permanent="!$vuetify.display.mobile"
-        :temporary="$vuetify.display.mobile"
-        :location="$vuetify.display.mobile ? 'bottom' : undefined"
+        mobile-breakpoint="sm"
+        :permanent="!$vuetify.display.smAndDown"
+        :temporary="$vuetify.display.smAndDown"
+        :location="$vuetify.display.smAndDown ? 'bottom' : undefined"
     >
         <template #prepend>
             <div class="d-flex align-center">
@@ -32,7 +32,7 @@
                     {{ project.name }}
                 </v-list-subheader>
                 <v-btn
-                    v-if="$vuetify.display.mobile"
+                    v-if="$vuetify.display.smAndDown"
                     icon
                     variant="text"
                     size="small"
