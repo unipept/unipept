@@ -128,7 +128,7 @@ const currentTablePage = ref(1);
 const currentItemsPerPage = ref(10);
 const visibleItems = ref<TableFeature[]>([]);
 
-const featureTableHeaders = [
+const featureTableHeaders: any = [
     {
         title: "Name",
         align: "start",
