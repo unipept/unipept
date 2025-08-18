@@ -71,7 +71,7 @@
                                 variant="tonal"
                                 prepend-icon="mdi-minus"
                                 text="Drop"
-                                @click="removeRow(rowNames.indexOf(item.name))"
+                                @click="removeRow(item)"
                                 v-bind="props"
                             />
                         </template>
@@ -100,8 +100,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import {ref, computed, watch} from 'vue';
 import { SortItem } from "vuetify/lib/components/VDataTable/composables/sort";
+import {FeatureData, FeatureId} from "@/components/analysis/comparative/heatmap/ComparativeHeatmap.vue";
 
 interface TableFeature {
     id: number | string,
@@ -112,21 +113,30 @@ interface TableFeature {
 
 const props = defineProps<{
     selectedTaxonomicRank: string,
-    tableFeatures: TableFeature[],
+    featureItems: Map<FeatureId, FeatureData>,
     rowNames: string[]
 }>();
 
 const emit = defineEmits<{
-    (e: 'add-row', feature: TableFeature): void,
-    (e: 'add-rows', features: TableFeature[]): void,
-    (e: 'remove-row', index: number): void,
-    (e: 'remove-rows', features: TableFeature[]): void
+    (e: 'select-row', featureId: FeatureId): void,
+    (e: 'deselect-row', featureId: FeatureId): void,
 }>();
 
 const featureSearchValue = ref("");
 const currentTablePage = ref(1);
 const currentItemsPerPage = ref(10);
 const visibleItems = ref<TableFeature[]>([]);
+
+const tableFeatures = computed(() => {
+    return [...props.featureItems.values()].filter(x => x.name.toLowerCase().includes(featureSearchValue.value.toLowerCase())).map(x => {
+        return {
+            id: x.id,
+            name: x.name,
+            matchingSamples: x.matchingSamples,
+            averageRelativeAbundance: x.columnWiseAbundances.reduce((a, b) => a + b, 0) / x.matchingSamples
+        }
+    });
+});
 
 const featureTableHeaders: any = [
     {
@@ -178,19 +188,23 @@ const allInPageSelected = computed(() => {
 });
 
 const addRow = (feature: TableFeature) => {
-    emit('add-row', feature);
+    emit('select-row', feature.id);
 };
 
 const addRows = (features: TableFeature[]) => {
-    emit('add-rows', features);
+    for (const feature of features) {
+        addRow(feature);
+    }
 };
 
-const removeRow = (index: number) => {
-    emit('remove-row', index);
+const removeRow = (feature: TableFeature) => {
+    emit('deselect-row', feature.id);
 };
 
 const removeRows = (features: TableFeature[]) => {
-    emit('remove-rows', features);
+    for (const feature of features) {
+        removeRow(feature);
+    }
 };
 </script>
 
