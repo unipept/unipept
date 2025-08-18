@@ -149,11 +149,16 @@ const debouncedFilterValue = refDebounced(filterValue, 600);
 const proteomeCommunicator = new ProteomeCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 
 const loadProteomes = async (params: LoadItemsParams) => {
+    const sortFields = new Map<string, "taxon_name" | "protein_count">([
+        ["taxonname", "taxon_name"],
+        ["proteincount", "protein_count"]
+    ]);
+
     await loadProteomesForBrowser(
         params,
         updateProteomeOntology,
         proteomeOntology,
-        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => proteomeCommunicator.getProteomeRange(start, end, filter, sortByColumn as any, sortDesc),
+        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => proteomeCommunicator.getProteomeRange(start, end, filter, sortFields.get(sortByColumn as string) || "id", sortDesc),
         (filter) => proteomeCommunicator.getProteomeCount(filter)
     )
 }
