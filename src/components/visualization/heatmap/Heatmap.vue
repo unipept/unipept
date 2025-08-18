@@ -522,6 +522,10 @@ watch(() => colNames, () => {
 watch(() => [ data, showCellLabels ], () => {
     debouncedRender();
 }, { deep: true });
+
+watch(() => highlightedCell, () => {
+    console.log(JSON.stringify(highlightedCell.value));
+});
 </script>
 
 <style>

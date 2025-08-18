@@ -182,7 +182,7 @@
                                     v-model:selected-cell="selectedCell"
                                 >
                                     <template #tooltip-content="{ selectedRow, selectedCol }">
-                                        <template v-if="selectedCol !== -1 && selectedRow !== -1">
+                                        <template v-if="selectedCol !== -1 && selectedRow !== -1 && rows[selectedRow]">
                                             <div class="text-subtitle-1"><span class="font-italic">{{ rowNames[selectedRow] }}</span> in {{ analyses[selectedCol].name }}</div>
                                             <div>
                                                 <span class="font-weight-bold">{{ rows[selectedRow].peptideCount[selectedCol] }} peptides</span>
@@ -197,104 +197,13 @@
                                         </template>
                                     </template>
                                     <template #row-selector>
-                                        <v-unipept-card style="width: 800px;" elevation="10">
-                                            <v-card-title>
-                                                <div class="text-h5">Add {{ selectedTaxonomicRank }}</div>
-                                            </v-card-title>
-                                            <v-card-text style="padding-top: 4px !important;">
-                                                <v-text-field
-                                                    v-model="featureSearchValue"
-                                                    density="compact"
-                                                    append-inner-icon="mdi-magnify"
-                                                    label="Search"
-                                                    variant="outlined"
-                                                    @click.stop
-                                                />
-                                                <v-data-table
-                                                    :items="tableFeatures"
-                                                    :headers="featureTableHeaders"
-                                                    :sort-by="sortByItems"
-                                                    multi-sort
-                                                    :items-per-page="currentItemsPerPage"
-                                                    :items-per-page-options="[5, 10, -1]"
-                                                    density="compact"
-                                                    :page="currentTablePage"
-                                                    @update:current-items="updateVisibleItems"
-                                                >
-                                                    <template #item.matchingSamples="{ item }">
-                                                        {{ item.matchingSamples }}
-                                                    </template>
-                                                    <template #item.averageRelativeAbundance="{ item }">
-                                                        {{ (item.averageRelativeAbundance * 100).toFixed(2) }}%
-                                                    </template>
-                                                    <template #header.action>
-                                                        <v-tooltip v-if="allInPageSelected">
-                                                            <template v-slot:activator="{ props }">
-                                                                <v-btn
-                                                                    style="width: 120px;"
-                                                                    color="error"
-                                                                    density="compact"
-                                                                    variant="tonal"
-                                                                    prepend-icon="mdi-minus"
-                                                                    text="Drop all"
-                                                                    v-bind="props"
-                                                                    @click="removeRows(visibleItems)"
-                                                                />
-                                                            </template>
-                                                            <span>Drop all items from the heatmap</span>
-                                                        </v-tooltip>
-                                                        <v-tooltip v-else>
-                                                            <template v-slot:activator="{ props }">
-                                                                <v-btn
-                                                                    style="width: 120px;"
-                                                                    color="primary"
-                                                                    density="compact"
-                                                                    variant="tonal"
-                                                                    prepend-icon="mdi-plus"
-                                                                    text="Add all"
-                                                                    v-bind="props"
-                                                                    @click="addRows(visibleItems)"
-                                                                />
-                                                            </template>
-                                                            <span>Add all items to the heatmap</span>
-                                                        </v-tooltip>
-                                                    </template>
-                                                    <template #item.action="{ item }">
-                                                        <v-tooltip v-if="rowNames.includes(item.name)">
-                                                            <template v-slot:activator="{ props }">
-                                                                <v-btn
-                                                                    style="width: 120px;"
-                                                                    color="error"
-                                                                    density="compact"
-                                                                    variant="tonal"
-                                                                    prepend-icon="mdi-minus"
-                                                                    text="Drop"
-                                                                    @click="removeRow(rowNames.indexOf(item.name))"
-                                                                    v-bind="props"
-                                                                />
-                                                            </template>
-                                                            <span>Remove item from the heatmap</span>
-                                                        </v-tooltip>
-                                                        <v-tooltip v-else>
-                                                            <template v-slot:activator="{ props }">
-                                                                <v-btn
-                                                                    style="width: 120px;"
-                                                                    color="primary"
-                                                                    density="compact"
-                                                                    variant="tonal"
-                                                                    prepend-icon="mdi-plus"
-                                                                    text="Add"
-                                                                    @click="addRow(item)"
-                                                                    v-bind="props"
-                                                                />
-                                                            </template>
-                                                            <span>Add item to the heatmap</span>
-                                                        </v-tooltip>
-                                                    </template>
-
-                                                </v-data-table>
-                                            </v-card-text>
-                                        </v-unipept-card>
+                                        <heatmap-ncbi-selector
+                                            :selected-taxonomic-rank="selectedTaxonomicRank"
+                                            :feature-items="featureItems"
+                                            :row-names="rowNames"
+                                            @select-row="selectRow"
+                                            @deselect-row="deselectRow"
+                                        />
                                     </template>
                                 </heatmap>
                             </div>
@@ -397,13 +306,12 @@ import {computed, ComputedRef, nextTick, onMounted, Ref, ref, watch} from "vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import DownloadImage from "@/components/image/DownloadImage.vue";
 import Heatmap from "@/components/visualization/heatmap/Heatmap.vue";
-import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
+import HeatmapNcbiSelector from "@/components/analysis/comparative/heatmap/HeatmapNcbiSelector.vue";
+import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
 import {useDebounceFn} from "@vueuse/core";
-import {transform} from "async";
 
-type FeatureId = number | string;
+export type FeatureId = number | string;
 
 /**
  * ** General settings for the comparative heatmap **
@@ -464,7 +372,7 @@ const selectedTaxonomicRank: Ref<string> = ref("species");
 /**
  * Data that can directly be visualized by the heatmap.
  */
-interface FeatureData {
+export interface FeatureData {
     id: FeatureId,
     name: string,
     matchingSamples: number,
@@ -492,8 +400,15 @@ interface FeatureData {
     rowWiseAbundances: number[]
 }
 
+// This map contains all items that can be selected by the user for visualization in the heatmap. This map is always
+// unfiltered (i.e. contains all items, filtering by search term is performed by other components).
 const featureItems: Ref<Map<FeatureId, FeatureData>> = ref(new Map());
 
+/**
+ * This function computes all items that can be selected by the user. This includes the amount of samples that match
+ * each of these items, the peptide count per sample and the relative abundances over rows or columns (see the
+ * FeatureData interface for more information on this).
+ */
 const computeFeatureItems: () => Map<FeatureId, FeatureData> = () => {
     const items = new Map<FeatureId, FeatureData>();
     const totalPeptideCountPerSample = new Array(props.analyses.length).fill(0);
@@ -501,14 +416,12 @@ const computeFeatureItems: () => Map<FeatureId, FeatureData> = () => {
     for (const [analysisIdx, analysis] of props.analyses.entries()) {
         const ncbiOntology = analysis.ontologyStore.ncbiOntology;
 
-        const taxaIds: number[] = [];
-
         // First we retrieve some basic information of all organisms of the selected rank type
         analysis.ncbiTree.callRecursivelyPostOrder((x: NcbiTreeNode) => {
             if (x && x.extra.rank === selectedTaxonomicRank.value) {
                 const taxonObj = ncbiOntology.get(x.id);
 
-                if (!taxonObj || !taxonObj.name.toLowerCase().includes(featureSearchValue.value.toLowerCase())) {
+                if (!taxonObj) {
                     return;
                 }
 
@@ -527,7 +440,6 @@ const computeFeatureItems: () => Map<FeatureId, FeatureData> = () => {
 
                 dataObj.matchingSamples += 1;
                 dataObj.peptideCount[analysisIdx] = x.count;
-                taxaIds.push(taxonObj.id);
                 totalPeptideCountPerSample[analysisIdx] += x.count;
             }
         });
@@ -551,16 +463,18 @@ const computeFeatureItems: () => Map<FeatureId, FeatureData> = () => {
     return items;
 };
 
-// Keeps track of the LCA ids that are selected by the user.
+// Keeps track of the LCA ids that are selected by the user and that should be visualized by the heatmap.
 const selectedIds: Ref<FeatureId[]> = ref([]);
 
+// For each selected ID (displayed on the rows), we keep track of all associated FeatureData-objects to aid in the
+// visualization step.
 const rows: Ref<FeatureData[]> = ref([]);
 const rowNames: ComputedRef<string[]> = computed(() => rows.value.map(x => x.name));
 const colNames: ComputedRef<string[]> = computed(() => props.analyses.map(a => a.name));
 
 /**
  * Computes the actual values that should be rendered by the heatmap. All returned values are in the [0, 1] range
- * and take into account the normalization settings that are selected by the end user.
+ * and take into account the visualization / normalization settings that are selected by the end user.
  */
 const rowData: ComputedRef<{ value: number, label: string }[][]> = computed(() => {
     let transformedRows: number[][];
@@ -626,88 +540,6 @@ const rowData: ComputedRef<{ value: number, label: string }[][]> = computed(() =
 });
 
 /**
- * ** Data and settings for row selection data table **
- */
-
-/**
- * This interface defines the type of objects that rendered by the "row selection" data table (which allows users
- * to add or remove rows from the heatmap).
- */
-interface TableFeature {
-    id: FeatureId,
-    name: string,
-    matchingSamples: number,
-    averageRelativeAbundance: number
-}
-
-const featureTableHeaders: any = [
-    {
-        title: "Name",
-        align: "start",
-        value: "name",
-        sortable: true,
-        width: "40%"
-    }, {
-        title: "Matching Samples",
-        align: "end",
-        value: "matchingSamples",
-        sortable: true,
-        width: "25%"
-    }, {
-        title: "Avg. Rel. Abundance",
-        align: "end",
-        value: "averageRelativeAbundance",
-        sortable: true,
-        width: "25%"
-    }, {
-        title: "",
-        align: "center",
-        sortable: false,
-        value: "action",
-        width: "10%"
-    }
-];
-
-const sortByItems: Ref<SortItem[]> = ref([
-    {
-        key: 'matchingSamples',
-        order: 'desc'
-    }, {
-        key: 'averageRelativeAbundance',
-        order: 'desc'
-    }
-]);
-
-const featureSearchValue: Ref<string> = ref("");
-
-const currentTablePage = ref(1);
-const currentItemsPerPage = ref(10);
-
-const tableFeatures: ComputedRef<TableFeature[]> = computed(() => {
-    return [...featureItems.value.values()].map(x => {
-        return {
-            id: x.id,
-            name: x.name,
-            matchingSamples: x.matchingSamples,
-            averageRelativeAbundance: x.columnWiseAbundances.reduce((a, b) => a + b, 0) / x.matchingSamples
-        }
-    });
-});
-
-const visibleItems: Ref<TableFeature[]> = ref([]);
-
-const updateVisibleItems = (currentItems: any[]) => {
-    visibleItems.value = currentItems.map(i => i.raw);
-}
-
-/**
- * Returns true if all the items of the currently shown row in the data table are already selected for the heatmap.
- */
-const allInPageSelected = computed(() => {
-    return visibleItems.value.every(summary => rowNames.value.includes(summary.name));
-});
-
-/**
  * ** Props and data that correspond to the currently selected cell details and overview. **
  */
 
@@ -759,48 +591,44 @@ const initializeData = () => {
     featureItems.value = computeFeatureItems();
 
     // Select the top 10 most abundant features for the initial state of the heatmap.
-    selectedIds.value = tableFeatures.value.toSorted((a, b) => {
+    selectedIds.value = [...featureItems.value.values()].toSorted((a, b) => {
         if (b.matchingSamples !== a.matchingSamples) {
             return b.matchingSamples - a.matchingSamples;
         }
-        return b.averageRelativeAbundance - a.averageRelativeAbundance;
+
+        const avgRelAbundanceA = a.columnWiseAbundances.reduce((a, b) => a + b, 0) / a.matchingSamples;
+        const avgRelAbundanceB = b.columnWiseAbundances.reduce((a, b) => a + b, 0) / b.matchingSamples;
+
+        return avgRelAbundanceB - avgRelAbundanceA;
     }).slice(0, 10).map(i => i.id);
 
     rows.value = selectedIds.value.map(id => featureItems.value.get(id)!);
 };
 
-const addRow = (feature: TableFeature) => {
-    if (!selectedIds.value.includes(feature.id)) {
-        selectedIds.value.push(feature.id);
+const selectRow = (featureId: FeatureId) => {
+    if (!selectedIds.value.includes(featureId)) {
+        selectedIds.value.push(featureId);
+        rows.value = selectedIds.value.map(id => featureItems.value.get(id)!);
     }
 };
 
-const addRows = (rows: TableFeature[]) => {
-    for (const row of rows) {
-        addRow(row);
-    }
-}
-
 const removeRow = (index: number) => {
     if (selectedCell.value.rowIdx === index) {
-         selectedCell.value.rowIdx = -1;
-         selectedCell.value.colIdx = -1;
+        selectedCell.value.rowIdx = -1;
+        selectedCell.value.colIdx = -1;
     }
 
-    if (selectedCell.value.rowIdx > index) {
+    if (selectedCell.value.rowIdx >= index) {
         selectedCell.value.rowIdx -= 1;
     }
 
     selectedIds.value.splice(index, 1);
+    rows.value = selectedIds.value.map(id => featureItems.value.get(id)!);
 }
 
-const removeRows = (rows: TableFeature[]) => {
-    for (const row of rows) {
-        const idx = rowNames.value.indexOf(row.name);
-        if (idx !== -1) {
-            removeRow(rowNames.value.indexOf(row.name));
-        }
-    }
+const deselectRow = (featureId: FeatureId) => {
+    const index = selectedIds.value.indexOf(featureId);
+    removeRow(index);
 }
 
 const debouncedInit = useDebounceFn(initializeData, 100);
