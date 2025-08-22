@@ -91,14 +91,18 @@
         </v-unipept-card>
 
         <v-row justify="center" class="mt-6">
-            <v-btn
-                color="primary"
-                variant="tonal"
-                @click="exportProject"
-                prepend-icon="mdi-download"
-                text="Export Project"
-                :loading="preparingExport"
-            />
+            <download-dialog @download="download">
+                <template #default="{ startPreparing }">
+                    <v-btn
+                        color="primary"
+                        variant="tonal"
+                        @click="startPreparing(exportProject())"
+                        prepend-icon="mdi-download"
+                        text="Export Project"
+                        :loading="preparingExport"
+                    />
+                </template>
+            </download-dialog>
         </v-row>
     </div>
 </template>
@@ -112,6 +116,7 @@ import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
 import useProjectExport from "@/composables/useProjectExport";
 import useAppStateStore from "@/store/AppStateStore";
 import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
+import DownloadDialog from "@/components/dialogs/DownloadDialog.vue";
 
 const { formatNumber } = useNumberFormatter();
 
@@ -189,23 +194,29 @@ const headers: any = [
 
 const { process: processExport } = useProjectExport();
 
-async function exportProject() {
+let exportedProject: string | null = "";
+
+const exportProject = async (): Promise<void> => {
     preparingExport.value = true;
 
     const appState = useAppStateStore();
-    const analyticsCommunicator = new AnalyticsCommunicator();
+    exportedProject = URL.createObjectURL((await processExport(project, appState)).content);
 
-    const url = URL.createObjectURL((await processExport(project, appState)).content);
+    preparingExport.value = false;
+}
+
+const download = async (callback: () => void): Promise<void> => {
     const a = document.createElement('a');
-    a.href = url;
+    a.href = exportedProject!;
     a.download = `${project.name}.unipept`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
 
     // Track the project export event
+    const analyticsCommunicator = new AnalyticsCommunicator();
     analyticsCommunicator.logExportProject();
 
-    preparingExport.value = false;
+    callback();
 }
 </script>
