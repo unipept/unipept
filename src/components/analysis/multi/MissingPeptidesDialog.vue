@@ -78,7 +78,6 @@ const headers = [
 ];
 
 const blastPeptide = (peptide: string) => {
-    // TODO: change this. Hardcoded link to website for testing purposes
     const a = document.createElement('a');
     a.href = `http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on
         &USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY=${peptide}&GAPCOSTS=11%201
