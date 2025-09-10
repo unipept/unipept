@@ -1,4 +1,4 @@
-import { ref, Ref, computed, watch } from "vue";
+import { ref, Ref } from "vue";
 
 /**
  * This is a composable that contains logic that is shared between the different Browser components (such as
@@ -59,11 +59,7 @@ export default function useDatabaseSummary<IdType, T extends { id: IdType }>(sel
 
         await updateOntology(validIds);
 
-        for (const id of validIds) {
-            if (selectedItems.value.every((item) => item.id !== id)) {
-                selectedItems.value.push(ontology.get(id)!);
-            }
-        }
+        selectedItems.value = Array.from(new Set(validIds)).map((id) => ontology.get(id)!);
     };
 
     return {
