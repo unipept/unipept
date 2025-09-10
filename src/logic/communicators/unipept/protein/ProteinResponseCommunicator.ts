@@ -111,7 +111,7 @@ export default class ProteinResponseCommunicator {
 
         for (let i = 0; i < accessionIds.length; i += this.batchSize) {
             const data = JSON.stringify({
-                accessions: accessionIds
+                accessions: accessionIds.slice(i, i + this.batchSize)
             });
 
             const res =  await NetworkUtils.postJSON(

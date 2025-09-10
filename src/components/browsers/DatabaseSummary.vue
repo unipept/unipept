@@ -29,7 +29,7 @@
                             class="flex-grow-1 d-flex"
                         >
                             <v-chip
-                                v-for="item in selectedItems"
+                                v-for="item in selectedItems.slice(0, amountOfPillsToShow)"
                                 :key="itemDisplayName(item)"
                                 :class="`bg-${chipBackgroundColor(item)}`"
                                 :variant="chipVariant(item)"
@@ -37,6 +37,14 @@
                                 @click:close="handleRemoveItem(item)"
                             >
                                 {{ itemDisplayName(item) }}
+                            </v-chip>
+                            <v-chip
+                                v-if="selectedItems.length > amountOfPillsToShow"
+                                class="bg-grey-lighten-3"
+                                variant="flat"
+                                @click="() => amountOfPillsToShow += 5"
+                            >
+                                + {{ selectedItems.length - amountOfPillsToShow }} more
                             </v-chip>
                         </v-chip-group>
                         <v-tooltip
@@ -130,6 +138,7 @@ const { formatNumber } = useNumberFormatter();
 
 // Start of logic for processing the uploaded file
 const processingFile = ref(false);
+const amountOfPillsToShow = ref(10);
 
 const onUploadFile = async (file: File) => {
     processingFile.value = true;
