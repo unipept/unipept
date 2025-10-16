@@ -151,10 +151,16 @@ const shownItems = ref<AnalysisSummaryTableItem[]>([]);
 const { getNcbiDefinition } = useOntologyStore();
 
 const computeShownItems = (params: ConfigParams) => {
+    let itemsPerPage = params.itemsPerPage;
+    // Check if we need to show all items
+    if (params.itemsPerPage === -1) {
+        itemsPerPage = analysis.peptidesTable!.totalCount;
+    }
+
     shownItems.value = analysis.peptidesTable!
         .getEntriesRange(
-            (params.page - 1) * params.itemsPerPage,
-            params.page * params.itemsPerPage
+            (params.page - 1) * itemsPerPage,
+            params.page * itemsPerPage
         )
         .map(([peptide, count]) => {
             const lca = analysis.peptideToLca!.get(peptide)!;
