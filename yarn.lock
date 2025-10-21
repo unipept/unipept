@@ -2701,10 +2701,10 @@ setimmediate@^1.0.5:
   resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
   integrity sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA==
 
-shared-memory-datastructures@1.0.0-alpha.8:
-  version "1.0.0-alpha.8"
-  resolved "https://registry.yarnpkg.com/shared-memory-datastructures/-/shared-memory-datastructures-1.0.0-alpha.8.tgz#963df1652709ce234518655dee682b1e53d9d3f2"
-  integrity sha512-t0/l9zO4TKcipwHc2pxnofj3dIAJLLKNSIOyb5v0ks7eOzXVUZKgVnm1Uh9DoymuHY7iF8/FBJ463D2Za86YEg==
+shared-memory-datastructures@1.0.0-alpha.9:
+  version "1.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/shared-memory-datastructures/-/shared-memory-datastructures-1.0.0-alpha.9.tgz#f0dcc8f3f481f0812cdad0763d7eee5b074404cb"
+  integrity sha512-7S8/LOBX5tt8oUe8ZE+BnkGM62x9eLtO+cF+xDA4Zp/mrlknJ2xj9VNrsijjvonnIeXNDz8K7HS2wm/KFlxi6g==
   dependencies:
     fnv-plus "^1.3.1"
 
