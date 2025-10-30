@@ -1,6 +1,9 @@
 import NcbiResponse from "./NcbiResponse";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import {NcbiId} from "@/logic/ontology/taxonomic/Ncbi";
+import {createCacheIdb} from "lru-cache-idb";
+import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
+import useMetaData from "@/composables/communication/unipept/useMetaData";
 
 export default class NcbiResponseCommunicator {
     public static readonly NCBI_ENDPOINT: string = "/private_api/taxa";
@@ -8,6 +11,7 @@ export default class NcbiResponseCommunicator {
     public static readonly NCBI_FILTER_ENDPOINT: string = "/private_api/taxa/filter";
 
     private static inProgress: Promise<NcbiResponse[]> | undefined;
+    private static lruCache = createCacheIdb<NcbiResponse>({ maxItems: 100000, databaseName: "taxonomic_lru_cache" });
 
     constructor(
         private readonly apiBaseUrl: string,
@@ -22,11 +26,10 @@ export default class NcbiResponseCommunicator {
         }
 
         NcbiResponseCommunicator.inProgress = this.doProcess(codes);
-        const result: NcbiResponse[] = [];
+        let result: NcbiResponse[];
 
         try {
-            const data: NcbiResponse[] = await NcbiResponseCommunicator.inProgress;
-            result.push(...data);
+            result = await NcbiResponseCommunicator.inProgress;
         } finally {
             NcbiResponseCommunicator.inProgress = undefined;
         }
@@ -93,15 +96,36 @@ export default class NcbiResponseCommunicator {
         codes: NcbiId[]
     ): Promise<NcbiResponse[]> {
         const responses: NcbiResponse[] = [];
-        for (let i = 0; i < codes.length; i += this.batchSize) {
+
+        const { databaseVersion, process: processMetadata } = useMetaData();
+        await processMetadata();
+        const uniprotVersion = databaseVersion.value;
+
+        const alreadyProcessedCodes = new Set<number>();
+        for (const code of codes) {
+            const response = await NcbiResponseCommunicator.lruCache.get(`${uniprotVersion}__${this.apiBaseUrl}__ncbi__${code}`);
+
+            if (response) {
+                responses.push(response);
+                alreadyProcessedCodes.add(code);
+            }
+        }
+
+        const codesToProcess = codes.filter(code => !alreadyProcessedCodes.has(code));
+
+        for (let i = 0; i < codesToProcess.length; i += this.batchSize) {
             const data = JSON.stringify({
-                taxids: codes.slice(i, i + this.batchSize)
+                taxids: codesToProcess.slice(i, i + this.batchSize)
             });
 
             const res = await NetworkUtils.postJSON(
                 this.apiBaseUrl + NcbiResponseCommunicator.NCBI_ENDPOINT,
                 data
             );
+
+            for (const response of res) {
+                await NcbiResponseCommunicator.lruCache.set(`${uniprotVersion}__${this.apiBaseUrl}__ncbi__${response["id"]}`, response);
+            }
 
             responses.push(...res);
         }

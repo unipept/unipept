@@ -34,13 +34,30 @@ export default class PeptideData {
     // Where does the variable length data portion of the array start?
     public static readonly DATA_START = PeptideData.FA_IPR_INDEX_OFFSET + PeptideData.FA_POINTER_SIZE;
 
-    private readonly dataView: DataView;
+    // How many bytes do we reserve to keep track of the length of the taxon array?
+    public static readonly TAXON_COUNT_SIZE = 4;
+
+    // How many bytes do we reserve to represent each taxon ID?
+    public static readonly TAXON_SIZE = 4;
+
+    public get TAXA_START() {
+        let goStart = this.dataView.getUint32(PeptideData.FA_GO_INDEX_OFFSET);
+        const goLength = this.dataView.getUint32(goStart);
+
+        let ecStart = this.dataView.getUint32(PeptideData.FA_EC_INDEX_OFFSET);
+        const ecLength = this.dataView.getUint32(ecStart);
+
+        let iprStart = this.dataView.getUint32(PeptideData.FA_IPR_INDEX_OFFSET);
+        const iprLength = this.dataView.getUint32(iprStart);
+
+        const faDataLength = 12 + goLength * 8 + iprLength * 8 + ecLength * 20;
+        return PeptideData.DATA_START + faDataLength;
+    }
+
 
     constructor(
-        public readonly buffer: ArrayBuffer
-    ) {
-        this.dataView = new DataView(buffer);
-    }
+        public readonly dataView: DataView
+    ) {}
 
     public static createFromPeptideDataResponse(response: PeptideDataResponse): PeptideData {
         const gos = response.fa.data ? Object.keys(response.fa.data).filter(
@@ -55,11 +72,13 @@ export default class PeptideData {
 
         const lineageDataLength = PeptideData.LINEAGE_COUNT_SIZE + response.lineage.length * 4;
         // We need 12 bytes to record the length of each of the functional annotation arrays.
-        // GO is stored as an integer (4 bytes) and it's count (4 bytes for count)
-        // IPR is stored as an integer (4 bytes) and it's count (4 bytes)
-        // EC is stored as 4 integers (4 bytes) and it's count (4 bytes)
+        // GO is stored as an integer (4 bytes) and its count (4 bytes for count)
+        // IPR is stored as an integer (4 bytes) and its count (4 bytes)
+        // EC is stored as 4 integers (4 bytes) and its count (4 bytes)
         const faDataLength = 12 + gos.length * 8 + iprs.length * 8 + ecs.length * 20;
-        const bufferLength = PeptideData.DATA_START + lineageDataLength + faDataLength;
+
+        const taxaStart = PeptideData.DATA_START + faDataLength + lineageDataLength;
+        const bufferLength = taxaStart + PeptideData.TAXON_COUNT_SIZE + (response.taxa?.length || 0) * PeptideData.TAXON_SIZE;
 
         const dataBuffer = new ArrayBuffer(bufferLength);
 
@@ -130,7 +149,16 @@ export default class PeptideData {
             currentPos += 8;
         }
 
-        return new PeptideData(dataBuffer);
+        // Keep track of how many taxa there are stored in this object
+        dataView.setUint32(taxaStart, response.taxa?.length || 0);
+        currentPos = taxaStart + PeptideData.TAXON_COUNT_SIZE;
+        // Store the actual taxa IDs
+        for (const taxon of response.taxa || []) {
+            dataView.setUint32(currentPos, taxon);
+            currentPos += PeptideData.TAXON_SIZE;
+        }
+
+        return new PeptideData(dataView);
     }
 
     public get faCounts(): { all: number, ec: number, go: number, ipr: number } {
@@ -240,6 +268,17 @@ export default class PeptideData {
         return output;
     }
 
+    public get taxa(): number[] {
+        const output = [];
+
+        const taxaLength = this.dataView.getUint32(this.TAXA_START);
+
+        for (let i = 0; i < taxaLength; i++) {
+            output.push(this.dataView.getUint32(this.TAXA_START + PeptideData.TAXON_COUNT_SIZE + i * PeptideData.TAXON_SIZE));
+        }
+
+        return output;
+    }
 
     public toPeptideDataResponse(): PeptideDataResponse {
         const faCounts = this.faCounts;
@@ -260,7 +299,8 @@ export default class PeptideData {
                     IPR: faCounts.ipr
                 },
                 data: dataObject
-            }
+            },
+            taxa: this.taxa,
         }
     }
 }

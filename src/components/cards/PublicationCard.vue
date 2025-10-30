@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card class="pa-0">
         <v-card-title
             class="bg-blue text-white"
             style="letter-spacing: 0.0125rem"
@@ -66,7 +66,8 @@
                 >
                     <RLink :to="'https://' + doi">
                         <v-hover v-slot="{ isHovering, props }">
-                            <v-card
+                            <v-unipept-card
+                                class="pa-0"
                                 :elevation="isHovering ? 6 : 2"
                                 v-bind="props"
                             >
@@ -74,13 +75,13 @@
                                     :src="image"
                                     :alt="image"
                                 />
-                            </v-card>
+                            </v-unipept-card>
                         </v-hover>
                     </RLink>
                 </v-col>
             </v-row>
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

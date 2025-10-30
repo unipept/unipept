@@ -1,8 +1,5 @@
 <template>
-    <v-card
-        elevation="2"
-        variant="flat"
-    >
+    <v-unipept-card :disabled="disabled">
         <v-card-title>
             <h2>Quick analysis</h2>
         </v-card-title>
@@ -62,26 +59,24 @@
                     </span>
                 </v-tooltip>
             </div>
-            <!--            <database-select-->
-            <!--                v-model="config.database"-->
-            <!--                class="mt-1"-->
-            <!--                label="Selected database"-->
-            <!--            />-->
             <v-btn
                 color="primary"
                 variant="tonal"
                 text="Analyze"
-                class="float-right mb-3"
-                :disabled="rawPeptides.length === 0"
+                class="w-100 w-lg-auto float-lg-right mt-2"
                 @click="analyze"
             />
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">
 import {ref} from "vue";
-import {AnalysisConfig} from "@/store/new/AnalysisConfig";
+import {AnalysisConfig} from "@/store/AnalysisConfig";
+
+const { disabled = false } = defineProps<{
+    disabled?: boolean
+}>();
 
 const emits = defineEmits<{
     (e: "analyze", rawPeptides: string, config: AnalysisConfig): void;

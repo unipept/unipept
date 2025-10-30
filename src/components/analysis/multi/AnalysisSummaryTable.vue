@@ -1,10 +1,14 @@
 <template>
-    <v-data-table
+    <v-data-table-server
+        mobile-breakpoint="md"
         :headers="headers"
-        :items="items"
+        :items="shownItems"
         :items-per-page="5"
-        :loading="false"
+        :items-length="analysis.peptidesTable!.totalCount"
         density="compact"
+        :disable-sort="true"
+        style="background-color: transparent"
+        @update:options="computeShownItems"
     >
         <template #no-data>
             <v-alert
@@ -20,6 +24,7 @@
             <a
                 class="cursor-pointer"
                 @click="openPeptideAnalysis(item.peptide)"
+                :style="$vuetify.display.mobile ? 'display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' : ''"
             >
                 {{ item.peptide }}
             </a>
@@ -32,6 +37,7 @@
                         v-bind="props"
                         size="30"
                         :color="item.faCounts.go > 0 ? 'amber' : 'amber-lighten-4'"
+                        class="me-1"
                     >
                         <span
                             :class="[ item.faCounts.go > 0 ? 'dark--text' : 'gray--text', 'headline']"
@@ -60,6 +66,7 @@
                         v-bind="props"
                         size="30"
                         :color="item.faCounts.ec > 0 ? 'indigo' : 'indigo-lighten-4'"
+                        class="me-1"
                     >
                         <span
                             class="text-white"
@@ -127,13 +134,52 @@
                 </template>
             </v-tooltip>
         </template>
-    </v-data-table>
+    </v-data-table-server>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-    items: AnalysisSummaryTableItem[]
+import {ref, watch} from "vue";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
+import useOntologyStore from "@/store/OntologyStore";
+
+const { analysis } = defineProps<{
+    analysis: SingleAnalysisStore
 }>();
+
+const shownItems = ref<AnalysisSummaryTableItem[]>([]);
+
+const { getNcbiDefinition } = useOntologyStore();
+
+const computeShownItems = (params: ConfigParams) => {
+    let itemsPerPage = params.itemsPerPage;
+    // Check if we need to show all items
+    if (params.itemsPerPage === -1) {
+        itemsPerPage = analysis.peptidesTable!.totalCount;
+    }
+
+    shownItems.value = analysis.peptidesTable!
+        .getEntriesRange(
+            (params.page - 1) * itemsPerPage,
+            params.page * itemsPerPage
+        )
+        .map(([peptide, count]) => {
+            const lca = analysis.peptideToLca!.get(peptide)!;
+            return {
+                peptide: peptide,
+                occurrence: count,
+                lca: getNcbiDefinition(lca)?.name ?? "N/A",
+                rank: getNcbiDefinition(lca)?.rank ?? "N/A",
+                found: analysis.peptideToLca!.has(peptide),
+                faCounts: analysis.peptideToData!.get(peptide)?.faCounts
+            };
+        });
+}
+
+watch(() => analysis, () => computeShownItems({
+    page: 1,
+    itemsPerPage: 5,
+    sortBy: []
+}));
 </script>
 
 <script lang="ts">
@@ -143,33 +189,37 @@ const headers: any = [
         title: "Peptide",
         align: "start",
         key: "peptide",
+        width: "25%"
     },
     {
         title: "Occurrence",
         align: "start",
         key: "occurrence",
+        width: "10%"
     },
     {
         title: "Lowest common ancestor",
         align: "start",
-        key: "lca"
+        key: "lca",
+        width: "30%"
     },
     {
         title: "Rank",
         align: "start",
-        key: "rank"
+        key: "rank",
+        width: "15%"
     },
     {
         title: "Annotations",
         align: "start",
         key: "faCounts",
-        sortable: false
+        width: "15%"
     },
     {
         title: "",
         align: "start",
         key: "warning",
-        sortable: false
+        width: "5%"
     }
 ];
 
@@ -180,6 +230,12 @@ export interface AnalysisSummaryTableItem {
     rank: string;
     found: boolean;
     faCounts: { all: number, ec: number, go: number, ipr: number } | undefined;
+}
+
+interface ConfigParams {
+    page: number;
+    itemsPerPage: number;
+    sortBy: { key: string, order: "asc" | "desc" }[];
 }
 
 const openPeptideAnalysis = (peptide: string) => {

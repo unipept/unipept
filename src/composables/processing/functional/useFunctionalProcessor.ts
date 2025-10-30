@@ -1,19 +1,18 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import FunctionalProcessorWebWorker from "../workers/functionalProcessor.worker.ts?worker";
-import FunctionalCode from "@/logic/ontology/functional/FunctionalCode";
+import {TransferableState} from "shared-memory-datastructures";
 
 export interface FunctionalProcessorData {
-    peptideCounts: Map<string, number>;
-    indexBuffer: ArrayBuffer;
-    dataBuffer: ArrayBuffer;
+    countsMapTransferable: TransferableState;
+    peptideDataTransferable: TransferableState;
     percentage: number;
     termPrefix: string;
     proteinCountProperty: "all" | "ec" | "go" | "ipr";
 }
 
 export interface FunctionalProcessorOutput {
-    sortedCounts: Map<FunctionalCode, number> ;
-    itemToPeptides: Map<FunctionalCode, string[]>;
+    sortedCountsTransferable: TransferableState;
+    itemToPeptides: Map<string, string[]>;
     annotatedCount: number;
 }
 

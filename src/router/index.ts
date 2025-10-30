@@ -60,13 +60,20 @@ const routes = [
     },
     {
         path: "/mpa",
-        component: () => import("@/components/pages/features/MetaproteomeAnalysisPage.vue"),
+        component: () => import("@/components/pages/features/analysis/MetaproteomeHomePage.vue"),
         meta: mpaMeta
     },
     {
-        path: "/mpa/results",
-        name: "mpaResults",
-        component:  () => import("@/components/pages/features/MetaproteomeResultsPage.vue"),
+        path: "/mpa/result",
+        name: "mpaResult",
+        component:  () => import("@/components/pages/features/analysis/MetaproteomeResultsPage.vue"),
+        children: [
+            { path: "home", name: "home", component: () => import("@/components/pages/features/analysis/MetaproteomeHomePage.vue"), meta: mpaMeta },
+            { path: "single", name: "mpaSingle", component: () => import("@/components/pages/features/analysis/MetaproteomeSinglePage.vue"), meta: mpaMeta },
+            { path: "compare", component: () => import("@/components/pages/features/analysis/MetaproteomeComparativePage.vue"), meta: mpaMeta },
+            { path: "export", name: "mpaExport", component: () => import("@/components/pages/features/analysis/MetaproteomeExportPage.vue"), meta: mpaMeta },
+            { path: "database", name: "mpaDatabase", component: () => import("@/components/pages/features/analysis/MetaproteomeDatabasePage.vue"), meta: mpaMeta },
+        ],
         meta: mpaMeta
     },
     {
@@ -82,6 +89,7 @@ const routes = [
             { path: "pept2interpro", component: () => import("@/components/pages/documentation/apidocs/APIPept2InterproPage.vue"), meta: apidocsMeta },
             { path: "pept2funct", component: () => import("@/components/pages/documentation/apidocs/APIPept2FunctPage.vue"), meta: apidocsMeta },
             { path: "peptinfo", component: () => import("@/components/pages/documentation/apidocs/APIPeptInfoPage.vue"), meta: apidocsMeta },
+            { path: "protinfo", component: () => import("@/components/pages/documentation/apidocs/APIProtInfoPage.vue"), meta: apidocsMeta },
             { path: "taxa2lca", component: () => import("@/components/pages/documentation/apidocs/APITaxa2LcaPage.vue"), meta: apidocsMeta },
             { path: "taxa2tree", component: () => import("@/components/pages/documentation/apidocs/APITaxa2TreePage.vue"), meta: apidocsMeta },
             { path: "taxonomy", component: () => import("@/components/pages/documentation/apidocs/APITaxonomyPage.vue"), meta: apidocsMeta },

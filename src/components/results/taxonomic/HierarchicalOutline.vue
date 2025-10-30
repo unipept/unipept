@@ -22,8 +22,8 @@
                     :expanded="3"
                 />
 
-                <v-card
-                    class="position-absolute top-0 right-0"
+                <v-unipept-card
+                    class="position-absolute top-0 right-0 pa-0"
                 >
                     <v-alert
                         color="primary"
@@ -31,13 +31,13 @@
                     >
                         <b>Click on a node in the tree to see the peptides associated with that organism.</b>
                     </v-alert>
-                </v-card>
+                </v-unipept-card>
             </div>
 
             <v-dialog
                 v-model="dialogOpen"
             >
-                <v-card v-click-outside="closeDialog">
+                <v-unipept-card v-click-outside="closeDialog">
                     <v-card-title class="d-flex align-center">
                         <h1>{{ selectedItem?.name }} ({{ selectedItem?.extra.rank }})</h1>
                         <v-spacer />
@@ -137,7 +137,7 @@
                             </v-col>
                         </v-row>
                     </v-card-text>
-                </v-card>
+                </v-unipept-card>
             </v-dialog>
         </v-card-text>
     </v-card>
@@ -184,7 +184,7 @@ watch(selectedItem, () => {
 
 <script lang="ts">
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {FilteredTree} from "@/composables/useTreeFilter";
 
 const headers = [

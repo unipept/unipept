@@ -1,55 +1,50 @@
 <template>
-    <v-dialog
-        v-model="dialogOpen"
-        max-width="50%"
-    >
-        <v-card>
-            <v-alert
-                type="error"
-                icon="mdi-alert"
-                variant="tonal"
-            >
-                Are you sure you want to remove the group <b>{{ group.name }}</b>? This action is irreversible. All samples and analyses will be lost.
-                <div class="d-flex justify-end">
-                    <v-btn
-                        class="me-3"
-                        variant="text"
-                        @click="dialogOpen = false"
-                    >
-                        Cancel
-                    </v-btn>
-
-                    <v-btn
-                        color="error"
-                        @click="confirm"
-                    >
-                        Remove
-                    </v-btn>
-                </div>
-            </v-alert>
-        </v-card>
+    <v-dialog v-model="dialogOpen" max-width="600" persistent>
+        <v-unipept-card>
+            <v-card-title class="text-h6 font-weight-bold">
+                Delete Group
+            </v-card-title>
+            <v-card-text class="pb-0">
+                <p>
+                    Are you sure you want to remove the group <b>{{ group.name }}</b>? This action is
+                    <strong>irreversible</strong>. All associated samples and analyses will be permanently lost.
+                </p>
+            </v-card-text>
+            <v-card-actions class="justify-end">
+                <v-btn variant="text" @click="cancel">Cancel</v-btn>
+                <v-btn color="error" @click="confirm">Remove</v-btn>
+            </v-card-actions>
+        </v-unipept-card>
     </v-dialog>
 </template>
 
 <script setup lang="ts">
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import { defineProps, defineEmits } from 'vue';
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 
 const dialogOpen = defineModel<boolean>();
 
 defineProps<{
-    group: MultiAnalysisStore;
+    group: GroupAnalysisStore;
 }>();
 
-const emits = defineEmits<{
-    (e: "confirm"): void;
-}>();
+const emit = defineEmits({
+    confirm: () => true,
+});
+
+const cancel = () => {
+    dialogOpen.value = false;
+};
 
 const confirm = () => {
     dialogOpen.value = false;
-    emits('confirm');
+    emit('confirm');
 };
 </script>
 
 <style scoped>
-
+p {
+    margin-bottom: 1em;
+}
 </style>
+

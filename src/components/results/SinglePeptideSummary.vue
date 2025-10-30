@@ -26,7 +26,7 @@
             </span>
         </div>
         <v-row>
-            <v-col :cols="6">
+            <v-col :cols="12" md="6">
                 <div class="headline">
                     Biodiversity
                 </div>
@@ -66,13 +66,13 @@
                     </span>
                 </div>
             </v-col>
-            <v-col :cols="6">
+            <v-col :cols="12" md="6">
                 <div class="headline">
                     Function
                 </div>
                 <div v-if="assay.goTrust">
                     <span class="font-weight-bold">{{ assay.goTrust.annotatedItems }} proteins</span>
-                    ({{ displayPercentage(assay.goTrust.annotatedItems / assay.goTrust.totalItems) }})
+                    ({{ assay.goTrust.totalItems > 0 ? displayPercentage(assay.goTrust.annotatedItems / assay.goTrust.totalItems) : '0%' }})
                     have at least one
                     <span
                         v-if="goLink"
@@ -95,7 +95,7 @@
 
                 <div v-if="assay.ecTrust">
                     <span class="font-weight-bold">{{ assay.ecTrust.annotatedItems }} proteins</span>
-                    ({{ displayPercentage(assay.ecTrust.annotatedItems / assay.ecTrust.totalItems) }})
+                    ({{ assay.ecTrust.totalItems > 0 ? displayPercentage(assay.ecTrust.annotatedItems / assay.ecTrust.totalItems) : '0%' }})
                     have at least one
                     <span
                         v-if="ecLink"
@@ -120,7 +120,7 @@
                     <span class="font-weight-bold">
                         {{ assay.iprTrust.annotatedItems }} proteins
                     </span>
-                    ({{ displayPercentage(assay.iprTrust.annotatedItems / assay.iprTrust.totalItems) }})
+                    ({{ assay.iprTrust.totalItems > 0 ? displayPercentage(assay.iprTrust.annotatedItems / assay.iprTrust.totalItems) : '0%' }})
                     have at least one
                     <span
                         v-if="interproLink"
@@ -147,9 +147,9 @@
 
 <script setup lang="ts">
 import {computed} from "vue";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
-import useOntologyStore from "@/store/new/OntologyStore";
-import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import useOntologyStore from "@/store/OntologyStore";
+import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import usePercentage from "@/composables/usePercentage";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 

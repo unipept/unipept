@@ -2,32 +2,33 @@ import {ShareableMap} from "shared-memory-datastructures";
 import {FunctionalProcessorData} from "@/composables/processing/functional/useFunctionalProcessor";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import FunctionalCode from "@/logic/ontology/functional/FunctionalCode";
+
+self.onunhandledrejection = (event) => {
+    // This will propagate to the main thread's `onerror` handler
+    throw event.reason;
+};
 
 self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
 
 const process = async ({
-    peptideCounts,
-    indexBuffer,
-    dataBuffer,
+    countsMapTransferable,
+    peptideDataTransferable,
     percentage,
     termPrefix,
     proteinCountProperty
 }: FunctionalProcessorData ) => {
-    const peptideToResponseMap = new ShareableMap<string, PeptideData>(
-        0, 0, new PeptideDataSerializer()
-    );
-    peptideToResponseMap.setBuffers(indexBuffer, dataBuffer);
+    const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
+    const peptideCounts = ShareableMap.fromTransferableState<string, number>(countsMapTransferable);
 
     // First we count the amount of peptides per unique code. Afterwards, we can fetch definitions for all these
     // terms and split them on namespace.
-    const countsPerCode = new Map();
+    const countsPerCode = new ShareableMap<string, number>();
     // Keeps track of how many peptides are associated with at least one annotation
     let annotatedCount = 0;
 
-    const itemToPeptides: Map<FunctionalCode, string[]> = new Map();
+    const itemToPeptides: Map<string, string[]> = new Map();
 
     for (const [peptide, peptideCount] of peptideCounts) {
         const peptideData = peptideToResponseMap.get(peptide);
@@ -58,15 +59,16 @@ const process = async ({
         }
     }
 
+
+
     // Counts per code is guaranteed to be sorted by count (note that JS Maps return values in the order they were
     // inserted!)
-    const sortedCounts: Map<FunctionalCode, number> = new Map([...countsPerCode].sort(
-         
-        ([code1, count1]: [string, number], [code2, count2]: [string, number]) => count2 - count1
-    ));
+    // const sortedCounts: Map<string, number> = new Map([...countsPerCode].sort(
+    //     ([code1, count1]: [string, number], [code2, count2]: [string, number]) => count2 - count1
+    // ));
 
     return {
-        sortedCounts,
+        sortedCountsTransferable: countsPerCode.toTransferableState(),
         itemToPeptides,
         annotatedCount
     };

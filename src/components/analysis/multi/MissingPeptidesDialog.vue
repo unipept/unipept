@@ -3,7 +3,7 @@
         v-model="dialogOpen"
         width="50%"
     >
-        <v-card>
+        <v-unipept-card>
             <v-card-title class="d-flex align-center">
                 <h1>{{ peptides.length }} missed peptides</h1>
                 <v-spacer />
@@ -53,7 +53,7 @@
                     </template>
                 </v-data-table-virtual>
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 
@@ -78,7 +78,6 @@ const headers = [
 ];
 
 const blastPeptide = (peptide: string) => {
-    // TODO: change this. Hardcoded link to website for testing purposes
     const a = document.createElement('a');
     a.href = `http://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch&SET_SAVED_SEARCH=on
         &USER_FORMAT_DEFAULTS=on&PAGE=Proteins&PROGRAM=blastp&QUERY=${peptide}&GAPCOSTS=11%201

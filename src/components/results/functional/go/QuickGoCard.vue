@@ -19,7 +19,7 @@
             v-model="showModal"
             max-width="90%"
         >
-            <v-card>
+            <v-unipept-card>
                 <v-card-title>
                     QuickGo {{ namespace.toString() }}
                 </v-card-title>
@@ -50,15 +50,16 @@
                 <v-card-text v-else>
                     No GO terms for this domain were found.
                 </v-card-text>
-            </v-card>
+            </v-unipept-card>
         </v-dialog>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import {computed, onMounted, Ref, ref, watch} from 'vue';
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
-import {GoNamespace} from "@/composables/ontology/useGoOntology";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
+import useQuickGo from "@/composables/communication/quick-go/useQuickGo";
 
 const props = defineProps<{
     items: GoResultsTableItem[]
@@ -68,6 +69,8 @@ const props = defineProps<{
 
 const showModal = ref<boolean>(false);
 
+const quickGo = useQuickGo();
+
 const topN = computed(() =>
     [...props.items].sort((a, b) => b.count - a.count).slice(0, props.n)
 );
@@ -76,14 +79,27 @@ const topNSentence = computed(() =>
     topN.value.slice(0, -1).map(x => x.name).join(', ') + (topN.value.length > 1 ? " and " : "") + topN.value.slice(-1).map(x => x.name)
 );
 
-const quickGoSmallUrl = computed(() => quickGoUrl(topN.value, false));
+const quickGoSmallUrl: Ref<string> = ref("");
+const quickGoChartUrl: Ref<string> = ref("");
 
-const quickGoChartUrl = computed(() => quickGoUrl(topN.value, true));
+onMounted(async () => {
+    quickGoSmallUrl.value = URL.createObjectURL((await quickGoUrl(topN.value, false))!);
+    quickGoChartUrl.value = URL.createObjectURL((await quickGoUrl(topN.value, true))!);
+});
+
+// watch(topN, async () => {
+//     quickGoSmallUrl.value = (await quickGoUrl(topN.value, false))!;
+//     quickGoChartUrl.value = (await quickGoUrl(topN.value, true))!;
+// });
+
+// const quickGoSmallUrl = computed(() => quickGoUrl(topN.value, false));
+//
+// const quickGoChartUrl = computed(() => quickGoUrl(topN.value, true));
 
 const quickGoUrl = (items: GoResultsTableItem[], showKey: boolean) => {
     if (items.length > 0) {
         const terms = items.map(x => x.code).sort().join(',');
-        return `https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${terms}/chart?showKey=${showKey}`;
+        return quickGo.process(`https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/${terms}/chart?showKey=${showKey}`);
     }
 }
 </script>

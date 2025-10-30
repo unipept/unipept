@@ -10,7 +10,7 @@
             Biological Process
         </h2>
         <v-row>
-            <v-col cols="9">
+            <v-col cols="12" lg="9">
                 <go-results-table
                     :items="biologicalProcessItems"
                     :data="data"
@@ -20,7 +20,7 @@
                     @download-table="downloadTable"
                 />
             </v-col>
-            <v-col cols="3">
+            <v-col cols="12" lg="3">
                 <quick-go-card
                     :items="biologicalProcessItems"
                     :namespace="GoNamespace.BiologicalProcess"
@@ -33,7 +33,7 @@
             Cellular Component
         </h2>
         <v-row>
-            <v-col cols="9">
+            <v-col cols="12" lg="9">
                 <go-results-table
                     :items="cellularComponentItems"
                     :data="data"
@@ -43,7 +43,7 @@
                     @download-table="downloadTable"
                 />
             </v-col>
-            <v-col cols="3">
+            <v-col cols="12" lg="3">
                 <quick-go-card
                     :items="cellularComponentItems"
                     :namespace="GoNamespace.CellularComponent"
@@ -56,7 +56,7 @@
             Molecular Function
         </h2>
         <v-row>
-            <v-col cols="9">
+            <v-col cols="12" lg="9">
                 <go-results-table
                     :items="molecularFunctionItems"
                     :data="data"
@@ -66,7 +66,7 @@
                     @download-table="downloadTable"
                 />
             </v-col>
-            <v-col cols="3">
+            <v-col cols="12" lg="3">
                 <quick-go-card
                     :items="molecularFunctionItems"
                     :namespace="GoNamespace.MolecularFunction"
@@ -85,12 +85,12 @@
 import GoResultsTable from "./GoResultsTable.vue";
 import {computed} from "vue";
 import QuickGoCard from "@/components/results/functional/go/QuickGoCard.vue";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import CountTable from "@/logic/processors/CountTable";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
-import {GoNamespace} from "@/composables/ontology/useGoOntology";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 const { getGoDefinition } = useOntologyStore();
 
@@ -111,7 +111,7 @@ const cellularComponentItems = computed(() => getItems(data.goTable).filter(x =>
 const molecularFunctionItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
 
 const getItems = (items: CountTable<string>) => {
-    return Array.from(items.entries())
+    return Array.from(items.counts.entries())
         .map(([key, value]) => ({
             code: key,
             name: getGoDefinition(key)?.name ?? "Unknown",

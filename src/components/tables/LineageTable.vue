@@ -6,7 +6,7 @@
                     This table shows the complete taxonomic lineages of all taxa associated with the UniProt entries
                     whose protein sequence contains the tryptic peptide. The first column contains the taxon name
                     extracted from the UniProt entry, followed by columns representing taxonomic ranks ordered from
-                    superkingdom on the left to forma on the right.
+                    domain on the left to forma on the right.
                 </p>
 
                 <v-data-table
@@ -55,11 +55,11 @@
 
 <script setup lang="ts">
 import { computed, ref, ComputedRef, Ref } from 'vue';
-import {PeptideAnalysisStore} from "@/store/new/PeptideAnalysisStore";
+import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import useOntologyStore from "@/store/new/OntologyStore";
-import {ProteinResponse} from "@/logic/communicators/unipept/protein/ProteinResponseCommunicator";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import useOntologyStore from "@/store/OntologyStore";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
+import Protein from "@/logic/ontology/proteins/Protein";
 
 export interface Props {
     assay: PeptideAnalysisStore
@@ -88,8 +88,8 @@ const items: ComputedRef<{ definition: NcbiTaxon, lineage: (NcbiTaxon | undefine
     const ontologyStore = useOntologyStore();
     const results: { definition: NcbiTaxon, lineage: (NcbiTaxon | undefined)[] }[] = [];
 
-    props.assay.proteins.forEach((p: ProteinResponse) => {
-        const def = ontologyStore.getNcbiDefinition(p.organism);
+    props.assay.proteins.forEach((p: Protein) => {
+        const def = ontologyStore.getNcbiDefinition(p.taxonId);
 
         if (def) {
             results.push({

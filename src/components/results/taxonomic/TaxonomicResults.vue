@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card class="pa-0">
         <v-tabs
             v-model="currentTab"
             bg-color="primary"
@@ -8,6 +8,7 @@
             <v-tab text="Sunburst" />
             <v-tab text="Treemap" />
             <v-tab text="Treeview" />
+            <v-tab text="Barplot" />
             <v-tab text="Hierarchical outline" />
             <v-tab text="Heatmap" />
             <v-tab>
@@ -50,6 +51,10 @@
                     <treeview :ncbi-root="analysis.ncbiTree!" />
                 </v-tabs-window-item>
 
+                <v-tabs-window-item style="height: 600px;">
+                    <taxonomic-barplot :analyses="[analysis]" />
+                </v-tabs-window-item>
+
                 <v-tabs-window-item>
                     <hierarchical-outline :analysis="analysis" />
                 </v-tabs-window-item>
@@ -64,6 +69,7 @@
                     <peptonizer-analysis
                         :sample-name="analysis.name"
                         :uses-default-scores="analysis.intensities === undefined"
+                        :peptide-data="analysis.peptideToData!"
                         :peptide-count-table="analysis.peptidesTable!"
                         :peptide-intensities="analysis.intensities!"
                         :equate-il="analysis.config.equate"
@@ -72,18 +78,19 @@
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">
 import {ref, watch} from "vue";
-import {SingleAnalysisStore} from "@/store/new/SingleAnalysisStore";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import Sunburst from "@/components/results/taxonomic/Sunburst.vue";
 import Treemap from "@/components/results/taxonomic/Treemap.vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import HierarchicalOutline from "@/components/results/taxonomic/HierarchicalOutline.vue";
 import HeatmapWizard from "@/components/results/taxonomic/heatmap/HeatmapWizard.vue";
 import PeptonizerAnalysis from "@/components/results/taxonomic/peptonizer/PeptonizerAnalysis.vue";
+import TaxonomicBarplot from "@/components/results/taxonomic/TaxonomicBarplot.vue";
 
 const props = defineProps<{
     analysis: SingleAnalysisStore

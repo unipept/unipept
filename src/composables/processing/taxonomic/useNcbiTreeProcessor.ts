@@ -1,7 +1,7 @@
-import {shallowRef} from "vue";
+import {markRaw, shallowRef} from "vue";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import CountTable from "@/logic/processors/CountTable";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 
 export default function useNcbiTreeProcessor() {
     const { getNcbiDefinition } = useOntologyStore();
@@ -19,7 +19,7 @@ export default function useNcbiTreeProcessor() {
 
         const tree = new NcbiTreeNode(id, name);
 
-        for (const taxonId of taxaCountTable.keys()) {
+        for (const taxonId of taxaCountTable.counts.keys()) {
             const taxonDefinition = getNcbiDefinition(taxonId);
 
             if (!taxonDefinition) {
@@ -47,9 +47,9 @@ export default function useNcbiTreeProcessor() {
         }
 
         tree.getCounts();
-        root.value = tree;
+        root.value = markRaw(tree);
         newNodes.set(id, tree);
-        nodes.value = newNodes;
+        nodes.value = markRaw(newNodes);
     }
 
     return {

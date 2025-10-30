@@ -3,7 +3,7 @@
         v-model="dialogOpen"
         width="80%"
     >
-        <v-card>
+        <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex align-center">
                 <h2>Export image</h2>
                 <v-spacer />
@@ -18,6 +18,7 @@
                     <v-card
                         class="pa-2"
                         width="60%"
+                        style="max-height: 400px;"
                         variant="outlined"
                     >
                         <v-img
@@ -65,7 +66,7 @@
                     @click="download"
                 />
             </v-card-text>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 
@@ -74,6 +75,7 @@ import {computed, ref, watch} from "vue";
 import useSvgDownload from "@/composables/useSvgDownload";
 import usePngDownload from "@/composables/usePngDownload";
 import {toSvg} from "html-to-image";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 const { downloadSvg } = useSvgDownload();
 const { downloadPng, downloadDomPng } = usePngDownload();
@@ -101,23 +103,37 @@ const supportedFormats = computed(() => {
 })
 
 const resolution = computed(() => {
-    const width = image.clientWidth;
-    const height = image.clientHeight;
+    let width: number;
+    let height: number;
+
+    if (image instanceof SVGSVGElement) {
+        width = image.viewBox.baseVal.width;
+        height = image.viewBox.baseVal.height;
+    } else {
+        width = image.clientWidth;
+        height = image.clientHeight;
+    }
+
     const factor = scalingFactorToNumber(selectedScalingFactor.value);
 
     return {
-        width: width * factor,
-        height: height * factor
+        width: Math.ceil(width * factor),
+        height: Math.ceil(height * factor)
     }
 })
 
 const download = async () => {
+    const analyticsCommunicator = new AnalyticsCommunicator();
+
     if (image instanceof HTMLElement) {
         await downloadDomPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
+        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'html');
     } else if (selectedFormat.value === Format.SVG.valueOf()) {
         await downloadSvg(image, `${filename}.svg`);
+        analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'svg');
     } else {
         await downloadPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
+        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'svg');
     }
     dialogOpen.value = false;
 };

@@ -1,101 +1,113 @@
 <template>
-    <v-list-group :value="group.id">
-        <template #activator="{ props }">
-            <v-list-item
-                base-color="grey-darken-3"
-                color="none"
-                density="compact"
-                variant="tonal"
-            >
-                <template #title>
-                    <div v-bind="props">
-                        {{ group.name }}
-                    </div>
-                </template>
+    <v-divider v-if="showDivider" class="mx-3"/>
 
-                <template #prepend="{ isOpen }">
+    <div class="d-flex flex-row align-center">
+        <v-list-subheader>{{ group.name }}</v-list-subheader>
+        <v-spacer></v-spacer>
+        <v-icon
+            class="pe-5"
+            color="grey-darken-2"
+            icon="mdi-pencil"
+            size="small"
+            @click="manageSamplesDialogOpen = true"
+        />
+    </div>
+
+    <v-list-item
+        v-for="analysis in group.analyses"
+        style="margin: 1px 2px;"
+        :key="analysis.id"
+        :value="analysis"
+        :title="analysis.name"
+        color="primary"
+        density="compact"
+        rounded
+    >
+        <template #prepend="{ isSelected }">
+            <v-tooltip
+                v-if="analysis.intensities"
+                text="Custom intensity scores for Peptonizer provided">
+                <template #activator="{ props }">
                     <v-icon
-                        v-if="isOpen"
+                        v-if="isSelected"
                         v-bind="props"
-                    >
-                        mdi-chevron-down
-                    </v-icon>
+                        icon="unipept:file-lightning-outline-check"
+                    />
                     <v-icon
                         v-else
                         v-bind="props"
-                    >
-                        mdi-chevron-right
-                    </v-icon>
-                </template>
-
-                <template #append>
-                    <v-icon
-                        color="grey-darken-3"
-                        icon="mdi-pencil"
-                        size="small"
-                        @click="manageSamplesDialogOpen = true"
+                        icon="unipept:file-lightning-outline"
                     />
                 </template>
-            </v-list-item>
-        </template>
+            </v-tooltip>
 
-        <v-list-item
-            v-for="analysis in group.analyses"
-            :key="analysis.id"
-            :value="analysis"
-            :title="analysis.name"
-            color="primary"
-            density="compact"
-            :prepend-icon="analysis.intensities ? 'unipept:file-lightning-outline' : 'mdi-file-document-outline'"
-        >
-            <template #append>
+            <template v-else>
                 <v-icon
-                    v-if="analysis.status === AnalysisStatus.Pending"
-                    icon="mdi-clock-outline"
+                    v-if="isSelected"
+                    icon="mdi-file-document-check-outline"
                 />
-
-                <v-progress-circular
-                    v-else-if="analysis.status === AnalysisStatus.Running"
-                    color="primary"
-                    size="20"
-                    width="3"
-                    indeterminate
+                <v-icon
+                    v-else
+                    icon="mdi-file-document-outline"
                 />
             </template>
-        </v-list-item>
+        </template>
+        <template #append>
+            <v-icon
+                v-if="analysis.status === AnalysisStatus.Pending"
+                icon="mdi-clock-outline"
+            />
 
-        <v-list-item
-            class="text-primary"
-            title="Add new sample"
-            color="primary"
-            density="compact"
-            prepend-icon="mdi-file-document-plus-outline"
-            :value="`button-${group.id}`"
-            :active="false"
-            @click="manageSamplesDialogOpen = true"
-        />
+            <v-progress-circular
+                v-else-if="analysis.status === AnalysisStatus.Running"
+                color="primary"
+                size="20"
+                width="3"
+                indeterminate
+            />
 
-        <manage-sample-group
-            v-model="manageSamplesDialogOpen"
-            :group="group"
-            @sample:add="addSample"
-            @sample:update="updateSample"
-            @sample:remove="removeSample"
-            @group:update="updateGroup"
-            @group:remove="removeGroup"
-        />
-    </v-list-group>
+            <v-icon
+                v-else-if="analysis.status === AnalysisStatus.Failed"
+                color="error"
+                icon="mdi-alert-circle"
+            />
+        </template>
+    </v-list-item>
+
+    <v-btn
+        style="width: calc(100% - 4px); justify-content: flex-start; margin-left: 2px; margin-right: 2px;"
+        class="mb-3"
+        color="primary"
+        variant="text"
+        @click="manageSamplesDialogOpen = true"
+    >
+        <v-icon size="x-large" style="margin-right: 5px; opacity: 0.70;">mdi-file-document-plus-outline</v-icon>
+        <span style="text-transform: none; font-size: 16px; letter-spacing: normal; font-weight: 400;">
+            Add new sample
+        </span>
+    </v-btn>
+
+    <manage-sample-group-dialog
+        v-model="manageSamplesDialogOpen"
+        :group="group"
+        @sample:add="addSample"
+        @sample:update="updateSample"
+        @sample:remove="removeSample"
+        @group:update="updateGroup"
+        @group:remove="removeGroup"
+    />
 </template>
 
 <script setup lang="ts">
-import ManageSampleGroup from "@/components/sample/ManageSampleGroup.vue";
-import {MultiAnalysisStore} from "@/store/new/MultiAnalysisStore";
+import ManageSampleGroupDialog from "@/components/sample/ManageSampleGroupDialog.vue";
+import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import {ref} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
-import {AnalysisStatus} from "@/store/new/AnalysisStatus";
+import {AnalysisStatus} from "@/store/AnalysisStatus";
 
 defineProps<{
-    group: MultiAnalysisStore;
+    group: GroupAnalysisStore,
+    showDivider?: boolean
 }>();
 
 const emits = defineEmits<{

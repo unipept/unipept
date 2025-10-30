@@ -361,13 +361,13 @@ OPTIONS
                 sys     0m0.038s
                 $ head sample7.csv
                 peptide,taxon_id,taxon_name,taxon_rank
-                AAALNLVPNSTGAAK,2,Bacteria,superkingdom
+                AAALNLVPNSTGAAK,2,Bacteria,domain
                 AAALNTLAHSTGAAK,1678,Bifidobacterium,genus
                 AAALNTLPHSTGAAK,1678,Bifidobacterium,genus
-                AAAMSMLPTSTGAAK,2,Bacteria,superkingdom
+                AAAMSMLPTSTGAAK,2,Bacteria,domain
                 AAANESFGYNEDELVSSDLVGMR,186802,Clostridiales,order
-                AAANYLDLPLYR,2,Bacteria,superkingdom
-                AAAVNLVPNSTGAAK,2,Bacteria,superkingdom
+                AAANYLDLPLYR,2,Bacteria,domain
+                AAAVNLVPNSTGAAK,2,Bacteria,domain
                 AADAAAALGEGLQAFCLPGSVADHR,186802,Clostridiales,order
                 AADAAAALGEGLQAFCLPGSVADTR,186802,Clostridiales,order
             </boxed>
@@ -382,13 +382,13 @@ OPTIONS
                 $ unipept pept2lca <b>--input</b> sample7.dat <b>--output</b> sample7.csv
                 $ head sample7.csv
                 peptide,taxon_id,taxon_name,taxon_rank
-                AAALNLVPNSTGAAK,2,Bacteria,superkingdom
+                AAALNLVPNSTGAAK,2,Bacteria,domain
                 AAALNTLAHSTGAAK,1678,Bifidobacterium,genus
                 AAALNTLPHSTGAAK,1678,Bifidobacterium,genus
-                AAAMSMLPTSTGAAK,2,Bacteria,superkingdom
+                AAAMSMLPTSTGAAK,2,Bacteria,domain
                 AAANESFGYNEDELVSSDLVGMR,186802,Clostridiales,order
-                AAANYLDLPLYR,2,Bacteria,superkingdom
-                AAAVNLVPNSTGAAK,2,Bacteria,superkingdom
+                AAANYLDLPLYR,2,Bacteria,domain
+                AAAVNLVPNSTGAAK,2,Bacteria,domain
                 AADAAAALGEGLQAFCLPGSVADHR,186802,Clostridiales,order
                 AADAAAALGEGLQAFCLPGSVADTR,186802,Clostridiales,order
             </boxed>

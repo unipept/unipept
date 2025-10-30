@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-unipept-card class="pa-0">
         <v-tabs
             style="pointer-events: none;"
             slider-color="primary"
@@ -52,7 +52,7 @@
                     <v-col
                         class="py-0"
                         cols="12"
-                        md="6"
+                        sm="6"
                     >
                         <v-tooltip text="Equate isoleucine (I) and leucine (L) when matching peptides to UniProt entries.">
                             <template #activator="{ props }">
@@ -61,18 +61,19 @@
                                     label="Equate I and L"
                                     v-bind="props"
                                     color="primary"
+                                    hide-details
                                 />
                             </template>
                         </v-tooltip>
                     </v-col>
 
                     <v-col
-                        class="d-flex"
                         cols="12"
-                        md="6"
+                        sm="6"
+                        class="pt-0 d-flex align-center justify-end"
                     >
-                        <v-spacer />
                         <v-btn
+                            class="w-100 w-sm-auto float-sm-right"
                             color="primary"
                             :disabled="!validForm"
                             prepend-icon="mdi-magnify"
@@ -84,7 +85,7 @@
                 </v-row>
             </v-form>
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">

@@ -9,6 +9,7 @@ export default function useAsyncWebWorker<In, Out>(workerFunction: () => Worker)
             };
 
             worker.onerror = (error) => {
+                console.error(error);
                 worker.terminate();
                 reject(error.message);
             };

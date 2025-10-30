@@ -1,16 +1,19 @@
 <template>
     <v-data-table
         v-model:expanded="expanded"
+        v-model:sort-by="sortBy"
         :items="items"
         :headers="headers"
         :items-per-page="10"
         :loading="false"
         item-value="code"
+        density="compact"
         :show-expand="data.ncbiTree !== undefined"
         @update:expanded="singleExpand"
+        mobile-breakpoint="md"
     >
         <template #header.action>
-            <v-tooltip text="Download table as CSV">
+            <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV">
                 <template #activator="{ props }">
                     <v-btn
                         v-bind="props"
@@ -22,14 +25,16 @@
                     />
                 </template>
             </v-tooltip>
+            <div v-else>
+                Download
+            </div>
         </template>
 
         <template #item.count="{ item }">
             <div
                 :style="{
-                    padding: '12px',
-                    background: 'linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ' +
-                        (item.count / item.totalCount) * 100 + '%, rgba(255,255,255,0) ' + (item.count / item.totalCount) * 100 + '%)',
+                    padding: '8px 12px',
+                    background: `linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ${(item.count / item.totalCount) * 100}%, rgb(240, 240, 240) ${(item.count / item.totalCount) * 100}%, rgb(240, 240, 240) 100%)`,
                 }"
             >
                 {{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}
@@ -57,6 +62,19 @@
             <v-tooltip text="Download CSV summary of the filtered functional annotation">
                 <template #activator="{ props }">
                     <v-btn
+                        v-if="$vuetify.display.mobile"
+                        v-bind="props"
+                        color="primary"
+                        density="compact"
+                        variant="tonal"
+                        prepend-icon="mdi-download"
+                        text="CSV"
+                        class="w-100"
+                        style="height: 32px;"
+                        @click="downloadItem(item)"
+                    />
+                    <v-btn
+                        v-else
                         v-bind="props"
                         color="primary"
                         density="compact"
@@ -90,15 +108,16 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, toRaw} from "vue";
+import {ref, watch, toRaw, Ref} from "vue";
 import usePercentage from "@/composables/usePercentage";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import useCsvDownload from "@/composables/useCsvDownload";
-import useOntologyStore from "@/store/new/OntologyStore";
+import useOntologyStore from "@/store/OntologyStore";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 import {DataNodeLike} from "unipept-visualizations";
+import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
@@ -189,7 +208,9 @@ const headers: any = [
         width: "2%",
         sortable: false
     }
-]
+];
+
+const sortBy: Ref<SortItem[]> = ref([{ key: 'count', order: 'desc' }]);
 
 export interface IprResultsTableItem {
     code: string;

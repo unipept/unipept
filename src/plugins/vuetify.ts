@@ -16,6 +16,8 @@ import * as labsComponents from 'vuetify/labs/components'
 
 // Icons
 import { unipeptIconsAliases, unipeptIcons } from './unipept-icons'
+import {VCard} from "vuetify/components/VCard";
+import {VStepperVerticalItem} from "vuetify/labs/VStepperVertical";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -29,10 +31,14 @@ export default createVuetify({
             light: {
                 colors: {
                     primary: "#2196F3",
-                    secondary: "#FFC107"
+                    secondary: "#FFC107",
+                    mainBody: "#F9FAFC"
                 },
             },
         },
+    },
+    aliases: {
+        VUnipeptCard: VCard
     },
     defaults: {
         VTooltip: {
@@ -41,6 +47,20 @@ export default createVuetify({
         },
         VDialog: {
             maxWidth: 1000
+        },
+        VUnipeptCard: {
+            style: {
+                borderRadius: '12px',
+                padding: '4px',
+                textAlign: 'left',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                background: 'white',
+                display: 'flex',
+                flexDirection: 'column'
+            }
+        },
+        VStepperVerticalItem: {
+            bgColor: 'mainBody'
         }
     },
     icons: {

@@ -24,46 +24,23 @@
                         style="max-width: 175px;"
                     >
                 </div>
-                <div>
-                    <v-row>
-                        <v-col
-                            :cols="12"
-                            class="pb-0"
-                        >
-                            <h4>General settings</h4>
-                        </v-col>
-                        <v-col :cols="6">
-                            <v-select
-                                v-model="peptonizerRank"
-                                label="Taxonomic rank"
-                                :items="peptonizerRankOptions"
-                                hint="Choose the taxonomic rank at which the Peptonizer2000 will perform inference."
-                                persistent-hint
-                            />
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col
-                            :cols="12"
-                            class="pb-1"
-                        >
-                            <h4>Filter settings</h4>
-                        </v-col>
-                        <v-col
-                            :cols="12"
-                            class="pt-0"
-                        >
-                            <p>
-                                You can restrict the Peptonizer's analysis to specific taxa by selecting them in the
-                                filter below. Only the selected taxa, along with all their descendant taxa, will be
-                                considered as potential candidates during taxonomic inference.
-                            </p>
-                            <v-card elevation="0">
-                                <taxa-browser v-model="peptonizerStore.selectedTaxa" />
-                            </v-card>
-                        </v-col>
-                    </v-row>
-                </div>
+                <v-row class="mb-4">
+                    <v-col :cols="6">
+                        <h3>Taxonomic rank</h3>
+                        <div class="settings-text">
+                            Choose the taxonomic rank at which the Peptonizer2000 will perform inference. These
+                            ranks correspond to those defined by the NCBI taxonomy.
+                        </div>
+                    </v-col>
+                    <v-col :cols="6">
+                        <v-select
+                            v-model="peptonizerRank"
+                            label="Taxonomic rank"
+                            :items="peptonizerRankOptions"
+                            hide-details
+                        />
+                    </v-col>
+                </v-row>
                 <v-divider class="mb-1" />
                 <v-card-actions class="pb-0">
                     <v-spacer />
@@ -163,19 +140,21 @@
 
 <script setup lang="ts">
 import CountTable from "@/logic/processors/CountTable";
-import {PeptonizerStatus, PeptonizerStore} from "@/store/new/PeptonizerAnalysisStore";
-import {Ref, ref, watch} from "vue";
+import {PeptonizerStatus, PeptonizerStore} from "@/store/PeptonizerAnalysisStore";
+import {onMounted, Ref, ref, toRaw, watch} from "vue";
 import PeptonizerProgress from "@/components/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/results/taxonomic/peptonizer/PeptonizerChart.vue";
-import TaxaBrowser from "@/components/taxon/TaxaBrowser.vue";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import usePeptonizerExport from "@/composables/usePeptonizerExport";
 import useCsvDownload from "@/composables/useCsvDownload";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
+import {ShareableMap} from "shared-memory-datastructures";
+import PeptideData from "@/logic/ontology/peptides/PeptideData";
 
 const props = defineProps<{
     usesDefaultScores: boolean,
     sampleName: string,
+    peptideData: ShareableMap<string, PeptideData>,
     peptideCountTable: CountTable<string>,
     peptideIntensities: Map<string, number> | undefined,
     equateIl: boolean,
@@ -184,7 +163,6 @@ const props = defineProps<{
 
 const {generateExport: generatePeptonizerExport}  = usePeptonizerExport();
 const {download} = useCsvDownload();
-
 
 const peptonizerStep: Ref<number> = ref(1);
 
@@ -198,6 +176,7 @@ const startPeptonizer = async () => {
 
     await props.peptonizerStore.runPeptonizer(
         props.peptideCountTable,
+        toRaw(props.peptideData),
         peptonizerRank.value as NcbiRank,
         props.equateIl,
         props.peptideIntensities,
@@ -233,7 +212,7 @@ const downloadCsv = async (callback: () => void): Promise<void> => {
     callback();
 }
 
-watch(() => props.peptonizerStore.status, () => {
+const setStep = () => {
     const peptonizerStatus = props.peptonizerStore.status;
     if (peptonizerStatus === PeptonizerStatus.Pending) {
         peptonizerStep.value = 1;
@@ -242,9 +221,16 @@ watch(() => props.peptonizerStore.status, () => {
     } else {
         peptonizerStep.value = 3;
     }
-});
+}
+
+watch(() => props.peptonizerStore.status, setStep);
+
+onMounted(setStep);
 </script>
 
 <style scoped>
-
+.settings-text {
+    font-size: 14px;
+    color: rgba(0,0,0,.6);
+}
 </style>

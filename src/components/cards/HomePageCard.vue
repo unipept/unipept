@@ -1,13 +1,14 @@
 <template>
-    <v-card
+    <v-unipept-card
         :elevation="hover ? 6 : 2"
-        class="equal"
+        class="equal pa-0"
     >
         <v-img
             height="300"
             :src="asset"
             :alt="asset"
             :cover="!contain"
+            style="max-height: 300px;"
         />
 
         <v-card-title class="feature-title pa-4">
@@ -17,7 +18,7 @@
         <v-card-text class="mt-4">
             <slot />
         </v-card-text>
-    </v-card>
+    </v-unipept-card>
 </template>
 
 <script setup lang="ts">
@@ -42,7 +43,7 @@ a {
     opacity: 0.70;
     background-color: black;
     color: white;
-    margin-top: -64px;
+    margin-top: -50px;
 }
 
 .equal {

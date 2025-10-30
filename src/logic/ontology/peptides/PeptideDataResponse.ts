@@ -11,7 +11,8 @@ type PeptideDataResponse = {
                     IPR: number
                 },
             data: any
-        }
+        },
+    taxa: number[]
 };
 
 export default PeptideDataResponse;

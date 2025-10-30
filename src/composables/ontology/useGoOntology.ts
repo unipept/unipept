@@ -1,47 +1,37 @@
-import {ref} from "vue";
-import FunctionalDefinition from "@/logic/ontology/functional/FunctionalDefinition";
-
-export enum GoNamespace {
-    BiologicalProcess = "biological process",
-    CellularComponent = "cellular component",
-    MolecularFunction = "molecular function"
-}
+import GoResponseCommunicator from "@/logic/communicators/unipept/functional/GoResponseCommunicator";
+import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
+import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
+import {markRaw} from "vue";
 
 export default function useGoOntology(
-    baseUrl = "https://api.unipept.ugent.be",
-    batchSize = 100
+    baseUrl = DEFAULT_API_BASE_URL,
+    batchSize = DEFAULT_ONTOLOGY_BATCH_SIZE
 ) {
-    const ontology = new Map<string, FunctionalDefinition>();
+    const ontology = new Map<string, FunctionalDefinition<GoNamespace>>();
 
     const update = async (
         codes: string[]
     ) => {
         codes = codes.filter(c => !ontology.has(c));
 
-        for(let i = 0; i < codes.length; i += batchSize) {
-            const response = await fetch(`${baseUrl}/private_api/goterms`, {
-                method: "POST",
-                body: JSON.stringify({
-                    goterms: codes.slice(i, i + batchSize)
-                }),
-                headers: { "Content-Type": "application/json" }
-            }).then(r => r.json());
+        const goCommunicator = new GoResponseCommunicator(baseUrl, batchSize);
+        const responses = await goCommunicator.getResponses(codes);
 
-            for (const definition of response) {
-                ontology.set(
-                    definition.code,
-                    {
-                        code: definition.code,
-                        name: definition.name,
-                        namespace: definition.namespace
-                    }
-                );
-            }
+        for (const definition of responses) {
+            ontology.set(
+                definition.code,
+                {
+                    code: definition.code,
+                    name: definition.name,
+                    namespace: definition.namespace
+                }
+            );
         }
     }
 
     return {
-        ontology,
+        ontology: markRaw(ontology),
         update
     }
 }
