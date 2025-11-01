@@ -36,7 +36,7 @@
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
-    "@babel/types": "^7.21.4",
+    "@babel/types": "^7.28.5",
     "@types/node": "^24.0.8",
     "@types/webfontloader": "^1.6.35",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
