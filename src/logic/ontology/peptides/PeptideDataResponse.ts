@@ -1,6 +1,6 @@
 type PeptideDataResponse = {
     lca: number,
-    lineage: number[],
+    lineage: (number | null)[],
     fa:
         {
             counts:
