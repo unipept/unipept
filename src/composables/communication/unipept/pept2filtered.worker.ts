@@ -1,6 +1,6 @@
 import {ShareableMap} from "shared-memory-datastructures";
 import {Pept2filteredData} from "@/composables/communication/unipept/usePept2filtered";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import {parallelLimit} from "async";
 import {Filter, FilterType} from "@/store/CustomFilterStore";
@@ -23,7 +23,7 @@ const process = async ({
     batchSize,
     parallelRequests
 }: Pept2filteredData) => {
-    const result = new ShareableMap<string, PeptideData>({ serializer: new PeptideDataSerializer() });
+    const result = new ShareableMap<string, PeptideDataV2>({ serializer: new PeptideDataSerializer() });
 
     const requests = [];
     for (let i = 0; i < peptides.length; i += batchSize) {
@@ -40,7 +40,7 @@ const process = async ({
             }).then(r => r.json());
 
             for (const peptide of response.peptides) {
-                result.set(peptide.sequence, PeptideData.createFromPeptideDataResponse(peptide));
+                result.set(peptide.sequence, PeptideDataV2.createFromPeptideDataResponse(peptide));
             }
         });
     }

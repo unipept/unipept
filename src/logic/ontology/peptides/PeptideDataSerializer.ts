@@ -1,12 +1,13 @@
-import PeptideData from "./PeptideData";
+import PeptideDataV2 from "./PeptideDataV2";
 import {Serializable} from "shared-memory-datastructures";
+import PeptideDataV1 from "@/logic/ontology/peptides/PeptideDataV1";
 
-export default class PeptideDataSerializer implements Serializable<PeptideData> {
-    public decode(buffer: Uint8Array): PeptideData {
-        return new PeptideData(new DataView(buffer.buffer));
+export default class PeptideDataSerializer implements Serializable<PeptideDataV2> {
+    public decode(buffer: Uint8Array): PeptideDataV2 {
+        return new PeptideDataV2(new DataView(buffer.buffer));
     }
 
-    public encode(object: PeptideData, destination: Uint8Array): number {
+    public encode(object: PeptideDataV2 | PeptideDataV1, destination: Uint8Array): number {
         const destinationView = new DataView(destination.buffer, destination.byteOffset, destination.byteLength);
         for (let i = 0; i < object.dataView.byteLength; i++) {
             destinationView.setUint8(i, object.dataView.getUint8(i));
@@ -14,7 +15,7 @@ export default class PeptideDataSerializer implements Serializable<PeptideData> 
         return object.dataView.byteLength;
     }
 
-    public maximumLength(object: PeptideData): number {
+    public maximumLength(object: PeptideDataV2 | PeptideDataV1): number {
         return object.dataView.byteLength;
     }
 }

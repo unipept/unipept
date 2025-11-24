@@ -1,7 +1,7 @@
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import {markRaw, ref, shallowRef, toRaw} from "vue";
 import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import {Filter} from "@/store/CustomFilterStore";
 import Pept2filteredWebWorker from "./pept2filtered.worker.ts?worker&inline";
@@ -25,7 +25,7 @@ export default function usePept2filtered(
     batchSize = 500,
     parallelRequests = 5,
 ) {
-    const peptideData = shallowRef<ShareableMap<string, PeptideData>>();
+    const peptideData = shallowRef<ShareableMap<string, PeptideDataV2>>();
 
     const { post } = useAsyncWebWorker<Pept2filteredData, Pept2filteredWorkerOutput>(
         () => new Pept2filteredWebWorker()
@@ -45,7 +45,7 @@ export default function usePept2filtered(
             parallelRequests
         });
 
-        peptideData.value = markRaw(ShareableMap.fromTransferableState<string, PeptideData>(peptToDataTransferable, { serializer: new PeptideDataSerializer() }));
+        peptideData.value = markRaw(ShareableMap.fromTransferableState<string, PeptideDataV2>(peptToDataTransferable, { serializer: new PeptideDataSerializer() }));
     }
 
     return {

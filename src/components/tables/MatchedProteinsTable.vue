@@ -203,7 +203,7 @@
 
 <script setup lang="ts">
 import {computed, onMounted, ref, Ref, ComputedRef} from 'vue';
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import useOntologyStore from "@/store/OntologyStore";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
@@ -291,7 +291,7 @@ const computeItems = async () => {
     });
 }
 
-const peptideData: ComputedRef<PeptideData | undefined> = computed(() => {
+const peptideData: ComputedRef<PeptideDataV2 | undefined> = computed(() => {
     return props.assay.peptideToData!.get(props.assay.peptide);
 });
 

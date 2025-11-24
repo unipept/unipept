@@ -149,12 +149,12 @@ import usePeptonizerExport from "@/composables/usePeptonizerExport";
 import useCsvDownload from "@/composables/useCsvDownload";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
 import {ShareableMap} from "shared-memory-datastructures";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 
 const props = defineProps<{
     usesDefaultScores: boolean,
     sampleName: string,
-    peptideData: ShareableMap<string, PeptideData>,
+    peptideData: ShareableMap<string, PeptideDataV2>,
     peptideCountTable: CountTable<string>,
     peptideIntensities: Map<string, number> | undefined,
     equateIl: boolean,

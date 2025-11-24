@@ -1,4 +1,4 @@
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideTrust from "@/types/PeptideTrust";
 import CountTable from "@/logic/processors/CountTable";
@@ -9,7 +9,7 @@ export default function usePeptideTrustProcessor() {
 
     const process = (
         countTable: CountTable<string>,
-        peptideData: ShareableMap<string, PeptideData>
+        peptideData: ShareableMap<string, PeptideDataV2>
     ): void => {
         let matchedPeptides = 0;
         const missedPeptides: string[] = [];

@@ -1,6 +1,6 @@
 import useFunctionalProcessor from "@/composables/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 import {markRaw, ref, shallowRef} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
 import CountTable from "@/logic/processors/CountTable";
@@ -14,7 +14,7 @@ export default function useInterproProcessor() {
 
     const process = async (
         peptideCounts: CountTable<string>,
-        peptideData: ShareableMap<string, PeptideData>,
+        peptideData: ShareableMap<string, PeptideDataV2>,
         percentage = 5
     ) => {
         const peptideDataTransferable = peptideData.toTransferableState();

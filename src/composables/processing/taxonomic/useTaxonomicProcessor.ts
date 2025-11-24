@@ -1,7 +1,7 @@
 import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import {markRaw, ref, shallowRef} from "vue";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 import TaxonomicProcessorWebWorker from "../workers/taxonomicProcessor.worker.ts?worker";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 
@@ -28,7 +28,7 @@ export default function useTaxonomicProcessor() {
 
     const process = async (
         peptideCounts: CountTable<string>,
-        peptideData: ShareableMap<string, PeptideData>
+        peptideData: ShareableMap<string, PeptideDataV2>
     ) => {
         const processed = await post({
             peptideCounts: new Map(peptideCounts.counts.entries()),
