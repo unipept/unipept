@@ -1,6 +1,9 @@
 import JSZip from "jszip";
-import {ProjectImportData, SerializedStateData} from "@/composables/useProjectImport";
-import {AppStateStoreImport} from "@/store/AppStateStore";
+import { ProjectImportData, SerializedStateData } from "@/composables/useProjectImport";
+import { AppStateStoreImport } from "@/store/AppStateStore";
+import { ProjectUpgradeManager, VersionedProject } from "@/logic/ProjectUpgradeManager";
+import { ProjectAnalysisStoreImport } from "@/store/ProjectAnalysisStore";
+import { TransferableState } from "shared-memory-datastructures";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler
@@ -27,7 +30,11 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
         throw new Error("Failed to find metadata file");
     }
 
-    const metadata = JSON.parse(await metadataFile.async("string"));
+    const metadata = JSON.parse(await metadataFile.async("string")) as ProjectAnalysisStoreImport & VersionedProject;
+
+    // If the user is trying to import an older Unipept project, we need to upgrade it here.
+    const projectUpgradeManager = new ProjectUpgradeManager();
+    const upgradedProject = projectUpgradeManager.upgradeIfNeeded(metadata) as ProjectAnalysisStoreImport;
 
     const buffers = zipper.folder("buffers");
 
@@ -35,16 +42,20 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
         throw new Error("Failed to find buffers folder");
     }
 
-    for (const group of metadata.groups) {
+    for (const group of upgradedProject.groups) {
         for (const analysis of group.analyses) {
             // Update the buffer assignments
             const indexBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.index`)?.async("arraybuffer") || undefined);
             const dataBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.data`)?.async("arraybuffer") || undefined);
 
-            analysis.peptideToDataTransferable = {
-                indexBuffer,
-                dataBuffer
-            };
+            if (indexBuffer && dataBuffer) {
+                analysis.peptideToDataTransferable = {
+                    indexBuffer: indexBuffer as SharedArrayBuffer,
+                    dataBuffer: dataBuffer as SharedArrayBuffer
+                } as TransferableState;
+            } else {
+                analysis.peptideToDataTransferable = undefined;
+            }
         }
     }
 
@@ -53,6 +64,7 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
     let appState: AppStateStoreImport;
     if (appStateFile) {
         appState = JSON.parse(await appStateFile.async("string"));
+        console.log(appState);
     } else {
         // Set appState to default values
         appState = {
@@ -64,7 +76,7 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
     }
 
     return {
-        project: metadata,
+        project: upgradedProject,
         appState: appState
     };
 }
