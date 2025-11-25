@@ -64,7 +64,6 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
     let appState: AppStateStoreImport;
     if (appStateFile) {
         appState = JSON.parse(await appStateFile.async("string"));
-        console.log(appState);
     } else {
         // Set appState to default values
         appState = {
