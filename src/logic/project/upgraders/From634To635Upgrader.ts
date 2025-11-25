@@ -89,7 +89,6 @@ export class From634To635Upgrader implements ProjectUpgrader {
 
                 for (const [peptide, v1] of oldMap) {
                     const response = v1.toPeptideDataResponse();
-                    console.log(response);
                     const v2 = PeptideDataV2.createFromPeptideDataResponse(response);
                     newMap.set(peptide, v2);
                 }
