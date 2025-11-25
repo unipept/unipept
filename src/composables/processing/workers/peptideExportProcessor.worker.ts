@@ -2,7 +2,7 @@ import {PeptideExportData} from "@/composables/usePeptideExport";
 import {ShareableMap} from "shared-memory-datastructures";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import usePercentage from "@/composables/usePercentage";
-import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
+import PeptideDataSerializerV2 from "@/logic/ontology/peptides/PeptideDataSerializerV2";
 import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
@@ -53,7 +53,7 @@ const process = async({
 
     const { displayPercentage } = usePercentage();
 
-    const peptideToData = ShareableMap.fromTransferableState<string, PeptideDataV2>(peptideDataTransferable, {serializer: new PeptideDataSerializer()});
+    const peptideToData = ShareableMap.fromTransferableState<string, PeptideDataV2>(peptideDataTransferable, {serializer: new PeptideDataSerializerV2()});
 
     // Make sure that the separator is not part of any of the values themselves
     const sanitizeRegex = new RegExp(`${separator}`, "g");

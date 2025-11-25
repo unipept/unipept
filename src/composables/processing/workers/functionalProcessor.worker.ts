@@ -1,6 +1,6 @@
 import {ShareableMap} from "shared-memory-datastructures";
 import {FunctionalProcessorData} from "@/composables/processing/functional/useFunctionalProcessor";
-import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
+import PeptideDataSerializerV2 from "@/logic/ontology/peptides/PeptideDataSerializerV2";
 import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 
 self.onunhandledrejection = (event) => {
@@ -19,7 +19,7 @@ const process = async ({
     termPrefix,
     proteinCountProperty
 }: FunctionalProcessorData ) => {
-    const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideDataV2>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
+    const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideDataV2>(peptideDataTransferable, { serializer: new PeptideDataSerializerV2()});
     const peptideCounts = ShareableMap.fromTransferableState<string, number>(countsMapTransferable);
 
     // First we count the amount of peptides per unique code. Afterwards, we can fetch definitions for all these

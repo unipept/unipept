@@ -1,6 +1,6 @@
 import {ShareableMap} from "shared-memory-datastructures";
 import {TaxonomicProcessorData} from "@/composables/processing/taxonomic/useTaxonomicProcessor";
-import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
+import PeptideDataSerializerV2 from "@/logic/ontology/peptides/PeptideDataSerializerV2";
 import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
 
 self.onunhandledrejection = (event) => {
@@ -16,7 +16,7 @@ const process = async ({
    peptideCounts,
    peptideDataTransferable
 }: TaxonomicProcessorData ) => {
-    const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideDataV2>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
+    const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideDataV2>(peptideDataTransferable, { serializer: new PeptideDataSerializerV2()});
 
     const countsPerLca = new Map<number, number>();
     const lcaToPeptides: Map<number, string[]> = new Map();

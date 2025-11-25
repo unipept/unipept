@@ -1,9 +1,10 @@
 import JSZip from "jszip";
 import { ProjectImportData, SerializedStateData } from "@/composables/useProjectImport";
 import { AppStateStoreImport } from "@/store/AppStateStore";
-import { ProjectUpgradeManager, VersionedProject } from "@/logic/ProjectUpgradeManager";
+import { ProjectUpgradeManager } from "@/logic/project/ProjectUpgradeManager";
 import { ProjectAnalysisStoreImport } from "@/store/ProjectAnalysisStore";
 import { TransferableState } from "shared-memory-datastructures";
+import { ArrayBufferUtils } from "@/logic/utils/ArrayBufferUtils";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler
@@ -14,15 +15,12 @@ self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
 
-const arrayBufferToShared = (buffer: ArrayBuffer | undefined): SharedArrayBuffer | undefined => {
-    if (!buffer) return undefined;
-    const sharedBuffer = new SharedArrayBuffer(buffer.byteLength);
-    new Uint8Array(sharedBuffer).set(new Uint8Array(buffer));
-    return sharedBuffer;
-};
-
 const process = async({ input }: ProjectImportData): Promise<SerializedStateData> => {
-    const zipper = await JSZip.loadAsync(input);
+    let zipper = await JSZip.loadAsync(input);
+
+    // If the user is trying to import an older Unipept project, we need to upgrade it here.
+    const projectUpgradeManager = new ProjectUpgradeManager();
+    zipper = await projectUpgradeManager.upgradeIfNeeded(zipper);
 
     const metadataFile = zipper.file("metadata.json");
 
@@ -30,11 +28,9 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
         throw new Error("Failed to find metadata file");
     }
 
-    const metadata = JSON.parse(await metadataFile.async("string")) as ProjectAnalysisStoreImport & VersionedProject;
+    const metadata = JSON.parse(await metadataFile.async("string")) as ProjectAnalysisStoreImport;
 
-    // If the user is trying to import an older Unipept project, we need to upgrade it here.
-    const projectUpgradeManager = new ProjectUpgradeManager();
-    const upgradedProject = projectUpgradeManager.upgradeIfNeeded(metadata) as ProjectAnalysisStoreImport;
+    const upgradedProject = metadata;
 
     const buffers = zipper.folder("buffers");
 
@@ -44,18 +40,22 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
 
     for (const group of upgradedProject.groups) {
         for (const analysis of group.analyses) {
-            // Update the buffer assignments
-            const indexBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.index`)?.async("arraybuffer") || undefined);
-            const dataBuffer = arrayBufferToShared(await buffers.file(`${analysis.id}.data`)?.async("arraybuffer") || undefined);
+            const arrayIndexBuffer = await buffers.file(`${analysis.id}.index`)?.async("arraybuffer");
+            const arrayDataBuffer = await buffers.file(`${analysis.id}.data`)?.async("arraybuffer");
 
-            if (indexBuffer && dataBuffer) {
-                analysis.peptideToDataTransferable = {
-                    indexBuffer: indexBuffer as SharedArrayBuffer,
-                    dataBuffer: dataBuffer as SharedArrayBuffer
-                } as TransferableState;
-            } else {
-                analysis.peptideToDataTransferable = undefined;
+            if (!arrayIndexBuffer || !arrayDataBuffer) {
+                throw new Error(`Failed to load buffers for analysis with id '${analysis.id}'. The project is in an invalid state.`);
             }
+
+            // Update the buffer assignments
+            const indexBuffer = ArrayBufferUtils.arrayBufferToShared(arrayIndexBuffer);
+            const dataBuffer = ArrayBufferUtils.arrayBufferToShared(arrayDataBuffer);
+            
+
+            analysis.peptideToDataTransferable = {
+                indexBuffer: indexBuffer as SharedArrayBuffer,
+                dataBuffer: dataBuffer as SharedArrayBuffer
+            } as TransferableState;
         }
     }
 
