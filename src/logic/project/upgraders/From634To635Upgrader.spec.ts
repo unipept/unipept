@@ -82,7 +82,7 @@ describe("From634To635Upgrader.upgrade", () => {
         const upgrader = new From634To635Upgrader();
 
         await expect(upgrader.upgrade(zip)).rejects.toThrow(
-            "Failed to find buffers folder while upgrading project from 6.3.4 to 6.3.5."
+            "Failed to find peptide data buffers for analysis 'a1' while upgrading project from 6.3.4 to 6.3.5."
         );
     });
 
