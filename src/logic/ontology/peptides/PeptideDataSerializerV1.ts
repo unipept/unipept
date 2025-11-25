@@ -1,4 +1,3 @@
-import PeptideDataV2 from "./PeptideDataV2";
 import {Serializable} from "shared-memory-datastructures";
 import PeptideDataV1 from "@/logic/ontology/peptides/PeptideDataV1";
 
