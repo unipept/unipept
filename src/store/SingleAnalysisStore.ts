@@ -15,8 +15,8 @@ import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
-import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
-import PeptideDataSerializerV2 from "@/logic/ontology/peptides/PeptideDataSerializerV2";
+import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 
 // Static queue for processing analyses sequentially
 class AnalysisQueue {
@@ -289,7 +289,7 @@ const useSingleAnalysisStore = (
         databaseVersion.value = storeImport.databaseVersion;
 
         if (storeImport.peptideToDataTransferable) {
-            peptideToData.value = markRaw(ShareableMap.fromTransferableState<string, PeptideDataV2>(storeImport.peptideToDataTransferable, { serializer: new PeptideDataSerializerV2() }));
+            peptideToData.value = markRaw(ShareableMap.fromTransferableState<string, PeptideData>(storeImport.peptideToDataTransferable, { serializer: new PeptideDataSerializer() }));
         }
 
         if (storeImport.peptonizer) {

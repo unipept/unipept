@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import PeptideDataV2 from "./PeptideDataV2";
+import PeptideData from "./PeptideData";
 import PeptideDataResponse from "./PeptideDataResponse";
 
 describe("PeptideData", () => {
@@ -19,8 +19,8 @@ describe("PeptideData", () => {
             taxa: [17, 45, 23]
         };
 
-        const peptideData = PeptideDataV2.createFromPeptideDataResponse(response);
-        expect(peptideData).toBeInstanceOf(PeptideDataV2);
+        const peptideData = PeptideData.createFromPeptideDataResponse(response);
+        expect(peptideData).toBeInstanceOf(PeptideData);
         expect(peptideData.lca).toBe(1);
         expect(peptideData.lineage).toEqual([1, 2, 3, -1, null, -1, -1, null, null, -1, null, -1, -1, null, -1, null, null, -1, null, -1, -1, null, -1, -1, -1, -1, -1]);
         expect(peptideData.faCounts.all).toBe(10);
@@ -50,8 +50,8 @@ describe("PeptideData", () => {
             taxa: [59, 47, 78]
         };
 
-        const peptideData = PeptideDataV2.createFromPeptideDataResponse(response);
-        const deserializedData = new PeptideDataV2(peptideData.dataView);
+        const peptideData = PeptideData.createFromPeptideDataResponse(response);
+        const deserializedData = new PeptideData(peptideData.dataView);
 
         expect(deserializedData.lca).toBe(peptideData.lca);
         expect(deserializedData.lineage).toEqual(peptideData.lineage);

@@ -1,13 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import JSZip from "jszip";
-import { From634To635Upgrader } from "@/logic/project/upgraders/From634To635Upgrader";
+import {
+    From634To635Upgrader,
+    PeptideData_v6_3_4,
+    PeptideDataSerializer_v6_3_4
+} from "@/logic/project/upgraders/From634To635Upgrader";
 import { SemVer } from "@/logic/project/SemVer";
 import { ShareableMap, type TransferableState } from "shared-memory-datastructures";
-import PeptideDataV1 from "@/logic/ontology/peptides/PeptideDataV1";
-import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
+import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataResponse from "@/logic/ontology/peptides/PeptideDataResponse";
-import PeptideDataSerializerV1 from "@/logic/ontology/peptides/PeptideDataSerializerV1";
-import PeptideDataSerializerV2 from "@/logic/ontology/peptides/PeptideDataSerializerV2";
+import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import { ArrayBufferUtils } from "@/logic/utils/ArrayBufferUtils";
 
 // Helper to create basic metadata for a single analysis
@@ -136,11 +138,11 @@ describe("From634To635Upgrader.upgrade", () => {
             }
         };
 
-        const serializerV1 = new PeptideDataSerializerV1();
-        const mapV1 = new ShareableMap<string, PeptideDataV1>({ serializer: serializerV1 });
+        const serializerV1 = new PeptideDataSerializer_v6_3_4();
+        const mapV1 = new ShareableMap<string, PeptideData_v6_3_4>({ serializer: serializerV1 });
 
         for (const [pep, resp] of Object.entries(responses)) {
-            mapV1.set(pep, PeptideDataV1.createFromPeptideDataResponse(resp));
+            mapV1.set(pep, PeptideData_v6_3_4.createFromPeptideDataResponse(resp));
         }
 
         const transferable = mapV1.toTransferableState();
@@ -176,9 +178,9 @@ describe("From634To635Upgrader.upgrade", () => {
             dataBuffer: newDataShared
         };
 
-        const mapV2 = ShareableMap.fromTransferableState<string, PeptideDataV2>(
+        const mapV2 = ShareableMap.fromTransferableState<string, PeptideData>(
             newTransferable,
-            { serializer: new PeptideDataSerializerV2() }
+            { serializer: new PeptideDataSerializer() }
         );
 
         // The keys should be preserved
@@ -189,7 +191,7 @@ describe("From634To635Upgrader.upgrade", () => {
             const original = responses[pep];
             const roundTripped = v2.toPeptideDataResponse();
             expect(roundTripped.lca).toBe(original.lca);
-            // PeptideDataV2 always has a fixed-length lineage, so the original
+            // PeptideData always has a fixed-length lineage, so the original
             // lineage must match the prefix of the upgraded lineage.
             expect(roundTripped.lineage.slice(0, original.lineage.length)).toEqual(original.lineage);
             expect(roundTripped.fa.counts).toEqual(original.fa.counts);

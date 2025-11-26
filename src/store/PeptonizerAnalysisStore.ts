@@ -6,7 +6,7 @@ import {PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} fr
 import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcessor";
 import useOntologyStore from "@/store/OntologyStore";
 import {ShareableMap} from "shared-memory-datastructures";
-import PeptideDataV2 from "@/logic/ontology/peptides/PeptideDataV2";
+import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {Filter} from "@/store/CustomFilterStore";
 
 export enum PeptonizerStatus {
@@ -100,7 +100,7 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
 
     const runPeptonizer = async (
         peptideCountTable: CountTable<string>,
-        peptideToData: ShareableMap<string, PeptideDataV2>,
+        peptideToData: ShareableMap<string, PeptideData>,
         rank: NcbiRank,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
