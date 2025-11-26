@@ -10,6 +10,7 @@ import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 export interface Pept2filteredData {
     peptides: string[],
     equate: boolean,
+    blacklist_crap: boolean,
     filter: Filter | undefined,
     baseUrl: string,
     batchSize: number,
@@ -34,11 +35,13 @@ export default function usePept2filtered(
     const process = async (
         peptides: string[],
         equate: boolean,
+        blacklist_crap: boolean,
         filter: Filter | undefined
     ) => {
         const { peptToDataTransferable } = await post({
             peptides,
             equate,
+            blacklist_crap,
             filter: toRaw(filter),
             baseUrl,
             batchSize,

@@ -18,6 +18,7 @@ self.onmessage = async (event) => {
 const process = async ({
     peptides,
     equate,
+    blacklist_crap,
     filter,
     baseUrl,
     batchSize,
@@ -33,6 +34,7 @@ const process = async ({
                 body: JSON.stringify({
                     peptides: peptides.slice(i, i + batchSize),
                     equate_il: equate,
+                    blacklist_crap: blacklist_crap,
                     report_taxa: true,
                     ...constructFilterJson(filter)
                 }),
