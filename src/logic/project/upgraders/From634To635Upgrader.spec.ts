@@ -18,7 +18,12 @@ function createMetadata(version: string, analysisIds: string[] = ["a1"]): any {
         version,
         groups: [
             {
-                analyses: analysisIds.map((id) => ({ id }))
+                analyses: analysisIds.map((id) => ({ id, config: {
+                    equate: false,
+                    filter: false,
+                    missed: true,
+                    database: "Test"
+                }}))
             }
         ]
     };
@@ -111,7 +116,7 @@ describe("From634To635Upgrader.upgrade", () => {
         );
     });
 
-    it("upgrades peptide data buffers from V1 to V2 and updates project version", async () => {
+    it("upgrades peptide data buffers from V1 to V2, updates project version and analysis configs", async () => {
         const metadata = createMetadata("6.3.4", ["a1"]);
         const zip = await createZipWithMetadata(metadata);
         const buffersFolder = zip.folder("buffers")!;
@@ -164,6 +169,14 @@ describe("From634To635Upgrader.upgrade", () => {
         // Metadata version should be updated to 6.3.5
         const updatedMetadata = JSON.parse(await upgraded.file("metadata.json")!.async("string"));
         expect(updatedMetadata.version).toBe("6.3.5");
+
+        // Analysis config should be the same and useCrap should be set to false
+        const updatedAnalysisConfig = updatedMetadata.groups[0].analyses[0].config;
+        expect(updatedAnalysisConfig.equate).toBe(false);
+        expect(updatedAnalysisConfig.filter).toBe(false);
+        expect(updatedAnalysisConfig.missed).toBe(true);
+        expect(updatedAnalysisConfig.database).toBe("Test");
+        expect(updatedAnalysisConfig.useCrap).toBe(false);
 
         // Reconstruct the new map from upgraded buffers as V2 to validate data
         const upgradedBuffersFolder = upgraded.folder("buffers")!;
