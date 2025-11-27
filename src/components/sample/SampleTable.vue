@@ -20,10 +20,10 @@
             />
         </template>
 
-        <template #header.missed>
+        <template #header.crap>
             <v-tooltip width="30%">
                 <template #activator="{ props: tooltip }">
-                    <span>Advanced missed cleavages</span>
+                    <span>Filter out cRAP</span>
                     <v-icon
                         v-bind="tooltip"
                         class="ms-1"
@@ -32,9 +32,7 @@
                     />
                 </template>
                 <span>
-                    Missed cleavage handling is now always enabled. Because of a change in Unipept's underlying search
-                    engine, enabling missed cleavage handling no longer results in a performance penalty. As a result,
-                    this configuration option will be removed in a future release.
+                    Remove common contaminants from the sample using the cRAP database (https://www.thegpm.org/crap/)
                 </span>
             </v-tooltip>
         </template>
@@ -71,12 +69,11 @@
             />
         </template>
 
-        <template #item.missed="{ item }">
+        <template #item.crap="{ item }">
             <v-checkbox
-                v-model="item.config.missed"
+                v-model="item.config.useCrap"
                 color="primary"
                 density="compact"
-                disabled
                 hide-details
             />
         </template>
@@ -205,9 +202,9 @@ const headers: any = [
         value: "filter",
     },
     {
-        title: "Advanced missed cleavages",
+        title: "Use cRAP",
         align: "start",
-        value: "missed",
+        value: "crap",
     },
     {
         title: "Database",
@@ -236,6 +233,7 @@ export interface SampleTableItem {
         equate: boolean;
         filter: boolean;
         missed: boolean;
+        useCrap: boolean;
         database: string;
     };
     intensities: Map<string, number> | undefined;

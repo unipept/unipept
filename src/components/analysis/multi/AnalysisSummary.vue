@@ -58,14 +58,14 @@
                         </span>
                     </div>
 
-                    <div class="mt-1">
+                    <div class="mt-1 d-flex">
                         <v-icon
                             class="ms-1"
-                            :icon="analysis.config.missed ? 'mdi-check-circle' : 'mdi-close-circle'"
-                            :color="analysis.config.missed ? 'success' : 'error'"
+                            :icon="analysis.config.useCrap ? 'mdi-check-circle' : 'mdi-close-circle'"
+                            :color="analysis.config.useCrap ? 'success' : 'error'"
                         />
-                        <span>
-                            Advanced missed cleavages
+                        <span class="ms-1">
+                            Filter out cRAP
                         </span>
                         <v-tooltip width="30%">
                             <template #activator="{ props: tooltip }">
@@ -77,9 +77,7 @@
                                 />
                             </template>
                             <span>
-                                Missed cleavage handling is now always enabled. Because of a change in Unipept's underlying search
-                                engine, enabling missed cleavage handling no longer results in a performance penalty. As a result,
-                                this configuration option will be removed in a future release.
+                                Remove common contaminants from the sample using the cRAP database (https://www.thegpm.org/crap/)
                             </span>
                         </v-tooltip>
                     </div>

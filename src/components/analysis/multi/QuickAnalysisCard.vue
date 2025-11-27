@@ -36,12 +36,11 @@
             />
             <div class="d-flex align-center">
                 <v-checkbox
-                    v-model="config.missed"
+                    v-model="config.useCrap"
                     color="primary"
-                    label="Enable missed cleavages"
+                    label="Filter out cRAP"
                     density="compact"
                     hide-details
-                    disabled
                 />
                 <v-tooltip width="30%">
                     <template #activator="{ props: tooltip }">
@@ -53,9 +52,7 @@
                         />
                     </template>
                     <span>
-                        Missed cleavage handling is now always enabled. Because of a change in Unipept's underlying search
-                        engine, enabling missed cleavage handling no longer results in a performance penalty. As a result,
-                        this configuration option will be removed in a future release.
+                        Remove common contaminants from the sample using the cRAP database (https://www.thegpm.org/crap/)
                     </span>
                 </v-tooltip>
             </div>
@@ -87,6 +84,7 @@ const config = ref<AnalysisConfig>({
     equate: true,
     filter: true,
     missed: true,
+    useCrap: false,
     database: "UniProtKB"
 });
 
