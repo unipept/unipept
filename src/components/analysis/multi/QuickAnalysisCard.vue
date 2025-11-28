@@ -83,7 +83,6 @@ const rawPeptides = ref("");
 const config = ref<AnalysisConfig>({
     equate: true,
     filter: true,
-    missed: true,
     useCrap: false,
     database: "UniProtKB"
 });

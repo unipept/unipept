@@ -35,13 +35,13 @@ export default function usePept2filtered(
     const process = async (
         peptides: string[],
         equate: boolean,
-        blacklist_crap: boolean,
+        useCrap: boolean,
         filter: Filter | undefined
     ) => {
         const { peptToDataTransferable } = await post({
             peptides,
             equate,
-            blacklist_crap,
+            useCrap,
             filter: toRaw(filter),
             baseUrl,
             batchSize,

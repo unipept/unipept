@@ -113,10 +113,16 @@ export class From634To635Upgrader implements ProjectUpgrader {
         // Update the metadata version of this project to 6.3.5
         updatedMetadata.version = "6.3.5";
 
-        // Update the config of this project (disable useCrap, as it was not present in earlier versions)
+        // Update the config of this project
+        // Remove missed and disable useCrap, as it was not present in earlier versions
         for (const group of updatedMetadata.groups) {
             for (const analysis of group.analyses) {
-                analysis.config.useCrap = false;
+                analysis.config = {
+                    equate: analysis.config.equate,
+                    filter: analysis.config.filter,
+                    useCrap: false,
+                    database: analysis.config.database
+                }
             }
         }
 

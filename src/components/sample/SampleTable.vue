@@ -232,7 +232,6 @@ export interface SampleTableItem {
     config: {
         equate: boolean;
         filter: boolean;
-        missed: boolean;
         useCrap: boolean;
         database: string;
     };

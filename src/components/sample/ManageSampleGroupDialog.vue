@@ -212,7 +212,7 @@ const addSamples = (newSamples: SampleTableItem[]) => {
         newSamples.forEach(s => s.config = {
             equate: samples.value[lastSampleIndex].config.equate,
             filter: samples.value[lastSampleIndex].config.filter,
-            missed: samples.value[lastSampleIndex].config.missed,
+            useCrap: samples.value[lastSampleIndex].config.useCrap,
             database: samples.value[lastSampleIndex].config.database
         });
     }
@@ -236,7 +236,7 @@ const isDirty = (original: SingleAnalysisStore, current: SampleTableItem): boole
     return original.name !== current.name
         || original.config.equate !== current.config.equate
         || original.config.filter !== current.config.filter
-        || original.config.missed !== current.config.missed
+        || original.config.useCrap !== current.config.useCrap
         || original.config.database !== current.config.database;
 };
 </script>

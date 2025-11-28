@@ -174,7 +174,7 @@ describe("From634To635Upgrader.upgrade", () => {
         const updatedAnalysisConfig = updatedMetadata.groups[0].analyses[0].config;
         expect(updatedAnalysisConfig.equate).toBe(false);
         expect(updatedAnalysisConfig.filter).toBe(false);
-        expect(updatedAnalysisConfig.missed).toBe(true);
+        expect(updatedAnalysisConfig.missed).toBe(undefined);
         expect(updatedAnalysisConfig.database).toBe("Test");
         expect(updatedAnalysisConfig.useCrap).toBe(false);
 
