@@ -277,7 +277,7 @@ const sample = ref<SampleTableItem>({
     config: {
         equate: true,
         filter: true,
-        missed: true,
+        useCrap: false,
         database: "UniProtKB"
     },
     intensities: undefined
@@ -349,7 +349,7 @@ const uploadFilesInBulk = async function() {
             config: {
                 equate: true,
                 filter: true,
-                missed: true,
+                useCrap: false,
                 database: "UniProtKB"
             },
             intensities: undefined

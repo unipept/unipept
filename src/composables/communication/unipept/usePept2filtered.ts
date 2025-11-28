@@ -1,5 +1,5 @@
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
-import {markRaw, ref, shallowRef, toRaw} from "vue";
+import {markRaw, shallowRef, toRaw} from "vue";
 import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
@@ -10,7 +10,7 @@ import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 export interface Pept2filteredData {
     peptides: string[],
     equate: boolean,
-    blacklist_crap: boolean,
+    useCrap: boolean,
     filter: Filter | undefined,
     baseUrl: string,
     batchSize: number,
