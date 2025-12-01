@@ -43,6 +43,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
+import RLink from '@/components/highlights/ResourceLink.vue';
 
 // Show a readable last updated date. Adjust if needed.
 const lastUpdated = computed(() => new Date('2025-12-01T00:00:00Z').toLocaleDateString());
