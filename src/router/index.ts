@@ -46,6 +46,11 @@ const routes = [
         }
     },
     {
+        path: "/privacy",
+        component: () => import("@/components/pages/PrivacyPolicyPage.vue"),
+        meta: {}
+    },
+    {
         path: "/spa",
         alias: "/tpa",
         component: () => import("@/components/pages/features/SinglePeptideAnalysisPage.vue"),
