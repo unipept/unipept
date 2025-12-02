@@ -21,8 +21,8 @@ import PeptideDataResponse from "@/logic/ontology/peptides/PeptideDataResponse";
  * 
  * @author Pieter Verschaffelt
  */
-export class From634To635Upgrader implements ProjectUpgrader {
-    public readonly name = "From 6.3.4 to 6.3.5";
+export class From635To640Upgrader implements ProjectUpgrader {
+    public readonly name = "From 6.3.5 to 6.4.0";
 
     public async canUpgrade(zippedProject: JSZip): Promise<boolean> {
         const metadataFile = zippedProject.file("metadata.json");
@@ -38,20 +38,20 @@ export class From634To635Upgrader implements ProjectUpgrader {
         }
 
         // This is the first upgrader in the chain, so it should handle any
-        // project whose version is older than or equal to 6.3.4.
-        return SemVer.compare(metadata.version, "6.3.4") <= 0;
+        // project whose version is older than or equal to 6.3.5.
+        return SemVer.compare(metadata.version, "6.3.5") <= 0;
     }
 
     public async upgrade(zippedProject: JSZip): Promise<JSZip> {
         const buffersFolder = zippedProject.folder("buffers");
 
         if (!buffersFolder) {
-            throw new Error("Failed to find buffers folder while upgrading project from 6.3.4 to 6.3.5.");
+            throw new Error("Failed to find buffers folder while upgrading project from 6.3.5 to 6.4.0.");
         }
 
         const metadataFile = zippedProject.file("metadata.json");
         if (!metadataFile) {
-            throw new Error("Failed to find metadata.json while upgrading project from 6.3.4 to 6.3.5.");
+            throw new Error("Failed to find metadata.json while upgrading project from 6.3.5 to 6.4.0.");
         }
 
         const metadata = JSON.parse(await metadataFile.async("string")) as {
@@ -67,7 +67,7 @@ export class From634To635Upgrader implements ProjectUpgrader {
 
                 if (!indexFile || !dataFile) {
                     // If either buffer is missing, this project export is inconsistent.
-                    throw new Error(`Failed to find peptide data buffers for analysis '${analysis.id}' while upgrading project from 6.3.4 to 6.3.5.`);
+                    throw new Error(`Failed to find peptide data buffers for analysis '${analysis.id}' while upgrading project from 6.3.5 to 6.4.0.`);
                 }
 
                 const indexArrayBuffer = await indexFile.async("arraybuffer");
@@ -81,7 +81,7 @@ export class From634To635Upgrader implements ProjectUpgrader {
                     dataBuffer: dataShared
                 };
 
-                const oldMap = ShareableMap.fromTransferableState<string, PeptideData_v6_3_4>(
+                const oldMap = ShareableMap.fromTransferableState<string, PeptideData_v6_3_5>(
                     transferableState,
                     { serializer: new PeptideDataSerializer_v6_3_4() }
                 );
@@ -110,8 +110,8 @@ export class From634To635Upgrader implements ProjectUpgrader {
 
         const updatedMetadata = JSON.parse(await metadataFile.async("string"));
 
-        // Update the metadata version of this project to 6.3.5
-        updatedMetadata.version = "6.3.5";
+        // Update the metadata version of this project to 6.4.0
+        updatedMetadata.version = "6.4.0";
 
         // Update the config of this project
         // Remove missed and disable useCrap, as it was not present in earlier versions
@@ -137,34 +137,34 @@ export class From634To635Upgrader implements ProjectUpgrader {
  * Version 1 of the binary PeptideData format that has been used until Unipept v6.3.4. This format is kept here for
  * compatibility purposes.
  */
-export class PeptideData_v6_3_4 {
+export class PeptideData_v6_3_5 {
     // Offsets and lengths of the data fields in bytes.
     public static readonly LCA_OFFSET: number = 0;
     public static readonly LCA_SIZE: number = 4;
 
     // At what position in the array does the lineage array start.
-    public static readonly LINEAGE_OFFSET: number = PeptideData_v6_3_4.LCA_OFFSET + PeptideData_v6_3_4.LCA_SIZE;
+    public static readonly LINEAGE_OFFSET: number = PeptideData_v6_3_5.LCA_OFFSET + PeptideData_v6_3_5.LCA_SIZE;
     public static readonly RANK_COUNT: number = 28;
     // 28 NCBI ranks at this moment (TODO should not be hardcoded)
-    public static readonly LINEAGE_SIZE: number = 4 * PeptideData_v6_3_4.RANK_COUNT;
+    public static readonly LINEAGE_SIZE: number = 4 * PeptideData_v6_3_5.RANK_COUNT;
 
     // How many bytes are reserved for the counts of each functional annotation type?
     public static readonly FA_COUNT_SIZE = 4;
 
     // At what offset in the array do the functional annotation counts start?
-    public static readonly FA_ALL_COUNT_OFFSET = PeptideData_v6_3_4.LINEAGE_OFFSET + PeptideData_v6_3_4.LINEAGE_SIZE;
-    public static readonly FA_EC_COUNT_OFFSET = PeptideData_v6_3_4.FA_ALL_COUNT_OFFSET + PeptideData_v6_3_4.FA_COUNT_SIZE;
-    public static readonly FA_GO_COUNT_OFFSET = PeptideData_v6_3_4.FA_EC_COUNT_OFFSET + PeptideData_v6_3_4.FA_COUNT_SIZE;
-    public static readonly FA_IPR_COUNT_OFFSET = PeptideData_v6_3_4.FA_GO_COUNT_OFFSET + PeptideData_v6_3_4.FA_COUNT_SIZE;
+    public static readonly FA_ALL_COUNT_OFFSET = PeptideData_v6_3_5.LINEAGE_OFFSET + PeptideData_v6_3_5.LINEAGE_SIZE;
+    public static readonly FA_EC_COUNT_OFFSET = PeptideData_v6_3_5.FA_ALL_COUNT_OFFSET + PeptideData_v6_3_5.FA_COUNT_SIZE;
+    public static readonly FA_GO_COUNT_OFFSET = PeptideData_v6_3_5.FA_EC_COUNT_OFFSET + PeptideData_v6_3_5.FA_COUNT_SIZE;
+    public static readonly FA_IPR_COUNT_OFFSET = PeptideData_v6_3_5.FA_GO_COUNT_OFFSET + PeptideData_v6_3_5.FA_COUNT_SIZE;
 
     // How many bytes are reserved for a pointer to the different start positions in the data portion of the array?
     public static readonly FA_POINTER_SIZE = 4;
 
     // Where does the data portion start in the array?
-    public static readonly FA_EC_INDEX_OFFSET = PeptideData_v6_3_4.FA_IPR_COUNT_OFFSET + PeptideData_v6_3_4.FA_COUNT_SIZE;
-    public static readonly FA_GO_INDEX_OFFSET = PeptideData_v6_3_4.FA_EC_INDEX_OFFSET + PeptideData_v6_3_4.FA_POINTER_SIZE;
-    public static readonly FA_IPR_INDEX_OFFSET = PeptideData_v6_3_4.FA_GO_INDEX_OFFSET + PeptideData_v6_3_4.FA_POINTER_SIZE;
-    public static readonly FA_DATA_START = PeptideData_v6_3_4.FA_IPR_INDEX_OFFSET + PeptideData_v6_3_4.FA_POINTER_SIZE;
+    public static readonly FA_EC_INDEX_OFFSET = PeptideData_v6_3_5.FA_IPR_COUNT_OFFSET + PeptideData_v6_3_5.FA_COUNT_SIZE;
+    public static readonly FA_GO_INDEX_OFFSET = PeptideData_v6_3_5.FA_EC_INDEX_OFFSET + PeptideData_v6_3_5.FA_POINTER_SIZE;
+    public static readonly FA_IPR_INDEX_OFFSET = PeptideData_v6_3_5.FA_GO_INDEX_OFFSET + PeptideData_v6_3_5.FA_POINTER_SIZE;
+    public static readonly FA_DATA_START = PeptideData_v6_3_5.FA_IPR_INDEX_OFFSET + PeptideData_v6_3_5.FA_POINTER_SIZE;
 
     // How many bytes do we reserve to keep track of the length of the taxon array?
     public static readonly TAXON_COUNT_SIZE = 4;
@@ -173,17 +173,17 @@ export class PeptideData_v6_3_4 {
     public static readonly TAXON_SIZE = 4;
 
     public get TAXA_START() {
-        let goStart = this.dataView.getUint32(PeptideData_v6_3_4.FA_GO_INDEX_OFFSET);
+        let goStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_GO_INDEX_OFFSET);
         const goLength = this.dataView.getUint32(goStart);
 
-        let ecStart = this.dataView.getUint32(PeptideData_v6_3_4.FA_EC_INDEX_OFFSET);
+        let ecStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_EC_INDEX_OFFSET);
         const ecLength = this.dataView.getUint32(ecStart);
 
-        let iprStart = this.dataView.getUint32(PeptideData_v6_3_4.FA_IPR_INDEX_OFFSET);
+        let iprStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_IPR_INDEX_OFFSET);
         const iprLength = this.dataView.getUint32(iprStart);
 
         const faDataLength = 12 + goLength * 8 + iprLength * 8 + ecLength * 20;
-        return PeptideData_v6_3_4.FA_DATA_START + faDataLength;
+        return PeptideData_v6_3_5.FA_DATA_START + faDataLength;
     }
 
 
@@ -191,7 +191,7 @@ export class PeptideData_v6_3_4 {
         public readonly dataView: DataView
     ) {}
 
-    public static createFromPeptideDataResponse(response: PeptideDataResponse): PeptideData_v6_3_4 {
+    public static createFromPeptideDataResponse(response: PeptideDataResponse): PeptideData_v6_3_5 {
         const gos = response.fa.data ? Object.keys(response.fa.data).filter(
             code => code.startsWith("GO:")
         ) : [];
@@ -208,8 +208,8 @@ export class PeptideData_v6_3_4 {
         // EC is stored as 4 integers (4 bytes) and it's count (4 bytes)
         const faDataLength = 12 + gos.length * 8 + iprs.length * 8 + ecs.length * 20;
 
-        const taxaStart = PeptideData_v6_3_4.FA_DATA_START + faDataLength;
-        const bufferLength = taxaStart + PeptideData_v6_3_4.TAXON_COUNT_SIZE + (response.taxa?.length || 0) * PeptideData_v6_3_4.TAXON_SIZE;
+        const taxaStart = PeptideData_v6_3_5.FA_DATA_START + faDataLength;
+        const bufferLength = taxaStart + PeptideData_v6_3_5.TAXON_COUNT_SIZE + (response.taxa?.length || 0) * PeptideData_v6_3_5.TAXON_SIZE;
 
         const dataBuffer = new ArrayBuffer(bufferLength);
 
@@ -271,33 +271,33 @@ export class PeptideData_v6_3_4 {
 
         // Keep track of how many taxa there are stored in this object
         dataView.setUint32(taxaStart, response.taxa?.length || 0);
-        currentPos = taxaStart + PeptideData_v6_3_4.TAXON_COUNT_SIZE;
+        currentPos = taxaStart + PeptideData_v6_3_5.TAXON_COUNT_SIZE;
         // Store the actual taxa IDs
         for (const taxon of response.taxa || []) {
             dataView.setUint32(currentPos, taxon);
-            currentPos += PeptideData_v6_3_4.TAXON_SIZE;
+            currentPos += PeptideData_v6_3_5.TAXON_SIZE;
         }
 
-        return new PeptideData_v6_3_4(dataView);
+        return new PeptideData_v6_3_5(dataView);
     }
 
     public get faCounts(): { all: number, ec: number, go: number, ipr: number } {
         return {
-            all: this.dataView.getUint32(PeptideData_v6_3_4.FA_ALL_COUNT_OFFSET),
-            ec: this.dataView.getUint32(PeptideData_v6_3_4.FA_EC_COUNT_OFFSET),
-            go: this.dataView.getUint32(PeptideData_v6_3_4.FA_GO_COUNT_OFFSET),
-            ipr: this.dataView.getUint32(PeptideData_v6_3_4.FA_IPR_COUNT_OFFSET)
+            all: this.dataView.getUint32(PeptideData_v6_3_5.FA_ALL_COUNT_OFFSET),
+            ec: this.dataView.getUint32(PeptideData_v6_3_5.FA_EC_COUNT_OFFSET),
+            go: this.dataView.getUint32(PeptideData_v6_3_5.FA_GO_COUNT_OFFSET),
+            ipr: this.dataView.getUint32(PeptideData_v6_3_5.FA_IPR_COUNT_OFFSET)
         }
     }
 
     public get lca(): number {
-        return this.dataView.getUint32(PeptideData_v6_3_4.LCA_OFFSET);
+        return this.dataView.getUint32(PeptideData_v6_3_5.LCA_OFFSET);
     }
 
     public get lineage(): number[] {
         const lin = [];
-        for (let i = 0; i < PeptideData_v6_3_4.RANK_COUNT; i++) {
-            const val = this.dataView.getInt32(PeptideData_v6_3_4.LINEAGE_OFFSET + i * 4);
+        for (let i = 0; i < PeptideData_v6_3_5.RANK_COUNT; i++) {
+            const val = this.dataView.getInt32(PeptideData_v6_3_5.LINEAGE_OFFSET + i * 4);
             if(val != null) {
                 lin.push(val);
             }
@@ -308,7 +308,7 @@ export class PeptideData_v6_3_4 {
     public get ec(): any {
         const output = {};
 
-        let ecStart = this.dataView.getUint32(PeptideData_v6_3_4.FA_EC_INDEX_OFFSET);
+        let ecStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_EC_INDEX_OFFSET);
         const ecLength = this.dataView.getUint32(ecStart);
 
         ecStart += 4;
@@ -340,7 +340,7 @@ export class PeptideData_v6_3_4 {
     public get go(): any {
         const output = {};
 
-        let goStart = this.dataView.getUint32(PeptideData_v6_3_4.FA_GO_INDEX_OFFSET);
+        let goStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_GO_INDEX_OFFSET);
         const goLength = this.dataView.getUint32(goStart);
 
         goStart += 4;
@@ -363,7 +363,7 @@ export class PeptideData_v6_3_4 {
     public get ipr(): any {
         const output = {};
 
-        let iprStart = this.dataView.getUint32(PeptideData_v6_3_4.FA_IPR_INDEX_OFFSET);
+        let iprStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_IPR_INDEX_OFFSET);
         const iprLength = this.dataView.getUint32(iprStart);
 
         iprStart += 4;
@@ -389,7 +389,7 @@ export class PeptideData_v6_3_4 {
         const taxaLength = this.dataView.getUint32(this.TAXA_START);
 
         for (let i = 0; i < taxaLength; i++) {
-            output.push(this.dataView.getUint32(this.TAXA_START + PeptideData_v6_3_4.TAXON_COUNT_SIZE + i * PeptideData_v6_3_4.TAXON_SIZE));
+            output.push(this.dataView.getUint32(this.TAXA_START + PeptideData_v6_3_5.TAXON_COUNT_SIZE + i * PeptideData_v6_3_5.TAXON_SIZE));
         }
 
         return output;
@@ -429,12 +429,12 @@ const leftPad = (str: string, character: string, len: number): string => {
     return chars + str;
 }
 
-export class PeptideDataSerializer_v6_3_4 implements Serializable<PeptideData_v6_3_4> {
-    public decode(buffer: Uint8Array): PeptideData_v6_3_4 {
-        return new PeptideData_v6_3_4(new DataView(buffer.buffer));
+export class PeptideDataSerializer_v6_3_4 implements Serializable<PeptideData_v6_3_5> {
+    public decode(buffer: Uint8Array): PeptideData_v6_3_5 {
+        return new PeptideData_v6_3_5(new DataView(buffer.buffer));
     }
 
-    public encode(object: PeptideData_v6_3_4, destination: Uint8Array): number {
+    public encode(object: PeptideData_v6_3_5, destination: Uint8Array): number {
         const destinationView = new DataView(destination.buffer, destination.byteOffset, destination.byteLength);
         for (let i = 0; i < object.dataView.byteLength; i++) {
             destinationView.setUint8(i, object.dataView.getUint8(i));
@@ -442,7 +442,7 @@ export class PeptideDataSerializer_v6_3_4 implements Serializable<PeptideData_v6
         return object.dataView.byteLength;
     }
 
-    public maximumLength(object: PeptideData_v6_3_4): number {
+    public maximumLength(object: PeptideData_v6_3_5): number {
         return object.dataView.byteLength;
     }
 }
