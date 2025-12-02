@@ -108,9 +108,24 @@ export class From634To635Upgrader implements ProjectUpgrader {
             }
         }
 
-        // Update the metadata version of this project to 6.3.5
         const updatedMetadata = JSON.parse(await metadataFile.async("string"));
+
+        // Update the metadata version of this project to 6.3.5
         updatedMetadata.version = "6.3.5";
+
+        // Update the config of this project
+        // Remove missed and disable useCrap, as it was not present in earlier versions
+        for (const group of updatedMetadata.groups) {
+            for (const analysis of group.analyses) {
+                analysis.config = {
+                    equate: analysis.config.equate,
+                    filter: analysis.config.filter,
+                    useCrap: false,
+                    database: analysis.config.database
+                }
+            }
+        }
+
         zippedProject.file("metadata.json", JSON.stringify(updatedMetadata));
 
         return zippedProject;

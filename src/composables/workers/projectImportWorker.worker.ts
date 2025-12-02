@@ -1,10 +1,10 @@
 import JSZip from "jszip";
-import { ProjectImportData, SerializedStateData } from "@/composables/useProjectImport";
-import { AppStateStoreImport } from "@/store/AppStateStore";
-import { ProjectUpgradeManager } from "@/logic/project/ProjectUpgradeManager";
-import { ProjectAnalysisStoreImport } from "@/store/ProjectAnalysisStore";
-import { TransferableState } from "shared-memory-datastructures";
-import { ArrayBufferUtils } from "@/logic/utils/ArrayBufferUtils";
+import {ProjectImportData, SerializedStateData} from "@/composables/useProjectImport";
+import {AppStateStoreImport} from "@/store/AppStateStore";
+import {ProjectUpgradeManager} from "@/logic/project/ProjectUpgradeManager";
+import {ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
+import {TransferableState} from "shared-memory-datastructures";
+import {ArrayBufferUtils} from "@/logic/utils/ArrayBufferUtils";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler
@@ -28,9 +28,7 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
         throw new Error("Failed to find metadata file");
     }
 
-    const metadata = JSON.parse(await metadataFile.async("string")) as ProjectAnalysisStoreImport;
-
-    const upgradedProject = metadata;
+    const upgradedProject = JSON.parse(await metadataFile.async("string")) as ProjectAnalysisStoreImport;
 
     const buffers = zipper.folder("buffers");
 

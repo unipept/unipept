@@ -2,7 +2,6 @@ import {defineStore} from "pinia";
 import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 import localforage from "localforage";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
-import {computed} from "vue";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore, {UNIPROT_ID} from "@/store/CustomFilterStore";
 import useProjectExport from "@/composables/useProjectExport";
@@ -100,7 +99,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
             project.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), {
                 equate: true,
                 filter: true,
-                missed: true,
+                useCrap: false,
                 database: UNIPROT_ID
             });
         }
