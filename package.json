@@ -1,6 +1,6 @@
 {
   "name": "unipept",
-  "version": "6.3.5",
+  "version": "6.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
