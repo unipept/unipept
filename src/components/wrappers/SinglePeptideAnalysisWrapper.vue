@@ -45,7 +45,7 @@ const analysisStore = usePeptideAnalysisStore(
     {
         equate: equateIl,
         filter: false,
-        missed: true,
+        useCrap: false,
         database: ""
     }
 );
