@@ -103,7 +103,7 @@
                 <v-divider class="my-2" thickness="2" width="50"></v-divider>
 
                 <div
-                    v-if="$route.meta"
+                    v-if="$route.meta && $route.meta.publication && $route.meta.publicationLink"
                     class="text-center mb-5 text-color"
                 >
                     {{ $route.meta.publication }}
@@ -122,6 +122,12 @@
                         to="/about"
                     >
                         Terms of service
+                    </router-link>
+                    <router-link
+                        class="link ml-5"
+                        to="/privacy"
+                    >
+                        Privacy policy
                     </router-link>
                     <router-link
                         class="link ml-5"
