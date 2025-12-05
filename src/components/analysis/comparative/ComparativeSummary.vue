@@ -42,8 +42,8 @@
 
                     <consistent-setting-check
                         :selected-analyses="selectedAnalyses"
-                        :check-test="(s: SingleAnalysisStore) => s.config.missed ? 'enabled' : 'disabled'"
-                        check-name="Advanced missed cleavage"
+                        :check-test="(s: SingleAnalysisStore) => s.config.useCrap ? 'enabled' : 'disabled'"
+                        check-name="Filter out cRAP"
                     />
 
                     <consistent-setting-check

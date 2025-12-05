@@ -157,7 +157,7 @@ const useSingleAnalysisStore = (
 
                 if (fetch) {
                     const filter = customFilterStore.getFilterById(config.value.database);
-                    await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, filter);
+                    await processPept2Filtered([...peptidesTable.value!.counts.keys()], config.value.equate, config.value.useCrap, filter);
 
                     await processMetadata();
                     lastAnalysed.value = new Date();

@@ -1,21 +1,27 @@
 import PeptideDataResponse from "./PeptideDataResponse";
 
+/**
+ * Version 2 of the binary PeptideData format that is used since Unipept v6.3.5
+ */
 export default class PeptideData {
     // Offsets and lengths of the data fields in bytes.
     public static readonly LCA_OFFSET: number = 0;
     public static readonly LCA_SIZE: number = 4;
 
-    // At what position in the array does the lineage array start.
-    public static readonly LINEAGE_OFFSET: number = PeptideData.LCA_OFFSET + PeptideData.LCA_SIZE;
-    public static readonly RANK_COUNT: number = 28;
-    // 28 NCBI ranks at this moment (TODO should not be hardcoded)
-    public static readonly LINEAGE_SIZE: number = 4 * PeptideData.RANK_COUNT;
+    // At what position in the array is the lineage length stored?
+    public static readonly LINEAGE_COUNT_OFFSET: number = PeptideData.LCA_OFFSET + PeptideData.LCA_SIZE;
+    // How many bytes are reserved to store the lineage array length?
+    public static readonly LINEAGE_COUNT_SIZE: number = 4;
+    // At what position in the data array does the lineage array start?
+    public static readonly LINEAGE_ARRAY_INDEX_OFFSET: number = PeptideData.LINEAGE_COUNT_OFFSET + PeptideData.LINEAGE_COUNT_SIZE;
+    // How many bytes are reserved to store each lineage value?
+    public static readonly LINEAGE_ARRAY_POINTER_SIZE: number = 4;
 
     // How many bytes are reserved for the counts of each functional annotation type?
     public static readonly FA_COUNT_SIZE = 4;
 
     // At what offset in the array do the functional annotation counts start?
-    public static readonly FA_ALL_COUNT_OFFSET = PeptideData.LINEAGE_OFFSET + PeptideData.LINEAGE_SIZE;
+    public static readonly FA_ALL_COUNT_OFFSET = PeptideData.LINEAGE_ARRAY_INDEX_OFFSET + PeptideData.LINEAGE_ARRAY_POINTER_SIZE;
     public static readonly FA_EC_COUNT_OFFSET = PeptideData.FA_ALL_COUNT_OFFSET + PeptideData.FA_COUNT_SIZE;
     public static readonly FA_GO_COUNT_OFFSET = PeptideData.FA_EC_COUNT_OFFSET + PeptideData.FA_COUNT_SIZE;
     public static readonly FA_IPR_COUNT_OFFSET = PeptideData.FA_GO_COUNT_OFFSET + PeptideData.FA_COUNT_SIZE;
@@ -23,11 +29,13 @@ export default class PeptideData {
     // How many bytes are reserved for a pointer to the different start positions in the data portion of the array?
     public static readonly FA_POINTER_SIZE = 4;
 
-    // Where does the data portion start in the array?
+    // Pointers to the positions in the variable length data portion of the array for each of the FA types.
     public static readonly FA_EC_INDEX_OFFSET = PeptideData.FA_IPR_COUNT_OFFSET + PeptideData.FA_COUNT_SIZE;
     public static readonly FA_GO_INDEX_OFFSET = PeptideData.FA_EC_INDEX_OFFSET + PeptideData.FA_POINTER_SIZE;
     public static readonly FA_IPR_INDEX_OFFSET = PeptideData.FA_GO_INDEX_OFFSET + PeptideData.FA_POINTER_SIZE;
-    public static readonly FA_DATA_START = PeptideData.FA_IPR_INDEX_OFFSET + PeptideData.FA_POINTER_SIZE;
+
+    // Where does the variable length data portion of the array start?
+    public static readonly DATA_START = PeptideData.FA_IPR_INDEX_OFFSET + PeptideData.FA_POINTER_SIZE;
 
     // How many bytes do we reserve to keep track of the length of the taxon array?
     public static readonly TAXON_COUNT_SIZE = 4;
@@ -45,8 +53,11 @@ export default class PeptideData {
         let iprStart = this.dataView.getUint32(PeptideData.FA_IPR_INDEX_OFFSET);
         const iprLength = this.dataView.getUint32(iprStart);
 
+        const lineageLength = this.dataView.getUint32(PeptideData.LINEAGE_COUNT_OFFSET);
+        const lineageDataLength = PeptideData.LINEAGE_COUNT_SIZE + lineageLength * 4;
+
         const faDataLength = 12 + goLength * 8 + iprLength * 8 + ecLength * 20;
-        return PeptideData.FA_DATA_START + faDataLength;
+        return PeptideData.DATA_START + faDataLength + lineageDataLength;
     }
 
 
@@ -65,13 +76,14 @@ export default class PeptideData {
             code => code.startsWith("EC:")
         ) : [];
 
+        const lineageDataLength = PeptideData.LINEAGE_COUNT_SIZE + response.lineage.length * 4;
         // We need 12 bytes to record the length of each of the functional annotation arrays.
-        // GO is stored as an integer (4 bytes) and it's count (4 bytes for count)
-        // IPR is stored as an integer (4 bytes) and it's count (4 bytes)
-        // EC is stored as 4 integers (4 bytes) and it's count (4 bytes)
+        // GO is stored as an integer (4 bytes) and its count (4 bytes for count)
+        // IPR is stored as an integer (4 bytes) and its count (4 bytes)
+        // EC is stored as 4 integers (4 bytes) and its count (4 bytes)
         const faDataLength = 12 + gos.length * 8 + iprs.length * 8 + ecs.length * 20;
 
-        const taxaStart = PeptideData.FA_DATA_START + faDataLength;
+        const taxaStart = PeptideData.DATA_START + faDataLength + lineageDataLength;
         const bufferLength = taxaStart + PeptideData.TAXON_COUNT_SIZE + (response.taxa?.length || 0) * PeptideData.TAXON_SIZE;
 
         const dataBuffer = new ArrayBuffer(bufferLength);
@@ -80,20 +92,31 @@ export default class PeptideData {
         const dataView = new DataView(dataBuffer);
         dataView.setUint32(this.LCA_OFFSET, response.lca);
 
-        // Copy the lineage array
-        for (let i = 0; i < response.lineage.length; i++) {
-            dataView.setInt32(this.LINEAGE_OFFSET + i * 4, response.lineage[i]);
-        }
+        // Keep track of the length of the lineage array
+        dataView.setUint32(this.LINEAGE_COUNT_OFFSET, response.lineage.length);
 
         dataView.setUint32(this.FA_ALL_COUNT_OFFSET, response.fa.counts.all);
         dataView.setUint32(this.FA_GO_COUNT_OFFSET, response.fa.counts.GO);
         dataView.setUint32(this.FA_IPR_COUNT_OFFSET, response.fa.counts.IPR);
         dataView.setUint32(this.FA_EC_COUNT_OFFSET, response.fa.counts.EC);
 
+        // First, convert lineage to binary format
+        // Keep track of which position in the variable length data array the lineage starts
+        dataView.setUint32(PeptideData.LINEAGE_ARRAY_INDEX_OFFSET, this.DATA_START);
+        let currentPos = this.DATA_START;
+
+        for (let i = 0; i < response.lineage.length; i++) {
+            dataView.setInt32(
+                currentPos,
+                response.lineage[i] !== null ? response.lineage[i]! : 0
+            );
+
+            currentPos += 4;
+        }
+
         // First convert EC-numbers to binary format
         // Keep track of where the EC-numbers encoding starts.
-        dataView.setUint32(this.FA_EC_INDEX_OFFSET, this.FA_DATA_START);
-        let currentPos = this.FA_DATA_START;
+        dataView.setUint32(this.FA_EC_INDEX_OFFSET, currentPos);
         // Keep track of how many EC-numbers are encoded.
         dataView.setUint32(currentPos, ecs.length);
         currentPos += 4;
@@ -157,11 +180,16 @@ export default class PeptideData {
         return this.dataView.getUint32(PeptideData.LCA_OFFSET);
     }
 
-    public get lineage(): number[] {
+    public get lineage(): (number | null)[] {
+        const length = this.dataView.getUint32(PeptideData.LINEAGE_COUNT_OFFSET);
+        const lineagePointer = this.dataView.getUint32(PeptideData.LINEAGE_ARRAY_INDEX_OFFSET);
+
         const lin = [];
-        for (let i = 0; i < PeptideData.RANK_COUNT; i++) {
-            const val = this.dataView.getInt32(PeptideData.LINEAGE_OFFSET + i * 4);
-            if(val != null) {
+        for (let i = 0; i < length; i++) {
+            const val = this.dataView.getInt32(lineagePointer + i * 4);
+            if (val === 0) {
+                lin.push(null);
+            } else {
                 lin.push(val);
             }
         }
