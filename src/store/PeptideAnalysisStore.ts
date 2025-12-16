@@ -42,8 +42,8 @@ const usePeptideAnalysisStore = (
 
     const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
 
-    const lca = computed(() => peptideToData.value.get(peptide.value)?.lca ?? 1);
-    const lineage = computed(() => peptideToData.value.get(peptide.value)?.lineage ?? []);
+    const lca = computed(() => peptideToData.value?.get(peptide.value)?.lca ?? 1);
+    const lineage = computed(() => peptideToData.value?.get(peptide.value)?.lineage ?? []);
 
     const analyse = async () => {
         status.value = AnalysisStatus.Running;
@@ -70,7 +70,9 @@ const usePeptideAnalysisStore = (
             lcaProteinMap.set(protein.taxonId, (lcaProteinMap.get(protein.taxonId) || 0) + 1);
         }
         for (const ncbiId of lineage.value) {
-            lcaSet.add(ncbiId);
+            if (ncbiId !== null) {
+                lcaSet.add(ncbiId);
+            }
         }
         const lcaProteinCountTable = new CountTable(lcaProteinMap);
 
