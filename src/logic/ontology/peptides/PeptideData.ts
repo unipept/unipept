@@ -121,7 +121,7 @@ export default class PeptideData {
         dataView.setUint32(currentPos, ecs.length);
         currentPos += 4;
         for (const ec of ecs) {
-            const parts = ec.replace("EC:", "").split(".");
+            const parts = ec.substring(3).split(".");
             // Encode null-values as -1
             dataView.setInt32(currentPos, parts[0] !== "-" ? parseInt(parts[0]) : -1);
             dataView.setInt32(currentPos + 4, parts[1] !== "-" ? parseInt(parts[1]) : -1);
@@ -138,7 +138,7 @@ export default class PeptideData {
         dataView.setUint32(currentPos, gos.length);
         currentPos += 4;
         for (const go of gos) {
-            dataView.setUint32(currentPos, parseInt(go.replace("GO:", "")));
+            dataView.setUint32(currentPos, parseInt(go.substring(3)));
             dataView.setUint32(currentPos + 4, response.fa.data[go]);
             currentPos += 8;
         }
@@ -150,7 +150,7 @@ export default class PeptideData {
         dataView.setUint32(currentPos, iprs.length);
         currentPos += 4;
         for (const ipr of iprs) {
-            dataView.setUint32(currentPos, parseInt(ipr.replace("IPR:IPR", "")));
+            dataView.setUint32(currentPos, parseInt(ipr.substring(7)));
             dataView.setUint32(currentPos + 4, response.fa.data[ipr]);
             currentPos += 8;
         }
