@@ -25,8 +25,12 @@ export default class CountTable<O>  {
 
         // Take the next `end` entries
         const entries: [O, number][] = [];
-        for (let i = start; i < Math.min(end, this.totalCount); i++) {
-            entries.push(entriesIterator.next().value!);
+        for (let i = start; i < end; i++) {
+            const next = entriesIterator.next();
+            if (next.done) {
+                break;
+            }
+            entries.push(next.value);
         }
 
         return entries;
