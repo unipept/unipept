@@ -19,8 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
-
 const dialogOpen = defineModel<boolean>();
 
 const emit = defineEmits({

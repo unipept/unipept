@@ -47,6 +47,7 @@
                             v-for="[idx, organismId] of assay.commonLineage.entries()"
                             :key="idx"
                         >
+                            <span v-if="idx > 0 && organismId"> > </span>
                             <a
                                 v-if="organismId"
                                 :href="`https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=${organismId}`"
@@ -55,10 +56,6 @@
                             >
                                 {{ getNcbiDefinition(organismId)!.name }}
                             </a>
-                            <span v-else>
-                                Unknown
-                            </span>
-                            <span v-if="idx + 1 < assay.commonLineage.length"> > </span>
                         </span>
                     </span>
                     <span v-else>
