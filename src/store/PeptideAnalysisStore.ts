@@ -1,5 +1,5 @@
 import {AnalysisConfig} from "@/store/AnalysisConfig";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import useOntologyStore from "@/store/OntologyStore";
 import useProteinProcessor from "@/composables/processing/protein/useProteinProcessor";
@@ -34,13 +34,16 @@ const usePeptideAnalysisStore = (
     // ===============================================================
 
     const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered();
-    const { proteins, lca, commonLineage, process: processProteins } = useProteinProcessor();
+    const { proteins, process: processProteins } = useProteinProcessor();
 
     const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
     const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
 
     const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
+
+    const lca = computed(() => peptideToData.value?.get(peptide.value)?.lca ?? 1);
+    const lineage = computed(() => peptideToData.value?.get(peptide.value)?.lineage ?? []);
 
     const analyse = async () => {
         status.value = AnalysisStatus.Running;
@@ -66,8 +69,10 @@ const usePeptideAnalysisStore = (
             lcaSet.add(protein.taxonId);
             lcaProteinMap.set(protein.taxonId, (lcaProteinMap.get(protein.taxonId) || 0) + 1);
         }
-        for (const ncbiId of commonLineage.value) {
-            lcaSet.add(ncbiId);
+        for (const ncbiId of lineage.value) {
+            if (ncbiId !== null) {
+                lcaSet.add(ncbiId);
+            }
         }
         const lcaProteinCountTable = new CountTable(lcaProteinMap);
 
@@ -91,7 +96,7 @@ const usePeptideAnalysisStore = (
         proteins,
         lca,
         ncbiTree,
-        commonLineage,
+        commonLineage: lineage,
         ecTable,
         ecTrust,
         ecToPeptides,
