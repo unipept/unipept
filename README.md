@@ -16,11 +16,37 @@ If you're willing to get your hands dirty, you might of course also send us a pu
 
 ## Installation
 
-This application is deployed and fully functional at [unipept.ugent.be](http://unipept.ugent.be).
-If for some reason you wish to run your own instance, you can do so by deploying this rails application and setting up a database.
-This isn't straightforward and you'll probably want some help, so contact us at [unipept@ugent.be](mailto:unipept@ugent.be) before you attempt an installation.
+This repository contains the source code for the Unipept web application.
 
-Check [our Wiki-pages](https://github.com/unipept/unipept/wiki) for a variety of different installation guides.
+To run this application locally, you need to have **Node.js** and **Yarn** installed.
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/unipept/unipept.git
+    cd unipept
+    ```
+
+2.  Install dependencies:
+    ```bash
+    yarn install
+    ```
+
+3.  Start the development server:
+    ```bash
+    yarn dev
+    ```
+
+The application will be available at `http://localhost:3000`.
+
+### Custom Unipept Instance
+
+This repository only contains the code for the web application of Unipept. To run a fully functional custom version of Unipept (with your own data), you also need to set up:
+
+*   The **Unipept Database**
+*   The **Unipept API**
+
+We have detailed guides on how to set up all of these components on our Wiki:
+[https://github.com/unipept/unipept/wiki](https://github.com/unipept/unipept/wiki)
 
 ## Who made this app?
 
