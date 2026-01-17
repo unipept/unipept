@@ -66,15 +66,21 @@ export default class PeptideData {
     ) {}
 
     public static createFromPeptideDataResponse(response: PeptideDataResponse): PeptideData {
-        const gos = response.fa.data ? Object.keys(response.fa.data).filter(
-            code => code.startsWith("GO:")
-        ) : [];
-        const iprs = response.fa.data ? Object.keys(response.fa.data).filter(
-            code => code.startsWith("IPR:")
-        ) : [];
-        const ecs = response.fa.data ? Object.keys(response.fa.data).filter(
-            code => code.startsWith("EC:")
-        ) : [];
+        const gos: string[] = [];
+        const iprs: string[] = [];
+        const ecs: string[] = [];
+
+        if (response.fa.data) {
+            for (const code of Object.keys(response.fa.data)) {
+                if (code.startsWith("GO:")) {
+                    gos.push(code);
+                } else if (code.startsWith("IPR:")) {
+                    iprs.push(code);
+                } else if (code.startsWith("EC:")) {
+                    ecs.push(code);
+                }
+            }
+        }
 
         const lineageDataLength = PeptideData.LINEAGE_COUNT_SIZE + response.lineage.length * 4;
         // We need 12 bytes to record the length of each of the functional annotation arrays.
