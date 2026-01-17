@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint",
     "test": "vitest run",
-    "test:coverage": "vitest --coverage run"
+    "test:coverage": "vitest --coverage run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@babel/types": "^7.28.6",
+    "@playwright/test": "^1.57.0",
     "@types/node": "^25.0.8",
     "@types/webfontloader": "^1.6.35",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
