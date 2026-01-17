@@ -7,10 +7,11 @@ export default class PeptideDataSerializer implements Serializable<PeptideData> 
     }
 
     public encode(object: PeptideData, destination: Uint8Array): number {
-        const destinationView = new DataView(destination.buffer, destination.byteOffset, destination.byteLength);
-        for (let i = 0; i < object.dataView.byteLength; i++) {
-            destinationView.setUint8(i, object.dataView.getUint8(i));
-        }
+        destination.set(new Uint8Array(
+            object.dataView.buffer,
+            object.dataView.byteOffset,
+            object.dataView.byteLength
+        ));
         return object.dataView.byteLength;
     }
 
