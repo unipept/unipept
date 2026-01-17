@@ -22,3 +22,7 @@ pnpm-debug.log*
 *.sln
 *.sw?
 *.iml
+
+# Playwright
+playwright-report/
+test-results/

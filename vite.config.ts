@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue"
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
 
 // Utilities
-import { defineConfig } from "vite"
+import { defineConfig, configDefaults } from "vitest/config"
 import { fileURLToPath, URL } from "node:url"
 
 // If the app is being deployed by GitHub Actions, we need to set the base URL to /unipept.
@@ -57,5 +57,8 @@ export default defineConfig({
             "Cross-Origin-Opener-Policy": "same-origin",
             "Cross-Origin-Embedder-Policy": "require-corp"
         }
+    },
+    test: {
+        exclude: [...configDefaults.exclude, 'tests/e2e/**']
     }
 })
