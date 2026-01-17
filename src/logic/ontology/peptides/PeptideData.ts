@@ -242,7 +242,7 @@ export default class PeptideData {
 
             // @ts-ignore: variable indexing
             output[
-            "GO:" + leftPad(term.toString(), "0", 7)
+            "GO:" + term.toString().padStart(7, "0")
                 ] = this.dataView.getUint32(goStart + 4);
 
             goStart += 8;
@@ -265,7 +265,7 @@ export default class PeptideData {
 
             // @ts-ignore: variable indexing
             output[
-            "IPR:IPR" + leftPad(term.toString(), "0", 6)
+            "IPR:IPR" + term.toString().padStart(6, "0")
                 ] = this.dataView.getUint32(iprStart + 4);
 
             iprStart += 8;
@@ -311,11 +311,3 @@ export default class PeptideData {
     }
 }
 
-const leftPad = (str: string, character: string, len: number): string => {
-    const numberOfChars = len - str.length;
-    let chars = "";
-    for (let i = 0; i < numberOfChars; i++) {
-        chars += character;
-    }
-    return chars + str;
-}
