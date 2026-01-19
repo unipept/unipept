@@ -2,7 +2,6 @@ import {ShareableMap} from "shared-memory-datastructures";
 import {Pept2filteredData} from "@/composables/communication/unipept/usePept2filtered";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
-import {parallelLimit} from "async";
 import {Filter, FilterType} from "@/store/CustomFilterStore";
 
 self.onunhandledrejection = (event) => {
@@ -26,7 +25,7 @@ const process = async ({
 }: Pept2filteredData) => {
     const result = new ShareableMap<string, PeptideData>({ serializer: new PeptideDataSerializer() });
 
-    const requests = [];
+    const requests: (() => Promise<void>)[] = [];
     for (let i = 0; i < peptides.length; i += batchSize) {
         requests.push(async () => {
             const response = await fetch(`${baseUrl}/mpa/pept2data`, {
@@ -47,7 +46,7 @@ const process = async ({
         });
     }
 
-    await parallelLimit(requests, parallelRequests);
+    await runParallel(requests, parallelRequests);
 
     return {
         peptToDataTransferable: result.toTransferableState()
@@ -65,4 +64,20 @@ const constructFilterJson = (filter: Filter | undefined) => {
         case FilterType.UniProtKB:
         default: return {}
     }
+}
+
+async function runParallel(tasks: (() => Promise<void>)[], limit: number) {
+    const results = [];
+    const executing: Promise<void>[] = [];
+    for (const task of tasks) {
+        const p = task().then(() => {
+            executing.splice(executing.indexOf(p), 1);
+        });
+        results.push(p);
+        executing.push(p);
+        if (executing.length >= limit) {
+            await Promise.race(executing);
+        }
+    }
+    return Promise.all(results);
 }

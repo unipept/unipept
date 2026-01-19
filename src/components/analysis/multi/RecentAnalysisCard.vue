@@ -176,7 +176,6 @@ import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
 import {useElementBounding} from "@vueuse/core";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import UploadProjectButton from "@/components/analysis/multi/UploadProjectButton.vue";
-import {load} from "webfontloader";
 
 const props = defineProps<{
     height: number,
