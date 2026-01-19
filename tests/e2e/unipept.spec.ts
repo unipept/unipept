@@ -77,4 +77,160 @@ test.describe('Unipept Web Application', () => {
     await expect(page.getByText('InterPro').first()).toBeVisible();
   });
 
+  test('Metaproteomics Analysis works', async ({ page }) => {
+    test.setTimeout(120000); // Analysis takes a while
+
+    // Navigate to MPA
+    await page.goto('/mpa');
+
+    // Define peptides
+    const peptides = `TTTVPWLELR
+AGPVLMEPLMK
+TGGLPYVGTGWYR
+TQDATHGNSLSHR
+VYFTADEAKAAHEAGER
+GAALSQNDNMLQMPLLTPVADETWGVK
+QGEGDKGTMKYEEFAK
+MLANAEEAGYKLLDRR
+QSLDLLSKFPTLLAYAYNMLRHATFGR
+QNVVLATLAGLSQLKTPEEVAK
+GLYKYTPGDNYVDGSDKK
+MNTYMANPDKLER
+EAAEQELQSYGCR
+DLSFSYDGKR
+MNLYTVGAATQGLSNYLK
+VTVQNLQVLK
+LLLNHPETELVFLNSSSNAGNR
+KGVTPPLDVLPSLSR
+MDQAQYRELEAFSK
+RGGDGGEFGATTGRPR
+TVPMFNEALAELNK
+DMSNGDMFLSK
+KAVEFQDLLK
+ANATAPALNVFETEK
+RMEVYAAVYDR
+ALAADPEYAEAYSNVGLVYLMK
+ALEDNLAKYER
+LSGLPENQLLGSGTLLDTAR
+GDVEAAKDLAR
+LLAALEAGNTFKR
+ANEVVELFTEFPELVDPHTGRK
+ANPMYLELPVMAAAR
+DKYVTPSTNNK
+FVADSDYKFLLDLRK
+LVMLNALEDAEMDPKEVDYLNVHGTSTPVGDLSEAK
+VLRPGMYEYEVVAEMNR
+FGPTVGGNLNLSDETKTK
+AYSGEGALADDAGNVSR
+ALAAGKELAEK
+VLLPDPVFNDQKVSK
+LSELFATQQLKDKVNQK
+WVTPGFGLR
+VVLFSPHPDDDVLSMGGTLR
+GQVLAKPGTLK
+GVGSPENFKLLEDLAEVLGGEVSCSR
+EFLSMLAYYVR
+LFPASALNGNDLDWTK
+RAEAVRDLMVNEFGVPASQLKVDYK
+GLQYGDEPDTHGWVTLVE
+GNTGDNTPAMLYTELVPGEQLK
+TKEPGSLGEPLYLDVVAALKGSKFDAVPLLTGR
+RPNNLTGEHSFPLR
+LGTCGGLQPNTPVGTFVCSQK
+AGKPLLLLAEDVEGEALATLVVNTMR
+SVPTDLNAPSLGLYPLLESMSGR
+KSDLTGSVASVGTK
+QVLGQVAADLR
+YETQLLQGTLAR
+LLTHPNFNGNTLDNDLMLLK
+TGYLEEEDLATLNDWRKDPAHWDAGK
+HVHMTPEDAEK
+TLLLANTSNMPVAAR
+LGLKDNQLVR
+VAAEKLKEER
+QLLPFWK
+SKLFDFVKPGVLTGDDVQK
+LVELDLNADEKAK
+GLFSLPFAGLDEK
+FGGADVLATSYTLAQGLK
+LLTPLDVNKNNLKDTVLK
+TAVSTDHHVSLNGGFKNLPYR
+DLMVNEFGVPASQLKVDYKGGVGNMFYDDAK
+AYPGDATVTVCHSR
+NVMEEYGAVASVK
+AVAAQEAGKFDEELVPVEVKK
+TALYNYLFAR
+AVFEKELATSPK
+NTYPALAEGNMTK
+TDVYENLHAAGVVDPAKVAR
+LEDLTLLRAEALCALNR
+SVLLYTPYTK
+MGTPNTFLATTK
+GYPGYMYTDLATMYER
+AGLYLFGQNR
+TNDVAGDGTTTATVLAQAMVNEGMKNLAAGANPLLLR
+VQFTLPVGTELEKLEKK
+ELYPQR
+GVDPYLDKEALR
+VAGKNMQSDFEPVLER
+GMQAANVEKL
+LLNELQAQKR
+HNLPGPFTFLLNGTNR
+YSLNGLWK
+LLDLEKLLDR
+TLQEGLALAK
+GGVGNMFYDDAK
+EGLFAGYASNNK
+TNEYLDELAFLAETAGAEVVKR
+FKEKHPLYGK
+LAVMPLLK`;
+
+    // Fill in the peptides
+    const peptidesInput = page.locator('textarea').first();
+    await peptidesInput.fill(peptides);
+
+    // Click Analyze
+    await page.getByText('Analyze', { exact: true }).click();
+
+    // Wait for analysis to load
+    // The URL changes to /mpa/result/single
+    await expect(page).toHaveURL(/.*\/mpa\/result\/single.*/, { timeout: 30000 });
+
+    // Wait for results to appear or error
+    // Check for "Analysis summary" which appears when analysis finishes
+    // Also check for error message
+    await expect(page.locator('body')).not.toContainText('An error occurred while analysing this sample', { timeout: 45000 });
+
+    // Wait for processing to finish
+    await expect(page.getByText('Processing sample. Please wait...')).toBeHidden({ timeout: 45000 });
+
+    await expect(page.getByText('Analysis summary')).toBeVisible({ timeout: 30000 });
+
+    // Wait for the Peptonizer tab to be visible.
+    // Use locator with text content to be safe
+    const peptonizerTab = page.locator('.v-tab').filter({ hasText: 'Peptonizer' });
+    await expect(peptonizerTab).toBeVisible({ timeout: 30000 });
+
+    // Click Peptonizer tab
+    await peptonizerTab.click();
+
+    // Click Start to peptonize
+    // Using regex to match "Start to peptonize!" with the icon
+    await page.getByText(/Start to peptonize/i).click();
+
+    // Verify peptonizer started (progress message)
+    await expect(page.getByText('Peptonizer is running, please wait...')).toBeVisible({ timeout: 30000 });
+
+    // Wait for computation
+    // The progress bar appears, then results. We can wait for "Peptonizer Results"
+    // Computation can take up to a minute (or more)
+    // Also check for potential error
+    await expect(page.getByText('An error occurred while running Peptonizer')).not.toBeVisible({ timeout: 90000 });
+    await expect(page.getByText('Peptonizer Results')).toBeVisible({ timeout: 90000 });
+
+    // Check for HighCharts
+    // Highcharts creates a container with class highcharts-container
+    await expect(page.locator('.highcharts-container')).toBeVisible();
+  });
+
 });
