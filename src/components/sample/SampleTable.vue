@@ -148,6 +148,7 @@ import {ref} from "vue";
 import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import SampleContentTable from "@/components/sample/SampleContentTable.vue";
 import {v4 as uuidv4} from "uuid"
+import type { DataTableHeader } from "vuetify";
 
 const samples = defineModel<SampleTableItem[]>({ required: true });
 
@@ -184,8 +185,7 @@ const duplicateSample = (index: number) => {
     samples.value = [ ...samples.value, newSample ];
 }
 
-// @ts-ignore need to annotate headers until Vuetify 3 correctly exposes type of headers
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "Sample name",
         align: "start",

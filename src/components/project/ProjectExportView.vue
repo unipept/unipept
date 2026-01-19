@@ -117,6 +117,7 @@ import useProjectExport from "@/composables/useProjectExport";
 import useAppStateStore from "@/store/AppStateStore";
 import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 import DownloadDialog from "@/components/dialogs/DownloadDialog.vue";
+import type { DataTableHeader } from "vuetify";
 
 const { formatNumber } = useNumberFormatter();
 
@@ -185,7 +186,7 @@ const peptonizerJobs = computed(() => {
     }, 0);
 });
 
-const headers: any = [
+const headers: DataTableHeader[] = [
     { title: 'Group', value: 'name' },
     { title: 'Samples', value: 'sampleCount', align: "end" },
     { title: 'Peptides', value: 'peptides', align: "end" },

@@ -88,9 +88,9 @@ import ProteinResponseCommunicator from "@/logic/communicators/unipept/protein/P
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
 import {refDebounced} from "@vueuse/core";
+import type { DataTableHeader } from "vuetify";
 
-// TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "UniProt Accession ID",
         align: "start",

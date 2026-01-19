@@ -116,6 +116,7 @@ import usePercentage from "@/composables/usePercentage";
 import useCsvDownload from "@/composables/useCsvDownload";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+import type { DataTableHeader } from "vuetify";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
@@ -174,8 +175,7 @@ watch(() => data, () => {
     trees.clear();
 });
 
-// TODO: get rid of any type annotation here when Vuetify properly exports the DataTableHeader type
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "Peptides",
         align: "start",

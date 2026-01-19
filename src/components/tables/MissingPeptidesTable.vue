@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import type { DataTableHeader } from "vuetify";
 
 export interface Props {
     items: string[]
@@ -36,8 +37,7 @@ export interface Props {
 
 const props = defineProps<Props>();
 
-// @ts-ignore need to annotate this as any until Vuetify correctly exports the type of DataTableHeaders
-const headers: any = ref([
+const headers = ref<DataTableHeader[]>([
     {
         title: "Peptide",
         align: "start",

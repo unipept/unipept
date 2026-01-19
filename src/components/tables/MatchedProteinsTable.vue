@@ -213,6 +213,7 @@ import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/Fun
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 import {InterproNamespace} from "@/logic/communicators/unipept/functional/InterproResponse";
 import {EcNamespace} from "@/logic/communicators/unipept/functional/EcResponse";
+import type { DataTableHeader } from "vuetify";
 
 type MatchedProtein = {
     uniprotAccessionId: string,
@@ -232,8 +233,7 @@ export interface Props {
 
 const props = defineProps<Props>();
 
-// TODO: remove any type whenever Vuetify exposes type of DataTableHeader...
-const headers: any = ref([
+const headers = ref<DataTableHeader[]>([
     {
         title: "UniProt ID",
         align: "start",
