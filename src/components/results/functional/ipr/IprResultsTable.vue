@@ -118,6 +118,7 @@ import useOntologyStore from "@/store/OntologyStore";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 import {DataNodeLike} from "unipept-visualizations";
 import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+import type { DataTableHeader } from "vuetify";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
@@ -175,8 +176,7 @@ watch(() => data, () => {
     trees.clear();
 });
 
-// TODO remove the any type annotation when Vuetify properly exports DataTableHeader types
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "Peptides",
         align: "start",

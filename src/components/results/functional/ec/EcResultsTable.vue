@@ -115,6 +115,7 @@ import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+import type { DataTableHeader } from "vuetify";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
@@ -172,8 +173,7 @@ watch(() => data, () => {
     trees.clear();
 });
 
-// Need to cast to any here until Vuetify properly exposes DataTableHeader type
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "Peptides",
         align: "start",

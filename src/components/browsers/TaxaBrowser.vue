@@ -118,9 +118,9 @@ import useDatabaseSummary from "@/components/browsers/useDatabaseSummary";
 import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowserLoader";
 import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomic/TaxonomyResponseCommunicator";
 import {refDebounced} from "@vueuse/core";
+import type { DataTableHeader } from "vuetify";
 
-// TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "NCBI ID",
         align: "start",
@@ -144,7 +144,7 @@ const headers: any = [
     },
     {
         title: "",
-        align: "left",
+        align: "start",
         value: "action",
         width: "15%",
         sortable: false

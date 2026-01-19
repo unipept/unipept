@@ -95,6 +95,7 @@ import {useDebounceFn} from "@vueuse/core";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+import type { DataTableHeader } from "vuetify";
 
 interface TopTaxon {
     // NcbiID of this taxon
@@ -110,8 +111,7 @@ const { selectedAnalyses } = defineProps<{
     selectedAnalyses: SingleAnalysisStore[]
 }>();
 
-// @ts-ignore need to annotate headers until Vuetify 3 correctly exposes type of headers
-const tableHeaders: any = [
+const tableHeaders: DataTableHeader[] = [
     {
         title: "Name",
         align: "start",
