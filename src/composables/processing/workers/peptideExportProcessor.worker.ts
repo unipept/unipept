@@ -77,7 +77,9 @@ const process = async({
 
             // Process the LCA's lineage
             const lineage = ncbiOntology.get(pept2DataResponse.lca)?.lineage || [];
-            row.push(...lineage.map((l: number) => ncbiOntology.get(l)?.name.replace(sanitizeRegex, "") || ""));
+            for (const l of lineage) {
+                row.push(ncbiOntology.get(l)?.name.replace(sanitizeRegex, "") || "");
+            }
             for (let i = lineage.length; i < Object.values(NcbiRank).length; i++) {
                 row.push("");
             }
@@ -118,7 +120,13 @@ const process = async({
                 goDefinitions.push(tmpGoDefinitions.join(separator));
             }
 
-            row.push(...goCodes, ...goDefinitions);
+            for (const code of goCodes) {
+                row.push(code);
+            }
+
+            for (const def of goDefinitions) {
+                row.push(def);
+            }
 
             // Process the InterPro entries
             const iprCodes = [];

@@ -32,7 +32,11 @@ export default function useNcbiOntology(
             );
 
             if (withLineages) {
-                lineageIds.push(...response.lineage.filter((id: number) => id !== null && id !== -1).map((id: number) => Math.abs(id)));
+                for (const id of response.lineage) {
+                    if (id !== null && id !== -1) {
+                        lineageIds.push(Math.abs(id));
+                    }
+                }
             }
         }
 

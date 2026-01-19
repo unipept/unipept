@@ -118,7 +118,9 @@ export default class ProteinResponseCommunicator {
                 this.apiBaseUrl + ProteinResponseCommunicator.PROTEIN_ENDPOINT, data
             );
 
-            responses.push(...res);
+            for (const r of res) {
+                responses.push(r);
+            }
         }
 
         return responses;
