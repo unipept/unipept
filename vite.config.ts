@@ -13,6 +13,7 @@ const baseURL = process.env.CI ? "/unipept" : "/";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    envPrefix: ['VITE_', 'MAX_PEPTONIZER_'],
     base: baseURL,
     css: {
         preprocessorOptions: {
