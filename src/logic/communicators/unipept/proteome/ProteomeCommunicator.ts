@@ -25,7 +25,9 @@ export default class ProteomeCommunicator {
 
         try {
             const data: ProteomeResponse[] = await ProteomeCommunicator.inProgress;
-            result.push(...data);
+            for (const d of data) {
+                result.push(d);
+            }
         } finally {
             ProteomeCommunicator.inProgress = undefined;
         }
@@ -98,7 +100,9 @@ export default class ProteomeCommunicator {
                 data
             );
 
-            responses.push(...res);
+            for (const r of res) {
+                responses.push(r);
+            }
         }
 
         return responses;

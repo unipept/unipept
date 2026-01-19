@@ -25,7 +25,9 @@ export default abstract class FunctionalResponseCommunicator<T extends Functiona
 
         try {
             const data: FunctionalDefinition<T>[] = await FunctionalResponseCommunicator.inProgress;
-            result.push(...data);
+            for (const d of data) {
+                result.push(d);
+            }
         } finally {
             FunctionalResponseCommunicator.inProgress = undefined;
         }

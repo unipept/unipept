@@ -103,6 +103,7 @@
 import {ref, computed, watch} from 'vue';
 import { SortItem } from "vuetify/lib/components/VDataTable/composables/sort";
 import {FeatureData, FeatureId} from "@/components/analysis/comparative/heatmap/ComparativeHeatmap.vue";
+import type { DataTableHeader } from "vuetify";
 
 interface TableFeature {
     id: number | string,
@@ -138,7 +139,7 @@ const tableFeatures = computed(() => {
     });
 });
 
-const featureTableHeaders: any = [
+const featureTableHeaders: DataTableHeader[] = [
     {
         title: "Name",
         align: "start",

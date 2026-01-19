@@ -67,6 +67,8 @@ watch(() => categories, () => {
 </script>
 
 <script lang="ts">
+import type { DataTableHeader } from "vuetify";
+
 export interface DataSourceTableItem {
     id: number | string
     name: string
@@ -75,8 +77,7 @@ export interface DataSourceTableItem {
     peptides: string[]
 }
 
-// TODO: Change when Vuetify correctly exposes types for headers
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "Name",
         align: "start",

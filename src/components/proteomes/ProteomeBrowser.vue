@@ -173,9 +173,9 @@
 <script setup lang="ts">
 import {computed, ref, watch} from "vue";
 import UniprotCommunicator, {ProteomeType} from "@/logic/communicators/uniprot/UniprotCommunicator";
+import type { DataTableHeader } from "vuetify";
 
-// TODO: need to annotate this as any until Vuetify correctly exposes the DataTableHeader types.
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "Status",
         align: "center",
@@ -202,7 +202,7 @@ const headers: any = [
     },
     {
         title: "",
-        align: "left",
+        align: "start",
         value: "action",
         width: "2%",
         sortable: false

@@ -66,15 +66,21 @@ export default class PeptideData {
     ) {}
 
     public static createFromPeptideDataResponse(response: PeptideDataResponse): PeptideData {
-        const gos = response.fa.data ? Object.keys(response.fa.data).filter(
-            code => code.startsWith("GO:")
-        ) : [];
-        const iprs = response.fa.data ? Object.keys(response.fa.data).filter(
-            code => code.startsWith("IPR:")
-        ) : [];
-        const ecs = response.fa.data ? Object.keys(response.fa.data).filter(
-            code => code.startsWith("EC:")
-        ) : [];
+        const gos: string[] = [];
+        const iprs: string[] = [];
+        const ecs: string[] = [];
+
+        if (response.fa.data) {
+            for (const code of Object.keys(response.fa.data)) {
+                if (code.startsWith("GO:")) {
+                    gos.push(code);
+                } else if (code.startsWith("IPR:")) {
+                    iprs.push(code);
+                } else if (code.startsWith("EC:")) {
+                    ecs.push(code);
+                }
+            }
+        }
 
         const lineageDataLength = PeptideData.LINEAGE_COUNT_SIZE + response.lineage.length * 4;
         // We need 12 bytes to record the length of each of the functional annotation arrays.
@@ -121,7 +127,7 @@ export default class PeptideData {
         dataView.setUint32(currentPos, ecs.length);
         currentPos += 4;
         for (const ec of ecs) {
-            const parts = ec.replace("EC:", "").split(".");
+            const parts = ec.substring(3).split(".");
             // Encode null-values as -1
             dataView.setInt32(currentPos, parts[0] !== "-" ? parseInt(parts[0]) : -1);
             dataView.setInt32(currentPos + 4, parts[1] !== "-" ? parseInt(parts[1]) : -1);
@@ -138,7 +144,7 @@ export default class PeptideData {
         dataView.setUint32(currentPos, gos.length);
         currentPos += 4;
         for (const go of gos) {
-            dataView.setUint32(currentPos, parseInt(go.replace("GO:", "")));
+            dataView.setUint32(currentPos, parseInt(go.substring(3)));
             dataView.setUint32(currentPos + 4, response.fa.data[go]);
             currentPos += 8;
         }
@@ -150,7 +156,7 @@ export default class PeptideData {
         dataView.setUint32(currentPos, iprs.length);
         currentPos += 4;
         for (const ipr of iprs) {
-            dataView.setUint32(currentPos, parseInt(ipr.replace("IPR:IPR", "")));
+            dataView.setUint32(currentPos, parseInt(ipr.substring(7)));
             dataView.setUint32(currentPos + 4, response.fa.data[ipr]);
             currentPos += 8;
         }
@@ -242,7 +248,7 @@ export default class PeptideData {
 
             // @ts-ignore: variable indexing
             output[
-            "GO:" + leftPad(term.toString(), "0", 7)
+            "GO:" + term.toString().padStart(7, "0")
                 ] = this.dataView.getUint32(goStart + 4);
 
             goStart += 8;
@@ -265,7 +271,7 @@ export default class PeptideData {
 
             // @ts-ignore: variable indexing
             output[
-            "IPR:IPR" + leftPad(term.toString(), "0", 6)
+            "IPR:IPR" + term.toString().padStart(6, "0")
                 ] = this.dataView.getUint32(iprStart + 4);
 
             iprStart += 8;
@@ -311,11 +317,3 @@ export default class PeptideData {
     }
 }
 
-const leftPad = (str: string, character: string, len: number): string => {
-    const numberOfChars = len - str.length;
-    let chars = "";
-    for (let i = 0; i < numberOfChars; i++) {
-        chars += character;
-    }
-    return chars + str;
-}

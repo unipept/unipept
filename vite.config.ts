@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue"
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
 
 // Utilities
-import { defineConfig } from "vite"
+import { defineConfig, configDefaults } from "vitest/config"
 import { fileURLToPath, URL } from "node:url"
 
 // If the app is being deployed by GitHub Actions, we need to set the base URL to /unipept.
@@ -13,6 +13,7 @@ const baseURL = process.env.CI ? "/unipept" : "/";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    envPrefix: ['VITE_', 'MAX_PEPTONIZER_'],
     base: baseURL,
     css: {
         preprocessorOptions: {
@@ -57,5 +58,21 @@ export default defineConfig({
             "Cross-Origin-Opener-Policy": "same-origin",
             "Cross-Origin-Embedder-Policy": "require-corp"
         }
+    },
+    optimizeDeps: {
+        exclude: ["vuetify"],
+        include: [
+            "d3",
+            "highcharts",
+            "highcharts-vue",
+            "uuid",
+            "async",
+            "localforage",
+            "marked",
+            "html-to-image"
+        ]
+    },
+    test: {
+        exclude: [...configDefaults.exclude, 'tests/e2e/**']
     }
 })

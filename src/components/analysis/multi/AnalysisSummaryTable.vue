@@ -183,8 +183,9 @@ watch(() => analysis, () => computeShownItems({
 </script>
 
 <script lang="ts">
-// Need to cast to any until Vuetify correctly exposes TableHeaderItems
-const headers: any = [
+import type { DataTableHeader } from "vuetify";
+
+const headers: DataTableHeader[] = [
     {
         title: "Peptide",
         align: "start",

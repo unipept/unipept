@@ -88,9 +88,9 @@ import DatabaseSummary from "@/components/browsers/DatabaseSummary.vue";
 import useDatabaseSummary from "@/components/browsers/useDatabaseSummary";
 import useBrowserLoader, {LoadItemsParams} from "@/components/browsers/useBrowserLoader";
 import {refDebounced} from "@vueuse/core";
+import type { DataTableHeader } from "vuetify";
 
-// TODO remove any type whenever Vuetify 3 exposes the DataTableHeader type
-const headers: any = [
+const headers: DataTableHeader[] = [
     {
         title: "Reference Proteome ID",
         align: "start",
@@ -114,7 +114,7 @@ const headers: any = [
     },
     {
         title: "",
-        align: "left",
+        align: "start",
         value: "action",
         width: "20%",
         sortable: false

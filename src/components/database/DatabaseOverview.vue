@@ -100,6 +100,7 @@ import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue
 import DeleteDatabaseDialog from "@/components/database/DeleteDatabaseDialog.vue";
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 import EditCustomDatabaseDialog from "@/components/database/edit/EditCustomDatabase.vue";
+import type { DataTableHeader } from "vuetify";
 
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
@@ -204,7 +205,7 @@ const computeSampleCount = (filterId: string): number => {
     return count;
 };
 
-const tableHeaders: any = [
+const tableHeaders: DataTableHeader[] = [
     { title: 'Name', key: 'name', width: '20%' },
     { title: 'Type', key: 'type', width: '30%' },
     { title: '# Taxa', key: 'taxaCount', align: "end", width: '15%' },
