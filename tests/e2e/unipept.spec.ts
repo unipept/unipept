@@ -77,4 +77,65 @@ test.describe('Unipept Web Application', () => {
     await expect(page.getByText('InterPro').first()).toBeVisible();
   });
 
+  test('Metaproteomics Analysis works', async ({ page }) => {
+    test.setTimeout(600000); // Analysis takes a while (up to 10 minutes)
+
+    // Navigate to MPA
+    await page.goto('/mpa');
+
+    // Select a demo project
+    await page.getByRole('button', { name: 'Select a demo project' }).click();
+
+    // Wait for dialog
+    const demoDialog = page.locator('.v-dialog');
+    await expect(demoDialog).toBeVisible();
+
+    // Select Human Gut
+    // The dialog itself is a card, and the items are cards. We want the inner card.
+    const humanGutCard = demoDialog.locator('.v-card').filter({ hasText: 'Human Gut' }).last();
+    await expect(humanGutCard).toBeVisible();
+    await humanGutCard.getByRole('button', { name: 'Load project' }).click();
+
+    // Wait for analysis to load
+    // The URL changes to /mpa/result/single
+    await expect(page).toHaveURL(/.*\/mpa\/result\/single.*/, { timeout: 30000 });
+
+    // Wait for results to appear or error
+    // Check for "Analysis summary" which appears when analysis finishes
+    // Also check for error message
+    // Increasing timeout to 5 minutes as analysis can be slow
+    await expect(page.locator('body')).not.toContainText('An error occurred while analysing this sample', { timeout: 300000 });
+
+    // Wait for processing to finish
+    await expect(page.getByText('Processing sample. Please wait...')).toBeHidden({ timeout: 300000 });
+
+    await expect(page.getByText('Analysis summary')).toBeVisible({ timeout: 30000 });
+
+    // Wait for the Peptonizer tab to be visible.
+    // Use locator with text content to be safe
+    const peptonizerTab = page.locator('.v-tab').filter({ hasText: 'Peptonizer' });
+    await expect(peptonizerTab).toBeVisible({ timeout: 30000 });
+
+    // Click Peptonizer tab
+    await peptonizerTab.click();
+
+    // Click Start to peptonize
+    // Using regex to match "Start to peptonize!" with the icon
+    await page.getByText(/Start to peptonize/i).click();
+
+    // Verify peptonizer started (progress message)
+    await expect(page.getByText('Peptonizer is running, please wait...')).toBeVisible({ timeout: 30000 });
+
+    // Wait for computation
+    // The progress bar appears, then results. We can wait for "Peptonizer Results"
+    // Computation can take up to a minute (or more)
+    // Also check for potential error
+    await expect(page.getByText('An error occurred while running Peptonizer')).not.toBeVisible({ timeout: 300000 });
+    await expect(page.getByText('Peptonizer Results')).toBeVisible({ timeout: 300000 });
+
+    // Check for HighCharts
+    // Highcharts creates a container with class highcharts-container
+    await expect(page.locator('.highcharts-container')).toBeVisible();
+  });
+
 });
