@@ -28,7 +28,7 @@ describe("PeptideArrayEncoder", () => {
         const encoder = new PeptideArrayEncoder();
         const emptyStringArray = [""];
         const maxSize = encoder.maximumLength(emptyStringArray);
-        const buffer = new Uint8Array(maxSize + 10); // extra space
+        const buffer = new Uint8Array(maxSize);
 
         const bytesWritten = encoder.encode(emptyStringArray, buffer);
         const decoded = encoder.decode(buffer.slice(0, bytesWritten));
@@ -37,8 +37,6 @@ describe("PeptideArrayEncoder", () => {
     });
 
     it("should handle empty array (note: decodes as [''])", () => {
-        // Javascript split("") behavior: "".split(";") -> [""]
-        // So an empty array encodes to "" and decodes to [""]
         const encoder = new PeptideArrayEncoder();
         const emptyArray: string[] = [];
 
@@ -46,20 +44,18 @@ describe("PeptideArrayEncoder", () => {
         const buffer = new Uint8Array(Math.max(1, maxSize));
 
         const bytesWritten = encoder.encode(emptyArray, buffer);
-        expect(bytesWritten).toBe(0);
+        expect(bytesWritten).toBe(8);
 
         const decoded = encoder.decode(buffer.slice(0, bytesWritten));
         // Expect [""] due to split behavior
-        expect(decoded).toEqual([""]);
+        expect(decoded).toEqual([]);
     });
 
     it("should calculate maximumLength reasonably", () => {
         const encoder = new PeptideArrayEncoder();
         const peptides = ["A", "B"];
-        // "A" + ";" + "B" = "A;B" length 3.
-        // encoder max length: 1 + 1 + (2-1) = 3.
-        // It says: object.reduce((acc, s) => acc + s.length, 0) + Math.max(0, object.length - 1);
 
-        expect(encoder.maximumLength(peptides)).toBe(3);
+        // max length is for characters A, B and the delimiter (;) plus 8 bytes for length -> 11 bytes
+        expect(encoder.maximumLength(peptides)).toBe(11);
     });
 });
