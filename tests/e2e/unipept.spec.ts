@@ -233,4 +233,60 @@ LAVMPLLK`;
     await expect(page.locator('.highcharts-container')).toBeVisible();
   });
 
+  test('Metaproteomics Analysis / Comparative Analysis works', async ({ page }) => {
+    test.setTimeout(300000); // Analysis takes a while
+
+    // Navigate to MPA
+    await page.goto('/mpa');
+
+    // Click "Select a demo project"
+    await page.getByText('Select a demo project').click();
+
+    // Click "Load project" for "Human Gut"
+    // We target the specific card inside the dialog (nested in v-row) to avoid matching the dialog container itself
+    const humanGutCard = page.locator('.v-dialog .v-row .v-card', { hasText: 'Human Gut' });
+    await humanGutCard.getByText('Load project').click();
+
+    // Wait for analysis to load
+    await expect(page).toHaveURL(/.*\/mpa\/result\/single.*/, { timeout: 30000 });
+    await expect(page.locator('body')).not.toContainText('An error occurred while analysing this sample', { timeout: 60000 });
+    await expect(page.getByText('Processing sample. Please wait...')).toBeHidden({ timeout: 180000 });
+    await expect(page.getByText('Analysis summary')).toBeVisible({ timeout: 60000 });
+
+    // Click "Comparative analysis" sidebar button
+    await page.locator('a[href$="/compare"]').click();
+
+    // Wait for navigation
+    await expect(page).toHaveURL(/.*\/mpa\/result\/compare.*/);
+
+    // Select Sample 8 (Sample 7 is selected by default)
+    await page.getByText('Sample 8').click();
+
+    // Check Analysis summary
+    // Computing comparative results might take time
+    await expect(page.getByText('Analysis summary')).toBeVisible({ timeout: 90000 });
+
+    // Check "Most common shared species" list (at least 5 items)
+    const speciesTable = page.locator('.v-data-table', { hasText: 'Avg. relative abundance' });
+    await expect(speciesTable.locator('tbody tr')).toHaveCount(5);
+
+    // Check Barplot
+    // TaxonomicBarplot uses custom SVG visualization, not Highcharts
+    const barplotSvg = page.locator('.v-window-item--active svg');
+    await expect(barplotSvg).toBeVisible();
+
+    // Check 2 bars (columns) labels visible
+    // Since showBarLabel is true, sample names should be text elements in the SVG
+    await expect(barplotSvg.getByText('Sample 7')).toBeVisible();
+    await expect(barplotSvg.getByText('Sample 8')).toBeVisible();
+
+    // Check for legend items or stacked bars.
+    // We expect at least 5 species, so there should be at least 5 distinct colors/items.
+    // We can check for a significant number of rect elements (bars + legend keys).
+    await expect(async () => {
+        const rectCount = await barplotSvg.locator('rect').count();
+        expect(rectCount).toBeGreaterThan(10);
+    }).toPass();
+  });
+
 });
