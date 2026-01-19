@@ -59,6 +59,19 @@ export default defineConfig({
             "Cross-Origin-Embedder-Policy": "require-corp"
         }
     },
+    optimizeDeps: {
+        exclude: ["vuetify"],
+        include: [
+            "d3",
+            "highcharts",
+            "highcharts-vue",
+            "uuid",
+            "async",
+            "localforage",
+            "marked",
+            "html-to-image"
+        ]
+    },
     test: {
         exclude: [...configDefaults.exclude, 'tests/e2e/**']
     }
