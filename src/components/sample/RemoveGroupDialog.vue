@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 
 const dialogOpen = defineModel<boolean>();
