@@ -60,7 +60,17 @@ export default defineConfig({
         }
     },
     optimizeDeps: {
-        exclude: ["vuetify"]
+        exclude: ["vuetify"],
+        include: [
+            "d3",
+            "highcharts",
+            "highcharts-vue",
+            "uuid",
+            "async",
+            "localforage",
+            "marked",
+            "html-to-image"
+        ]
     },
     test: {
         exclude: [...configDefaults.exclude, 'tests/e2e/**']
