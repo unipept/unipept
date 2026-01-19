@@ -59,6 +59,9 @@ export default defineConfig({
             "Cross-Origin-Embedder-Policy": "require-corp"
         }
     },
+    optimizeDeps: {
+        exclude: ["vuetify"]
+    },
     test: {
         exclude: [...configDefaults.exclude, 'tests/e2e/**']
     }
