@@ -69,6 +69,7 @@ Current team:
 - Pieter Verschaffelt ([@pverscha](https://github.com/pverscha)): Postdoc and lead developer
 - Tibo Vande Moortele ([@tibvdm](https://github.com/tibvdm)): PhD student
 - Simon Van de Vyver ([@SimonVandeVyver](https://github.com/SimonVandeVyver)): PhD student
+- Ben-Björn Binke ([@benbnk](https://github.com/benbnk)): PhD student
 - Peter Dawyndt ([@pdawyndt](https://github.com/pdawyndt)): Group leader and PhD supervisor
 
 Other contributions from:
