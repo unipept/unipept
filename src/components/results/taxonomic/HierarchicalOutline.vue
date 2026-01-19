@@ -222,7 +222,9 @@ const recursivePeptides = (analysis: SingleAnalysisStore, node?: NcbiTreeNode): 
     const ownPeptides = [...analysis.lcaToPeptides?.get(node.id) || []];
 
     for (const child of node.children) {
-        ownPeptides.push(...recursivePeptides(analysis, child));
+        for (const p of recursivePeptides(analysis, child)) {
+            ownPeptides.push(p);
+        }
     }
 
     return ownPeptides;

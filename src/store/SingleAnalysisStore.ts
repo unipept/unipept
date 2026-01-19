@@ -214,11 +214,15 @@ const useSingleAnalysisStore = (
             while (nodes.length > 0) {
                 const node = nodes.pop();
                 if (node && lcaToPeptides.value!.has(node.id)) {
-                    sequences.push(...lcaToPeptides.value!.get(node?.id)!);
+                    for (const p of lcaToPeptides.value!.get(node?.id)!) {
+                        sequences.push(p);
+                    }
                 }
 
                 if (node?.children) {
-                    nodes.push(...node.children);
+                    for (const child of node.children) {
+                        nodes.push(child);
+                    }
                 }
             }
 
