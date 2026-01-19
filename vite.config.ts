@@ -66,7 +66,6 @@ export default defineConfig({
             "highcharts",
             "highcharts-vue",
             "uuid",
-            "async",
             "localforage",
             "marked",
             "html-to-image"
