@@ -39,7 +39,7 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: 'CI= yarn build && CI= yarn preview --port 4173',
+        command: process.env.CI ? 'CI= yarn build --mode ci && CI= yarn preview --port 4173 --mode ci' : 'CI= yarn build && CI= yarn preview --port 4173',
         port: 4173,
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,

@@ -8,7 +8,9 @@ const { isSafari } = useBrowserCheck();
 export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
 // Safari does not expose the same amount of web assembly memory as Chrome and Firefox do, so we need to lower the
 // amount of parallel web workers for Safari.
-export const DEFAULT_PEPTONIZER_WORKERS = isSafari() ? 2 : 8;
+export const DEFAULT_PEPTONIZER_WORKERS = isSafari() ?
+    (parseInt(import.meta.env.MAX_PEPTONIZER_WORKERS_SAFARI) || 2) :
+    (parseInt(import.meta.env.MAX_PEPTONIZER_WORKERS_DEFAULT) || 8);
 
 export const DEFAULT_TAXA_IN_GRAPH = 25;
 
