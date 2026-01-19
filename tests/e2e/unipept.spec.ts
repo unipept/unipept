@@ -78,23 +78,119 @@ test.describe('Unipept Web Application', () => {
   });
 
   test('Metaproteomics Analysis works', async ({ page }) => {
-    test.setTimeout(600000); // Analysis takes a while (up to 10 minutes)
+    test.setTimeout(120000); // Analysis takes a while
 
     // Navigate to MPA
     await page.goto('/mpa');
 
-    // Select a demo project
-    await page.getByRole('button', { name: 'Select a demo project' }).click();
+    // Define peptides
+    const peptides = `TTTVPWLELR
+AGPVLMEPLMK
+TGGLPYVGTGWYR
+TQDATHGNSLSHR
+VYFTADEAKAAHEAGER
+GAALSQNDNMLQMPLLTPVADETWGVK
+QGEGDKGTMKYEEFAK
+MLANAEEAGYKLLDRR
+QSLDLLSKFPTLLAYAYNMLRHATFGR
+QNVVLATLAGLSQLKTPEEVAK
+GLYKYTPGDNYVDGSDKK
+MNTYMANPDKLER
+EAAEQELQSYGCR
+DLSFSYDGKR
+MNLYTVGAATQGLSNYLK
+VTVQNLQVLK
+LLLNHPETELVFLNSSSNAGNR
+KGVTPPLDVLPSLSR
+MDQAQYRELEAFSK
+RGGDGGEFGATTGRPR
+TVPMFNEALAELNK
+DMSNGDMFLSK
+KAVEFQDLLK
+ANATAPALNVFETEK
+RMEVYAAVYDR
+ALAADPEYAEAYSNVGLVYLMK
+ALEDNLAKYER
+LSGLPENQLLGSGTLLDTAR
+GDVEAAKDLAR
+LLAALEAGNTFKR
+ANEVVELFTEFPELVDPHTGRK
+ANPMYLELPVMAAAR
+DKYVTPSTNNK
+FVADSDYKFLLDLRK
+LVMLNALEDAEMDPKEVDYLNVHGTSTPVGDLSEAK
+VLRPGMYEYEVVAEMNR
+FGPTVGGNLNLSDETKTK
+AYSGEGALADDAGNVSR
+ALAAGKELAEK
+VLLPDPVFNDQKVSK
+LSELFATQQLKDKVNQK
+WVTPGFGLR
+VVLFSPHPDDDVLSMGGTLR
+GQVLAKPGTLK
+GVGSPENFKLLEDLAEVLGGEVSCSR
+EFLSMLAYYVR
+LFPASALNGNDLDWTK
+RAEAVRDLMVNEFGVPASQLKVDYK
+GLQYGDEPDTHGWVTLVE
+GNTGDNTPAMLYTELVPGEQLK
+TKEPGSLGEPLYLDVVAALKGSKFDAVPLLTGR
+RPNNLTGEHSFPLR
+LGTCGGLQPNTPVGTFVCSQK
+AGKPLLLLAEDVEGEALATLVVNTMR
+SVPTDLNAPSLGLYPLLESMSGR
+KSDLTGSVASVGTK
+QVLGQVAADLR
+YETQLLQGTLAR
+LLTHPNFNGNTLDNDLMLLK
+TGYLEEEDLATLNDWRKDPAHWDAGK
+HVHMTPEDAEK
+TLLLANTSNMPVAAR
+LGLKDNQLVR
+VAAEKLKEER
+QLLPFWK
+SKLFDFVKPGVLTGDDVQK
+LVELDLNADEKAK
+GLFSLPFAGLDEK
+FGGADVLATSYTLAQGLK
+LLTPLDVNKNNLKDTVLK
+TAVSTDHHVSLNGGFKNLPYR
+DLMVNEFGVPASQLKVDYKGGVGNMFYDDAK
+AYPGDATVTVCHSR
+NVMEEYGAVASVK
+AVAAQEAGKFDEELVPVEVKK
+TALYNYLFAR
+AVFEKELATSPK
+NTYPALAEGNMTK
+TDVYENLHAAGVVDPAKVAR
+LEDLTLLRAEALCALNR
+SVLLYTPYTK
+MGTPNTFLATTK
+GYPGYMYTDLATMYER
+AGLYLFGQNR
+TNDVAGDGTTTATVLAQAMVNEGMKNLAAGANPLLLR
+VQFTLPVGTELEKLEKK
+ELYPQR
+GVDPYLDKEALR
+VAGKNMQSDFEPVLER
+GMQAANVEKL
+LLNELQAQKR
+HNLPGPFTFLLNGTNR
+YSLNGLWK
+LLDLEKLLDR
+TLQEGLALAK
+GGVGNMFYDDAK
+EGLFAGYASNNK
+TNEYLDELAFLAETAGAEVVKR
+FKEKHPLYGK
+LAVMPLLK`;
 
-    // Wait for dialog
-    const demoDialog = page.locator('.v-dialog');
-    await expect(demoDialog).toBeVisible();
+    // Fill in the peptides
+    const peptidesInput = page.locator('textarea').first();
+    await peptidesInput.fill(peptides);
 
-    // Select Human Gut
-    // The dialog itself is a card, and the items are cards. We want the inner card.
-    const humanGutCard = demoDialog.locator('.v-card').filter({ hasText: 'Human Gut' }).last();
-    await expect(humanGutCard).toBeVisible();
-    await humanGutCard.getByRole('button', { name: 'Load project' }).click();
+    // Click Analyze
+    await page.getByText('Analyze', { exact: true }).click();
 
     // Wait for analysis to load
     // The URL changes to /mpa/result/single
@@ -103,11 +199,10 @@ test.describe('Unipept Web Application', () => {
     // Wait for results to appear or error
     // Check for "Analysis summary" which appears when analysis finishes
     // Also check for error message
-    // Increasing timeout to 5 minutes as analysis can be slow
-    await expect(page.locator('body')).not.toContainText('An error occurred while analysing this sample', { timeout: 300000 });
+    await expect(page.locator('body')).not.toContainText('An error occurred while analysing this sample', { timeout: 45000 });
 
     // Wait for processing to finish
-    await expect(page.getByText('Processing sample. Please wait...')).toBeHidden({ timeout: 300000 });
+    await expect(page.getByText('Processing sample. Please wait...')).toBeHidden({ timeout: 45000 });
 
     await expect(page.getByText('Analysis summary')).toBeVisible({ timeout: 30000 });
 
@@ -130,8 +225,8 @@ test.describe('Unipept Web Application', () => {
     // The progress bar appears, then results. We can wait for "Peptonizer Results"
     // Computation can take up to a minute (or more)
     // Also check for potential error
-    await expect(page.getByText('An error occurred while running Peptonizer')).not.toBeVisible({ timeout: 300000 });
-    await expect(page.getByText('Peptonizer Results')).toBeVisible({ timeout: 300000 });
+    await expect(page.getByText('An error occurred while running Peptonizer')).not.toBeVisible({ timeout: 90000 });
+    await expect(page.getByText('Peptonizer Results')).toBeVisible({ timeout: 90000 });
 
     // Check for HighCharts
     // Highcharts creates a container with class highcharts-container
