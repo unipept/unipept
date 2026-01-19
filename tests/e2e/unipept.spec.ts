@@ -77,7 +77,7 @@ test.describe('Unipept Web Application', () => {
     await expect(page.getByText('InterPro').first()).toBeVisible();
   });
 
-  test('Metaproteomics Analysis works', async ({ page }) => {
+  test('Metaproteomics Analysis / Peptonizer works', async ({ page }) => {
     test.setTimeout(120000); // Analysis takes a while
 
     // Navigate to MPA
