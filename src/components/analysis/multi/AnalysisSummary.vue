@@ -30,9 +30,28 @@
                             Analysis is up-to-date with the latest UniProt release ({{ analysis.databaseVersion }}).
                         </h1>
 
-                        <h1 v-else class="text-subtitle-1">
-                            Analysis is outdated. The latest UniProt release is {{ latest }}. Click <a @click="restartAnalysis">here</a> to restart the analysis.
-                        </h1>
+                        <v-alert
+                            v-else
+                            color="warning"
+                            variant="tonal"
+                            class="mt-3"
+                            icon="mdi-history"
+                        >
+                            <div class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between">
+                                <div class="mr-4">
+                                    <div class="font-weight-bold">Analysis Outdated</div>
+                                    <div>The results are based on database version {{ analysis.databaseVersion }}, but the latest UniProt release is {{ latest }}.</div>
+                                </div>
+                                <v-btn
+                                    variant="outlined"
+                                    size="small"
+                                    @click="restartAnalysis"
+                                    class="mt-2 mt-sm-0 flex-shrink-0"
+                                >
+                                    Restart Analysis
+                                </v-btn>
+                            </div>
+                        </v-alert>
                     </template>
                 </v-col>
                 <v-col cols="12" lg="4">
