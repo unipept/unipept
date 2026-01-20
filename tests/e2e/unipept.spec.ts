@@ -295,4 +295,32 @@ LAVMPLLK`;
         }).toPass();
     });
 
+    test('Metaproteomics Analysis / Backwards compatibility works', async ({page}) => {
+        test.setTimeout(120000); // Analysis takes a while
+
+        // Navigate to MPA
+        await page.goto('/mpa');
+
+        // Locate the hidden file input that accepts .unipept files and upload the project file
+        await page.setInputFiles('input[accept=".unipept"]', 'tests/e2e/resources/project_v6_3_4.unipept');
+
+        // Wait for the "Upload project" dialog to appear
+        const uploadDialog = page.locator('.v-dialog', {hasText: 'Upload project'});
+        await expect(uploadDialog).toBeVisible();
+
+        // Click "Upload project" button in the dialog
+        await uploadDialog.getByRole('button', {name: 'Upload project'}).click();
+
+        // Wait for results to appear
+        await expect(page).toHaveURL(/.*\/mpa\/result\/single.*/, {timeout: 30000});
+
+        await expect(page.locator('body')).not.toContainText('An error occurred while analysing this sample', {timeout: 60000});
+        await expect(page.getByText('Processing sample. Please wait...')).toBeHidden({timeout: 180000});
+
+        await expect(page.getByText('Analysis summary')).toBeVisible({timeout: 60000});
+
+        // Check for "2065 unique peptides"
+        await expect(page.getByText('2065 unique peptides')).toBeVisible();
+    });
+
 });
