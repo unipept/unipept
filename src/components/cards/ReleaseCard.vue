@@ -76,6 +76,7 @@ import { GithubRelease } from '@/logic/communicators/github/GithubCommunicator';
 import {ReleaseParser, ReleaseParserResult} from '@/logic/parsers/github/ReleaseParser';
 import Rlink from '../highlights/ResourceLink.vue';
 import {onMounted, ref, Ref, watch} from "vue";
+import DOMPurify from 'dompurify';
 
 export interface Props {
     release: GithubRelease,
@@ -92,7 +93,11 @@ const formatDate = (dateString: string) => {
 const changelog: Ref<ReleaseParserResult | undefined> = ref();
 
 onMounted(async () => {
-  changelog.value = await parser.parse(release.body)
+    const result = await parser.parse(release.body);
+    if (result.description) {
+        result.description = DOMPurify.sanitize(result.description);
+    }
+    changelog.value = result;
 });
 </script>
 
