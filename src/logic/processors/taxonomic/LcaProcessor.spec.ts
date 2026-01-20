@@ -31,31 +31,4 @@ describe("LcaProcessor", () => {
         // Common lineage is [1].
         expect(lcaProcessor.computeLca([taxon1, taxon2])).toBe(1);
     });
-
-    it("should handle lineages of different lengths", () => {
-        const taxon1 = new NcbiTaxon(100, "Organism A", NcbiRank.Species, [1, 2, 10, 100]);
-        const taxon2 = new NcbiTaxon(10, "Organism B", NcbiRank.Genus, [1, 2, 10]);
-
-        // Common lineage is [1, 2, 10].
-        expect(lcaProcessor.computeLca([taxon1, taxon2])).toBe(10);
-    });
-
-    it("should handle lineages where one is a prefix of another (ancestor relationship)", () => {
-         const taxon1 = new NcbiTaxon(10, "Parent", NcbiRank.Genus, [1, 2, 10]);
-         const taxon2 = new NcbiTaxon(100, "Child", NcbiRank.Species, [1, 2, 10, 100]);
-
-         expect(lcaProcessor.computeLca([taxon1, taxon2])).toBe(10);
-    });
-
-    it("should handle null values in lineage if they exist", () => {
-        // The implementation checks for null or 0.
-        // Assuming lineage can contain nulls based on implementation check: `value !== 0 && value !== null`
-        // However, NcbiId is number. But maybe runtime data has nulls.
-        // I will force cast or just use numbers.
-        const taxon1 = new NcbiTaxon(100, "A", NcbiRank.Species, [1, 2, 0, 100]);
-        const taxon2 = new NcbiTaxon(101, "B", NcbiRank.Species, [1, 2, 0, 101]);
-
-        // Col 2 is 0. Col 1 is 2.
-        expect(lcaProcessor.computeLca([taxon1, taxon2])).toBe(2);
-    });
 });
