@@ -2,6 +2,8 @@ const STRING_COLOR = "#4070a0";
 const BOOLEAN_NULL_COLOR = "#f79ea9";
 const NUMBER_COLOR = "#40a070";
 
+import DOMPurify from "dompurify";
+
 export {STRING_COLOR, BOOLEAN_NULL_COLOR, NUMBER_COLOR};
 
 export default class JsonParser {
@@ -15,17 +17,17 @@ export default class JsonParser {
      * @return {string} A string representing the highlighted JSON data (as HTML).
      */
     public parseAndHighlight(object: object): string {
-        return JSON
+        const rawHtml = JSON
             .stringify(object, null, 2)
             .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g, 
                 match => {
                     if(/^"/.test(match)) {
                         if (/:$/.test(match)) {
-                            // Field - strip quotes and escape
-                            return this.escapeHtml(match.replace(/"/g,""));
+                            // Field - strip quotes
+                            return match.replace(/"/g,"");
                         } else {
-                            // String - escape content
-                            return '<span style="color: ' + STRING_COLOR + ';">' + this.escapeHtml(match) + '</span>';
+                            // String
+                            return '<span style="color: ' + STRING_COLOR + ';">' + match + '</span>';
                         }
                     } else if(/true|false/.test(match)) {
                         // Boolean
@@ -39,14 +41,10 @@ export default class JsonParser {
                     return '<span style="color: ' + NUMBER_COLOR + ';">' + match + '</span>';
                 }
         );
-    }
 
-    private escapeHtml(unsafe: string): string {
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+        return DOMPurify.sanitize(rawHtml, {
+            ALLOWED_TAGS: ['span'],
+            ALLOWED_ATTR: ['style']
+        });
     }
 }

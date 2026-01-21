@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import {describe, it, expect} from "vitest";
 import JsonParser, {STRING_COLOR, BOOLEAN_NULL_COLOR, NUMBER_COLOR} from "./JsonParser";
 
@@ -8,7 +9,7 @@ describe("JsonParser", () => {
         const input = {name: "test"};
         const result = parser.parseAndHighlight(input);
         expect(result).toContain('name:');
-        expect(result).toContain('<span style="color: #4070a0;">&quot;test&quot;</span>');
+        expect(result).toContain('<span style="color: #4070a0;">"test"</span>');
     });
 
     it("should properly highlight boolean values", () => {
@@ -48,7 +49,7 @@ describe("JsonParser", () => {
         const result = parser.parseAndHighlight(input);
         expect(result).toContain('name:');
         expect(result).toContain('details:');
-        expect(result).toContain(`<span style="color: ${STRING_COLOR};">&quot;test&quot;</span>`);
+        expect(result).toContain(`<span style="color: ${STRING_COLOR};">"test"</span>`);
         expect(result).toContain(`<span style="color: ${BOOLEAN_NULL_COLOR};">true</span>`);
         expect(result).toContain(`<span style="color: ${NUMBER_COLOR};">42</span>`);
         expect(result).toContain(`<span style="color: ${BOOLEAN_NULL_COLOR};">null</span>`);
@@ -59,12 +60,15 @@ describe("JsonParser", () => {
         expect(result.indexOf('count:')).toBeLessThan(result.indexOf('description:'));
     });
 
-    it("should escape HTML in strings to prevent XSS", () => {
+    it("should strip malicious HTML in strings to prevent XSS", () => {
         const input = { malicious: "<img src=x onerror=alert(1)>" };
         const result = parser.parseAndHighlight(input);
-        // We expect the output to NOT contain the raw script tag
+        // We expect the output to NOT contain the malicious tag
         expect(result).not.toContain('<img src=x onerror=alert(1)>');
-        // We expect it to be escaped
-        expect(result).toContain('&lt;img src=x onerror=alert(1)&gt;');
+        // Since we are using DOMPurify, it strips the tag.
+        // The original string was "<img ...>". JSON.stringify quotes it: "\"<img ...>\"".
+        // The parser wraps it: <span...>"\"<img ...>\""</span>.
+        // DOMPurify strips <img ...>. Result is <span...>"\"\""</span>.
+        expect(result).toContain(`<span style="color: ${STRING_COLOR};">""</span>`);
     });
 });

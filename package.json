@@ -47,6 +47,7 @@
     "eslint": "^9.39.2",
     "eslint-define-config": "^2.1.0",
     "eslint-plugin-vue": "^10.5.0",
+    "jsdom": "^27.4.0",
     "sass": "^1.97.2",
     "sass-loader": "^16.0.2",
     "typescript": "^5.9.3",
