@@ -14,7 +14,19 @@ export default function useBrowserCheck() {
             !userAgent.includes('android');
     }
 
+    const isFirefox = (): boolean => {
+        const userAgent = navigator.userAgent.toLowerCase();
+        return userAgent.includes('firefox');
+    }
+
+    const isChromium = (): boolean => {
+        const userAgent = navigator.userAgent.toLowerCase();
+        return (userAgent.includes('chrome') || userAgent.includes('chromium'));
+    }
+
     return {
-        isSafari
+        isSafari,
+        isFirefox,
+        isChromium
     }
 }
