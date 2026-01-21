@@ -21,11 +21,11 @@ export default class JsonParser {
                 match => {
                     if(/^"/.test(match)) {
                         if (/:$/.test(match)) {
-                            // Field
-                            return match.replace(/"/g,"");
+                            // Field - strip quotes and escape
+                            return this.escapeHtml(match.replace(/"/g,""));
                         } else {
-                            // String
-                            return '<span style="color: ' + STRING_COLOR + ';">' + match + '</span>';
+                            // String - escape content
+                            return '<span style="color: ' + STRING_COLOR + ';">' + this.escapeHtml(match) + '</span>';
                         }
                     } else if(/true|false/.test(match)) {
                         // Boolean
@@ -39,5 +39,14 @@ export default class JsonParser {
                     return '<span style="color: ' + NUMBER_COLOR + ';">' + match + '</span>';
                 }
         );
+    }
+
+    private escapeHtml(unsafe: string): string {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 }
