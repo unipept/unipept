@@ -3,14 +3,21 @@ import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import useBrowserCheck from "@/composables/useBrowserCheck";
 
-const { isSafari } = useBrowserCheck();
+const { isSafari, isFirefox, isChromium } = useBrowserCheck();
 
 export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
-// Safari does not expose the same amount of web assembly memory as Chrome and Firefox do, so we need to lower the
-// amount of parallel web workers for Safari.
-export const DEFAULT_PEPTONIZER_WORKERS = isSafari() ?
-    (parseInt(import.meta.env.MAX_PEPTONIZER_WORKERS_SAFARI) || 2) :
-    (parseInt(import.meta.env.MAX_PEPTONIZER_WORKERS_DEFAULT) || 8);
+
+export const DEFAULT_PEPTONIZER_WORKERS = (() => {
+    if (isSafari()) {
+        return parseInt(import.meta.env.MAX_PEPTONIZER_WORKERS_SAFARI) || 2;
+    } else if (isFirefox()) {
+        return parseInt(import.meta.env.MAX_PEPTONIZER_WORKERS_FIREFOX) || 6;
+    } else if (isChromium()) {
+        return parseInt(import.meta.env.MAX_PEPTONIZER_WORKERS_CHROMIUM) || 8;
+    } else {
+        return parseInt(import.meta.env.MAX_PEPTONIZER_WORKERS_DEFAULT) || 4;
+    }
+})();
 
 export const DEFAULT_TAXA_IN_GRAPH = 25;
 
@@ -52,6 +59,8 @@ export default class PeptonizerProcessor {
         }
 
         try {
+            console.log(`Starting Peptonizer with up to ${DEFAULT_PEPTONIZER_WORKERS} workers...`);
+
             PeptonizerProcessor.inProgress = this.peptonizer.peptonize(
                 peptidesTaxa,
                 peptideIntensities,
