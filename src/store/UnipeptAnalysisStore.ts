@@ -36,7 +36,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
             const value: StoreValue | null = await store.getItem(key);
             return {
                 name: key,
-                totalPeptides: value!.totalPeptides,
+                totalPeptides: value?.totalPeptides || 0,
                 lastAccessed: new Date(value!.lastAccessed)
             };
         }));
