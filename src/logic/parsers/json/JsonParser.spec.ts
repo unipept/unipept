@@ -8,7 +8,7 @@ describe("JsonParser", () => {
         const input = {name: "test"};
         const result = parser.parseAndHighlight(input);
         expect(result).toContain('name:');
-        expect(result).toContain('<span style="color: #4070a0;">"test"</span>');
+        expect(result).toContain(`<span style="color: #4070a0;">&quot;test&quot;</span>`);
     });
 
     it("should properly highlight boolean values", () => {
@@ -48,7 +48,7 @@ describe("JsonParser", () => {
         const result = parser.parseAndHighlight(input);
         expect(result).toContain('name:');
         expect(result).toContain('details:');
-        expect(result).toContain(`<span style="color: ${STRING_COLOR};">"test"</span>`);
+        expect(result).toContain(`<span style="color: ${STRING_COLOR};">&quot;test&quot;</span>`);
         expect(result).toContain(`<span style="color: ${BOOLEAN_NULL_COLOR};">true</span>`);
         expect(result).toContain(`<span style="color: ${NUMBER_COLOR};">42</span>`);
         expect(result).toContain(`<span style="color: ${BOOLEAN_NULL_COLOR};">null</span>`);
@@ -57,5 +57,21 @@ describe("JsonParser", () => {
         expect(result.indexOf('details:')).toBeLessThan(result.indexOf('active:'));
         expect(result.indexOf('active:')).toBeLessThan(result.indexOf('count:'));
         expect(result.indexOf('count:')).toBeLessThan(result.indexOf('description:'));
+    });
+
+    it("should sanitize HTML in keys and values to prevent XSS", () => {
+        const input = {
+            "<img src=x onerror=alert(1)>": "<script>alert('xss')</script>"
+        };
+        const result = parser.parseAndHighlight(input);
+
+        // The output should NOT contain raw HTML tags
+        expect(result).not.toContain('<img src=x onerror=alert(1)>');
+        expect(result).not.toContain('<script>alert(\'xss\')</script>');
+
+        // It SHOULD contain escaped HTML entities
+        expect(result).toContain('&lt;img src=x onerror=alert(1)&gt;');
+        // Note: quotes are also escaped
+        expect(result).toContain('&quot;&lt;script&gt;alert(&#039;xss&#039;)&lt;/script&gt;&quot;');
     });
 });
