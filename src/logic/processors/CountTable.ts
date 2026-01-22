@@ -7,8 +7,15 @@ export default class CountTable<O>  {
         public readonly counts: ShareableMap<O, number>,
         totalCount?: number
     ) {
-        this.totalCount = totalCount ??
-            [...counts.values()].reduce((a, b) => a + b, 0);
+        if (totalCount !== undefined) {
+            this.totalCount = totalCount;
+        } else {
+            let sum = 0;
+            for (const value of counts.values()) {
+                sum += value;
+            }
+            this.totalCount = sum;
+        }
     }
 
     getOrDefault(key: O, defaultValue = 0): number {
@@ -25,8 +32,12 @@ export default class CountTable<O>  {
 
         // Take the next `end` entries
         const entries: [O, number][] = [];
-        for (let i = start; i < Math.min(end, this.totalCount); i++) {
-            entries.push(entriesIterator.next().value!);
+        for (let i = 0; i < end - start; i++) {
+            const next = entriesIterator.next();
+            if (next.done) {
+                break;
+            }
+            entries.push(next.value);
         }
 
         return entries;
