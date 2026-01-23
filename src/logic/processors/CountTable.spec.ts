@@ -53,4 +53,17 @@ describe("CountTable", () => {
         expect(entries).toHaveLength(expected.length);
         expect(entries).toEqual(expected);
     });
+
+    it("should handle getEntriesRange safely when requested range exceeds map size", () => {
+        const map = new ShareableMap<string, number>();
+        map.set("A", 100);
+
+        const countTable = new CountTable(map);
+
+        // Request entries from 0 to 50 (larger than map size 1)
+        const entries = countTable.getEntriesRange(0, 50);
+
+        expect(entries).toHaveLength(1);
+        expect(entries[0]).toEqual(["A", 100]);
+    });
 });
