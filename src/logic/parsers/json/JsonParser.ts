@@ -4,6 +4,14 @@ const NUMBER_COLOR = "#40a070";
 
 export {STRING_COLOR, BOOLEAN_NULL_COLOR, NUMBER_COLOR};
 
+const escapeHtml = (unsafe: string) => {
+    return unsafe.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 export default class JsonParser {
 
 
@@ -22,10 +30,10 @@ export default class JsonParser {
                     if(/^"/.test(match)) {
                         if (/:$/.test(match)) {
                             // Field
-                            return match.replace(/"/g,"");
+                            return escapeHtml(match.replace(/"/g,""));
                         } else {
                             // String
-                            return '<span style="color: ' + STRING_COLOR + ';">' + match + '</span>';
+                            return '<span style="color: ' + STRING_COLOR + ';">' + escapeHtml(match) + '</span>';
                         }
                     } else if(/true|false/.test(match)) {
                         // Boolean

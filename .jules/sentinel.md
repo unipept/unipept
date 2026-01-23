@@ -1,0 +1,4 @@
+## 2025-02-14 - [Unsafe Manual HTML Generation for Syntax Highlighting]
+**Vulnerability:** `JsonParser` manually constructed HTML strings from JSON data using `JSON.stringify` and regex replacements, but failed to escape HTML entities in the JSON content before wrapping them in `<span>` tags. This allowed XSS via injected scripts in JSON keys or values when rendered with `v-html`.
+**Learning:** Custom syntax highlighters or HTML generators that operate on string representations of data must explicitly escape HTML entities, as `JSON.stringify` only escapes characters for JSON validity (like quotes), not HTML safety.
+**Prevention:** Always use a dedicated escaping utility (like `dompurify` for HTML or a simple entity escaper for text) when generating HTML from data. Prefer using established syntax highlighting libraries over custom regex-based implementations if possible.
