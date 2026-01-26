@@ -4,7 +4,6 @@ import useSingleAnalysisStore, {
     SingleAnalysisStore, SingleAnalysisStoreImport,
     useSingleAnalysisStoreImport
 } from "@/store/SingleAnalysisStore";
-import {v4 as uuidv4} from "uuid";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 
 const useGroupAnalysisStore = (
@@ -49,7 +48,7 @@ const useGroupAnalysisStore = (
         config: AnalysisConfig,
         intensities?: Map<string, number>
     ): string => {
-        const analysisId = uuidv4();
+        const analysisId = crypto.randomUUID();
         _analyses.value.set(analysisId, useSingleAnalysisStore(analysisId, name, rawPeptides, config, intensities));
         return analysisId;
     }

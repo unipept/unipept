@@ -1,6 +1,5 @@
 import {defineStore} from "pinia";
 import {computed, ref, toRaw} from "vue";
-import {v4 as uuidv4} from "uuid";
 
 export const UNIPROT_ID = 'UniProtKB';
 
@@ -34,7 +33,7 @@ const useCustomFilterStore = defineStore('customFilterStore', () => {
     }
 
     const addFilter = (filter: Filter): string => {
-        const filterId = uuidv4();
+        const filterId = crypto.randomUUID();
         _filters.value.set(filterId, filter);
         return filterId;
     }
