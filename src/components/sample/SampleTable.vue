@@ -147,7 +147,6 @@
 import {ref} from "vue";
 import DatabaseSelect from "@/components/database/DatabaseSelect.vue";
 import SampleContentTable from "@/components/sample/SampleContentTable.vue";
-import {v4 as uuidv4} from "uuid"
 import type { DataTableHeader } from "vuetify";
 
 const samples = defineModel<SampleTableItem[]>({ required: true });
@@ -176,7 +175,7 @@ const duplicateSample = (index: number) => {
     }
 
     const newSample = {
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         name: `${sample.name} - copy ${counter}`,
         rawPeptides: `${sample.rawPeptides}`,
         intensities: sample.intensities ? new Map(sample.intensities) : undefined,

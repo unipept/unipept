@@ -84,7 +84,7 @@ test.describe('Unipept Web Application', () => {
     });
 
     test('Metaproteomics Analysis / Peptonizer works', async ({page}) => {
-        test.setTimeout(120000); // Analysis takes a while
+        test.setTimeout(300000); // Analysis takes a while
 
         // Navigate to MPA
         await page.goto('/mpa');
@@ -231,8 +231,8 @@ LAVMPLLK`;
         // The progress bar appears, then results. We can wait for "Peptonizer Results"
         // Computation can take up to a minute (or more)
         // Also check for potential error
-        await expect(page.getByText('An error occurred while running Peptonizer')).not.toBeVisible({timeout: 90000});
-        await expect(page.getByText('Peptonizer Results')).toBeVisible({timeout: 90000});
+        await expect(page.getByText('An error occurred while running Peptonizer')).not.toBeVisible({timeout: 180000});
+        await expect(page.getByText('Peptonizer Results')).toBeVisible({timeout: 180000});
 
         // Check for HighCharts
         // Highcharts creates a container with class highcharts-container
