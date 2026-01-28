@@ -147,62 +147,16 @@
 import Treeview from '@/components/visualization/treeview/Treeview.vue';
 import {computed, ref, watch} from "vue";
 import useTreeFilter from "@/composables/useTreeFilter";
+import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
+import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
+import {FilteredTree} from "@/composables/useTreeFilter";
+import {useRouter} from "vue-router";
+
+const router = useRouter();
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
 }>();
-
-const { filteredTree, filter, update } = useTreeFilter(constructTree(analysis.ncbiTree));
-
-const search = ref('');
-const selectedItem = ref();
-const dialogOpen = ref(false);
-
-const selfPeptides = computed(() =>
-    [...new Set(analysis.lcaToPeptides?.get(selectedItem.value?.id) || [])].map(p => ({ name: p }))
-);
-const subPeptides = computed(() => {
-    const nodeInOriginalTree = recursiveSearch(analysis.ncbiTree, selectedItem.value?.id);
-    return [...new Set(recursivePeptides(analysis, nodeInOriginalTree) || [])].map(p => ({ name: p }));
-});
-
-const searchUpdated = (search: string) => {
-    filter(search);
-    selectedItem.value = undefined;
-}
-
-const closeDialog = () => {
-    selectedItem.value = undefined;
-}
-
-watch(() => analysis.ncbiTree, () => update(constructTree(analysis.ncbiTree)));
-
-watch(selectedItem, () => {
-    dialogOpen.value = selectedItem.value !== undefined;
-});
-</script>
-
-<script lang="ts">
-import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
-import {FilteredTree} from "@/composables/useTreeFilter";
-
-const headers = [
-    { text: 'Peptide', value: 'name', width: '98%' },
-    { text: '', value: 'action', width: '2%' }
-];
-
-const openPeptideAnalysis = (peptide: string) => {
-    // TODO: change this. Hardcoded link to website for testing purposes
-    const a = document.createElement('a');
-    a.href = `https://unipept.ugent.be/tpa/${peptide}?equate=${true}`;
-    a.target = '_blank';
-    a.click();
-}
-
-const copyToClipboard = (peptides: string[]) => {
-    navigator.clipboard.writeText(peptides.join('\n'));
-}
 
 const constructTree = (node: NcbiTreeNode): FilteredTree => {
     return {
@@ -243,6 +197,52 @@ const recursiveSearch = (node: NcbiTreeNode, id: number): NcbiTreeNode | undefin
     }
 
     return undefined;
+}
+
+const { filteredTree, filter, update } = useTreeFilter(constructTree(analysis.ncbiTree));
+
+const search = ref('');
+const selectedItem = ref();
+const dialogOpen = ref(false);
+
+const selfPeptides = computed(() =>
+    [...new Set(analysis.lcaToPeptides?.get(selectedItem.value?.id) || [])].map(p => ({ name: p }))
+);
+const subPeptides = computed(() => {
+    const nodeInOriginalTree = recursiveSearch(analysis.ncbiTree, selectedItem.value?.id);
+    return [...new Set(recursivePeptides(analysis, nodeInOriginalTree) || [])].map(p => ({ name: p }));
+});
+
+const searchUpdated = (search: string) => {
+    filter(search);
+    selectedItem.value = undefined;
+}
+
+const closeDialog = () => {
+    selectedItem.value = undefined;
+}
+
+watch(() => analysis.ncbiTree, () => update(constructTree(analysis.ncbiTree)));
+
+watch(selectedItem, () => {
+    dialogOpen.value = selectedItem.value !== undefined;
+});
+
+const headers = [
+    { title: 'Peptide', value: 'name', width: '98%' },
+    { title: '', value: 'action', width: '2%', sortable: false }
+];
+
+const openPeptideAnalysis = (peptide: string) => {
+    const route = router.resolve({
+        path: `/tpa/${peptide}`,
+        query: { equate: analysis.config.equate }
+    });
+    window.open(route.href, '_blank');
+}
+
+const copyToClipboard = (peptides: string[]) => {
+    navigator.clipboard.writeText(peptides.join('\n'));
 }
 </script>
 
