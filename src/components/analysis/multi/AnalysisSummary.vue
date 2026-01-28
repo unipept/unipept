@@ -22,13 +22,17 @@
                             </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found.
                         </h1>
 
-                        <h3 class="font-weight-bold mt-3">
-                            Last analysed on {{ analysis.lastAnalysedString }}
-                        </h3>
-
-                        <h1 v-if="latest === analysis.databaseVersion" class="text-subtitle-1">
-                            Analysis is up-to-date with the latest UniProt release ({{ analysis.databaseVersion }}).
-                        </h1>
+                        <v-alert
+                            v-if="latest === analysis.databaseVersion"
+                            color="success"
+                            variant="tonal"
+                            class="mt-3"
+                            icon="mdi-check-circle"
+                        >
+                            <div class="font-weight-bold">Analysis up-to-date</div>
+                            <div class="mb-1">Last analysed on {{ analysis.lastAnalysedString }}</div>
+                            <div>Analysis is up-to-date with the latest UniProt release ({{ analysis.databaseVersion }}).</div>
+                        </v-alert>
 
                         <v-alert
                             v-else
@@ -40,7 +44,11 @@
                             <div class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between">
                                 <div class="mr-4">
                                     <div class="font-weight-bold">Analysis Outdated</div>
+                                    <div class="mb-1">Last analysed on {{ analysis.lastAnalysedString }}</div>
                                     <div>The results are based on database version {{ analysis.databaseVersion }}, but the latest UniProt release is {{ latest }}.</div>
+                                    <div class="text-caption mt-1">
+                                        Reanalysing will update results to the latest database version ({{ latest }}). You will not be able to revert to the previous results.
+                                    </div>
                                 </div>
                                 <v-btn
                                     variant="outlined"
