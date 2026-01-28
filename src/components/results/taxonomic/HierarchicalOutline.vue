@@ -237,7 +237,7 @@ const headers = [
 const openPeptideAnalysis = (peptide: string) => {
     const route = router.resolve({
         path: `/tpa/${peptide}`,
-        query: { equate: "true" }
+        query: { equate: analysis.config.equate ? "true" : "false" }
     });
     window.open(route.href, '_blank');
 }
