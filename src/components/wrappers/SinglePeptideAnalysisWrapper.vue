@@ -27,7 +27,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import usePeptideAnalysisStore from "@/store/PeptideAnalysisStore";
-import {v4 as uuidv4} from "uuid";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import SinglePeptideAnalysisResultsCard from "@/components/analysis/single/SinglePeptideAnalysisResultsCard.vue";
 import SinglePeptideSummary from "@/components/results/SinglePeptideSummary.vue";
@@ -40,7 +39,7 @@ export interface Props {
 const { peptide, equateIl } = defineProps<Props>();
 
 const analysisStore = usePeptideAnalysisStore(
-    uuidv4(),
+    crypto.randomUUID(),
     peptide,
     {
         equate: equateIl,

@@ -6,6 +6,8 @@ import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializ
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
+const goNamespaces = Object.values(GoNamespace);
+
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler
     throw event.reason;
@@ -31,8 +33,8 @@ const process = async({
             ...Object.values(NcbiRank),
             "EC",
             "EC - names",
-            ...Object.values(GoNamespace).map(ns => `GO (${ns})`),
-            ...Object.values(GoNamespace).map(ns => `GO (${ns}) - names`),
+            ...goNamespaces.map(ns => `GO (${ns})`),
+            ...goNamespaces.map(ns => `GO (${ns}) - names`),
             "InterPro",
             "InterPro - names",
         ];
@@ -103,7 +105,7 @@ const process = async({
             const goCodes = [];
             const goDefinitions = [];
             const totalGoCounts = Object.values<number>(pept2DataResponse.go).reduce((acc, current) => acc + current, 0);
-            for (const ns of Object.values(GoNamespace)) {
+            for (const ns of goNamespaces) {
                 const goCodesInNamespace = Object.entries<number>(pept2DataResponse.go).filter(([go, _count]) =>
                     goOntology.get(go)?.namespace === ns
                 );

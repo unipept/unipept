@@ -22,17 +22,47 @@
                             </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found.
                         </h1>
 
-                        <h3 class="font-weight-bold mt-3">
-                            Last analysed on {{ analysis.lastAnalysedString }}
-                        </h3>
+                        <v-alert
+                            v-if="latest === analysis.databaseVersion"
+                            color="success"
+                            variant="tonal"
+                            class="mt-3"
+                            icon="mdi-check-circle"
+                        >
+                            <div class="font-weight-bold">Analysis up-to-date</div>
+                            <div class="mb-1">Last analysed on {{ analysis.lastAnalysedString }}</div>
+                            <div>Analysis is up-to-date with the latest UniProt release ({{ analysis.databaseVersion }}).</div>
+                        </v-alert>
 
-                        <h1 v-if="latest === analysis.databaseVersion" class="text-subtitle-1">
-                            Analysis is up-to-date with the latest UniProt release ({{ analysis.databaseVersion }}).
-                        </h1>
-
-                        <h1 v-else class="text-subtitle-1">
-                            Analysis is outdated. The latest UniProt release is {{ latest }}. Click <a @click="restartAnalysis">here</a> to restart the analysis.
-                        </h1>
+                        <v-alert
+                            v-else
+                            color="warning"
+                            variant="tonal"
+                            class="mt-3"
+                            icon="mdi-history"
+                        >
+                            <v-tooltip text="Restart analysis">
+                                <template #activator="{ props: tooltip }">
+                                    <v-btn
+                                        v-bind="tooltip"
+                                        variant="outlined"
+                                        size="small"
+                                        @click="restartAnalysis"
+                                        class="float-end"
+                                        icon="mdi-restart"
+                                    >
+                                    </v-btn>
+                                </template>
+                            </v-tooltip>
+                            <div>
+                                <div class="font-weight-bold">Analysis Outdated</div>
+                                <div class="mb-1">Last analysed on {{ analysis.lastAnalysedString }}</div>
+                                <div>The results are based on database version {{ analysis.databaseVersion }}, but the latest UniProt release is {{ latest }}.</div>
+                                <div class="text-caption mt-1">
+                                    Warning: Reanalysing will update results to the latest database version ({{ latest }}). You will not be able to revert to the previous results.
+                                </div>
+                            </div>
+                        </v-alert>
                     </template>
                 </v-col>
                 <v-col cols="12" lg="4">

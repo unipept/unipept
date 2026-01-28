@@ -5,7 +5,6 @@ import useGroupAnalysisStore, {
     useGroupAnalysisStoreImport
 } from "@/store/GroupAnalysisStore";
 import {computed, ref} from "vue";
-import {v4 as uuidv4} from "uuid";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore, {CustomFilterStoreImport, useCustomFilterStoreImport} from "@/store/CustomFilterStore";
 
@@ -61,7 +60,7 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     }
 
     const addGroup = (name: string): string => {
-        const id = uuidv4();
+        const id = crypto.randomUUID();
         _groups.value.set(id, useGroupAnalysisStore(id, name));
         return id;
     };

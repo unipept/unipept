@@ -251,7 +251,6 @@
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import {computed, Ref, ref} from "vue";
 import AddSampleCard from "@/components/sample/AddSampleCard.vue";
-import {v4 as uuidv4} from "uuid";
 import FileUpload from "@/components/filesystem/FileUpload.vue";
 import ColumnFileImport from "@/components/sample/upload/ColumnFileImport.vue";
 import useFileReader from "@/composables/useFileReader";
@@ -271,7 +270,7 @@ const sampleCreationType: Ref<number> = ref<number>(1);
 const validFileImport: Ref<boolean> = ref<boolean>(false);
 
 const sample = ref<SampleTableItem>({
-    id: uuidv4(),
+    id: crypto.randomUUID(),
     name: "",
     rawPeptides: "",
     config: {
@@ -343,7 +342,7 @@ const uploadFilesInBulk = async function() {
         const sampleName = file.name.replace(/\.[^/.]+$/, "");
 
         const sample: SampleTableItem = {
-            id: uuidv4(),
+            id: crypto.randomUUID(),
             name: sampleName,
             rawPeptides: peptides,
             config: {
