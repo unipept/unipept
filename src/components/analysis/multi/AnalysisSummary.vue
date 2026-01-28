@@ -41,23 +41,26 @@
                             class="mt-3"
                             icon="mdi-history"
                         >
-                            <div class="d-flex flex-column flex-sm-row align-start align-sm-center justify-space-between">
-                                <div class="mr-4">
-                                    <div class="font-weight-bold">Analysis Outdated</div>
-                                    <div class="mb-1">Last analysed on {{ analysis.lastAnalysedString }}</div>
-                                    <div>The results are based on database version {{ analysis.databaseVersion }}, but the latest UniProt release is {{ latest }}.</div>
-                                    <div class="text-caption mt-1">
-                                        Reanalysing will update results to the latest database version ({{ latest }}). You will not be able to revert to the previous results.
-                                    </div>
+                            <v-tooltip text="Restart analysis">
+                                <template #activator="{ props: tooltip }">
+                                    <v-btn
+                                        v-bind="tooltip"
+                                        variant="outlined"
+                                        size="small"
+                                        @click="restartAnalysis"
+                                        class="float-end"
+                                        icon="mdi-restart"
+                                    >
+                                    </v-btn>
+                                </template>
+                            </v-tooltip>
+                            <div>
+                                <div class="font-weight-bold">Analysis Outdated</div>
+                                <div class="mb-1">Last analysed on {{ analysis.lastAnalysedString }}</div>
+                                <div>The results are based on database version {{ analysis.databaseVersion }}, but the latest UniProt release is {{ latest }}.</div>
+                                <div class="text-caption mt-1">
+                                    Warning: Reanalysing will update results to the latest database version ({{ latest }}). You will not be able to revert to the previous results.
                                 </div>
-                                <v-btn
-                                    variant="outlined"
-                                    size="small"
-                                    @click="restartAnalysis"
-                                    class="mt-2 mt-sm-0 flex-shrink-0"
-                                >
-                                    Restart Analysis
-                                </v-btn>
                             </div>
                         </v-alert>
                     </template>
