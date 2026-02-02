@@ -63,8 +63,6 @@ export default defineConfig({
         exclude: ["vuetify"],
         include: [
             "d3",
-            "highcharts",
-            "highcharts-vue",
             "localforage",
             "marked",
             "html-to-image"
