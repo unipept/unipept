@@ -234,9 +234,9 @@ LAVMPLLK`;
         await expect(page.getByText('An error occurred while running Peptonizer')).not.toBeVisible({timeout: 180000});
         await expect(page.getByText('Peptonizer Results')).toBeVisible({timeout: 180000});
 
-        // Check for HighCharts
-        // Highcharts creates a container with class highcharts-container
-        await expect(page.locator('.highcharts-container')).toBeVisible();
+        // Check for Peptonizer Chart (D3)
+        // The chart is rendered in a container with class chart-container containing an SVG
+        await expect(page.locator('.chart-container svg')).toBeVisible();
     });
 
     test('Metaproteomics Analysis / Comparative Analysis works', async ({page}) => {
