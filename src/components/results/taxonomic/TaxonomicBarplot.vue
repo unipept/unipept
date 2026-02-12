@@ -143,7 +143,7 @@
     barplotSettings.value.legend.padding.top = 40;
     barplotSettings.value.legend.padding.left = 20;
     barplotSettings.value.height = 250 + 100 * props.analyses.length;
-    barplotSettings.value.showBarLabel = props.comparative;
+    barplotSettings.value.showBarLabel = props.analyses.length > 1;
     barplotSettings.value.barLabelWidth = 200;
     barplotSettings.value.displayMode = "relative";
     barplotSettings.value.maxItems = taxonCount.value;
