@@ -1,15 +1,19 @@
 <template>
-    <div class="d-flex flex-row">
+    <div ref="rootElement" class="d-flex flex-row">
         <div
             v-if="props.settings.showBarLabel"
-            :style="{ width: barLabelWidth + 'px', minWidth: barLabelWidth + 'px' }"
+            :style="{ width: barLabelWidth + 'px', minWidth: barLabelWidth + 'px', marginTop: props.settings.chart.padding.top + 'px', height: (props.settings.barHeight * props.bars.length) + 'px' }"
             class="d-flex flex-column pr-2 label-container pl-6"
         >
             <div
                 v-for="(bar, index) in props.bars"
                 :key="index"
                 class="d-flex align-center bar-label"
-                :style="{ height: props.settings.barHeight + 'px' }"
+                :style="{ 
+                    height: (props.settings.barHeight * 0.9) + 'px',
+                    marginTop: (index === 0 ? props.settings.barHeight * 0.05 : props.settings.barHeight * 0.1) + 'px',
+                    marginBottom: (index === props.bars.length - 1 ? props.settings.barHeight * 0.05 : 0) + 'px'
+                }"
             >
                 <span class="text-truncate" :title="bar.label">
                     {{ bar.label }}
@@ -40,8 +44,13 @@ const props = withDefaults(
     }
 );
 
+const rootElement = ref<HTMLElement>();
 const barplotContainer = ref<HTMLElement>();
 const barLabelWidth = ref(props.settings.barLabelWidth || 200);
+
+defineExpose({
+    rootElement
+});
 
 const startResizing = (event: MouseEvent) => {
     const startX = event.clientX;

@@ -65,7 +65,7 @@
                         </v-expansion-panels>
                     </div>
                     <div ref="barplotWrapper">
-                        <barplot :bars="barData" :settings="barplotSettings" />
+                        <barplot ref="barplotComponent" :bars="barData" :settings="barplotSettings" />
                     </div>
 
                     <v-tooltip
@@ -88,9 +88,9 @@
     </div>
 
     <download-image
-        v-if="svg"
+        v-if="imageElement"
         v-model="downloadImageModalOpen"
-        :image="svg"
+        :image="imageElement"
         filename="barplot"
     />
 </template>
@@ -129,13 +129,14 @@
     const taxonCount = ref(15);
 
     const barplotWrapper = ref<HTMLDivElement>();
+    const barplotComponent = ref<any>();
     const containerWidth: Ref<number> = ref(800);
     const barplotSettings: Ref<BarplotSettings> = ref(new BarplotSettings());
     const barData: Ref<Bar[]> = ref([]);
 
     const downloadImageModalOpen: Ref<boolean> = ref(false);
 
-    const svg: Ref<SVGElement | undefined | null> = ref();
+    const imageElement: Ref<HTMLElement | undefined | null> = ref();
 
     // Display the barplot below the visualization settings bar
     barplotSettings.value.chart.padding.left = 15;
@@ -276,7 +277,7 @@
 
     watch(barData, async () => {
         await nextTick();
-        svg.value = barplotWrapper.value?.querySelector("svg") as SVGElement;
+        imageElement.value = barplotComponent.value?.rootElement;
     }, { immediate: true })
 </script>
 

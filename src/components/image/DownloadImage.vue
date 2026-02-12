@@ -95,10 +95,6 @@ const selectedScalingFactor = ref(ScalingFactor.Hundred);
 const imageDataUrl = ref<string>("");
 
 const supportedFormats = computed(() => {
-    if (image instanceof HTMLElement) {
-        return [Format.PNG.valueOf()];
-    }
-
     return [ Format.SVG.valueOf(), Format.PNG.valueOf() ];
 })
 
@@ -125,7 +121,18 @@ const resolution = computed(() => {
 const download = async () => {
     const analyticsCommunicator = new AnalyticsCommunicator();
 
-    if (image instanceof HTMLElement) {
+    if (image instanceof HTMLElement && selectedFormat.value === Format.SVG.valueOf()) {
+        const svgDataUrl = await toSvg(image, { skipFonts: true });
+        const svgString = decodeURIComponent(svgDataUrl.split(",")[1]);
+        const blob = new Blob([svgString], { type: "image/svg+xml" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${filename}.svg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'html');
+    } else if (image instanceof HTMLElement) {
         await downloadDomPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
         analyticsCommunicator.logDownloadVisualization(filename, 'png', 'html');
     } else if (selectedFormat.value === Format.SVG.valueOf()) {
@@ -153,7 +160,6 @@ watch(dialogOpen, async (value) => {
                 decodeURIComponent(svgDataUrl.split(",")[1]),
                 "image/svg+xml"
             ).documentElement as unknown as SVGElement & { viewBox: any | undefined, width: any | undefined, height: any | undefined };
-            selectedFormat.value = Format.PNG.valueOf();
         }
         const svgData = new XMLSerializer().serializeToString(svgElement);
         imageDataUrl.value = `data:image/svg+xml;base64,${btoa(svgData)}`;
