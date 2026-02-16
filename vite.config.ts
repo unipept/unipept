@@ -65,7 +65,6 @@ export default defineConfig({
             "d3",
             "highcharts",
             "highcharts-vue",
-            "localforage",
             "marked",
             "html-to-image"
         ]

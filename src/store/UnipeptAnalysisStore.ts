@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
-import localforage from "localforage";
+import IndexedDBStore from "@/logic/storage/IndexedDBStore";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore, {UNIPROT_ID} from "@/store/CustomFilterStore";
@@ -17,11 +17,7 @@ interface StoreValue {
 }
 
 const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
-    const store = localforage.createInstance({
-        driver: localforage.INDEXEDDB,
-        storeName: 'projects',
-        name: 'unipept',
-    });
+    const store = new IndexedDBStore("unipept", "projects");
 
     const { process: storeToBlob } = useProjectExport();
     const { process: blobToStore } = useProjectImport();
