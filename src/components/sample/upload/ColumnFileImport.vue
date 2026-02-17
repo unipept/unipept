@@ -134,17 +134,38 @@
                             persistent-clear
                             :disabled="disabledInputs"
                         />
-                        <v-text-field
+                        <div
                             v-if="selectedFdrColumn"
-                            v-model.number="fdrThreshold"
-                            label="FDR Threshold"
-                            type="number"
-                            step="0.001"
-                            density="compact"
                             class="mt-2"
-                            hide-details
-                            :disabled="disabledInputs"
-                        />
+                        >
+                            <div class="text-caption mb-1">FDR Threshold</div>
+                            <v-slider
+                                v-model="fdrThreshold"
+                                :max="0.05"
+                                :min="0"
+                                :step="0.001"
+                                hide-details
+                                thumb-label
+                                class="align-center"
+                                :disabled="disabledInputs"
+                            >
+                                <template #append>
+                                    <v-text-field
+                                        v-model.number="fdrThreshold"
+                                        type="number"
+                                        style="width: 100px"
+                                        density="compact"
+                                        hide-details
+                                        variant="outlined"
+                                        :min="0"
+                                        :max="1"
+                                        :step="0.001"
+                                        @update:model-value="clampFdrThreshold"
+                                        :disabled="disabledInputs"
+                                    />
+                                </template>
+                            </v-slider>
+                        </div>
                     </div>
                 </v-row>
                 <v-row>
@@ -395,6 +416,14 @@ const initialize = async function() {
     useFirstRowAsHeader.value = true;
 
     await readFile();
+}
+
+const clampFdrThreshold = () => {
+    if (fdrThreshold.value < 0) {
+        fdrThreshold.value = 0;
+    } else if (fdrThreshold.value > 1) {
+        fdrThreshold.value = 1;
+    }
 }
 
 watch(delimiter, parseContent);
