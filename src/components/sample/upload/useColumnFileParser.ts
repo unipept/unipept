@@ -9,6 +9,8 @@ export interface ColumnFileParserData {
     sanitizeSequenceColumn: boolean
     selectedSequenceColumn: string
     selectedIntensitiesColumn: string
+    selectedFdrColumn?: string
+    fdrThreshold?: number
     delimiter: string
 }
 
@@ -19,6 +21,7 @@ export interface ColumnFileParserWorkerOutput {
     intensities: Map<string, number> | undefined,
     validPeptides: boolean,
     validIntensities: boolean
+    validFdr?: boolean
 }
 
 
@@ -27,6 +30,7 @@ export default function useColumnFileParser() {
     const rows: Ref<string[][]> = ref([]);
     const validPeptides: Ref<boolean> = ref(true);
     const validIntensities: Ref<boolean> = ref(true);
+    const validFdr: Ref<boolean> = ref(true);
 
     const disabledInputs = ref(false);
 
@@ -37,6 +41,7 @@ export default function useColumnFileParser() {
     const debouncedDisabledInputs: Ref<boolean> = refDebounced(disabledInputs, debounceMs);
     const debouncedValidPeptides: Ref<boolean> = refDebounced(validPeptides, debounceMs);
     const debouncedValidIntensities: Ref<boolean> = refDebounced(validIntensities, debounceMs);
+    const debouncedValidFdr: Ref<boolean> = refDebounced(validFdr, debounceMs);
 
     const { post } = useAsyncWebWorker<ColumnFileParserData, ColumnFileParserWorkerOutput>(
         () => new ColumnFileParserWebWorker()
@@ -48,7 +53,9 @@ export default function useColumnFileParser() {
         sanitizeSequenceColumn: boolean,
         selectedSequenceColumn: string,
         selectedIntensitiesColumn: string,
-        delimiter: string
+        delimiter: string,
+        selectedFdrColumn?: string,
+        fdrThreshold?: number
     ) => {
         disabledInputs.value = true
         loading.value = true;
@@ -59,6 +66,8 @@ export default function useColumnFileParser() {
             sanitizeSequenceColumn,
             selectedSequenceColumn,
             selectedIntensitiesColumn,
+            selectedFdrColumn,
+            fdrThreshold,
             delimiter
         });
 
@@ -66,6 +75,7 @@ export default function useColumnFileParser() {
         rows.value = processed.rows;
         validPeptides.value = processed.validPeptides;
         validIntensities.value = processed.validIntensities;
+        validFdr.value = processed.validFdr ?? true;
 
         loading.value = false;
         disabledInputs.value = false;
@@ -83,6 +93,7 @@ export default function useColumnFileParser() {
         rows,
         validPeptides,
         validIntensities,
+        validFdr: debouncedValidFdr,
 
         parse
     }

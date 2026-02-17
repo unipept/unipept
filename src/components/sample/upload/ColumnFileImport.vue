@@ -68,7 +68,7 @@
                     </div>
                 </v-row>
                 <v-row class="mb-n3">
-                    <div class="v-col-md-6">
+                    <div class="v-col-md-4">
                         <div class="d-flex align-center pb-1">
                             <h4>Sequence column</h4>
                             <v-icon
@@ -89,7 +89,7 @@
                             :disabled="disabledInputs"
                         />
                     </div>
-                    <div class="v-col-md-6">
+                    <div class="v-col-md-4">
                         <div class="d-flex align-center pb-1">
                             <h4>Score column</h4>
                             <v-icon
@@ -109,6 +109,40 @@
                             hint="Please indicate which column contains the peptide intensities. The intensity values are optional. If provided, they are used by the Peptonizer module and drastically improves its accuracy."
                             persistent-hint
                             persistent-clear
+                            :disabled="disabledInputs"
+                        />
+                    </div>
+                    <div class="v-col-md-4">
+                        <div class="d-flex align-center pb-1">
+                            <h4>FDR column</h4>
+                            <v-icon
+                                size="extra-small"
+                                class="mx-1"
+                                color="teal"
+                            >
+                                mdi-rhombus
+                            </v-icon>
+                            <span class="font-italic">(Optional)</span>
+                        </div>
+                        <v-select
+                            v-model="selectedFdrColumn"
+                            :items="columns"
+                            density="comfortable"
+                            :clearable="selectedFdrColumn !== ''"
+                            hint="Please indicate which column contains the peptide FDR (False Discovery Rate). Peptides with an FDR higher than the threshold will be excluded."
+                            persistent-hint
+                            persistent-clear
+                            :disabled="disabledInputs"
+                        />
+                        <v-text-field
+                            v-if="selectedFdrColumn"
+                            v-model.number="fdrThreshold"
+                            label="FDR Threshold"
+                            type="number"
+                            step="0.001"
+                            density="compact"
+                            class="mt-2"
+                            hide-details
                             :disabled="disabledInputs"
                         />
                     </div>
@@ -137,7 +171,7 @@
                                         <div class="d-flex justify-space-between">
                                             {{ column }}
                                             <div
-                                                v-if="!loadingPreview && (column === selectedSequenceColumn && !validPeptides) || (column === selectedIntensitiesColumn && !validIntensities)"
+                                                v-if="!loadingPreview && ((column === selectedSequenceColumn && !validPeptides) || (column === selectedIntensitiesColumn && !validIntensities) || (column === selectedFdrColumn && !validFdr))"
                                                 class="float-right pl-2"
                                             >
                                                 <v-icon
@@ -179,6 +213,12 @@
                             >
                                 <span class="font-weight-bold">Invalid intensities:</span> all intensities must be a valid numeric value.
                             </div>
+                            <div
+                                v-if="!validFdr"
+                                class="text-red"
+                            >
+                                <span class="font-weight-bold">Invalid FDR:</span> all FDR values must be valid numeric values.
+                            </div>
                         </div>
                     </div>
                 </v-row>
@@ -210,6 +250,7 @@ const {
     rows,
     validPeptides,
     validIntensities,
+    validFdr,
 
     parse
 } = useColumnFileParser();
@@ -222,7 +263,7 @@ const loading: Ref<boolean> = ref(false);
 const validForm: Ref<boolean> = ref(false);
 
 // Compute the combined validity
-const combinedValid = computed(() => validForm.value && validPeptides.value && validIntensities.value);
+const combinedValid = computed(() => validForm.value && validPeptides.value && validIntensities.value && validFdr.value);
 
 watch(combinedValid, (newValue) => {
     valid.value = newValue;
@@ -246,6 +287,8 @@ const delimiter: Ref<string> = ref(",");
 
 const selectedSequenceColumn: Ref<string> = ref("");
 const selectedIntensitiesColumn: Ref<string> = ref("");
+const selectedFdrColumn: Ref<string> = ref("");
+const fdrThreshold: Ref<number> = ref(0.01);
 
 const sanitizeSequenceColumn: Ref<boolean> = ref(true);
 const useFirstRowAsHeader: Ref<boolean> = ref(true);
@@ -265,6 +308,12 @@ const getColumnHeaderColor = function(columnName: string): string {
         } else {
             return 'bg-red-lighten-4';
         }
+    } else if (selectedFdrColumn.value === columnName) {
+        if (validFdr.value) {
+            return 'bg-teal-lighten-4';
+        } else {
+            return 'bg-red-lighten-4';
+        }
     } else {
         return 'bg-grey-lighten-4';
     }
@@ -281,6 +330,12 @@ const getColumnCellColor = function(columnIdx: number): string {
     } else if (!loadingPreview.value && selectedIntensitiesColumn.value === currentCol) {
         if (validIntensities.value) {
             return 'bg-orange-lighten-5';
+        } else {
+            return 'bg-red-lighten-5';
+        }
+    } else if (!loadingPreview.value && selectedFdrColumn.value === currentCol) {
+        if (validFdr.value) {
+            return 'bg-teal-lighten-5';
         } else {
             return 'bg-red-lighten-5';
         }
@@ -320,7 +375,9 @@ const parseContent = async function() {
         sanitizeSequenceColumn.value,
         selectedSequenceColumn.value,
         selectedIntensitiesColumn.value,
-        delimiter.value
+        delimiter.value,
+        selectedFdrColumn.value,
+        fdrThreshold.value
     );
 
     props.sample.rawPeptides = rawPeptides;
@@ -331,6 +388,8 @@ const initialize = async function() {
     // Reset the selected values...
     selectedSequenceColumn.value = "";
     selectedIntensitiesColumn.value = "";
+    selectedFdrColumn.value = "";
+    fdrThreshold.value = 0.01;
 
     sanitizeSequenceColumn.value = true;
     useFirstRowAsHeader.value = true;
@@ -345,14 +404,30 @@ watch(selectedSequenceColumn, async () => {
     if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
         selectedIntensitiesColumn.value = "";
     }
+    if (selectedSequenceColumn.value === selectedFdrColumn.value) {
+        selectedFdrColumn.value = "";
+    }
     await parseContent();
 });
 watch(selectedIntensitiesColumn, async () => {
     if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
         selectedSequenceColumn.value = "";
     }
+    if (selectedIntensitiesColumn.value === selectedFdrColumn.value) {
+        selectedFdrColumn.value = "";
+    }
     await parseContent();
 });
+watch(selectedFdrColumn, async () => {
+    if (selectedSequenceColumn.value === selectedFdrColumn.value) {
+        selectedSequenceColumn.value = "";
+    }
+    if (selectedIntensitiesColumn.value === selectedFdrColumn.value) {
+        selectedIntensitiesColumn.value = "";
+    }
+    await parseContent();
+});
+watch(fdrThreshold, parseContent);
 
 watch(columnFileRef, initialize);
 onMounted(initialize);
