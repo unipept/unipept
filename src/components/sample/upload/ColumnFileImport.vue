@@ -138,10 +138,10 @@
                             v-if="selectedFdrColumn"
                             class="mt-2"
                         >
-                            <div class="text-caption mb-1">FDR Threshold</div>
+                            <h4>FDR Threshold</h4>
                             <v-slider
                                 v-model="fdrThreshold"
-                                :max="0.05"
+                                :max="1"
                                 :min="0"
                                 :step="0.001"
                                 hide-details
