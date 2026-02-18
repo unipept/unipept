@@ -1,4 +1,4 @@
-import {ColumnFileParserData} from "@/components/sample/upload/useColumnFileParser";
+import { ColumnFileParserData } from "@/components/sample/upload/useColumnFileParser";
 
 export interface ColumnFileParserWorkerOutput {
     rowStart: number
@@ -128,12 +128,12 @@ export const process = async ({
     };
 };
 
-const stripPeptideSequence = function(peptide: string): string {
+const stripPeptideSequence = function (peptide: string): string {
     // Regular expression to match PTMs (e.g., [modification]) and charge states (e.g., +2, -3, /+2, /-3)
     return peptide.replace(/\[.*?\]|\/?[+-]?\d+/g, '');
 }
 
-const isValidPeptide = function(sequence: string): boolean {
+const isValidPeptide = function (sequence: string): boolean {
     // Regular expression to check if the string contains only letters
     return /^[A-Za-z]+$/.test(sequence);
 }
