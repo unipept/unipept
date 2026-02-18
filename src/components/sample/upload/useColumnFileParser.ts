@@ -20,6 +20,7 @@ export default function useColumnFileParser() {
     const rows: Ref<string[][]> = ref([]);
     const validPeptides: Ref<boolean> = ref(true);
     const validIntensities: Ref<boolean> = ref(true);
+    const validFdr: Ref<boolean> = ref(true);
 
     const disabledInputs = ref(false);
 
@@ -33,6 +34,7 @@ export default function useColumnFileParser() {
     const debouncedDisabledInputs: Ref<boolean> = refDebounced(disabledInputs, debounceMs);
     const debouncedValidPeptides: Ref<boolean> = refDebounced(validPeptides, debounceMs);
     const debouncedValidIntensities: Ref<boolean> = refDebounced(validIntensities, debounceMs);
+    const debouncedValidFdr: Ref<boolean> = refDebounced(validFdr, debounceMs);
 
     const { post } = useAsyncWebWorker<ColumnFileParserData, ColumnFileParserWorkerOutput>(
         () => new ColumnFileParserWebWorker()
@@ -66,7 +68,7 @@ export default function useColumnFileParser() {
         rows.value = processed.rows;
         validPeptides.value = processed.validPeptides;
         validIntensities.value = processed.validIntensities;
-
+        validFdr.value = processed.validFdr;
 
         totalRows.value = processed.totalRows || 0;
         validRows.value = processed.validRows || 0;
@@ -87,6 +89,7 @@ export default function useColumnFileParser() {
         rows,
         validPeptides,
         validIntensities,
+        validFdr,
         totalRows,
         validRows,
 

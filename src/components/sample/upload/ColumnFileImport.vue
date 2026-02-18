@@ -185,7 +185,7 @@
                                     <div class="d-flex justify-space-between">
                                         {{ column }}
                                         <div
-                                            v-if="!loadingPreview && (column === selectedSequenceColumn && !validPeptides) || (column === selectedIntensitiesColumn && !validIntensities)"
+                                            v-if="!loadingPreview && ((column === selectedSequenceColumn && !validPeptides) || (column === selectedIntensitiesColumn && !validIntensities) || (column === selectedFdrColumn && !validFdr))"
                                             class="float-right pl-2"
                                         >
                                             <v-icon
@@ -193,18 +193,6 @@
                                                 color="red"
                                             >
                                                 mdi-alert
-                                            </v-icon>
-                                        </div>
-                                        <div
-                                            v-if="!loadingPreview && column === selectedFdrColumn"
-                                            class="float-right pl-2"
-                                        >
-                                            <v-icon
-                                                v-bind="props"
-                                                color="green"
-                                                size="x-small"
-                                            >
-                                                mdi-rhombus
                                             </v-icon>
                                         </div>
                                     </div>
@@ -242,6 +230,13 @@
                                 <span class="font-weight-bold">Invalid intensities:</span> all intensities must be a
                                 valid numeric value.
                             </div>
+                            <div
+                                v-if="!validFdr"
+                                class="text-red"
+                            >
+                                <span class="font-weight-bold">Invalid FDR values:</span> all values in the selected FDR column must be valid numeric values.
+                            </div>
+
                             <div class="mt-2" v-if="!loadingPreview && selectedFdrColumn">
                                 <b>{{ validRows }}</b> rows will be imported.
                             </div>
@@ -276,6 +271,7 @@ const {
     rows,
     validPeptides,
     validIntensities,
+    validFdr,
     validRows,
 
     parse
@@ -289,7 +285,7 @@ const loading: Ref<boolean> = ref(false);
 const validForm: Ref<boolean> = ref(false);
 
 // Compute the combined validity
-const combinedValid = computed(() => validForm.value && validPeptides.value && validIntensities.value);
+const combinedValid = computed(() => validForm.value && validPeptides.value && validIntensities.value && validFdr.value);
 
 watch(combinedValid, (newValue) => {
     valid.value = newValue;
@@ -343,7 +339,11 @@ const getColumnHeaderColor = function (columnName: string): string {
             return 'bg-red-lighten-4';
         }
     } else if (selectedFdrColumn.value === columnName) {
-        return 'bg-green-lighten-4';
+        if (validFdr.value) {
+            return 'bg-green-lighten-4';
+        } else {
+            return 'bg-red-lighten-4';
+        }
     } else {
         return 'bg-grey-lighten-4';
     }
@@ -364,7 +364,11 @@ const getColumnCellColor = function (columnIdx: number): string {
             return 'bg-red-lighten-5';
         }
     } else if (!loadingPreview.value && selectedFdrColumn.value === currentCol) {
-        return 'bg-green-lighten-5';
+        if (validFdr.value) {
+            return 'bg-green-lighten-5';
+        } else {
+            return 'bg-red-lighten-5';
+        }
     } else {
         return '';
     }
@@ -385,7 +389,6 @@ const readFile = async function () {
 
     // Remove the file extension from the file name
     props.sample.name = props.columnFile.name.replace(/\.[^/.]+$/, "");
-    ;
 
     await parseContent();
 
@@ -433,8 +436,8 @@ watch(selectedSequenceColumn, async () => {
         selectedIntensitiesColumn.value = "";
     }
 
-    if (selectedFdrColumn.value === selectedSequenceColumn.value) {
-        selectedSequenceColumn.value = "";
+    if (selectedSequenceColumn.value === selectedFdrColumn.value) {
+        selectedFdrColumn.value = "";
     }
     await parseContent();
 });
@@ -444,8 +447,8 @@ watch(selectedIntensitiesColumn, async () => {
         selectedSequenceColumn.value = "";
     }
 
-    if (selectedFdrColumn.value === selectedIntensitiesColumn.value) {
-        selectedIntensitiesColumn.value = "";
+    if (selectedIntensitiesColumn.value === selectedFdrColumn.value) {
+        selectedFdrColumn.value = "";
     }
     await parseContent();
 });

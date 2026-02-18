@@ -8,6 +8,7 @@ export interface ColumnFileParserWorkerOutput {
     intensities: Map<string, number> | undefined,
     validPeptides: boolean,
     validIntensities: boolean,
+    validFdr: boolean,
     totalRows: number,
     validRows: number
 }
@@ -29,6 +30,7 @@ export const process = async ({
     let intensities = undefined;
     let validPeptides = false;
     let validIntensities = false;
+    let validFdr = true;
 
     const lines = new TextDecoder().decode(linesBuffer).split(/\r?\n/);
 
@@ -52,13 +54,17 @@ export const process = async ({
         }
     }
 
+    const allRowsCount = allRows.length;
+
     // Filter by FDR if applicable
     const selectedFdrColIdx = columns.indexOf(selectedFdrColumn);
     if (selectedFdrColIdx >= 0 && selectedFdrColIdx < columns.length) {
         allRows = allRows.filter(row => {
-            const fdrValue = parseFloat(row[selectedFdrColIdx]);
+            const fdrValueStr = row[selectedFdrColIdx];
+            const fdrValue = parseFloat(fdrValueStr);
             // Discard rows with invalid (NaN) FDR values or FDR values above the configured threshold.
             if (isNaN(fdrValue)) {
+                validFdr = false;
                 return false;
             }
             return fdrValue <= fdrThreshold;
@@ -121,8 +127,9 @@ export const process = async ({
         intensities,
         validPeptides,
         validIntensities,
+        validFdr,
         validRows: rows.length,
-        totalRows: allRows.length
+        totalRows: allRowsCount
     };
 };
 
