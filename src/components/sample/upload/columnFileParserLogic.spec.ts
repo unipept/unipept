@@ -50,11 +50,6 @@ CCCCC,300,0.001`;
 
         const result = await process(data);
 
-        // Currently logic not implemented, so it will return all peptides
-        // Once implemented, it should only return AAAAA and CCCCC
-        // expect(result.rawPeptides).toBe('AAAAA\nCCCCC');
-        // For now, let's just assert it runs without crashing, or assert the expected behavior and expect it to fail?
-        // I will assert the expected behavior. This test will FAIL until I implement the logic.
         expect(result.rawPeptides).toContain('AAAAA');
         expect(result.rawPeptides).toContain('CCCCC');
         expect(result.rawPeptides).not.toContain('BBBBB');

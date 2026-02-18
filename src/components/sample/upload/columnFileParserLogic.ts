@@ -57,7 +57,7 @@ export const process = async ({
 
             // If valid, filter the rows
             if (validFdr && fdrThreshold !== undefined) {
-                rows = rows.filter(row => parseFloat(row[selectedFdrColIdx]) >= fdrThreshold);
+                rows = rows.filter(row => parseFloat(row[selectedFdrColIdx]) <= fdrThreshold);
             }
         }
     }
