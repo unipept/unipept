@@ -96,6 +96,7 @@ describe('ColumnFileParser', () => {
             expect(result.rawPeptides).toContain('CCCCC');
             expect(result.rawPeptides).toContain('DDDDD');
             expect(result.rawPeptides).not.toContain('EEEEE');
+            expect(result.validFdr).toBe(false);
         });
 
         it('should not filter if no FDR column is selected', async () => {
