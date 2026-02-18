@@ -8,6 +8,7 @@ export interface ColumnFileParserWorkerOutput {
     intensities: Map<string, number> | undefined,
     validPeptides: boolean,
     validIntensities: boolean,
+    totalRows: number,
     validRows: number
 }
 
@@ -126,7 +127,8 @@ export const process = async ({
         intensities,
         validPeptides,
         validIntensities,
-        validRows: rows.length
+        validRows: rows.length,
+        totalRows: allRows.length
     };
 };
 

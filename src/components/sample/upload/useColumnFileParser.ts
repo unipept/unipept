@@ -2,6 +2,7 @@ import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import ColumnFileParserWebWorker from "./workers/columnFileParser.worker?worker";
 import { ref, Ref } from "vue";
 import { refDebounced } from '@vueuse/core'
+import {ColumnFileParserWorkerOutput} from "@/components/sample/upload/ColumnFileParser";
 
 export interface ColumnFileParserData {
     linesBuffer: Uint8Array
@@ -13,18 +14,6 @@ export interface ColumnFileParserData {
     fdrThreshold: number
     delimiter: string
 }
-
-export interface ColumnFileParserWorkerOutput {
-    columns: string[]
-    rows: string[][]
-    rawPeptides: string
-    intensities: Map<string, number> | undefined,
-    validPeptides: boolean,
-    validIntensities: boolean,
-    totalRows: number,
-    validRows: number
-}
-
 
 export default function useColumnFileParser() {
     const columns: Ref<string[]> = ref([]);
@@ -78,13 +67,8 @@ export default function useColumnFileParser() {
         validPeptides.value = processed.validPeptides;
         validIntensities.value = processed.validIntensities;
 
-        // Based on the worker output, we might want to return total/valid rows count.
-        // But our worker currently only returns a slice of rows. 
-        // We need to update the worker to return counts as well.
-        // For now, let's assume the worker will return them (I need to update the worker definition).
-        // @ts-ignore
+
         totalRows.value = processed.totalRows || 0;
-        // @ts-ignore
         validRows.value = processed.validRows || 0;
 
         loading.value = false;

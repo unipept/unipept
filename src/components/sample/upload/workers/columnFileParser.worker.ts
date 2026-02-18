@@ -7,7 +7,5 @@ self.onunhandledrejection = (event) => {
 };
 
 self.onmessage = async (event) => {
-    // @ts-ignore
     self.postMessage(await process(event.data));
 }
-
