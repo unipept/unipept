@@ -432,6 +432,10 @@ watch(selectedSequenceColumn, async () => {
     if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
         selectedIntensitiesColumn.value = "";
     }
+
+    if (selectedFdrColumn.value === selectedSequenceColumn.value) {
+        selectedSequenceColumn.value = "";
+    }
     await parseContent();
 });
 
@@ -439,13 +443,21 @@ watch(selectedIntensitiesColumn, async () => {
     if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
         selectedSequenceColumn.value = "";
     }
+
+    if (selectedFdrColumn.value === selectedIntensitiesColumn.value) {
+        selectedIntensitiesColumn.value = "";
+    }
     await parseContent();
 });
 
 watch(selectedFdrColumn, async () => {
-    // Should we ensure it's distinct from others?
-    // Current logic for others effectively swaps if they pick the same.
-    // For simplicity, let's just parse.
+    if (selectedFdrColumn.value === selectedSequenceColumn.value) {
+        selectedSequenceColumn.value = "";
+    }
+
+    if (selectedFdrColumn.value === selectedIntensitiesColumn.value) {
+        selectedIntensitiesColumn.value = "";
+    }
     await parseContent();
 });
 

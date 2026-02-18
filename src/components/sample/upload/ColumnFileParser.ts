@@ -57,13 +57,7 @@ export const process = async ({
     if (selectedFdrColIdx >= 0 && selectedFdrColIdx < columns.length) {
         allRows = allRows.filter(row => {
             const fdrValue = parseFloat(row[selectedFdrColIdx]);
-            // If the FDR value is valid and less than or equal to the threshold, keep it.
-            // If the FDR value is NOT a number, we should probably discard it if we are strictly filtering?
-            // Existing logic for intensities discards if ANY is invalid. Here we filter ROWS.
-            // Let's assume if it's not a number it's invalid and should be filtered out? 
-            // Or should we only filter if it IS a number and > threshold?
-            // Requirements: "no matter their FDR" -> imports all. "filter... on their FDR".
-            // If import filter is active, we expect valid FDRs.
+            // Discard rows with invalid (NaN) FDR values or FDR values above the configured threshold.
             if (isNaN(fdrValue)) {
                 return false;
             }
