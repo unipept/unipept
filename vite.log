@@ -1,0 +1,11 @@
+yarn run v1.22.22
+$ vite --host
+
+  VITE v7.3.1  ready in 485 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://192.168.0.2:3000/
+10:18:13 AM [vite] (client) ✨ new dependencies optimized: jszip
+10:18:13 AM [vite] (client) ✨ optimized dependencies changed. reloading
+error Command failed with exit code 143.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
