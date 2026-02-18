@@ -68,7 +68,7 @@
                     </div>
                 </v-row>
                 <v-row class="mb-n3">
-                    <div class="v-col-md-6">
+                    <div class="v-col-6 v-col-md-4">
                         <div class="d-flex align-center pb-1">
                             <h4>Sequence column</h4>
                             <v-icon
@@ -89,7 +89,7 @@
                             :disabled="disabledInputs"
                         />
                     </div>
-                    <div class="v-col-md-6">
+                    <div class="v-col-6 v-col-md-4">
                         <div class="d-flex align-center pb-1">
                             <h4>Score column</h4>
                             <v-icon
@@ -111,6 +111,54 @@
                             persistent-clear
                             :disabled="disabledInputs"
                         />
+                    </div>
+                    <div class="v-col-6 v-col-md-4">
+                        <div class="d-flex align-center pb-1">
+                            <h4>FDR column</h4>
+                            <v-icon
+                                size="extra-small"
+                                class="mx-1"
+                                color="green"
+                            >
+                                mdi-rhombus
+                            </v-icon>
+                            <span class="font-italic">(Optional)</span>
+                        </div>
+                        <v-select
+                            v-model="selectedFdrColumn"
+                            :items="columns"
+                            density="comfortable"
+                            :clearable="selectedFdrColumn !== ''"
+                            hint="Please indicate which column contains the FDR values. These values are optional and used for filtering."
+                            persistent-hint
+                            persistent-clear
+                            :disabled="disabledInputs"
+                        />
+                        
+                        <div class="d-flex align-center pb-1 mt-2">
+                            <h4>FDR threshold</h4>
+                        </div>
+                        <div class="d-flex">
+                            <v-select
+                                v-model="selectedFdrThreshold"
+                                :items="fdrOptions"
+                                density="comfortable"
+                                hint="Peptides with an FDR value higher than this threshold will be filtered out."
+                                persistent-hint
+                                :disabled="disabledInputs"
+                                item-title="text"
+                                item-value="value"
+                                class="mr-2"
+                            />
+                             <v-text-field
+                                v-if="selectedFdrThreshold === 'custom'"
+                                v-model.number="customFdrThreshold"
+                                type="number"
+                                density="comfortable"
+                                :rules="[value => (value >= 0 && value <= 1) || 'Value must be between 0 and 1']"
+                                :disabled="disabledInputs"
+                            />
+                        </div>
                     </div>
                 </v-row>
                 <v-row>
@@ -147,6 +195,18 @@
                                                     mdi-alert
                                                 </v-icon>
                                             </div>
+                                             <div
+                                                v-if="!loadingPreview && column === selectedFdrColumn"
+                                                class="float-right pl-2"
+                                            >
+                                                <v-icon
+                                                    v-bind="props"
+                                                    color="green"
+                                                    size="x-small"
+                                                >
+                                                    mdi-rhombus
+                                                </v-icon>
+                                            </div>
                                         </div>
                                     </th>
                                 </tr>
@@ -179,6 +239,9 @@
                             >
                                 <span class="font-weight-bold">Invalid intensities:</span> all intensities must be a valid numeric value.
                             </div>
+                            <div class="mt-2" v-if="!loadingPreview && selectedFdrColumn">
+                                <b>{{ validRows }}</b> rows will be imported.
+                            </div>
                         </div>
                     </div>
                 </v-row>
@@ -210,6 +273,7 @@ const {
     rows,
     validPeptides,
     validIntensities,
+    validRows,
 
     parse
 } = useColumnFileParser();
@@ -246,6 +310,16 @@ const delimiter: Ref<string> = ref(",");
 
 const selectedSequenceColumn: Ref<string> = ref("");
 const selectedIntensitiesColumn: Ref<string> = ref("");
+const selectedFdrColumn: Ref<string> = ref("");
+
+const fdrOptions = [
+    { text: "5% FDR", value: "0.05" },
+    { text: "1% FDR", value: "0.01" },
+    { text: "0.1% FDR", value: "0.001" },
+    { text: "Other", value: "custom" }
+];
+const selectedFdrThreshold: Ref<string> = ref("0.05");
+const customFdrThreshold: Ref<number> = ref(0.01);
 
 const sanitizeSequenceColumn: Ref<boolean> = ref(true);
 const useFirstRowAsHeader: Ref<boolean> = ref(true);
@@ -265,6 +339,8 @@ const getColumnHeaderColor = function(columnName: string): string {
         } else {
             return 'bg-red-lighten-4';
         }
+    } else if (selectedFdrColumn.value === columnName) {
+        return 'bg-green-lighten-4';
     } else {
         return 'bg-grey-lighten-4';
     }
@@ -284,6 +360,8 @@ const getColumnCellColor = function(columnIdx: number): string {
         } else {
             return 'bg-red-lighten-5';
         }
+    } else if (!loadingPreview.value && selectedFdrColumn.value === currentCol) {
+        return 'bg-green-lighten-5';
     } else {
         return '';
     }
@@ -320,7 +398,9 @@ const parseContent = async function() {
         sanitizeSequenceColumn.value,
         selectedSequenceColumn.value,
         selectedIntensitiesColumn.value,
-        delimiter.value
+        delimiter.value,
+        selectedFdrColumn.value,
+        selectedFdrThreshold.value === 'custom' ? customFdrThreshold.value : parseFloat(selectedFdrThreshold.value)
     );
 
     props.sample.rawPeptides = rawPeptides;
@@ -331,6 +411,9 @@ const initialize = async function() {
     // Reset the selected values...
     selectedSequenceColumn.value = "";
     selectedIntensitiesColumn.value = "";
+    selectedFdrColumn.value = "";
+    selectedFdrThreshold.value = "0.05";
+    customFdrThreshold.value = 0.01;
 
     sanitizeSequenceColumn.value = true;
     useFirstRowAsHeader.value = true;
@@ -347,12 +430,23 @@ watch(selectedSequenceColumn, async () => {
     }
     await parseContent();
 });
+
 watch(selectedIntensitiesColumn, async () => {
     if (selectedSequenceColumn.value === selectedIntensitiesColumn.value) {
         selectedSequenceColumn.value = "";
     }
     await parseContent();
 });
+
+watch(selectedFdrColumn, async () => {
+    // Should we ensure it's distinct from others?
+    // Current logic for others effectively swaps if they pick the same.
+    // For simplicity, let's just parse.
+    await parseContent();
+});
+
+watch(selectedFdrThreshold, parseContent);
+watch(customFdrThreshold, parseContent);
 
 watch(columnFileRef, initialize);
 onMounted(initialize);
