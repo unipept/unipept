@@ -1,10 +1,10 @@
-import { defineConfig } from 'eslint-define-config';
 import vuePlugin from 'eslint-plugin-vue';
 import vueParser from 'vue-eslint-parser';
 import typescriptPlugin from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 
-export default defineConfig([
+/** @type {import('eslint').Linter.Config[]} */
+export default [
     {
         files: ['**/*.ts', '**/*.tsx', '**/*.vue'], // Include TypeScript and Vue files
         ignores: ['node_modules', 'dist', 'build'], // Ignore common folders
@@ -51,4 +51,4 @@ export default defineConfig([
             '@typescript-eslint/no-unused-vars': 'off', // Disable unused var check for JS
         },
     },
-]);
+];
