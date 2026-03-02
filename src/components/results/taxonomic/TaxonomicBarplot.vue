@@ -64,7 +64,7 @@
                             </v-expansion-panel>
                         </v-expansion-panels>
                     </div>
-                    <div ref="barplotWrapper">
+                    <div ref="barplotWrapper" class="mb-3">
                         <barplot ref="barplotComponent" :bars="barData" :settings="barplotSettings" />
                     </div>
 
