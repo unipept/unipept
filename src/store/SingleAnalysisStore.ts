@@ -10,6 +10,7 @@ import useOntologyStore from "@/store/OntologyStore";
 import useTaxonomicProcessor from "@/composables/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTreeProcessor";
 import usePeptonizerStore, {PeptonizerStoreImport} from "@/store/PeptonizerAnalysisStore";
+import usePathwayPilotStore, {PathwayPilotStoreImport} from "@/store/PathwayPilotStore";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
@@ -81,6 +82,7 @@ const useSingleAnalysisStore = (
     const ontologyStore = useOntologyStore();
     const customFilterStore = useCustomFilterStore();
     const peptonizerStore = usePeptonizerStore(_id);
+    const pathwayPilotStore = usePathwayPilotStore(_id);
 
     // ===============================================================
     // ======================== REFERENCES ===========================
@@ -275,7 +277,8 @@ const useSingleAnalysisStore = (
 
             peptideToDataTransferable,
 
-            peptonizer: peptonizerStore.exportStore()
+            peptonizer: peptonizerStore.exportStore(),
+            pathwayPilot: pathwayPilotStore.exportStore()
         }
     }
 
@@ -298,6 +301,10 @@ const useSingleAnalysisStore = (
 
         if (storeImport.peptonizer) {
             peptonizerStore.setImportedData(storeImport.peptonizer);
+        }
+
+        if (storeImport.pathwayPilot) {
+            pathwayPilotStore.setImportedData(storeImport.pathwayPilot);
         }
     }
 
@@ -333,10 +340,12 @@ const useSingleAnalysisStore = (
         lcaToPeptides,
         peptideToLca,
         ncbiTree,
+        ncbiTreeNodes,
 
         ontologyStore,
 
         peptonizerStore,
+        pathwayPilotStore,
 
         analyse,
         updateName,
@@ -362,6 +371,7 @@ export interface SingleAnalysisStoreImport {
     databaseVersion: string;
     peptideToDataTransferable: TransferableState | undefined;
     peptonizer: PeptonizerStoreImport | undefined;
+    pathwayPilot: PathwayPilotStoreImport | undefined;
 }
 
 export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImport) => {

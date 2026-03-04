@@ -8,6 +8,22 @@
             <v-tab text="GO terms" />
             <v-tab text="EC numbers" />
             <v-tab text="InterPro entries" />
+            <v-tab>
+                <v-tooltip>
+                    <template #activator="{ props: tooltip }">
+                        <span v-bind="tooltip">
+                            Pathway Pilot
+                            <v-icon
+                                v-bind="tooltip"
+                                color="yellow"
+                            >
+                                mdi-creation-outline
+                            </v-icon>
+                        </span>
+                    </template>
+                    <span>New since Unipept 6.2.0!</span>
+                </v-tooltip>
+            </v-tab>
 
             <v-spacer />
 
@@ -68,9 +84,9 @@
             />
         </v-tabs>
 
-        <v-card-text>
-            <v-tabs-window v-model="currentTab">
-                <v-tabs-window-item>
+        <v-tabs-window v-model="currentTab">
+            <v-tabs-window-item>
+                <v-card-text>
                     <functional-go-results
                         :data="goData"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
@@ -86,9 +102,11 @@
                             </span>
                         </template>
                     </functional-go-results>
-                </v-tabs-window-item>
+                </v-card-text>
+            </v-tabs-window-item>
 
-                <v-tabs-window-item>
+            <v-tabs-window-item>
+                <v-card-text>
                     <functional-ec-results
                         :data="ecData"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
@@ -105,9 +123,11 @@
                             </span>
                         </template>
                     </functional-ec-results>
-                </v-tabs-window-item>
+                </v-card-text>
+            </v-tabs-window-item>
 
-                <v-tabs-window-item>
+            <v-tabs-window-item>
+                <v-card-text>
                     <functional-ipr-results
                         :data="iprData"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
@@ -124,9 +144,13 @@
                             </span>
                         </template>
                     </functional-ipr-results>
-                </v-tabs-window-item>
-            </v-tabs-window>
-        </v-card-text>
+                </v-card-text>
+            </v-tabs-window-item>
+
+            <v-tabs-window-item>
+                <pathway-pilot-results :analysis="analysis" />
+            </v-tabs-window-item>
+        </v-tabs-window>
     </v-unipept-card>
 </template>
 
@@ -148,6 +172,7 @@ import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/OntologyStore";
 import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue";
 import {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
+import PathwayPilotResults from "@/components/results/functional/pathway/PathwayPilotResults.vue";
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore

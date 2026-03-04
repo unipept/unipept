@@ -37,17 +37,17 @@
                 v-if="hasChildren && (isExpanded || node.match)"
                 style="cursor: pointer;"
                 :size="size"
-                @click="isExpanded = !isExpanded"
+                @click="handleExpandClick"
             />
             <open
                 v-else-if="hasChildren && !isExpanded"
                 style="cursor: pointer;"
                 :size="size"
-                @click="isExpanded = !isExpanded"
+                @click="handleExpandClick"
             />
 
             <treeview-check-box
-                v-if="selectable && depth > 0"
+                v-if="selectable && depth > 0 && node.selectable !== false"
                 v-model="itemSelected"
                 :size="size"
                 :disabled="selectedItems.length >= max"
@@ -72,7 +72,7 @@
                 </span>
                 <span v-else>
                     {{ node.name }}
-                    <span v-if="node.nameExtra"> ({{ node.nameExtra }})</span>
+                    <span v-if="node.nameExtra"> (<span v-if="node.nameExtraMatch"><span>{{ node.nameExtra.slice(0, node.nameExtraMatch.start) }}</span><b :style="{ color: '#306ccf' }">{{ node.nameExtra.slice(node.nameExtraMatch.start, node.nameExtraMatch.end) }}</b><span>{{ node.nameExtra.slice(node.nameExtraMatch.end) }}</span></span><span v-else>{{ node.nameExtra }}</span>)</span>
                 </span>
             </div>
         </div>
@@ -86,7 +86,7 @@
                 :node="child"
                 :lines="depth > 0 ? [ ...lines, !last ] : lines"
                 :depth="depth + 1"
-                :expanded="expanded"
+                :expanded="childExpanded"
                 :size="size"
                 :last="i === amountOfChildren - 1"
                 :max="max"
@@ -139,8 +139,41 @@ const selectable = computed(() => max > 0);
 const amountOfChildren = computed(() => node.children.length);
 const hasChildren = computed(() => amountOfChildren.value > 0);
 
+// When the user manually opens a node, pass `depth` to children so only the
+// immediate level expands (single-level expand).  Programmatic prop changes
+// (e.g. search) reset this so the full expansion depth is restored.
+const manuallyToggled = ref(false);
+const childExpanded = computed<boolean | number>(() => manuallyToggled.value ? depth : expanded);
+
+const handleExpandClick = () => {
+    if (!isExpanded.value) {
+        // Opening via user click – limit children to a single level
+        manuallyToggled.value = true;
+    }
+    isExpanded.value = !isExpanded.value;
+};
+
 watch(() => expanded, (newValue) => {
     isExpanded.value = Number.isInteger(newValue) ? newValue as number > depth : newValue as boolean;
+    manuallyToggled.value = false;
+});
+
+// Sync checkbox state → selectedItems model
+watch(itemSelected, (selected) => {
+    if (node.selectable === false) return;
+    if (selected) {
+        if (!selectedItems.value.some(item => item.id === node.id)) {
+            selectedItems.value = [...selectedItems.value, node];
+        }
+    } else {
+        selectedItems.value = selectedItems.value.filter(item => item.id !== node.id);
+    }
+});
+
+// Sync selectedItems model → checkbox state (e.g. external clear)
+watch(selectedItems, (items) => {
+    if (node.selectable === false) return;
+    itemSelected.value = items.some(item => item.id === node.id);
 });
 </script>
 
@@ -153,6 +186,8 @@ export interface TreeviewItem {
     nameExtra?: string
     highlighted?: boolean
     match?: { start: number, end: number }
+    nameExtraMatch?: { start: number, end: number }
+    selectable?: boolean
 }
 
 export type Size = 'x-small' | 'small' | 'default' | 'large' | 'x-large';

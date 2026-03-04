@@ -4,10 +4,12 @@ import {ref, Ref} from "vue";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
+import {PathwayItem} from "@/store/PathwayPilotStore";
 
 export interface ComparativePageState {
     selectedAnalyses: SingleAnalysisStore[];
     selectedGroup: GroupAnalysisStore | undefined;
+    selectedComparativePathway: PathwayItem | undefined;
 }
 
 export interface SinglePageState {
@@ -20,8 +22,13 @@ const useAppStateStore = defineStore('appStateStore', () => {
 
     const comparativeAnalysisState: Ref<ComparativePageState> = ref({
         selectedAnalyses: [],
-        selectedGroup: undefined
+        selectedGroup: undefined,
+        selectedComparativePathway: undefined
     });
+
+    // Holds a pathway ID that was imported from a session and needs to be resolved
+    // into a full PathwayItem once the pathway mapping has been loaded.
+    const pendingComparativePathwayId = ref<string | undefined>(undefined);
 
     const singleAnalysisState: Ref<SinglePageState> = ref({
         selectedAnalyses: [],
@@ -31,6 +38,8 @@ const useAppStateStore = defineStore('appStateStore', () => {
     const clear = () => {
         comparativeAnalysisState.value.selectedAnalyses = [];
         comparativeAnalysisState.value.selectedGroup = undefined;
+        comparativeAnalysisState.value.selectedComparativePathway = undefined;
+        pendingComparativePathwayId.value = undefined;
 
         singleAnalysisState.value.selectedAnalyses = [];
         singleAnalysisState.value.selectedGroup = undefined;
@@ -40,6 +49,7 @@ const useAppStateStore = defineStore('appStateStore', () => {
         return {
             selectedComparativeAnalysisIds: comparativeAnalysisState.value.selectedAnalyses.map((a: SingleAnalysisStore) => a.id),
             selectedComparativeGroupId: comparativeAnalysisState.value.selectedGroup?.id,
+            selectedComparativePathwayId: comparativeAnalysisState.value.selectedComparativePathway?.id,
             selectedSingleAnalysisIds: singleAnalysisState.value.selectedAnalyses.map((a: SingleAnalysisStore) => a.id),
             selectedSingleGroupId: singleAnalysisState.value.selectedGroup?.id
         }
@@ -59,6 +69,10 @@ const useAppStateStore = defineStore('appStateStore', () => {
             comparativeAnalysisState.value.selectedGroup = project.getGroup(storeImport.selectedComparativeGroupId);
         }
 
+        if (storeImport.selectedComparativePathwayId) {
+            pendingComparativePathwayId.value = storeImport.selectedComparativePathwayId;
+        }
+
         for (const analysisId of storeImport.selectedSingleAnalysisIds) {
             singleAnalysisState.value.selectedAnalyses.push(allAnalysesOfProject.find(a => a.id === analysisId) as SingleAnalysisStore);
         }
@@ -72,6 +86,7 @@ const useAppStateStore = defineStore('appStateStore', () => {
         project,
 
         comparativeAnalysisState,
+        pendingComparativePathwayId,
         singleAnalysisState,
 
         exportStore,
@@ -84,6 +99,7 @@ const useAppStateStore = defineStore('appStateStore', () => {
 export interface AppStateStoreImport {
     selectedComparativeAnalysisIds: string[];
     selectedComparativeGroupId: string | undefined;
+    selectedComparativePathwayId?: string;
 
     selectedSingleAnalysisIds: string[];
     selectedSingleGroupId: string | undefined;
