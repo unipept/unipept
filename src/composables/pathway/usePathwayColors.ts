@@ -1,8 +1,9 @@
 import { pathwayGroups, groupColors } from '@/logic/PathwayGroups';
 
 export const PATHWAY_COLORS = [
-    '#4c8cbf', '#e74c3c', '#2ecc71', '#f39c12',
-    '#9b59b6', '#1abc9c', '#e67e22', '#3498db'
+    '#5878a3', '#e59344', '#d1605e', '#85b6b2',
+    '#6b9f59', '#e7cb60', '#a77c9f', '#f2a2a9',
+    '#967762', "#b9b1ac"
 ];
 
 export function categoryColor(subCategory: string): string {

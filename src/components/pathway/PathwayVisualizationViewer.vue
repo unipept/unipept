@@ -24,6 +24,15 @@
                                 </v-expansion-panel-text>
                             </v-expansion-panel>
                         </v-expansion-panels>
+                        <v-alert
+                            v-if="crowdingWarning"
+                            type="warning"
+                            variant="tonal"
+                            density="compact"
+                            class="mt-2"
+                        >
+                            More than 6 groups are active. The visualization may become too crowded to interpret clearly.
+                        </v-alert>
                     </div>
 
                     <template v-if="viz.loading.value">
@@ -187,6 +196,7 @@ const props = defineProps<{
     getEcStats?: (ecId: string) => { name: string; color: string; matched: number; total: number }[];
     getAreaStats?: (area: any) => { name: string; color: string; count: number; total: number }[];
     showCsvExport?: boolean;
+    crowdingWarning?: boolean;
 }>();
 
 const emit = defineEmits<{

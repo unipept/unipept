@@ -11,6 +11,7 @@
         :get-ec-stats="getEcStats"
         :get-area-stats="getAreaStats"
         :show-csv-export="true"
+        :crowding-warning="selectedTreeviewItems.length > 6"
         @back="emit('back')"
         @export-csv="exportAsCsv"
         @retry="loadVisualization"

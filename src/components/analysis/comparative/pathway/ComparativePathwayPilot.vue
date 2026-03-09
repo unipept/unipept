@@ -14,6 +14,7 @@
                 :get-ec-stats="getGroupEcStats"
                 :get-area-stats="getAreaStats"
                 :show-csv-export="true"
+                :crowding-warning="(useGroups ? effectiveGroups.length : props.analyses.length) > 6"
                 @back="selectedPathway = undefined"
                 @export-csv="exportAsCsv"
                 @retry="retryViz"
