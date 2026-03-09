@@ -146,8 +146,28 @@ const groupTotalCounts = computed<number[]>(() =>
     })
 );
 
+const analysisTotalCounts = computed<number[]>(() =>
+    props.analyses.map(analysis => {
+        let total = 0;
+        if (analysis.peptidesTable) {
+            for (const count of analysis.peptidesTable.counts.values()) {
+                total += count;
+            }
+        }
+        return total;
+    })
+);
+
 const getGroupEcStats = computed(() => {
-    if (!useGroups.value || effectiveGroups.value.length === 0) return undefined;
+    if (!useGroups.value) {
+        return (ecId: string) => props.analyses.map((analysis, i) => ({
+            name: analysis.name,
+            color: analysisColors.value[i],
+            matched: analysis.pathwayPilotStore.getEcCount(ecId),
+            total: analysisTotalCounts.value[i] ?? 0
+        }));
+    }
+    if (effectiveGroups.value.length === 0) return undefined;
     return (ecId: string) => effectiveGroups.value.map((group, i) => ({
         name: group.name,
         color: groupColors.value[i],
@@ -159,7 +179,15 @@ const getGroupEcStats = computed(() => {
 });
 
 const getAreaStats = computed(() => {
-    if (!useGroups.value || effectiveGroups.value.length === 0) return undefined;
+    if (!useGroups.value) {
+        return (area: any) => props.analyses.map((analysis, i) => ({
+            name: analysis.name,
+            color: analysisColors.value[i],
+            count: getGroupCountForArea([analysis], area),
+            total: analysisTotalCounts.value[i] ?? 0
+        }));
+    }
+    if (effectiveGroups.value.length === 0) return undefined;
     return (area: any) => effectiveGroups.value.map((group, i) => ({
         name: group.name,
         color: groupColors.value[i],
