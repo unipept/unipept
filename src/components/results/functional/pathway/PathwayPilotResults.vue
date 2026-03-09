@@ -13,13 +13,10 @@
                 :analysis="analysis"
                 @back="analysis.pathwayPilotStore.setSelectedPathway(undefined)"
             />
-            <div v-else-if="analysis.pathwayPilotStore.status === PathwayPilotStatus.Loading" class="d-flex justify-center align-center py-8">
-                <v-progress-circular indeterminate color="primary" />
-                <span class="ml-4">Loading pathway data...</span>
-            </div>
             <pathway-selection-panel
                 v-else
                 :store="analysis.pathwayPilotStore"
+                :loading="analysis.pathwayPilotStore.status === PathwayPilotStatus.Loading"
             />
         </template>
     </div>

@@ -3,6 +3,7 @@
         :filters="filters"
         :headers="headers"
         sort-key="count"
+        :loading="loading"
         :error="store.status === 'Failed'"
         :category-options="categoryOptions"
         :compound-options="compoundOptions"
@@ -22,6 +23,7 @@ import PathwaySelectionTable from '@/components/pathway/PathwaySelectionTable.vu
 
 const props = defineProps<{
     store: PathwayPilotStore;
+    loading?: boolean;
 }>();
 
 const mappingStore = usePathwayPilotMappingStore();

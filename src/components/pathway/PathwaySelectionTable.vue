@@ -21,14 +21,14 @@
 
         <p v-if="subtitle" class="text-body-1 mb-4">{{ subtitle }}</p>
 
-        <div v-if="loading" class="d-flex justify-center align-center py-8">
+        <v-alert v-if="error" type="error" variant="tonal">
+            Failed to load pathway data. Please check your network connection and try again.
+        </v-alert>
+
+        <div v-else-if="loading" class="d-flex justify-center align-center py-8">
             <v-progress-circular indeterminate color="primary" />
             <span class="ml-4">Loading pathway data...</span>
         </div>
-
-        <v-alert v-else-if="error" type="error" variant="tonal">
-            Failed to load pathway data. Please check your network connection and try again.
-        </v-alert>
 
         <v-data-table
             v-else
