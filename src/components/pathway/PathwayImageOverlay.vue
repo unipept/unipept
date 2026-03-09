@@ -95,12 +95,12 @@
                 >
                     <template v-for="(color, ci) in area.colors" :key="ci">
                         <stop
-                            :offset="`${ci * 100 / area.colors.length}%`"
+                            :offset="`${Number(ci) * 100 / area.colors.length}%`"
                             :stop-color="color"
                             stop-opacity="1"
                         />
                         <stop
-                            :offset="`${(ci + 1) * 100 / area.colors.length}%`"
+                            :offset="`${(Number(ci) + 1) * 100 / area.colors.length}%`"
                             :stop-color="color"
                             stop-opacity="1"
                         />
