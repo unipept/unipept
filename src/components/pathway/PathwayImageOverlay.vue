@@ -232,6 +232,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { EcInfo, CompoundInfo } from '@/logic/communicators/PathwayPilotCommunicator';
+import { isSelectable } from '@/composables/pathway/usePathwayColors';
 
 const props = defineProps<{
     areas: any[];
@@ -255,14 +256,6 @@ const selectedCompound = ref<any>(undefined);
 
 const rectHover = ref<number | undefined>(undefined);
 const circleHover = ref<number | undefined>(undefined);
-
-const isSelectable = (area: any): boolean => {
-    if (!area?.info) return false;
-    return (area.info.ecNumbers?.length ?? 0)
-         + (area.info.koNumbers?.length ?? 0)
-         + (area.info.compounds?.length ?? 0)
-         + (area.info.reactions?.length ?? 0) > 0;
-};
 
 // All selectable rects — matched (with colors) and unmatched (transparent) both rendered
 const selectableRects = computed(() =>
