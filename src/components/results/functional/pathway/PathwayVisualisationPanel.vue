@@ -328,7 +328,7 @@ const exportAsCsv = (delimiter: string) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${props.store.selectedPathway?.name ?? 'pathway'}_export.${extension}`;
+    a.download = `pathwaypilot_export.${extension}`;
     a.click();
     URL.revokeObjectURL(url);
 };
