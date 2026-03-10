@@ -16,7 +16,6 @@ import * as components from 'vuetify/components'
 // Icons
 import { unipeptIconsAliases, unipeptIcons } from './unipept-icons'
 import {VCard} from "vuetify/components/VCard";
-import {VStepperVerticalItem} from "vuetify/components/VStepperVertical";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
