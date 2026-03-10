@@ -12,16 +12,16 @@ import "@/styles/unipept-icons.css";
 // Composables
 import {createVuetify} from "vuetify"
 import * as components from 'vuetify/components'
-import * as labsComponents from 'vuetify/labs/components'
 
 // Icons
 import { unipeptIconsAliases, unipeptIcons } from './unipept-icons'
 import {VCard} from "vuetify/components/VCard";
-import {VStepperVerticalItem} from "vuetify/labs/VStepperVertical";
+import {VStepperVerticalItem} from "vuetify/components/VStepperVertical";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
     theme: {
+        defaultTheme: 'light',
         variations: {
             colors: ['primary'],
             lighten: 5,
@@ -29,6 +29,13 @@ export default createVuetify({
         },
         themes: {
             light: {
+                colors: {
+                    primary: "#2196F3",
+                    secondary: "#FFC107",
+                    mainBody: "#F9FAFC"
+                },
+            },
+            dark: {
                 colors: {
                     primary: "#2196F3",
                     secondary: "#FFC107",
@@ -72,7 +79,6 @@ export default createVuetify({
         unipeptIconsAliases
     },
     components: {
-        ...components,
-        ...labsComponents
+        ...components
     }
 })

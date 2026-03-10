@@ -1,9 +1,8 @@
 <template>
     <v-app>
         <v-app-bar
-            app
             color="secondary"
-            dark
+            theme="dark"
             hide-on-scroll
             class="px-lg-16"
         >
@@ -264,7 +263,4 @@ td {
     filter: drop-shadow(0 0 0.50rem gray);
 }
 
-.v-tab {
-    text-transform: none !important;
-}
 </style>

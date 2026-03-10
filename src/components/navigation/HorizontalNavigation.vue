@@ -26,7 +26,4 @@ defineProps<Props>()
 </script>
 
 <style>
-.v-tab {
-    text-transform: none;
-}
 </style>

@@ -68,7 +68,7 @@
                         <v-hover v-slot="{ isHovering, props }">
                             <v-unipept-card
                                 class="pa-0"
-                                :elevation="isHovering ? 6 : 2"
+                                :elevation="isHovering ? 5 : 2"
                                 v-bind="props"
                             >
                                 <v-img

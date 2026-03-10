@@ -1,5 +1,5 @@
 <template>
-    <v-unipept-card style="width: 800px;" elevation="10">
+    <v-unipept-card style="width: 800px;" elevation="5">
         <v-card-title>
             <div class="text-h5">Add {{ selectedTaxonomicRank }}</div>
         </v-card-title>

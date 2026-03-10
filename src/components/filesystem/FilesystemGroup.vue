@@ -82,7 +82,7 @@
         @click="manageSamplesDialogOpen = true"
     >
         <v-icon size="x-large" style="margin-right: 5px; opacity: 0.70;">mdi-file-document-plus-outline</v-icon>
-        <span style="text-transform: none; font-size: 16px; letter-spacing: normal; font-weight: 400;">
+        <span style="font-size: 16px; letter-spacing: normal; font-weight: 400;">
             Add new sample
         </span>
     </v-btn>

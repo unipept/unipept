@@ -40,7 +40,7 @@
                         class="me-1"
                     >
                         <span
-                            :class="[ item.faCounts.go > 0 ? 'dark--text' : 'gray--text', 'headline']"
+                            :class="[ item.faCounts.go > 0 ? 'text-black' : 'text-grey', 'headline']"
                             style="font-size: 14px !important;"
                         >
                             GO

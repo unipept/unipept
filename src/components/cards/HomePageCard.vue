@@ -1,6 +1,6 @@
 <template>
     <v-unipept-card
-        :elevation="hover ? 6 : 2"
+        :elevation="hover ? 5 : 2"
         class="equal pa-0"
     >
         <v-img

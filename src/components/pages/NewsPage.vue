@@ -2,19 +2,16 @@
     <v-container>
         <v-row>
             <v-col
-                class="pt-0"
+                class="pt-0 order-sm-1 order-lg-0"
                 sm="12"
                 lg="10"
-                order-sm="1"
-                order-lg="0"
             >
                 <router-view />
             </v-col>
             <v-col
+                class="order-sm-0 order-lg-1"
                 sm="12"
                 lg="2"
-                order-sm="0"
-                order-lg="1"
             >
                 <vertical-navigation
                     v-if="display.lgAndUp"
