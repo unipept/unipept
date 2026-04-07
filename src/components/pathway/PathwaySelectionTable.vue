@@ -11,12 +11,12 @@
                 </p>
                 <span class="text-subtitle-2">
                     Vande Moortele et al. (2025) MCP
-                    <a href="https://www.mcponline.org/article/S1535-9476(25)00016-7/fulltext" target="_blank">
+                    <a href="https://www.mcponline.org/article/S1535-9476(25)00016-7/fulltext" target="_blank" rel="noopener noreferrer">
                         doi.org/10.1016/j.mcpro.2025.100916
                     </a>
                 </span>
             </div>
-            <img src="../../assets/logo/pathwaypilot-logo.svg" style="max-width: 160px; flex-shrink: 0;" />
+            <img src="../../assets/logo/pathwaypilot-logo.svg" alt="PathwayPilot logo" style="max-width: 120px; flex-shrink: 0;" />
         </div>
 
         <p v-if="subtitle" class="text-body-1 mb-4">{{ subtitle }}</p>

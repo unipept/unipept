@@ -466,19 +466,19 @@ const ensureInitialized = async () => {
             appStateStore.pendingComparativePathwayId = undefined;
         }
 
-        for (const analysis of props.analyses) {
-            if (
-                analysis.status === AnalysisStatus.Finished &&
-                analysis.pathwayPilotStore.status === PathwayPilotStatus.Pending &&
-                analysis.ecToPeptides &&
-                analysis.peptidesTable
-            ) {
-                await analysis.pathwayPilotStore.initialize(
-                    analysis.ecToPeptides,
+        await Promise.all(
+            props.analyses
+                .filter(analysis =>
+                    analysis.status === AnalysisStatus.Finished &&
+                    analysis.pathwayPilotStore.status === PathwayPilotStatus.Pending &&
+                    analysis.ecToPeptides &&
                     analysis.peptidesTable
-                );
-            }
-        }
+                )
+                .map(analysis => analysis.pathwayPilotStore.initialize(
+                    analysis.ecToPeptides!,
+                    analysis.peptidesTable!
+                ))
+        );
     } finally {
         loadingMappings.value = false;
     }

@@ -69,6 +69,7 @@
                                 <a
                                     :href="`https://www.genome.jp/entry/ec:${ec.id}`"
                                     target="_blank"
+                                    rel="noopener noreferrer"
                                     class="text-caption font-weight-bold text-decoration-none text-primary"
                                 >
                                     {{ ec.id }}
@@ -94,6 +95,7 @@
                                 <a
                                     :href="`https://www.genome.jp/entry/${ko.id}`"
                                     target="_blank"
+                                    rel="noopener noreferrer"
                                     class="text-caption font-weight-bold text-decoration-none text-primary"
                                 >
                                     {{ ko.id }}
@@ -108,6 +110,7 @@
                                 <a
                                     :href="`https://www.genome.jp/entry/${r.id}`"
                                     target="_blank"
+                                    rel="noopener noreferrer"
                                     class="text-caption font-weight-bold text-decoration-none text-primary"
                                 >
                                     {{ r.id }}
@@ -124,6 +127,7 @@
                     <a
                         :href="`https://www.genome.jp/entry/${compoundId}`"
                         target="_blank"
+                        rel="noopener noreferrer"
                         class="text-caption font-weight-bold text-decoration-none text-primary"
                     >
                         {{ compoundId }}

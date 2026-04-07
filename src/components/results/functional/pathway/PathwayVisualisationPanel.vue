@@ -149,7 +149,7 @@ const taxonTotalCount = (taxonId: number): number => {
     if (!taxonSet) return 0;
     let total = 0;
     for (const p of taxonSet) {
-        total += props.analysis.peptidesTable.counts.get(p) ?? 1;
+        total += props.analysis.peptidesTable.getOrDefault(p);
     }
     return total;
 };
@@ -160,7 +160,7 @@ const getMatchedCountForEc = (taxonId: number, ecId: string): number => {
     if (!taxonSet) return 0;
     return (props.analysis.ecToPeptides.get('EC:' + ecId) ?? [])
         .filter(p => taxonSet.has(p))
-        .reduce((s, p) => s + (props.analysis.peptidesTable!.counts.get(p) ?? 1), 0);
+        .reduce((s, p) => s + props.analysis.peptidesTable!.getOrDefault(p), 0);
 };
 
 const getTaxonCountForArea = (taxonId: number, area: any): number => {
@@ -175,7 +175,7 @@ const getTaxonCountForArea = (taxonId: number, area: any): number => {
         .reduce((total, ecId) => {
             const count = (props.analysis.ecToPeptides!.get('EC:' + ecId) ?? [])
                 .filter(p => taxonPeptideSet.has(p))
-                .reduce((s, p) => s + (props.analysis.peptidesTable!.counts.get(p) ?? 1), 0);
+                .reduce((s, p) => s + props.analysis.peptidesTable!.getOrDefault(p), 0);
             return total + count;
         }, 0);
 };

@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = withDefaults(defineProps<{
     scale?: number;
@@ -81,6 +81,14 @@ onMounted(() => {
     container.value?.addEventListener('mouseup', onMouseUp);
     container.value?.addEventListener('mouseleave', onMouseUp);
     container.value?.addEventListener('wheel', onZoom, { passive: false });
+});
+
+onUnmounted(() => {
+    container.value?.removeEventListener('mousedown', onMouseDown);
+    container.value?.removeEventListener('mousemove', onMouseMove);
+    container.value?.removeEventListener('mouseup', onMouseUp);
+    container.value?.removeEventListener('mouseleave', onMouseUp);
+    container.value?.removeEventListener('wheel', onZoom);
 });
 </script>
 
