@@ -93,7 +93,7 @@ const usePathwayPilotStore = (sampleId: string) => defineStore(`pathwayPilotStor
                 ecs.value.add(ecId);
                 let count = 0;
                 for (const peptide of peptideList) {
-                    count += peptidesTable.counts.get(peptide) ?? 1;
+                    count += peptidesTable.getOrDefault(peptide);
                 }
                 _ecToPeptideCount.set(ecId, count);
             }

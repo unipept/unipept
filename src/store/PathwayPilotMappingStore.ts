@@ -15,7 +15,9 @@ const usePathwayPilotMappingStore = defineStore("pathwayPilotMappingStore", () =
 
     const getVisualizationData = (pathwayId: string): Promise<PathwayVisualizationData> => {
         if (!_pathwayData.has(pathwayId)) {
-            _pathwayData.set(pathwayId, communicator.fetchPathwayVisualization(pathwayId));
+            const promise = communicator.fetchPathwayVisualization(pathwayId);
+            promise.catch(() => _pathwayData.delete(pathwayId));
+            _pathwayData.set(pathwayId, promise);
         }
         return _pathwayData.get(pathwayId)!;
     };
