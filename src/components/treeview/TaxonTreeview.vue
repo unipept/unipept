@@ -65,7 +65,9 @@ const loading = ref(false);
 const treeError = ref(false);
 const treeLoaded = ref(false);
 const searchQuery = ref('');
-const expandDepth = ref(15);
+const DEFAULT_EXPAND_DEPTH = 15;
+const SEARCH_EXPAND_DEPTH = 25;
+const expandDepth = ref(DEFAULT_EXPAND_DEPTH);
 const localSelected = ref<TreeviewItem[]>(props.modelValue);
 
 const placeholder: FilteredTree = { id: 0, name: '', nameExtra: '', children: [], extra: null };
@@ -95,7 +97,7 @@ const compressRankTree = (tree: any, taxa: number[]): FilteredTree => {
 
 const onSearch = (val: string) => {
     filter(val ?? '');
-    if (val) expandDepth.value += 10;
+    expandDepth.value = val ? SEARCH_EXPAND_DEPTH : DEFAULT_EXPAND_DEPTH;
 };
 
 const onItemsUpdate = (items: TreeviewItem[]) => {
@@ -140,7 +142,7 @@ watch(() => props.taxonIds, async (newIds, oldIds) => {
         && newIds.every((id, i) => id === oldIds[i]);
     if (!sameIds) {
         searchQuery.value = '';
-        expandDepth.value = 15;
+        expandDepth.value = DEFAULT_EXPAND_DEPTH;
         await loadTree();
     }
 }, { deep: true });
