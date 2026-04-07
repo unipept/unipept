@@ -48,7 +48,7 @@
                             <!-- Per-taxon/group spectral count stats -->
                             <template v-if="areaStats">
                                 <v-divider class="mb-2" />
-                                <div class="text-caption text-medium-emphasis mb-2">Spectral counts</div>
+                                <div class="text-caption text-medium-emphasis mb-2">Counts</div>
                                 <div
                                     v-for="stat in areaStats"
                                     :key="stat.name"
