@@ -95,7 +95,6 @@
                         <!-- Info panel overlay -->
                         <pathway-info-panel
                             v-model="viz.infoPanel.value"
-                            :image-loaded="viz.imageLoaded.value"
                             :ec-mapping="viz.mappingStore.ecMapping"
                             :compound-mapping="viz.mappingStore.compoundMapping"
                             :get-ec-stats="getEcStats"

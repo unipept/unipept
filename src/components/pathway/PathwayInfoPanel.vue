@@ -1,12 +1,12 @@
 <template>
-    <div v-if="modelValue && imageLoaded" class="info-panel-overlay">
+    <div v-if="modelValue" class="info-panel-overlay">
         <v-card elevation="4" width="380" style="max-height: 450px; display: flex; flex-direction: column; overflow: hidden;">
             <!-- Fixed header: title + tabs (never scrolls) -->
             <div class="info-panel-header">
                 <div class="text-body-2 pa-2 pb-1 d-flex align-center">
                     <span>{{ modelValue.type === 'area' ? 'Pathway Node' : 'Compound' }}</span>
                     <v-spacer />
-                    <v-btn icon="mdi-close" size="x-small" density="compact" variant="text" @click="emit('update:modelValue', null)" />
+                    <v-btn icon="mdi-close" size="x-small" density="compact" variant="text" @click="modelValue = null" />
                 </div>
                 <v-divider />
                 <template v-if="modelValue.type === 'area' && hasNodeData">
@@ -57,7 +57,7 @@
                                     <span class="stat-circle" :style="{ background: stat.color }"></span>
                                     <span class="flex-grow-1">{{ stat.name }}</span>
                                     <span class="font-weight-medium">{{ stat.count }}/{{ stat.total }}</span>
-                                    <span class="text-medium-emphasis">({{ toPercent(stat.count, stat.total) }})</span>
+                                    <span class="text-medium-emphasis">({{ displayPercentage(stat.count / stat.total) }})</span>
                                 </div>
                             </template>
 
@@ -83,7 +83,7 @@
                                         class="d-flex align-center ga-1 text-caption text-medium-emphasis"
                                     >
                                         <span class="stat-circle" :style="{ background: stat.color }"></span>
-                                        {{ stat.name }}: {{ stat.matched }}/{{ stat.total }} ({{ toPercent(stat.matched, stat.total) }})
+                                        {{ stat.name }}: {{ stat.matched }}/{{ stat.total }} ({{ displayPercentage(stat.matched / stat.total) }})
                                     </div>
                                 </template>
                             </div>
@@ -145,52 +145,45 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { EcInfo, CompoundInfo } from '@/logic/communicators/PathwayPilotCommunicator';
+import usePercentage from '@/composables/usePercentage';
 
 type InfoPanelData = { type: 'area'; area: any } | { type: 'compound'; compound: any };
 
+const modelValue = defineModel<InfoPanelData | null>();
+
 const props = defineProps<{
-    modelValue: InfoPanelData | null;
-    imageLoaded: boolean;
     ecMapping: Map<string, EcInfo> | undefined;
     compoundMapping?: Map<string, CompoundInfo> | undefined;
     getEcStats?: (ecId: string) => { name: string; color: string; matched: number; total: number }[];
     getAreaStats?: (area: any) => { name: string; color: string; count: number; total: number }[];
 }>();
 
-const emit = defineEmits<{
-    'update:modelValue': [value: InfoPanelData | null];
-}>();
+const { displayPercentage } = usePercentage();
 
 const activeTab = ref<string>('overview');
 
 const hasNodeData = computed(() => {
-    if (props.modelValue?.type !== 'area') return false;
-    const info = props.modelValue.area?.info;
+    if (modelValue.value?.type !== 'area') return false;
+    const info = modelValue.value.area?.info;
     return !!(info?.ecNumbers?.length || info?.koNumbers?.length || info?.reactions?.length);
 });
 
-watch(() => props.modelValue, (panel) => {
-    if (panel?.type === 'area') {
-        activeTab.value = 'overview';
-    }
-});
-
-const toPercent = (matched: number, total: number): string => {
-    if (total === 0) return '0%';
-    return (matched / total * 100).toPrecision(2) + '%';
-};
-
 const compoundId = computed<string>(() => {
-    if (props.modelValue?.type !== 'compound') return '';
-    const compound = props.modelValue.compound;
+    if (modelValue.value?.type !== 'compound') return '';
+    const compound = modelValue.value.compound;
     return compound?.info?.compounds?.[0]?.id ?? compound?.id ?? '';
 });
 
 const areaStats = computed(() => {
-    if (!props.getAreaStats || props.modelValue?.type !== 'area') return null;
-    return props.getAreaStats(props.modelValue.area);
+    if (!props.getAreaStats || modelValue.value?.type !== 'area') return null;
+    return props.getAreaStats(modelValue.value.area);
 });
 
+watch(modelValue, (panel) => {
+    if (panel?.type === 'area') {
+        activeTab.value = 'overview';
+    }
+});
 </script>
 
 <style scoped>
