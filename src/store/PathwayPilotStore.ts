@@ -29,12 +29,11 @@ const usePathwayPilotStore = (sampleId: string) => defineStore(`pathwayPilotStor
         if (!_selectedPathwayId.value) return undefined;
         const id = _selectedPathwayId.value;
         const info = mappingStore.pathwayMapping?.get(id);
-        if (!info) return { id, name: '', category: '', subCategory: '', count: 0 };
         return {
             id,
-            name: info.name,
-            category: info.category,
-            subCategory: info.subCategory,
+            name: info?.name ?? '',
+            category: info?.category ?? '',
+            subCategory: info?.subCategory ?? '',
             count: pathwayToPeptideCounts.value.get(id) ?? 0
         };
     });

@@ -1,5 +1,12 @@
 <template>
-    <div ref="container" class="interactive-image-container">
+    <div ref="container"
+         @mousedown="onMouseDown"
+         @mousemove="onMouseMove"
+         @mouseup="onMouseUp"
+         @mouseleave="onMouseUp"
+         @wheel.prevent="onZoom"
+         class="interactive-image-container"
+    >
         <div :style="style">
             <slot></slot>
         </div>
@@ -7,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import {computed, ref, useTemplateRef, watch} from 'vue';
 
 const props = withDefaults(defineProps<{
     scale?: number;
@@ -22,7 +29,7 @@ const emit = defineEmits<{
     'update:translate': [value: { x: number; y: number }];
 }>();
 
-const container = ref<HTMLDivElement | null>(null);
+const container = useTemplateRef<HTMLDivElement>('container');
 
 const _scale = ref(props.scale);
 const _translate = ref({ ...props.translate });
@@ -54,8 +61,6 @@ const onMouseUp = (e: MouseEvent) => {
 };
 
 const onZoom = (e: WheelEvent) => {
-    e.preventDefault();
-
     const oldScale = _scale.value;
     const newScale = Math.min(Math.max(0.25, oldScale + e.deltaY * -0.005), 4);
     if (newScale === oldScale) return;
@@ -72,24 +77,8 @@ const onZoom = (e: WheelEvent) => {
     emit('update:translate', { ..._translate.value });
 };
 
-watch(() => props.scale, (scale) => { _scale.value = scale; });
-watch(() => props.translate, (translate) => { _translate.value = { ...translate }; });
-
-onMounted(() => {
-    container.value?.addEventListener('mousedown', onMouseDown);
-    container.value?.addEventListener('mousemove', onMouseMove);
-    container.value?.addEventListener('mouseup', onMouseUp);
-    container.value?.addEventListener('mouseleave', onMouseUp);
-    container.value?.addEventListener('wheel', onZoom, { passive: false });
-});
-
-onUnmounted(() => {
-    container.value?.removeEventListener('mousedown', onMouseDown);
-    container.value?.removeEventListener('mousemove', onMouseMove);
-    container.value?.removeEventListener('mouseup', onMouseUp);
-    container.value?.removeEventListener('mouseleave', onMouseUp);
-    container.value?.removeEventListener('wheel', onZoom);
-});
+watch(() => props.scale, scale => (_scale.value = scale));
+watch(() => props.translate, translate => (_translate.value = { ...translate }));
 </script>
 
 <style scoped>

@@ -2,23 +2,26 @@
     <svg
         width="100%"
         height="100%"
-        version="1.1"
         overflow="visible"
         style="position: absolute; top: 0; left: 0;"
     >
-        <!-- All selectable rects (matched get color bands, unmatched stay transparent but hoverable) -->
+        <!-- White border overlay to cover the image border edge -->
+        <rect class="border" width="100%" height="100%" fill="none" />
+
+        <!-- All selectable rectangles -->
+        <!-- All rectangles with a match get split into color bands based on the number of groups that match there -->
+        <!-- Other rectangles stay transparent so they can remain hoverable -->
         <g
             v-for="(area, i) in selectableRects"
-            :key="`rect-${i}`"
+            :key="`rect${i}`"
             :transform="`scale(${scale})`"
-            style="pointer-events: all;"
-            cursor="pointer"
+            class="cursor-events"
             @mousedown.stop
-            @click="onClickArea(area, 'r' + i)"
-            @mouseenter="rectHover = i"
-            @mouseleave="rectHover = undefined"
+            @click="onClickArea(area, `rect${i}`)"
+            @mouseenter="hoveredKey = `rect${i}`"
+            @mouseleave="hoveredKey = undefined"
         >
-            <!-- Color bands (only for matched areas) -->
+            <!-- Draw all the color bands for rectangles with a match -->
             <rect
                 v-for="(r, j) in splitRectangle(area)"
                 :key="j"
@@ -29,141 +32,49 @@
                 :fill="r.color"
                 fill-opacity="0.5"
             />
-            <!-- Transparent overlay for hover cursor + selection outline -->
-            <!-- White halo (outer ring) rendered first so the blue ring paints on top -->
+
+            <!-- Transparent overlay to make all rectangles interactable  -->
+            <!-- Stroke only when selected, otherwise no stroke to allow hover on adjacent areas -->
             <rect
-                v-if="selectedAreaKey === 'r' + i"
-                :x="area.x1"
-                :y="area.y1"
-                :width="area.x2 - area.x1"
-                :height="area.y2 - area.y1"
-                fill="rgba(76, 140, 191, 0.12)"
-                stroke="white"
-                stroke-width="7"
-            />
-            <rect
-                :x="area.x1"
-                :y="area.y1"
+                :x="area.x1 - 1"
+                :y="area.y1 - 1"
                 :width="area.x2 - area.x1"
                 :height="area.y2 - area.y1"
                 fill="transparent"
-                :stroke="selectedAreaKey === 'r' + i ? '#4c8cbf' : 'none'"
-                :stroke-width="selectedAreaKey === 'r' + i ? 4 : 0"
+                :stroke="selectedKey === `rect${i}` ? 'black' : 'none'"
+                :stroke-width="selectedKey === `rect${i}` ? 6 : 0"
             />
         </g>
 
-        <!-- Empty polygons (structural outlines, gray if many) -->
+        <!-- All selectable circles -->
         <g
-            v-for="(area, i) in emptyPolygons"
-            :key="`epoly-${i}`"
+            v-for="(area, i) in selectableCircles"
+            :key="`circle${i}`"
             :transform="`scale(${scale})`"
-            style="pointer-events: all;"
-            cursor="pointer"
+            class="cursor-events"
             @mousedown.stop
-            @click="onClickArea(area, 'ep' + i)"
+            @click="onClickCompound(area, `circle${i}`)"
+            @mouseenter="hoveredKey = `circle${i}`"
+            @mouseleave="hoveredKey = undefined"
         >
-            <polygon
-                v-if="selectedAreaKey === 'ep' + i"
-                :points="area.points"
-                fill="rgba(76, 140, 191, 0.12)"
-                stroke="white"
-                stroke-width="7"
-            />
-            <polygon
-                :points="area.points"
-                :fill="polygons.length > 20 ? '#e3e3e3' : 'transparent'"
-                :stroke="selectedAreaKey === 'ep' + i ? '#4c8cbf' : 'none'"
-                :stroke-width="selectedAreaKey === 'ep' + i ? 4 : 0"
-            />
-        </g>
-
-        <!-- Colored polygons (with linear gradient for multi-color) -->
-        <g
-            v-for="(area, i) in coloredPolygons"
-            :key="`cpoly-${i}`"
-            :transform="`scale(${scale})`"
-            style="pointer-events: all;"
-            cursor="pointer"
-            @mousedown.stop
-            @click="onClickArea(area, 'cp' + i)"
-        >
-            <defs>
-                <linearGradient
-                    v-if="area.colors.length > 1"
-                    :id="`pg-${i}`"
-                    x1="0%" y1="0%" x2="100%" y2="0%"
-                >
-                    <template v-for="(color, ci) in area.colors" :key="ci">
-                        <stop
-                            :offset="`${Number(ci) * 100 / area.colors.length}%`"
-                            :stop-color="color"
-                            stop-opacity="1"
-                        />
-                        <stop
-                            :offset="`${(Number(ci) + 1) * 100 / area.colors.length}%`"
-                            :stop-color="color"
-                            stop-opacity="1"
-                        />
-                    </template>
-                </linearGradient>
-            </defs>
-            <polygon
-                v-if="selectedAreaKey === 'cp' + i"
-                :points="area.points"
-                fill="rgba(76, 140, 191, 0.12)"
-                stroke="white"
-                stroke-width="7"
-            />
-            <polygon
-                :points="area.points"
-                :fill="area.colors.length === 1 ? area.colors[0] : `url(#pg-${i})`"
-                fill-opacity="0.5"
-                :stroke="selectedAreaKey === 'cp' + i ? '#4c8cbf' : 'none'"
-                :stroke-width="selectedAreaKey === 'cp' + i ? 4 : 0"
-            />
-        </g>
-
-        <!-- Circles (compounds): transparent fill, outline when selected -->
-        <g
-            v-for="(area, i) in circles"
-            :key="`circle-${i}`"
-            :transform="`scale(${scale})`"
-            style="pointer-events: all;"
-            cursor="pointer"
-            @mousedown.stop
-            @click="onClickCompound(area, i)"
-            @mouseenter="circleHover = i"
-            @mouseleave="circleHover = undefined"
-        >
+            <!-- Circles: transparent fill, outline when selected -->
             <circle
-                v-if="selectedCircleIdx === i"
-                :cx="area.x + 1"
-                :cy="area.y + 1"
-                :r="area.r"
-                fill="rgba(76, 140, 191, 0.12)"
-                stroke="white"
-                stroke-width="7"
-            />
-            <circle
-                :cx="area.x + 1"
-                :cy="area.y + 1"
+                :cx="area.x - 1"
+                :cy="area.y - 1"
                 :r="area.r"
                 fill="transparent"
-                :stroke="selectedCircleIdx === i ? '#4c8cbf' : 'none'"
-                :stroke-width="selectedCircleIdx === i ? 4 : 0"
+                :stroke="selectedKey === `circle${i}` ? 'black' : 'none'"
+                :stroke-width="selectedKey === `circle${i}` ? 6 : 0"
             />
         </g>
 
-        <!-- White border overlay to cover the image border edge -->
-        <rect class="border" width="100%" height="100%" fill="none" />
-
-        <!-- Tooltips for hovered selectable rect areas -->
+        <!-- Tooltips for hovered selectable rect and circle areas -->
         <g
-            v-for="(tt, i) in rectTooltips"
-            :key="`tt-${i}`"
+            v-for="(tt, i) in [...rectTooltips, ...circleTooltips]"
+            :key="`tt${i}`"
             :transform="`scale(${scale})`"
         >
-            <template v-if="rectHover === i && tt.text.length > 0">
+            <template v-if="tt.text.length > 0 && (hoveredKey === `rect${i}` || hoveredKey === `circle${i - rectTooltips.length}`)">
                 <rect
                     :x="tt.boundingX"
                     :y="tt.boundingY"
@@ -191,54 +102,17 @@
                 </text>
             </template>
         </g>
-
-        <!-- Tooltips for hovered circles (compounds) -->
-        <g
-            v-for="(ct, i) in circleTooltips"
-            :key="`ct-${i}`"
-            :transform="`scale(${scale})`"
-        >
-            <template v-if="circleHover === i && ct.text.length > 0">
-                <rect
-                    :x="ct.boundingX"
-                    :y="ct.boundingY"
-                    :width="ct.boundingWidth"
-                    :height="ct.boundingHeight"
-                    fill="black"
-                    stroke="black"
-                    opacity="0.7"
-                    rx="15"
-                />
-                <text
-                    :x="ct.textX"
-                    :y="ct.textY"
-                    font-size="26"
-                    font-family="monospace"
-                    dominant-baseline="hanging"
-                    fill="white"
-                >
-                    <tspan
-                        v-for="(t, j) in ct.text"
-                        :key="j"
-                        :x="ct.textX"
-                        :dy="j === 0 ? 0 : ct.textOffset"
-                    >{{ t }}</tspan>
-                </text>
-            </template>
-        </g>
     </svg>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { EcInfo, CompoundInfo } from '@/logic/communicators/PathwayPilotCommunicator';
 import { isSelectable } from '@/composables/pathway/usePathwayColors';
+import { useCalculateAreaTooltip } from './useCalculateAreaTooltip';
 
 const props = defineProps<{
     areas: any[];
     scale: number;
-    ecMapping: Map<string, EcInfo> | undefined;
-    compoundMapping?: Map<string, CompoundInfo> | undefined;
 }>();
 
 const emit = defineEmits<{
@@ -246,26 +120,12 @@ const emit = defineEmits<{
     'click:compound': [compound: any];
 }>();
 
-// Track selected area/compound by a stable key (type+index) to avoid object identity issues
-const selectedAreaKey = ref<string | undefined>(undefined);
-const selectedCircleIdx = ref<number | undefined>(undefined);
-
-// Still keep object refs for emitting to parent
+const selectedKey = ref<string | undefined>(undefined);
 const selectedArea = ref<any>(undefined);
-const selectedCompound = ref<any>(undefined);
+const hoveredKey = ref<string | undefined>(undefined);
 
-const rectHover = ref<number | undefined>(undefined);
-const circleHover = ref<number | undefined>(undefined);
-
-// All selectable rects — matched (with colors) and unmatched (transparent) both rendered
-const selectableRects = computed(() =>
-    props.areas.filter(a => a.shape === 'rect' && isSelectable(a))
-);
-
-const circles = computed(() => props.areas.filter(a => a.shape === 'circle'));
-const polygons = computed(() => props.areas.filter(a => a.shape === 'poly'));
-const coloredPolygons = computed(() => polygons.value.filter(a => (a.colors?.length ?? 0) > 0));
-const emptyPolygons = computed(() => polygons.value.filter(a => !(a.colors?.length ?? 0)));
+const selectableRects = computed(() => props.areas.filter(a => a.shape === 'rect' && isSelectable(a)));
+const selectableCircles = computed(() => props.areas.filter(a => a.shape === 'circle'));
 
 const splitRectangle = (area: any): { x1: number; y1: number; x2: number; y2: number; color: string }[] => {
     const colors: string[] = area.colors ?? [];
@@ -281,92 +141,33 @@ const splitRectangle = (area: any): { x1: number; y1: number; x2: number; y2: nu
     }));
 };
 
-const computeRectTooltip = (area: any) => {
-    const px = 30, py = 20;
-    const lineHeight = 22, lineDistance = 10;
-    const charWidth = 15.8;
-    const tooltipOffset = 25;
+const { rectTooltips, circleTooltips } = useCalculateAreaTooltip(selectableRects, selectableCircles);
 
-    const ecNumbers = area.info?.ecNumbers ?? [];
-    const text: string[] = ecNumbers.map((ec: any) =>
-        `${ec.id}: ${props.ecMapping?.get(ec.id)?.names?.[0] ?? 'Unknown'}`
-    );
-
-    if (text.length === 0) {
-        return { text: [], boundingX: 0, boundingY: 0, boundingWidth: 0, boundingHeight: 0, textX: 0, textY: 0, textOffset: 0 };
-    }
-
-    const amountOfCharacters = text.reduce((a, b) => Math.max(a, b.length), 0);
-    const boundingWidth = 2 * px + charWidth * amountOfCharacters;
-    const boundingHeight = 2 * py + lineHeight * text.length + lineDistance * (text.length - 1);
-    const boundingX = area.x1 + (area.x2 - area.x1) / 2 - boundingWidth / 2;
-    const boundingY = area.y1 - boundingHeight - tooltipOffset;
-
-    return {
-        text,
-        boundingX, boundingY, boundingWidth, boundingHeight,
-        textX: boundingX + px,
-        textY: boundingY + py,
-        textOffset: lineHeight + lineDistance
-    };
+const onClick = (area: any, key: string) => {
+    const isSame = selectedKey.value === key;
+    selectedKey.value = isSame ? undefined : key;
+    selectedArea.value = isSame ? undefined : area;
 };
-
-const computeCircleTooltip = (area: any) => {
-    const px = 30, py = 20;
-    const lineHeight = 22, lineDistance = 10;
-    const charWidth = 15.8;
-    const tooltipOffset = 25;
-
-    const compoundId = area.info?.compounds?.[0]?.id ?? area.id;
-    if (!compoundId) return { text: [], boundingX: 0, boundingY: 0, boundingWidth: 0, boundingHeight: 0, textX: 0, textY: 0, textOffset: 0 };
-
-    const name = props.compoundMapping?.get(compoundId)?.names?.[0] ?? 'Unknown';
-    const text = [`${compoundId}: ${name}`];
-
-    const amountOfCharacters = text.reduce((a, b) => Math.max(a, b.length), 0);
-    const boundingWidth = 2 * px + charWidth * amountOfCharacters;
-    const boundingHeight = 2 * py + lineHeight;
-    const cx = area.x + 1;
-    const cy = area.y + 1 - (area.r ?? 10);
-    const boundingX = cx - boundingWidth / 2;
-    const boundingY = cy - boundingHeight - tooltipOffset;
-
-    return {
-        text,
-        boundingX, boundingY, boundingWidth, boundingHeight,
-        textX: boundingX + px,
-        textY: boundingY + py,
-        textOffset: lineHeight + lineDistance
-    };
-};
-
-const rectTooltips = computed(() => selectableRects.value.map(computeRectTooltip));
-const circleTooltips = computed(() => circles.value.map(computeCircleTooltip));
 
 const onClickArea = (area: any, key: string) => {
-    selectedCircleIdx.value = undefined;
-    selectedCompound.value = undefined;
-    const isSame = selectedAreaKey.value === key;
-    selectedAreaKey.value = isSame ? undefined : key;
-    selectedArea.value = isSame ? undefined : area;
+    onClick(area, key);
     emit('click:area', selectedArea.value);
 };
 
-const onClickCompound = (compound: any, idx: number) => {
-    selectedAreaKey.value = undefined;
-    selectedArea.value = undefined;
-    const isSame = selectedCircleIdx.value === idx;
-    selectedCircleIdx.value = isSame ? undefined : idx;
-    selectedCompound.value = isSame ? undefined : compound;
-    emit('click:compound', selectedCompound.value);
+const onClickCompound = (compound: any, key: string) => {
+    onClick(compound, key);
+    emit('click:compound', selectedArea.value);
 };
 </script>
 
 <style scoped>
 .border {
-    outline-color: white;
-    outline-style: solid;
-    outline-width: 10px;
+    outline: white solid 10px;
     outline-offset: -5px;
+}
+
+.cursor-events {
+    pointer-events: all;
+    cursor: pointer;
 }
 </style>

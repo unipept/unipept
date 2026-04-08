@@ -78,8 +78,6 @@
                                     :ref="(el) => { viz.overlayRef.value = el as any }"
                                     :areas="coloredAreas"
                                     :scale="1"
-                                    :ec-mapping="viz.mappingStore.ecMapping"
-                                    :compound-mapping="viz.mappingStore.compoundMapping"
                                     :style="{ width: viz.imgWidth.value + 'px', height: viz.imgHeight.value + 'px' }"
                                     @click:area="viz.onAreaClick"
                                     @click:compound="viz.onCompoundClick"
