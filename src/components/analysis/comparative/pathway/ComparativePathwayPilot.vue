@@ -7,10 +7,9 @@
                 :colored-areas="coloredAreas"
                 :selected-pathway="selectedPathway"
                 :legend-items="legendItems"
-                :legend-visible="true"
-                :show-differential="showDifferential"
-                :differential-labels="showDifferential && effectiveGroups.length === 2 ? [effectiveGroups[0].name, effectiveGroups[1].name] : undefined"
-                :differential-colors="showDifferential && effectiveGroups.length === 2 ? [groupColors[0], groupColors[1]] : undefined"
+                :show-differential="showDifferential && canShowDifferential"
+                :differential-labels="differentialLabels"
+                :differential-colors="differentialColors"
                 :get-ec-stats="getGroupEcStats"
                 :get-area-stats="getAreaStats"
                 :show-csv-export="true"
@@ -79,7 +78,8 @@ import { PathwayPilotStatus, PathwayItem } from '@/store/PathwayPilotStore';
 import usePathwayPilotMappingStore from '@/store/PathwayPilotMappingStore';
 import useAppStateStore from '@/store/AppStateStore';
 import { pathwayGroups } from '@/logic/PathwayGroups';
-import { PATHWAY_COLORS, categoryColor, isSelectable } from '@/composables/pathway/usePathwayColors';
+import { categoryColor, isSelectable } from '@/composables/pathway/usePathwayColors';
+import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
 import { usePathwayFilters } from '@/composables/pathway/usePathwayFilters';
 import { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
 import PathwaySelectionTable from '@/components/pathway/PathwaySelectionTable.vue';
@@ -101,12 +101,7 @@ const selectedPathway = computed({
 });
 
 const useGroups = ref(true);
-const showDifferential = ref(false);
 const loadingMappings = ref(false);
-
-const analysisColors = computed(() =>
-    props.analyses.map((_, i) => PATHWAY_COLORS[i % PATHWAY_COLORS.length])
-);
 
 const effectiveGroups = computed<GroupAnalysisStore[]>(() =>
     props.groups.filter(g =>
@@ -114,21 +109,11 @@ const effectiveGroups = computed<GroupAnalysisStore[]>(() =>
     )
 );
 
-const groupColors = computed(() =>
-    effectiveGroups.value.map((_, i) => PATHWAY_COLORS[i % PATHWAY_COLORS.length])
-);
-
-const canShowDifferential = computed(() => useGroups.value && effectiveGroups.value.length === 2);
-
-watch(canShowDifferential, (can) => {
-    if (!can) showDifferential.value = false;
-});
-
-const legendItems = computed(() => {
-    if (useGroups.value) {
-        return effectiveGroups.value.map((g, i) => ({ label: g.name, color: groupColors.value[i] }));
-    }
-    return props.analyses.map((a, i) => ({ label: a.name, color: analysisColors.value[i] }));
+const { legendItems, showDifferential, canShowDifferential, differentialLabels, differentialColors } = usePathwayLegend({
+    items: () => useGroups.value
+        ? effectiveGroups.value.map(g => ({ label: g.name }))
+        : props.analyses.map(a => ({ label: a.name })),
+    canDifferential: () => useGroups.value && effectiveGroups.value.length === 2,
 });
 
 const analysesForGroup = (group: GroupAnalysisStore): SingleAnalysisStore[] =>
@@ -164,7 +149,7 @@ const getGroupEcStats = computed(() => {
     if (!useGroups.value) {
         return (ecId: string) => props.analyses.map((analysis, i) => ({
             name: analysis.name,
-            color: analysisColors.value[i],
+            color: legendItems.value[i].color,
             matched: analysis.pathwayPilotStore.getEcCount(ecId),
             total: analysisTotalCounts.value[i] ?? 0
         }));
@@ -172,7 +157,7 @@ const getGroupEcStats = computed(() => {
     if (effectiveGroups.value.length === 0) return undefined;
     return (ecId: string) => effectiveGroups.value.map((group, i) => ({
         name: group.name,
-        color: groupColors.value[i],
+        color: legendItems.value[i].color,
         matched: analysesForGroup(group).reduce(
             (sum, a) => sum + a.pathwayPilotStore.getEcCount(ecId), 0
         ),
@@ -184,7 +169,7 @@ const getAreaStats = computed(() => {
     if (!useGroups.value) {
         return (area: any) => props.analyses.map((analysis, i) => ({
             name: analysis.name,
-            color: analysisColors.value[i],
+            color: legendItems.value[i].color,
             count: getGroupCountForArea([analysis], area),
             total: analysisTotalCounts.value[i] ?? 0
         }));
@@ -192,7 +177,7 @@ const getAreaStats = computed(() => {
     if (effectiveGroups.value.length === 0) return undefined;
     return (area: any) => effectiveGroups.value.map((group, i) => ({
         name: group.name,
-        color: groupColors.value[i],
+        color: legendItems.value[i].color,
         count: getGroupCountForArea(analysesForGroup(group), area),
         total: groupTotalCounts.value[i] ?? 0
     }));
@@ -236,7 +221,7 @@ const coloredAreas = computed(() => {
 
         const colorScale = d3.scaleDiverging(
             [min, 0, max],
-            d3.interpolateRgbBasis([groupColors.value[0], '#ffffe0', groupColors.value[1]])
+            d3.interpolateRgbBasis([legendItems.value[0].color, '#ffffe0', legendItems.value[1].color])
         );
 
         return withValues.map(({ area, value }) => ({
@@ -255,7 +240,7 @@ const coloredAreas = computed(() => {
                 const hasMatch = area?.info?.ecNumbers?.some((ec: any) =>
                     groupAnalyses.some(a => a.pathwayPilotStore.ecs.has(ec.id ?? ec))
                 ) ?? false;
-                if (hasMatch) colors.push(groupColors.value[i]);
+                if (hasMatch) colors.push(legendItems.value[i].color);
             }
             return { ...area, colors };
         });
@@ -266,7 +251,7 @@ const coloredAreas = computed(() => {
 
         const matchingColors = props.analyses
             .map((analysis, i) => ({
-                color: analysisColors.value[i],
+                color: legendItems.value[i].color,
                 matches: area?.info?.ecNumbers?.some((ec: any) =>
                     analysis.pathwayPilotStore.ecs.has(ec.id ?? ec)
                 ) ?? false

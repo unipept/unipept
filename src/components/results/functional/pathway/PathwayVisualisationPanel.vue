@@ -4,10 +4,9 @@
         :colored-areas="coloredAreas"
         :selected-pathway="props.store.selectedPathway"
         :legend-items="legendItems"
-        :legend-visible="selectedTreeviewItems.length > 0"
-        :show-differential="showDifferential && selectedTreeviewItems.length === 2"
-        :differential-labels="selectedTreeviewItems.length === 2 ? [selectedTreeviewItems[0].name, selectedTreeviewItems[1].name] : undefined"
-        :differential-colors="selectedTreeviewItems.length === 2 ? [PATHWAY_COLORS[0], PATHWAY_COLORS[1]] : undefined"
+        :show-differential="showDifferential && canShowDifferential"
+        :differential-labels="differentialLabels"
+        :differential-colors="differentialColors"
         :get-ec-stats="getEcStats"
         :get-area-stats="getAreaStats"
         :show-csv-export="true"
@@ -60,6 +59,7 @@ import * as d3 from 'd3';
 import { PathwayPilotStore } from '@/store/PathwayPilotStore';
 import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
 import { PATHWAY_COLORS, isSelectable } from '@/composables/pathway/usePathwayColors';
+import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
 import { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
 import NcbiTreeNode from '@/logic/ontology/taxonomic/NcbiTreeNode';
 import PathwayVisualizationViewer from '@/components/pathway/PathwayVisualizationViewer.vue';
@@ -81,16 +81,9 @@ const emit = defineEmits<{
 const viz = usePathwayVisualization();
 
 const selectedTreeviewItems = ref<TreeviewItem[]>([]);
-const showDifferential = ref(false);
 
-const canShowDifferential = computed(() => selectedTreeviewItems.value.length === 2);
-
-const legendItems = computed(() =>
-    selectedTreeviewItems.value.map((t, i) => ({ label: t.name, color: PATHWAY_COLORS[i] }))
-);
-
-watch(canShowDifferential, (can) => {
-    if (!can) showDifferential.value = false;
+const { legendItems, showDifferential, canShowDifferential, differentialLabels, differentialColors } = usePathwayLegend({
+    items: () => selectedTreeviewItems.value.map(t => ({ label: t.name })),
 });
 
 const totalSpectralCount = computed(() => {
@@ -225,7 +218,7 @@ const coloredAreas = computed(() => {
         }));
     }
 
-    if (showDifferential.value && selectedTreeviewItems.value.length === 2) {
+    if (showDifferential.value && canShowDifferential.value) {
         const taxon1 = selectedTreeviewItems.value[0];
         const taxon2 = selectedTreeviewItems.value[1];
         const p1 = taxonTotalCount(taxon1.id);
