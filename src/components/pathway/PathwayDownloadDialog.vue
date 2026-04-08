@@ -1,8 +1,8 @@
 <template>
-    <v-dialog v-model="dialogOpen" width="680">
-        <v-card>
+    <v-dialog v-model="dialogOpen" width="80%">
+        <v-unipept-card class="bg-mainBody">
             <v-card-title class="d-flex align-center">
-                Export pathway image
+                <h2>Export pathway image</h2>
                 <v-spacer />
                 <v-btn icon="mdi-close" variant="plain" @click="dialogOpen = false" />
             </v-card-title>
@@ -10,15 +10,15 @@
             <v-card-text style="overflow: visible;">
                 <!-- Preview -->
                 <div class="d-flex justify-center mb-5">
-                    <v-card variant="outlined" class="pa-1" style="min-height: 120px;">
-                        <div v-if="!previewDataUrl" class="d-flex align-center justify-center" style="width: 460px; height: 200px;">
+                    <v-card variant="outlined" class="pa-2" width="60%" style="max-height: 400px;">
+                        <div v-if="!previewDataUrl" class="d-flex align-center justify-center" style="min-height: 120px;">
                             <v-progress-circular indeterminate color="primary" size="32" />
                         </div>
-                        <img
+                        <v-img
                             v-else
                             :src="previewDataUrl"
-                            style="display: block; max-width: 460px; max-height: 260px; object-fit: contain;"
-                            alt="Pathway preview"
+                            max-width="100%"
+                            max-height="100%"
                         />
                     </v-card>
                 </div>
@@ -101,7 +101,7 @@
                     Download
                 </v-btn>
             </v-card-actions>
-        </v-card>
+        </v-unipept-card>
     </v-dialog>
 </template>
 
