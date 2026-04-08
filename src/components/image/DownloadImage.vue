@@ -134,13 +134,10 @@ const download = async () => {
         analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'html');
     } else if (image instanceof HTMLElement) {
         await downloadDomPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
-        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'html');
     } else if (selectedFormat.value === Format.SVG.valueOf()) {
         await downloadSvg(image, `${filename}.svg`);
-        analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'svg');
     } else {
         await downloadPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
-        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'svg');
     }
     dialogOpen.value = false;
 };

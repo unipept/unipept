@@ -1,7 +1,8 @@
 import {useFileSystemAccess} from "@vueuse/core";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 export default function useSvgDownload() {
-    const serializer = new XMLSerializer();
+    const analyticsCommunicator = new AnalyticsCommunicator();
 
     const {
         isSupported,
@@ -10,7 +11,7 @@ export default function useSvgDownload() {
     } = useFileSystemAccess();
 
     const downloadSvg = async (svg: SVGElement, filename = 'image.png') => {
-        let svgString = serializer.serializeToString(svg);
+        let svgString = new XMLSerializer().serializeToString(svg);
 
         if (svg.hasAttribute("viewport")) {
             svgString = svgString
@@ -43,6 +44,8 @@ export default function useSvgDownload() {
             link.click();
             document.body.removeChild(link);
         }
+
+        analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'svg');
     }
 
     return {

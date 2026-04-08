@@ -1,7 +1,10 @@
 import {useFileSystemAccess} from "@vueuse/core";
 import {toPng} from "html-to-image";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 export default function usePngDownload() {
+    const analyticsCommunicator = new AnalyticsCommunicator();
+
     const {
         isSupported,
         data: content,
@@ -90,6 +93,8 @@ export default function usePngDownload() {
 
         await saveBlobAs(pngBlob, filename);
 
+        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'svg');
+
         // Clean up URL
         URL.revokeObjectURL(url);
     }
@@ -106,6 +111,8 @@ export default function usePngDownload() {
             await saveAs({
                 suggestedName: filename
             });
+
+            analyticsCommunicator.logDownloadVisualization(filename, 'png', 'html');
         } catch (error) {
             // Check if the user is simply the result of the user cancelling the request. Rethrow the error
             // otherwise.
@@ -123,6 +130,8 @@ export default function usePngDownload() {
         }
 
         await saveBlobAs(pngBlob, filename);
+
+        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'canvas');
     };
 
     return {
