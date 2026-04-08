@@ -55,13 +55,14 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue';
-import * as d3 from 'd3';
 import { PathwayPilotStore } from '@/store/PathwayPilotStore';
 import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
-import { PATHWAY_COLORS, isSelectable } from '@/composables/pathway/usePathwayColors';
+import { PATHWAY_COLORS } from '@/composables/pathway/usePathwayColors';
 import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
 import { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
 import { usePathwayCsvExport } from '@/composables/pathway/usePathwayCsvExport';
+import { usePathwayColoring } from '@/composables/pathway/usePathwayColoring';
+import type { ColoringItem } from '@/composables/pathway/usePathwayColoring';
 import NcbiTreeNode from '@/logic/ontology/taxonomic/NcbiTreeNode';
 import PathwayVisualizationViewer from '@/components/pathway/PathwayVisualizationViewer.vue';
 import TaxonTreeview from '@/components/treeview/TaxonTreeview.vue';
@@ -209,61 +210,26 @@ const getAreaStats = computed(() => {
     }));
 });
 
-const coloredAreas = computed(() => {
-    if (selectedTreeviewItems.value.length === 0) {
+const coloringItems = computed<ColoringItem[]>(() =>
+    selectedTreeviewItems.value.map((taxon, i) => ({
+        color: legendItems.value[i].color,
+        hasMatch: (area: any) => getTaxonCountForArea(taxon.id, area) > 0,
+        countForArea: (area: any) => getTaxonCountForArea(taxon.id, area),
+        total: taxonTotalCount(taxon.id),
+    }))
+);
+
+const { coloredAreas } = usePathwayColoring({
+    rawAreas: viz.rawAreas,
+    showDifferential,
+    canShowDifferential,
+    items: coloringItems,
+    defaultColoring: (area: any) => {
         const ecs = props.store.ecs;
-        return viz.rawAreas.value.map(area => ({
-            ...area,
-            colors: (isSelectable(area) && area?.info?.ecNumbers?.some((ec: any) => ecs.has(ec.id ?? ec)))
-                ? [HIGHLIGHT_COLOR]
-                : []
-        }));
-    }
-
-    if (showDifferential.value && canShowDifferential.value) {
-        const taxon1 = selectedTreeviewItems.value[0];
-        const taxon2 = selectedTreeviewItems.value[1];
-        const p1 = taxonTotalCount(taxon1.id);
-        const p2 = taxonTotalCount(taxon2.id);
-
-        if (p1 === 0 || p2 === 0) {
-            return viz.rawAreas.value.map(area => ({ ...area, colors: [] }));
-        }
-
-        let min = 0, max = 0;
-        const withValues = viz.rawAreas.value.map(area => {
-            if (!isSelectable(area)) return { area, value: null as number | null };
-            const x = getTaxonCountForArea(taxon1.id, area);
-            const y = getTaxonCountForArea(taxon2.id, area);
-            if (x > 0 || y > 0) {
-                const diff = y / p2 - x / p1;
-                min = Math.min(min, diff);
-                max = Math.max(max, diff);
-                return { area, value: diff };
-            }
-            return { area, value: null as number | null };
-        });
-
-        const colorScale = d3.scaleDiverging(
-            [min, 0, max],
-            d3.interpolateRgbBasis([PATHWAY_COLORS[0], '#ffffe0', PATHWAY_COLORS[1]])
-        );
-        return withValues.map(({ area, value }) => ({
-            ...area,
-            colors: value !== null ? [colorScale(value)] : []
-        }));
-    }
-
-    return viz.rawAreas.value.map(area => {
-        if (!isSelectable(area)) return { ...area, colors: [] };
-        const colors: string[] = [];
-        for (let i = 0; i < selectedTreeviewItems.value.length; i++) {
-            if (getTaxonCountForArea(selectedTreeviewItems.value[i].id, area) > 0) {
-                colors.push(PATHWAY_COLORS[i]);
-            }
-        }
-        return { ...area, colors };
-    });
+        return (area?.info?.ecNumbers?.some((ec: any) => ecs.has(ec.id ?? ec)))
+            ? [HIGHLIGHT_COLOR]
+            : [];
+    },
 });
 
 const exportAsCsv = (delimiter: string) => exportSingleAnalysis(props.analysis, delimiter);

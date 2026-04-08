@@ -52,14 +52,14 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import * as d3 from 'd3';
 import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
 import { GroupAnalysisStore } from '@/store/GroupAnalysisStore';
 import { PathwayItem } from '@/store/PathwayPilotStore';
-import { isSelectable } from '@/composables/pathway/usePathwayColors';
 import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
 import { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
 import { usePathwayCsvExport } from '@/composables/pathway/usePathwayCsvExport';
+import { usePathwayColoring } from '@/composables/pathway/usePathwayColoring';
+import type { ColoringItem } from '@/composables/pathway/usePathwayColoring';
 import PathwayVisualizationViewer from '@/components/pathway/PathwayVisualizationViewer.vue';
 
 const props = defineProps<{
@@ -166,75 +166,38 @@ const getAreaStats = computed(() => {
     }));
 });
 
-const coloredAreas = computed(() => {
-    if (useGroups.value && showDifferential.value && effectiveGroups.value.length === 2) {
-        const group1Analyses = analysesForGroup(effectiveGroups.value[0]);
-        const group2Analyses = analysesForGroup(effectiveGroups.value[1]);
-        const p1 = groupTotalCounts.value[0] ?? 0;
-        const p2 = groupTotalCounts.value[1] ?? 0;
-
-        if (p1 === 0 || p2 === 0) {
-            return viz.rawAreas.value.map(area => ({ ...area, colors: [] }));
-        }
-
-        let min = 0, max = 0;
-        const withValues = viz.rawAreas.value.map(area => {
-            if (!isSelectable(area)) return { area, value: null as number | null };
-
-            const x = getGroupCountForArea(group1Analyses, area);
-            const y = getGroupCountForArea(group2Analyses, area);
-
-            if (x > 0 || y > 0) {
-                const diff = y / p2 - x / p1;
-                min = Math.min(min, diff);
-                max = Math.max(max, diff);
-                return { area, value: diff };
-            }
-            return { area, value: null as number | null };
-        });
-
-        const colorScale = d3.scaleDiverging(
-            [min, 0, max],
-            d3.interpolateRgbBasis([legendItems.value[0].color, '#ffffe0', legendItems.value[1].color])
-        );
-
-        return withValues.map(({ area, value }) => ({
-            ...area,
-            colors: value !== null ? [colorScale(value)] : []
-        }));
-    }
-
+const coloringItems = computed<ColoringItem[]>(() => {
     if (useGroups.value) {
-        return viz.rawAreas.value.map(area => {
-            if (!isSelectable(area)) return { ...area, colors: [] };
-
-            const colors: string[] = [];
-            for (let i = 0; i < effectiveGroups.value.length; i++) {
-                const groupAnalyses = analysesForGroup(effectiveGroups.value[i]);
-                const hasMatch = area?.info?.ecNumbers?.some((ec: any) =>
-                    groupAnalyses.some(a => a.pathwayPilotStore.ecs.has(ec.id ?? ec))
-                ) ?? false;
-                if (hasMatch) colors.push(legendItems.value[i].color);
-            }
-            return { ...area, colors };
+        return effectiveGroups.value.map((group, i) => {
+            const groupAnalyses = analysesForGroup(group);
+            return {
+                color: legendItems.value[i].color,
+                hasMatch: (area: any) =>
+                    area?.info?.ecNumbers?.some((ec: any) =>
+                        groupAnalyses.some(a => a.pathwayPilotStore.ecs.has(ec.id ?? ec))
+                    ) ?? false,
+                countForArea: (area: any) => getGroupCountForArea(groupAnalyses, area),
+                total: groupTotalCounts.value[i] ?? 0,
+            };
         });
     }
+    return props.analyses.map((analysis, i) => ({
+        color: legendItems.value[i].color,
+        hasMatch: (area: any) =>
+            area?.info?.ecNumbers?.some((ec: any) =>
+                analysis.pathwayPilotStore.ecs.has(ec.id ?? ec)
+            ) ?? false,
+        countForArea: (area: any) => getGroupCountForArea([analysis], area),
+        total: analysisTotalCounts.value[i] ?? 0,
+    }));
+});
 
-    return viz.rawAreas.value.map(area => {
-        if (!isSelectable(area)) return { ...area, colors: [] };
-
-        const matchingColors = props.analyses
-            .map((analysis, i) => ({
-                color: legendItems.value[i].color,
-                matches: area?.info?.ecNumbers?.some((ec: any) =>
-                    analysis.pathwayPilotStore.ecs.has(ec.id ?? ec)
-                ) ?? false
-            }))
-            .filter(c => c.matches)
-            .map(c => c.color);
-
-        return { ...area, colors: matchingColors };
-    });
+const { coloredAreas } = usePathwayColoring({
+    rawAreas: viz.rawAreas,
+    showDifferential,
+    canShowDifferential,
+    items: coloringItems,
+    defaultColoring: () => [],
 });
 
 const exportAsCsv = (delimiter: string) => exportComparativeAnalysis(props.analyses, props.groups, delimiter);

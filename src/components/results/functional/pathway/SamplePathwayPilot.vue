@@ -7,16 +7,17 @@
         </div>
 
         <template v-else>
+            <sample-pathway-selection
+                v-if="!analysis.pathwayPilotStore.selectedPathway"
+                :store="analysis.pathwayPilotStore"
+                :loading="analysis.pathwayPilotStore.status === PathwayPilotStatus.Loading"
+            />
+
             <sample-pathway-visualization
-                v-if="analysis.pathwayPilotStore.selectedPathway"
+                v-else
                 :store="analysis.pathwayPilotStore"
                 :analysis="analysis"
                 @back="analysis.pathwayPilotStore.setSelectedPathway(undefined)"
-            />
-            <sample-pathway-selection
-                v-else
-                :store="analysis.pathwayPilotStore"
-                :loading="analysis.pathwayPilotStore.status === PathwayPilotStatus.Loading"
             />
         </template>
     </div>
