@@ -34,7 +34,7 @@
                 <v-col cols="6" class="pl-4">
                     <div class="text-subtitle-2 mb-1">Differential abundance</div>
                     <div class="text-caption text-medium-emphasis mb-2">
-                        Colors each pathway node by the relative abundance difference between the two groups. Requires exactly 2 groups.
+                        Colors each pathway node by the relative abundance difference between two items. Requires exactly 2 groups (when grouping is enabled) or exactly 2 analyses.
                     </div>
                     <v-switch
                         v-model="showDifferential"
@@ -75,7 +75,7 @@ const emit = defineEmits<{
 const viz = usePathwayVisualization();
 const { exportComparativeAnalysis } = usePathwayCsvExport();
 
-const useGroups = ref(true);
+const useGroups = ref(false);
 
 const effectiveGroups = computed<GroupAnalysisStore[]>(() =>
     props.groups.filter(g =>
@@ -87,7 +87,9 @@ const { legendItems, showDifferential, canShowDifferential, differentialLabels, 
     items: () => useGroups.value
         ? effectiveGroups.value.map(g => ({ label: g.name }))
         : props.analyses.map(a => ({ label: a.name })),
-    canDifferential: () => useGroups.value && effectiveGroups.value.length === 2,
+    canDifferential: () =>
+        (useGroups.value && effectiveGroups.value.length === 2) ||
+        (!useGroups.value && props.analyses.length === 2),
 });
 
 const analysesForGroup = (group: GroupAnalysisStore): SingleAnalysisStore[] =>
