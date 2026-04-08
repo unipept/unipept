@@ -148,7 +148,7 @@
             </v-tabs-window-item>
 
             <v-tabs-window-item>
-                <pathway-pilot-results :analysis="analysis" />
+                <sample-pathway-pilot :analysis="analysis" />
             </v-tabs-window-item>
         </v-tabs-window>
     </v-unipept-card>
@@ -172,7 +172,7 @@ import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/OntologyStore";
 import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue";
 import {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
-import PathwayPilotResults from "@/components/results/functional/pathway/PathwayPilotResults.vue";
+import SamplePathwayPilot from "@/components/results/functional/pathway/SamplePathwayPilot.vue";
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore

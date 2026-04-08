@@ -7,13 +7,13 @@
         </div>
 
         <template v-else>
-            <pathway-visualisation-panel
+            <sample-pathway-visualization
                 v-if="analysis.pathwayPilotStore.selectedPathway"
                 :store="analysis.pathwayPilotStore"
                 :analysis="analysis"
                 @back="analysis.pathwayPilotStore.setSelectedPathway(undefined)"
             />
-            <pathway-selection-panel
+            <sample-pathway-selection
                 v-else
                 :store="analysis.pathwayPilotStore"
                 :loading="analysis.pathwayPilotStore.status === PathwayPilotStatus.Loading"
@@ -27,8 +27,8 @@ import { onMounted, watch } from 'vue';
 import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
 import { AnalysisStatus } from '@/store/AnalysisStatus';
 import { PathwayPilotStatus } from '@/store/PathwayPilotStore';
-import PathwaySelectionPanel from '@/components/results/functional/pathway/PathwaySelectionPanel.vue';
-import PathwayVisualisationPanel from '@/components/results/functional/pathway/PathwayVisualisationPanel.vue';
+import SamplePathwaySelection from "@/components/results/functional/pathway/SamplePathwaySelection.vue";
+import SamplePathwayVisualization from "@/components/results/functional/pathway/SamplePathwayVisualization.vue";
 
 const props = defineProps<{
     analysis: SingleAnalysisStore;
