@@ -26,14 +26,16 @@
                 <v-divider class="mb-4" />
 
                 <!-- Options row -->
-                <div class="d-flex align-start" style="gap: 0;">
+                <div class="d-flex align-stretch" style="gap: 0;">
                     <!-- Export region -->
                     <div style="flex: 1;" class="d-flex flex-column align-center px-2">
                         <div class="text-subtitle-2 mb-2">Export region</div>
-                        <v-radio-group v-model="selectedRegion" color="primary" hide-details>
-                            <v-radio label="Full pathway" value="full" density="compact" />
-                            <v-radio label="Visible area" value="viewport" density="compact" />
-                        </v-radio-group>
+                        <div class="d-flex flex-grow-1 align-center justify-center">
+                            <v-radio-group v-model="selectedRegion" color="primary" hide-details>
+                                <v-radio label="Full pathway" value="full" density="compact" />
+                                <v-radio label="Visible area" value="viewport" density="compact" />
+                            </v-radio-group>
+                        </div>
                     </div>
 
                     <!-- Legend options (only when a legend is present) -->
@@ -43,17 +45,21 @@
                         <!-- Legend position -->
                         <div style="flex: 1;" class="d-flex flex-column align-center px-2">
                             <div class="text-subtitle-2 mb-2">Legend position</div>
-                            <div class="legend-position-grid">
-                                <v-btn
-                                    v-for="pos in (['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const)"
-                                    :key="pos"
-                                    :variant="legendPosition === pos ? 'tonal' : 'outlined'"
-                                    :color="legendPosition === pos ? 'primary' : undefined"
-                                    :title="pos.replace('-', ' ')"
-                                    @click="legendPosition = pos"
-                                >
-                                    <v-icon size="22">{{ posIcon(pos) }}</v-icon>
-                                </v-btn>
+                            <div class="d-flex flex-grow-1 align-center justify-center">
+                                <div class="legend-position-grid">
+                                    <v-btn
+                                        v-for="pos in (['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const)"
+                                        :key="pos"
+                                        :variant="legendPosition === pos ? 'tonal' : 'outlined'"
+                                        :color="legendPosition === pos ? 'primary' : undefined"
+                                        :title="pos.replace('-', ' ')"
+                                        size="small"
+                                        class="px-7"
+                                        @click="legendPosition = pos"
+                                    >
+                                        <v-icon size="22">{{ posIcon(pos) }}</v-icon>
+                                    </v-btn>
+                                </div>
                             </div>
                         </div>
 
@@ -62,24 +68,26 @@
                         <!-- Legend size -->
                         <div style="flex: 1;" class="d-flex flex-column align-center px-2">
                             <div class="text-subtitle-2 mb-2">Legend size</div>
-                            <div class="d-flex align-center ga-2">
-                                <v-btn
-                                    icon="mdi-minus"
-                                    size="small"
-                                    variant="outlined"
-                                    :disabled="legendScale <= 0.5"
-                                    @click="legendScale = Math.round((legendScale - 0.1) * 10) / 10"
-                                />
-                                <span class="text-body-2" style="min-width: 44px; text-align: center;">
-                                    {{ Math.round(legendScale * 100) }}%
-                                </span>
-                                <v-btn
-                                    icon="mdi-plus"
-                                    size="small"
-                                    variant="outlined"
-                                    :disabled="legendScale >= 2.0"
-                                    @click="legendScale = Math.round((legendScale + 0.1) * 10) / 10"
-                                />
+                            <div class="d-flex flex-grow-1 align-center justify-center">
+                                <div class="d-flex align-center ga-2">
+                                    <v-btn
+                                        icon="mdi-minus"
+                                        size="small"
+                                        variant="outlined"
+                                        :disabled="legendScale <= 0.5"
+                                        @click="legendScale = Math.round((legendScale - 0.1) * 10) / 10"
+                                    />
+                                    <span class="text-body-2" style="min-width: 44px; text-align: center;">
+                                        {{ Math.round(legendScale * 100) }}%
+                                    </span>
+                                    <v-btn
+                                        icon="mdi-plus"
+                                        size="small"
+                                        variant="outlined"
+                                        :disabled="legendScale >= 2.0"
+                                        @click="legendScale = Math.round((legendScale + 0.1) * 10) / 10"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </template>
