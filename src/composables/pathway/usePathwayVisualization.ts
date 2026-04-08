@@ -17,6 +17,7 @@ export function usePathwayVisualization() {
 
     const imgRef = ref<HTMLImageElement | null>(null);
     const overlayRef = ref<InstanceType<typeof PathwayImageOverlay> | null>(null);
+    const legendRef = ref<HTMLElement | null>(null);
     const vizWrapper = ref<HTMLElement | null>(null);
     const imageLoaded = ref(false);
     const imgWidth = ref(0);
@@ -89,6 +90,7 @@ export function usePathwayVisualization() {
         initialScale,
         imgRef,
         overlayRef,
+        legendRef,
         vizWrapper,
         imageLoaded,
         imgWidth,

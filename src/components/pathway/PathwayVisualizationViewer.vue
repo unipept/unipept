@@ -69,6 +69,7 @@
                                 <img
                                     :ref="(el) => { viz.imgRef.value = el as HTMLImageElement }"
                                     :src="viz.pngUrl.value"
+                                    crossorigin="anonymous"
                                     alt="Pathway visualization"
                                     style="display: block; max-width: none;"
                                     @load="viz.onImageLoad()"
@@ -86,6 +87,7 @@
                         </pathway-interactive-image>
 
                         <pathway-legend
+                            :ref="(el) => { viz.legendRef.value = (el as any)?.$el ?? null }"
                             :items="legendItems"
                             :show-differential="showDifferential"
                             :differential-labels="differentialLabels"
@@ -140,23 +142,20 @@
 
         <pathway-download-dialog
             v-model="viz.downloadDialogOpen.value"
-            :png-url="viz.pngUrl.value ?? ''"
+            :img-el="viz.imgRef.value"
             :overlay-el="(viz.overlayRef.value as any)?.$el ?? null"
-            :img-width="viz.imgWidth.value"
-            :img-height="viz.imgHeight.value"
+            :legend-el="viz.legendRef.value"
             :scale="viz.scale.value"
             :translate="viz.translate.value"
             :container-width="viz.containerWidth.value"
             :container-height="viz.containerHeight.value"
-            :legend-entries="legendEntriesForDialog"
-            :is-differential="showDifferential"
             :filename="selectedPathway?.name ?? 'pathway'"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useFullscreen } from '@vueuse/core';
 import type { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
 import type { PathwayItem } from '@/store/PathwayPilotStore';
@@ -191,9 +190,7 @@ const settingsPanelOpen = ref<string[]>([]);
 const fullscreenRoot = ref<HTMLElement | null>(null);
 const { toggle: toggleFullscreen, isFullscreen } = useFullscreen(fullscreenRoot);
 
-const legendEntriesForDialog = computed(() =>
-    props.legendItems.map(item => ({ name: item.label, color: item.color }))
-);
+;
 </script>
 
 <style scoped>

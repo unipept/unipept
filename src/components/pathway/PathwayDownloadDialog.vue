@@ -36,8 +36,8 @@
                         </v-radio-group>
                     </div>
 
-                    <!-- Legend options (only when legend entries exist) -->
-                    <template v-if="legendEntries.length > 0">
+                    <!-- Legend options (only when a legend is present) -->
+                    <template v-if="legendEl">
                         <v-divider vertical />
 
                         <!-- Legend position -->
@@ -107,22 +107,23 @@
 
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue';
+import { toCanvas } from 'html-to-image';
+import usePngDownload from '@/composables/usePngDownload';
 
 const props = defineProps<{
-    pngUrl: string;
+    imgEl: HTMLImageElement | null;
     overlayEl: SVGElement | null;
-    imgWidth: number;
-    imgHeight: number;
+    legendEl: HTMLElement | null;
     scale: number;
     translate: { x: number; y: number };
     containerWidth: number;
     containerHeight: number;
-    legendEntries: { name: string; color: string }[];
-    isDifferential: boolean;
     filename: string;
 }>();
 
 const dialogOpen = defineModel<boolean>();
+
+const { downloadCanvasPng } = usePngDownload();
 
 type Region = 'full' | 'viewport';
 type LegendPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
@@ -140,7 +141,9 @@ const buildCanvas = async (region: Region, legendPos: LegendPosition, legScale: 
     const ctx = canvas.getContext('2d')!;
 
     // Determine source rect (in image coords) and canvas size
-    let srcX = 0, srcY = 0, srcW = props.imgWidth, srcH = props.imgHeight;
+    const imgW = props.imgEl?.naturalWidth ?? 0;
+    const imgH = props.imgEl?.naturalHeight ?? 0;
+    let srcX = 0, srcY = 0, srcW = imgW, srcH = imgH;
 
     if (region === 'viewport' && props.containerWidth > 0 && props.containerHeight > 0 && props.scale > 0) {
         const s = props.scale;
@@ -148,8 +151,8 @@ const buildCanvas = async (region: Region, legendPos: LegendPosition, legScale: 
         const ty = props.translate.y;
         srcX = Math.max(0, -tx);
         srcY = Math.max(0, -ty);
-        const srcX2 = Math.min(props.imgWidth, props.containerWidth / s - tx);
-        const srcY2 = Math.min(props.imgHeight, props.containerHeight / s - ty);
+        const srcX2 = Math.min(imgW, props.containerWidth / s - tx);
+        const srcY2 = Math.min(imgH, props.containerHeight / s - ty);
         srcW = Math.max(1, srcX2 - srcX);
         srcH = Math.max(1, srcY2 - srcY);
     }
@@ -157,25 +160,23 @@ const buildCanvas = async (region: Region, legendPos: LegendPosition, legScale: 
     canvas.width = Math.round(srcW);
     canvas.height = Math.round(srcH);
 
-    // 1. Draw PNG background
-    // crossOrigin = 'anonymous' requests CORS headers so the canvas won't be tainted.
-    // If the server doesn't support CORS, onerror fires and we continue with a white background.
-    await new Promise<void>(resolve => {
-        const bg = new Image();
-        bg.crossOrigin = 'anonymous';
-        bg.onload = () => {
-            ctx.drawImage(bg, srcX, srcY, srcW, srcH, 0, 0, canvas.width, canvas.height);
-            resolve();
-        };
-        bg.onerror = () => resolve();
-        bg.src = props.pngUrl;
-    });
+    // 1. Draw PNG background directly from the already-loaded img element.
+    // crossorigin="anonymous" is set on the element so the canvas won't be tainted.
+    // If CORS is not supported by the server a SecurityError is thrown and we fall through
+    // with a white background.
+    if (props.imgEl) {
+        try {
+            ctx.drawImage(props.imgEl, srcX, srcY, srcW, srcH, 0, 0, canvas.width, canvas.height);
+        } catch {
+            // CORS not supported — canvas left with white background
+        }
+    }
 
     // 2. Draw SVG overlay
-    if (props.overlayEl && props.imgWidth > 0 && props.imgHeight > 0) {
+    if (props.overlayEl && imgW > 0 && imgH > 0) {
         const clone = props.overlayEl.cloneNode(true) as SVGElement;
-        clone.setAttribute('width', String(props.imgWidth));
-        clone.setAttribute('height', String(props.imgHeight));
+        clone.setAttribute('width', String(imgW));
+        clone.setAttribute('height', String(imgH));
         clone.setAttribute('overflow', 'hidden');
         clone.style.position = 'static';
         const svgStr = new XMLSerializer().serializeToString(clone);
@@ -193,9 +194,24 @@ const buildCanvas = async (region: Region, legendPos: LegendPosition, legScale: 
         URL.revokeObjectURL(svgUrl);
     }
 
-    // 3. Draw legend
-    if (props.legendEntries.length > 0) {
-        drawLegend(ctx, canvas.width, canvas.height, legendPos, legScale);
+    // 3. Draw legend from the live DOM element
+    if (props.legendEl) {
+        try {
+            // pixelRatio: 1 ensures the canvas dimensions match CSS pixel size exactly,
+            // avoiding 2x scaling on retina displays that would misplace the legend.
+            const legendCanvas = await toCanvas(props.legendEl, {
+                skipFonts: true,
+                pixelRatio: 1,
+                style: { position: 'static', top: 'auto', right: 'auto', bottom: 'auto', left: 'auto' },
+            });
+            console.log('Legend canvas dims:', legendCanvas.width, legendCanvas.height);
+            const lw = Math.round(legendCanvas.width * legScale);
+            const lh = Math.round(legendCanvas.height * legScale);
+            const PAD = 10;
+            const lx = legendPos.includes('right') ? canvas.width - lw - PAD : PAD;
+            const ly = legendPos.includes('bottom') ? canvas.height - lh - PAD : PAD;
+            ctx.drawImage(legendCanvas, lx, ly, lw, lh);
+        } catch (e) { console.error('Legend capture failed', e) }
     }
 
     // 4. White border frame — replicates the .border scoped CSS in PathwayImageOverlay
@@ -210,126 +226,11 @@ const buildCanvas = async (region: Region, legendPos: LegendPosition, legScale: 
     return canvas;
 };
 
-const drawLegend = (
-    ctx: CanvasRenderingContext2D,
-    canvasW: number,
-    canvasH: number,
-    legendPos: LegendPosition,
-    legScale: number
-) => {
-    const PAD = Math.round(10 * legScale);
-    const SWATCH = Math.round(14 * legScale);
-    const LINE_H = Math.round(22 * legScale);
-    const GAP = Math.round(6 * legScale);
-    const FONT = `${Math.round(12 * legScale)}px sans-serif`;
-    const RADIUS = Math.round(6 * legScale);
-    const BG_ALPHA = 0.92;
-
-    ctx.font = FONT;
-
-    if (props.isDifferential && props.legendEntries.length === 2) {
-        // Differential legend: gradient bar + two labels
-        const GRAD_W = Math.round(14 * legScale);
-        const GRAD_H = Math.round(80 * legScale);
-        const label1 = props.legendEntries[0].name;
-        const label2 = props.legendEntries[1].name;
-        const maxTextW = Math.max(ctx.measureText(label1).width, ctx.measureText(label2).width);
-        const boxW = PAD * 2 + GRAD_W + GAP + maxTextW;
-        const boxH = PAD * 2 + LINE_H + GRAD_H + LINE_H;
-
-        const { lx, ly } = legendCorner(legendPos, canvasW, canvasH, boxW, boxH, PAD);
-
-        ctx.fillStyle = `rgba(255,255,255,${BG_ALPHA})`;
-        roundRect(ctx, lx, ly, boxW, boxH, RADIUS);
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-        ctx.lineWidth = 1;
-        roundRect(ctx, lx, ly, boxW, boxH, RADIUS);
-        ctx.stroke();
-
-        const textX = lx + PAD + GRAD_W + GAP;
-
-        // Top label (color 1)
-        ctx.fillStyle = props.legendEntries[0].color;
-        ctx.fillText(label1, textX, ly + PAD + SWATCH);
-
-        // Gradient bar
-        const gradX = lx + PAD;
-        const gradY = ly + PAD + LINE_H;
-        const grad = ctx.createLinearGradient(gradX, gradY, gradX, gradY + GRAD_H);
-        grad.addColorStop(0, props.legendEntries[0].color);
-        grad.addColorStop(0.5, '#ffffe0');
-        grad.addColorStop(1, props.legendEntries[1].color);
-        ctx.fillStyle = grad;
-        ctx.fillRect(gradX, gradY, GRAD_W, GRAD_H);
-
-        // Bottom label (color 2)
-        ctx.fillStyle = props.legendEntries[1].color;
-        ctx.fillText(label2, textX, ly + PAD + LINE_H + GRAD_H + SWATCH);
-
-    } else {
-        // Per-taxon/group legend: colored swatches + labels
-        const maxTextW = Math.max(...props.legendEntries.map(e => ctx.measureText(e.name).width));
-        const boxW = PAD * 2 + SWATCH + GAP + maxTextW;
-        const boxH = PAD * 2 + props.legendEntries.length * LINE_H - (LINE_H - SWATCH) / 2;
-
-        const { lx, ly } = legendCorner(legendPos, canvasW, canvasH, boxW, boxH, PAD);
-
-        ctx.fillStyle = `rgba(255,255,255,${BG_ALPHA})`;
-        roundRect(ctx, lx, ly, boxW, boxH, RADIUS);
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-        ctx.lineWidth = 1;
-        roundRect(ctx, lx, ly, boxW, boxH, RADIUS);
-        ctx.stroke();
-
-        for (let i = 0; i < props.legendEntries.length; i++) {
-            const entry = props.legendEntries[i];
-            const rowY = ly + PAD + i * LINE_H;
-            const swatchY = rowY + (LINE_H - SWATCH) / 2;
-
-            ctx.fillStyle = entry.color;
-            roundRect(ctx, lx + PAD, swatchY, SWATCH, SWATCH, Math.round(3 * legScale));
-            ctx.fill();
-
-            ctx.fillStyle = '#212121';
-            ctx.font = FONT;
-            ctx.fillText(entry.name, lx + PAD + SWATCH + GAP, rowY + SWATCH - 1);
-        }
-    }
-};
-
-const legendCorner = (
-    pos: LegendPosition,
-    canvasW: number,
-    canvasH: number,
-    boxW: number,
-    boxH: number,
-    pad: number
-): { lx: number; ly: number } => {
-    const lx = pos.includes('right') ? canvasW - boxW - pad : pad;
-    const ly = pos.includes('bottom') ? canvasH - boxH - pad : pad;
-    return { lx, ly };
-};
-
-const roundRect = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) => {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-};
 
 let _previewGen = 0;
 
 const buildPreview = async () => {
-    if (!props.pngUrl) return;
+    if (!props.imgEl) return;
     const gen = ++_previewGen;
     await nextTick(); // let parent prop updates flush first
     try {
@@ -343,22 +244,11 @@ const buildPreview = async () => {
 };
 
 const download = async () => {
-    if (!props.pngUrl || downloading.value) return;
+    if (!props.imgEl || downloading.value) return;
     downloading.value = true;
     try {
         const canvas = await buildCanvas(selectedRegion.value, legendPosition.value, legendScale.value);
-        await new Promise<void>(resolve => {
-            canvas.toBlob(blob => {
-                if (!blob) { resolve(); return; }
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${props.filename}.png`;
-                a.click();
-                URL.revokeObjectURL(url);
-                resolve();
-            }, 'image/png');
-        });
+        await downloadCanvasPng(canvas, `${props.filename}.png`);
     } finally {
         downloading.value = false;
     }

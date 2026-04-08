@@ -2,13 +2,35 @@ import {useFileSystemAccess} from "@vueuse/core";
 import {toPng} from "html-to-image";
 
 export default function usePngDownload() {
-    const serializer = new XMLSerializer();
-
     const {
         isSupported,
         data: content,
         saveAs
     } = useFileSystemAccess();
+
+    const saveBlobAs = async (blob: Blob, filename: string) => {
+        if (isSupported.value) {
+            content.value = blob;
+            try {
+                await saveAs({ suggestedName: filename });
+            } catch (error) {
+                // Check if the user is simply the result of the user cancelling the request. Rethrow the error
+                // otherwise.
+                if (!JSON.stringify(error).includes('The user aborted a request')) {
+                    throw error;
+                }
+            }
+        } else {
+            console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
 
     const downloadPng = async (
         svgElement: SVGElement,
@@ -66,31 +88,7 @@ export default function usePngDownload() {
             throw new Error(`Could not create PNG blob!`);
         }
 
-        if (isSupported.value) {
-            // Convert canvas to a PNG blob
-            content.value = pngBlob;
-
-            try {
-                await saveAs({
-                    suggestedName: filename
-                });
-            } catch (error) {
-                // Check if the user is simply the result of the user cancelling the request. Rethrow the error
-                // otherwise.
-                if (!JSON.stringify(error).includes("The user aborted a request")) {
-                    throw error;
-                }
-            }
-        } else {
-            console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
-
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(pngBlob);
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+        await saveBlobAs(pngBlob, filename);
 
         // Clean up URL
         URL.revokeObjectURL(url);
@@ -117,8 +115,19 @@ export default function usePngDownload() {
         }
     }
 
+    const downloadCanvasPng = async (canvas: HTMLCanvasElement, filename = 'image.png') => {
+        const pngBlob = await new Promise<Blob | null>(resolve => canvas.toBlob(b => resolve(b), 'image/png'));
+
+        if (pngBlob === null) {
+            throw new Error('Could not create PNG blob!');
+        }
+
+        await saveBlobAs(pngBlob, filename);
+    };
+
     return {
         downloadPng,
-        downloadDomPng
+        downloadDomPng,
+        downloadCanvasPng
     }
 }
