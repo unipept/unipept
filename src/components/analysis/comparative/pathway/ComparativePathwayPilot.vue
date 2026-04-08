@@ -82,6 +82,7 @@ import { categoryColor, isSelectable } from '@/composables/pathway/usePathwayCol
 import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
 import { usePathwayFilters } from '@/composables/pathway/usePathwayFilters';
 import { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
+import { usePathwayCsvExport } from '@/composables/pathway/usePathwayCsvExport';
 import PathwaySelectionTable from '@/components/pathway/PathwaySelectionTable.vue';
 import PathwayVisualizationViewer from '@/components/pathway/PathwayVisualizationViewer.vue';
 
@@ -92,6 +93,7 @@ const props = defineProps<{
 
 const mappingStore = usePathwayPilotMappingStore();
 const appStateStore = useAppStateStore();
+const { exportComparativeAnalysis } = usePathwayCsvExport();
 
 const viz = usePathwayVisualization();
 
@@ -352,75 +354,7 @@ const compoundOptions = computed(() => {
 
 // ---- Export ----
 
-const exportAsCsv = (delimiter: string) => {
-    const escapeCell = (cell: string): string => {
-        if (cell.includes(delimiter) || cell.includes('"') || cell.includes('\n')) {
-            return '"' + cell.replace(/"/g, '""') + '"';
-        }
-        return cell;
-    };
-
-    const header = ['group', 'sample', 'peptide', 'peptide_count', 'taxon_id', 'taxon_rank', 'taxon_name', 'pathways', 'pathway_names'];
-    const lines: string[] = [header.join(delimiter)];
-
-    for (const analysis of props.analyses) {
-        if (!analysis.peptidesTable || !analysis.ecToPeptides) continue;
-
-        const groupName = props.groups.find(g =>
-            (g.analyses as SingleAnalysisStore[]).some(a => a.id === analysis.id)
-        )?.name ?? '';
-
-        const peptideToEcs = new Map<string, string[]>();
-        for (const [rawEc, peptides] of analysis.ecToPeptides.entries()) {
-            const ecId = rawEc.startsWith('EC:') ? rawEc.substring(3) : rawEc;
-            for (const peptide of peptides) {
-                if (!peptideToEcs.has(peptide)) peptideToEcs.set(peptide, []);
-                peptideToEcs.get(peptide)!.push(ecId);
-            }
-        }
-
-        for (const [peptide, count] of analysis.peptidesTable.counts.entries()) {
-            const taxonId = analysis.peptideToLca?.get(peptide);
-            const taxonNode = taxonId != null ? analysis.ncbiTreeNodes?.get(taxonId) : undefined;
-            const rank = taxonNode?.extra?.rank ?? 'no rank';
-            const name = rank === 'no rank' ? 'root' : (taxonNode?.name ?? '');
-
-            const ecIds = peptideToEcs.get(peptide) ?? [];
-            const pathwayIdSet = new Set<string>();
-            for (const ec of ecIds) {
-                for (const p of analysis.pathwayPilotStore.pathwaysForEc(ec)) {
-                    pathwayIdSet.add(p);
-                }
-            }
-
-            const sortedPathways = Array.from(pathwayIdSet).sort();
-            const pathwayNames = sortedPathways.map(id => mappingStore.pathwayMapping?.get(id)?.name ?? '').join(';');
-
-            lines.push([
-                escapeCell(groupName),
-                escapeCell(analysis.name),
-                escapeCell(peptide),
-                String(count),
-                taxonId != null ? String(taxonId) : '',
-                escapeCell(rank),
-                escapeCell(name),
-                escapeCell(sortedPathways.join(';')),
-                escapeCell(pathwayNames),
-            ].join(delimiter));
-        }
-    }
-
-    const content = lines.join('\n');
-    const extension = delimiter === '\t' ? 'tsv' : 'csv';
-    const mimeType = delimiter === '\t' ? 'text/tab-separated-values' : 'text/csv';
-    const blob = new Blob([content], { type: `${mimeType};charset=utf-8;` });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `pathwaypilot_export.${extension}`;
-    a.click();
-    URL.revokeObjectURL(url);
-};
+const exportAsCsv = (delimiter: string) => exportComparativeAnalysis(props.analyses, props.groups, delimiter);
 
 // ---- Visualization ----
 

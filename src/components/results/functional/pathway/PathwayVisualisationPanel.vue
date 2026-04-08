@@ -61,6 +61,7 @@ import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
 import { PATHWAY_COLORS, isSelectable } from '@/composables/pathway/usePathwayColors';
 import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
 import { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
+import { usePathwayCsvExport } from '@/composables/pathway/usePathwayCsvExport';
 import NcbiTreeNode from '@/logic/ontology/taxonomic/NcbiTreeNode';
 import PathwayVisualizationViewer from '@/components/pathway/PathwayVisualizationViewer.vue';
 import TaxonTreeview from '@/components/treeview/TaxonTreeview.vue';
@@ -79,6 +80,7 @@ const emit = defineEmits<{
 }>();
 
 const viz = usePathwayVisualization();
+const { exportSingleAnalysis } = usePathwayCsvExport();
 
 const selectedTreeviewItems = ref<TreeviewItem[]>([]);
 
@@ -264,68 +266,7 @@ const coloredAreas = computed(() => {
     });
 });
 
-const exportAsCsv = (delimiter: string) => {
-    if (!props.analysis.peptidesTable || !props.analysis.ecToPeptides) return;
-
-    const peptideToEcs = new Map<string, string[]>();
-    for (const [rawEc, peptides] of props.analysis.ecToPeptides.entries()) {
-        const ecId = rawEc.startsWith('EC:') ? rawEc.substring(3) : rawEc;
-        for (const peptide of peptides) {
-            if (!peptideToEcs.has(peptide)) peptideToEcs.set(peptide, []);
-            peptideToEcs.get(peptide)!.push(ecId);
-        }
-    }
-
-    const escapeCell = (cell: string): string => {
-        if (cell.includes(delimiter) || cell.includes('"') || cell.includes('\n')) {
-            return '"' + cell.replace(/"/g, '""') + '"';
-        }
-        return cell;
-    };
-
-    const header = ['peptide', 'peptide_count', 'taxon_id', 'taxon_rank', 'taxon_name', 'pathways', 'pathway_names'];
-    const lines: string[] = [header.join(delimiter)];
-
-    for (const [peptide, count] of props.analysis.peptidesTable.counts.entries()) {
-        const taxonId = props.analysis.peptideToLca?.get(peptide);
-        const taxonNode = taxonId != null ? props.analysis.ncbiTreeNodes?.get(taxonId) : undefined;
-
-        const ecIds = peptideToEcs.get(peptide) ?? [];
-        const pathwayIdSet = new Set<string>();
-        for (const ec of ecIds) {
-            for (const p of props.store.pathwaysForEc(ec)) {
-                pathwayIdSet.add(p);
-            }
-        }
-
-        const sortedPathways = Array.from(pathwayIdSet).sort();
-        const pathwayNames = sortedPathways.map(id => viz.mappingStore.pathwayMapping?.get(id)?.name ?? '').join(';');
-
-        const rank = taxonNode?.extra?.rank ?? 'no rank';
-        const name = rank === 'no rank' ? 'root' : (taxonNode?.name ?? '');
-
-        lines.push([
-            escapeCell(peptide),
-            String(count),
-            taxonId != null ? String(taxonId) : '',
-            escapeCell(rank),
-            escapeCell(name),
-            escapeCell(sortedPathways.join(';')),
-            escapeCell(pathwayNames),
-        ].join(delimiter));
-    }
-
-    const content = lines.join('\n');
-    const extension = delimiter === '\t' ? 'tsv' : 'csv';
-    const mimeType = delimiter === '\t' ? 'text/tab-separated-values' : 'text/csv';
-    const blob = new Blob([content], { type: `${mimeType};charset=utf-8;` });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `pathwaypilot_export.${extension}`;
-    a.click();
-    URL.revokeObjectURL(url);
-};
+const exportAsCsv = (delimiter: string) => exportSingleAnalysis(props.analysis, delimiter);
 
 const loadVisualization = async () => {
     if (!props.store.selectedPathway) return;
