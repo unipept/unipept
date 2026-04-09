@@ -14,16 +14,17 @@
             <slot name="append-search" />
         </div>
 
-        <div v-if="loading" class="d-flex justify-center py-4">
-            <v-progress-circular indeterminate color="primary" size="24" />
-        </div>
+        <div class="treeview-container">
+            <div v-if="loading" class="d-flex justify-center py-4">
+                <v-progress-circular indeterminate color="primary" size="24" />
+            </div>
 
-        <div v-else-if="treeError" class="text-caption text-medium-emphasis py-2">
-            Could not load taxonomy tree.
-        </div>
+            <div v-else-if="treeError" class="text-caption text-medium-emphasis py-2">
+                Could not load taxonomy tree.
+            </div>
 
-        <div v-else-if="treeLoaded" class="treeview-scroll">
             <treeview
+                v-else-if="treeLoaded"
                 :items="localSelected"
                 :node="filteredTree"
                 :expanded="expandDepth"
@@ -31,10 +32,10 @@
                 size="small"
                 @update:items="onItemsUpdate"
             />
-        </div>
 
-        <div v-else class="text-caption text-medium-emphasis py-2">
-            No taxon data available.
+            <div v-else class="text-caption text-medium-emphasis py-2">
+                No taxon data available.
+            </div>
         </div>
     </div>
 </template>
@@ -65,7 +66,7 @@ const loading = ref(false);
 const treeError = ref(false);
 const treeLoaded = ref(false);
 const searchQuery = ref('');
-const DEFAULT_EXPAND_DEPTH = 15;
+const DEFAULT_EXPAND_DEPTH = 3;
 const SEARCH_EXPAND_DEPTH = 25;
 const expandDepth = ref(DEFAULT_EXPAND_DEPTH);
 const localSelected = ref<TreeviewItem[]>(props.modelValue);
@@ -149,8 +150,8 @@ watch(() => props.taxonIds, async (newIds, oldIds) => {
 </script>
 
 <style scoped>
-.treeview-scroll {
-    max-height: 300px;
+.treeview-container {
+    height: 250px;
     overflow-y: auto;
     padding: 4px 0;
 }
