@@ -19,7 +19,7 @@
                                     <v-icon class="mr-2">mdi-cog</v-icon>
                                     PathwayPilot settings
                                 </v-expansion-panel-title>
-                                <v-expansion-panel-text>
+                                <v-expansion-panel-text eager>
                                     <slot name="settings" />
                                 </v-expansion-panel-text>
                             </v-expansion-panel>

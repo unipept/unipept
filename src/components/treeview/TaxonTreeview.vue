@@ -15,12 +15,13 @@
         </div>
 
         <div class="treeview-container">
-            <div v-if="loading" class="d-flex justify-center py-4">
-                <v-progress-circular indeterminate color="primary" size="24" />
+            <div v-if="loading" class="d-flex flex-column align-center justify-center" style="height: 100%;">
+                <v-progress-circular indeterminate color="primary" size="36" />
+                <span class="text-caption text-medium-emphasis mt-3">Loading taxa...</span>
             </div>
 
-            <div v-else-if="treeError" class="text-caption text-medium-emphasis py-2">
-                Could not load taxonomy tree.
+            <div v-else-if="treeError" class="d-flex align-center justify-center" style="height: 100%;">
+                <span class="text-caption text-medium-emphasis">Could not load taxonomy tree.</span>
             </div>
 
             <treeview
@@ -33,8 +34,8 @@
                 @update:items="onItemsUpdate"
             />
 
-            <div v-else class="text-caption text-medium-emphasis py-2">
-                No taxon data available.
+            <div v-else class="d-flex align-center justify-center" style="height: 100%;">
+                <span class="text-caption text-medium-emphasis">No taxa found for this pathway.</span>
             </div>
         </div>
     </div>
