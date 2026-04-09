@@ -47,7 +47,7 @@
                             <v-tooltip>
                                 <template #activator="{ props: tooltip }">
                                     <span v-bind="tooltip">
-                                        Pathway Pilot
+                                        PathwayPilot
                                         <v-icon
                                             v-bind="tooltip"
                                             color="yellow"
