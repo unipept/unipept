@@ -86,7 +86,10 @@ const { exportSingleAnalysis } = usePathwayCsvExport();
 const selectedTreeviewItems = ref<TreeviewItem[]>([]);
 
 const { legendItems, showDifferential, canShowDifferential, differentialLabels, differentialColors } = usePathwayLegend({
-    items: () => selectedTreeviewItems.value.map(t => ({ label: t.name })),
+    items: () =>
+        selectedTreeviewItems.value.length > 0
+            ? selectedTreeviewItems.value.map(t => ({ label: t.name }))
+            : [{ label: props.analysis.name }],
 });
 
 const totalSpectralCount = computed(() => {
