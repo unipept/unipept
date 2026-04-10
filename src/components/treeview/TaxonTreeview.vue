@@ -45,12 +45,8 @@
 import { ref, watch, onMounted } from 'vue';
 import Treeview, { TreeviewItem } from '@/components/visualization/treeview/Treeview.vue';
 import useTreeFilter, { FilteredTree } from '@/composables/useTreeFilter';
+import useTreeCompression from '@/composables/useTreeCompression';
 import UnipeptCommunicator from '@/logic/communicators/unipept/UnipeptCommunicator';
-
-const RANKS = [
-    'no rank', 'superkingdom', 'kingdom', 'phylum', 'class',
-    'order', 'family', 'genus', 'species', 'strain'
-];
 
 const props = withDefaults(defineProps<{
     taxonIds: number[];
@@ -75,30 +71,9 @@ const localSelected = ref<TreeviewItem[]>(props.modelValue);
 
 const placeholder: FilteredTree = { id: 0, name: '', nameExtra: '', children: [], extra: null };
 const { filteredTree, filter, update } = useTreeFilter(placeholder);
+const { compress: compressRankTree } = useTreeCompression();
 
 const communicator = new UnipeptCommunicator();
-
-const _compressRankTree = (tree: any, taxa: number[]): FilteredTree[] => {
-    tree.highlighted = taxa.includes(tree.id) && tree.id !== 1;
-
-    const updatedChildren: FilteredTree[] = [];
-    for (const child of tree.children ?? []) {
-        updatedChildren.push(..._compressRankTree(child, taxa));
-    }
-
-    if (RANKS.includes(tree.rank)) {
-        tree.children = updatedChildren;
-        tree.nameExtra = tree.rank;
-        tree.extra = null;
-        return [tree as FilteredTree];
-    } else {
-        return updatedChildren;
-    }
-};
-
-const compressRankTree = (tree: any, taxa: number[]): FilteredTree => {
-    return _compressRankTree(JSON.parse(JSON.stringify(tree)), taxa)[0];
-};
 
 const onSearch = (val: string) => {
     filter(val ?? '');
