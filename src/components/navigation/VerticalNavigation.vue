@@ -57,6 +57,7 @@ const matchRoute = (link: string, route: string) => {
     text-align: start;
     padding-left: 5%;
     max-height: 35px;
+    text-transform: none;
 }
 
 :deep(.v-tabs .v-slide-group__wrapper) {
