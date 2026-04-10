@@ -6,7 +6,7 @@
         style="position: absolute; top: 0; left: 0;"
     >
         <!-- White border overlay to cover the image border edge -->
-        <rect class="border" width="100%" height="100%" fill="none" />
+        <rect style="outline: white solid 10px; outline-offset: -5px;" width="100%" height="100%" fill="none" />
 
         <!-- All selectable rectangles -->
         <!-- All rectangles with a match get split into color bands based on the number of groups that match there -->
@@ -161,11 +161,6 @@ const onClickCompound = (compound: any, key: string) => {
 </script>
 
 <style scoped>
-.border {
-    outline: white solid 10px;
-    outline-offset: -5px;
-}
-
 .cursor-events {
     pointer-events: all;
     cursor: pointer;

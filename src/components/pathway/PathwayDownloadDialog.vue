@@ -205,31 +205,24 @@ const buildCanvas = async (region: Region, legendPos: LegendPosition, legScale: 
     // 3. Draw legend from the live DOM element
     if (props.legendEl) {
         try {
-            // pixelRatio: 1 ensures the canvas dimensions match CSS pixel size exactly,
-            // avoiding 2x scaling on retina displays that would misplace the legend.
+            // Render at target density: for upscaling use legScale as pixelRatio so
+            // the canvas already has the right pixel count (drawn 1:1, no browser scaling).
+            // For downscaling keep pixelRatio >= 1 so we have full-res source pixels for
+            // smooth bilinear downsampling via drawImage.
+            const pixelRatio = Math.max(1, legScale);
             const legendCanvas = await toCanvas(props.legendEl, {
                 skipFonts: true,
-                pixelRatio: 1,
+                pixelRatio,
                 style: { position: 'static', top: 'auto', right: 'auto', bottom: 'auto', left: 'auto' },
             });
-            console.log('Legend canvas dims:', legendCanvas.width, legendCanvas.height);
-            const lw = Math.round(legendCanvas.width * legScale);
-            const lh = Math.round(legendCanvas.height * legScale);
+            const lw = Math.round(legendCanvas.width / pixelRatio * legScale);
+            const lh = Math.round(legendCanvas.height / pixelRatio * legScale);
             const PAD = 10;
             const lx = legendPos.includes('right') ? canvas.width - lw - PAD : PAD;
             const ly = legendPos.includes('bottom') ? canvas.height - lh - PAD : PAD;
             ctx.drawImage(legendCanvas, lx, ly, lw, lh);
         } catch (e) { console.error('Legend capture failed', e) }
     }
-
-    // 4. White border frame — replicates the .border scoped CSS in PathwayImageOverlay
-    //    which doesn't survive SVG serialization (scoped styles aren't embedded in SVG).
-    const BORDER = 6;
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, BORDER);
-    ctx.fillRect(0, canvas.height - BORDER, canvas.width, BORDER);
-    ctx.fillRect(0, 0, BORDER, canvas.height);
-    ctx.fillRect(canvas.width - BORDER, 0, BORDER, canvas.height);
 
     return canvas;
 };
