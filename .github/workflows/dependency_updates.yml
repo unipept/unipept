@@ -1,0 +1,47 @@
+# .github/workflows/weekly-dep-update.yml
+name: Weekly Dependency Update
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-deps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Update deps (7-day filter) + bisect failures
+        id: update
+        run: bash ./github/scripts/dep-update.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Open PR
+        if: steps.update.outputs.any_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "chore/dep-update-$(date +%Y-%m-%d)"
+          git add package.json yarn.lock
+          git commit -m "chore: weekly dependency updates $(date +%Y-%m-%d)"
+          git push origin HEAD
+          gh pr create \
+            --title "chore: weekly dependency updates $(date +%Y-%m-%d)" \
+            --body-file /tmp/pr-report.md \
+            --label "dependencies"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
