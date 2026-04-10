@@ -51,6 +51,7 @@ export function usePathwayFilters<T extends FilterablePathwayItem>(options: Path
             }
             items = items.filter(item => allowed.has(item.id));
         }
+
         if (compounds.length > 0) {
             const allowed = new Set<string>();
             for (const c of compounds) {
@@ -58,10 +59,12 @@ export function usePathwayFilters<T extends FilterablePathwayItem>(options: Path
             }
             items = items.filter(item => allowed.has(item.id));
         }
+
         if (categories.length > 0) {
             const catSet = new Set(categories);
             items = items.filter(item => catSet.has(item.subCategory || item.category));
         }
+
         return items;
     };
 
