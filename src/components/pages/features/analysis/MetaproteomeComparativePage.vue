@@ -56,7 +56,7 @@
                                         </v-icon>
                                     </span>
                                 </template>
-                                <span>New since Unipept 6.2.0!</span>
+                                <span>New since Unipept 6.5.0!</span>
                             </v-tooltip>
                         </v-tab>
                     </v-tabs>
