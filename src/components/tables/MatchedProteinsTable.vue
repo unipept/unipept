@@ -48,7 +48,7 @@
                                 :color="item.functionalAnnotations.go.length > 0 ? 'amber' : 'amber-lighten-4'"
                             >
                                 <span
-                                    :class="[item.functionalAnnotations.go.length > 0 ? 'dark--text' : 'gray--text', 'headline']"
+                                    :class="[item.functionalAnnotations.go.length > 0 ? 'text-black' : 'text-grey', 'headline']"
                                     style="font-size: 14px !important;"
                                 >
                                     GO
