@@ -142,7 +142,7 @@
             class="mt-5"
             large-title
         >
-            <h2>--input / -i <span class="text-caption grey--text text--darken-2">Specify an input file</span></h2>
+            <h2>--input / -i <span class="text-caption text-grey-darken-2">Specify an input file</span></h2>
 
             <p>
                 All Unipept <initialism>CLI</initialism> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <inline-code>--input</inline-code>
@@ -159,7 +159,7 @@
                 <br>[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"domain","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
             </boxed>
 
-            <h2>--output / -o <span class="text-caption grey--text text--darken-2">Specify an output file</span></h2>
+            <h2>--output / -o <span class="text-caption text-grey-darken-2">Specify an output file</span></h2>
 
             <p>
                 By default, the unipept commands write their output to <i>standard output</i>. Using the optional <inline-code>--output</inline-code> option allows you to
@@ -173,7 +173,7 @@
                 <br>[{"id":1,"name":"Organism","rank":"root","data":{"count":3,"self_count":0},"children":[{"id":2,"name":"Bacteria","rank":"domain","data":{"count":3,"self_count":0},"children":[{"id":976,"name":"Bacteroidetes","rank":"phylum","data":{"count":3,"self_count":0},"children":[{"id":200643,"name":"Bacteroidia","rank":"class_","data":{"count":3,"self_count":0},"children":[{"id":171549,"name":"Bacteroidales","rank":"order","data":{"count":3,"self_count":0},"children":[{"id":815,"name":"Bacteroidaceae","rank":"family","data":{"count":2,"self_count":0},"children":[{"id":816,"name":"Bacteroides","rank":"genus","data":{"count":2,"self_count":0},"children":[{"id":817,"name":"Bacteroides fragilis","rank":"species","data":{"count":1,"self_count":1},"children":[]},{"id":329854,"name":"Bacteroides intestinalis","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]},{"id":2005519,"name":"Barnesiellaceae","rank":"family","data":{"count":1,"self_count":0},"children":[{"id":1348911,"name":"Coprobacter","rank":"genus","data":{"count":1,"self_count":0},"children":[{"id":1099853,"name":"Coprobacter fastidiosus","rank":"species","data":{"count":1,"self_count":1},"children":[]}]}]}]}]}]}]}]}]
             </boxed>
 
-            <h2>--format / -f <span class="text-caption grey--text text--darken-2">Specify the output format</span></h2>
+            <h2>--format / -f <span class="text-caption text-grey-darken-2">Specify the output format</span></h2>
 
             <p>
                 By default, the Unipept <initialism>CLI</initialism> commands return their output in json format. The <inline-code>--format</inline-code> option allows you to select another format.
@@ -220,7 +220,7 @@
 </pre>
             </boxed>
 
-            <h2>--help / -h <span class="text-caption grey--text text--darken-2">Display help</span></h2>
+            <h2>--help / -h <span class="text-caption text-grey-darken-2">Display help</span></h2>
 
             <p>
                 This flag displays the help.

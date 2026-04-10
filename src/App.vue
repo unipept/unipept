@@ -1,9 +1,8 @@
 <template>
     <v-app>
         <v-app-bar
-            app
             color="secondary"
-            dark
+            theme="dark"
             hide-on-scroll
             class="px-lg-16"
         >
@@ -157,7 +156,6 @@
 import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router'
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
-import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
 const router = useRouter();
 

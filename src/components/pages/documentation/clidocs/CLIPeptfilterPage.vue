@@ -108,7 +108,7 @@
             class="mt-5"
             large-title
         >
-            <h2>--minlen <span class="text-caption grey--text text--darken-2">Specify minimum length</span></h2>
+            <h2>--minlen <span class="text-caption text-grey-darken-2">Specify minimum length</span></h2>
 
             <p>
                 By default, only peptides with a minimal length of 5 are retained. By using the <inline-code>--minlen</inline-code> parameter, this value can be changed.
@@ -124,7 +124,7 @@
                 <br>AAR
             </boxed>
 
-            <h2>--maxlen <span class="text-caption grey--text text--darken-2">Specify maximum length</span></h2>
+            <h2>--maxlen <span class="text-caption text-grey-darken-2">Specify maximum length</span></h2>
 
             <p>
                 By default, only peptides with a maximal length of 50 are retained. By using the <inline-code>--maxlen</inline-code> parameter, this value can be changed.
@@ -139,7 +139,7 @@
                 <br>AAR
             </boxed>
 
-            <h2>--contains / -c <span class="text-caption grey--text text--darken-2">Specify mandatory amino acids</span></h2>
+            <h2>--contains / -c <span class="text-caption text-grey-darken-2">Specify mandatory amino acids</span></h2>
 
             <p>
                 By using the <inline-code>--contains</inline-code> parameter, you can specify the amino acids that a peptide must contain. All specified amino acids must be
@@ -155,7 +155,7 @@
                 <br>AALTER
             </boxed>
 
-            <h2>--lacks / -l <span class="text-caption grey--text text--darken-2">Specify forbidden amino acids</span></h2>
+            <h2>--lacks / -l <span class="text-caption text-grey-darken-2">Specify forbidden amino acids</span></h2>
 
             <p>
                 By using the <inline-code>--lacks</inline-code> parameter, you can specify the amino acids that a peptide can not contain. The peptide may have none of the
@@ -171,7 +171,7 @@
                 <br>AARAAR
             </boxed>
 
-            <h2>--help / -h <span class="text-caption grey--text text--darken-2">Display help</span></h2>
+            <h2>--help / -h <span class="text-caption text-grey-darken-2">Display help</span></h2>
 
             <p>
                 This flag displays the help.
