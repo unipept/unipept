@@ -138,6 +138,7 @@ const usePathwayPilotStore = (sampleId: string) => defineStore(`pathwayPilotStor
     const setImportedData = (storeImport: PathwayPilotStoreImport) => {
         if (storeImport.selectedPathwayId) {
             _selectedPathwayId.value = storeImport.selectedPathwayId;
+            mappingStore.fetchMappings(); // warm the mapping so selectedPathway.name is available immediately
         }
     };
 
