@@ -83,5 +83,9 @@ const ensureInitialized = async () => {
 
 onMounted(ensureInitialized);
 
-watch(() => props.analyses, ensureInitialized);
+watch(() => props.analyses.map(a => [
+    a.id,
+    a.status,
+    a.pathwayPilotStore.status
+]), ensureInitialized);
 </script>

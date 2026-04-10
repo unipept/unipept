@@ -166,7 +166,7 @@ import PathwayDownloadDialog from '@/components/pathway/PathwayDownloadDialog.vu
 import VisualizationControls from '@/components/results/taxonomic/VisualizationControls.vue';
 import PathwayLegend from "@/components/pathway/PathwayLegend.vue";
 
-const props = defineProps<{
+defineProps<{
     viz: ReturnType<typeof usePathwayVisualization>;
     coloredAreas: any[];
     selectedPathway: PathwayItem | undefined;
@@ -189,8 +189,6 @@ const emit = defineEmits<{
 const settingsPanelOpen = ref<string[]>([]);
 const fullscreenRoot = ref<HTMLElement | null>(null);
 const { toggle: toggleFullscreen, isFullscreen } = useFullscreen(fullscreenRoot);
-
-;
 </script>
 
 <style scoped>
