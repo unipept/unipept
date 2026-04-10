@@ -26,6 +26,7 @@ export default function useSvgDownload() {
                 await saveAs({
                     suggestedName: filename
                 });
+                analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'svg');
             } catch (error) {
                 // Check if the user is simply the result of the user cancelling the request. Rethrow the error
                 // otherwise.
@@ -43,9 +44,8 @@ export default function useSvgDownload() {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'svg');
         }
-
-        analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'svg');
     }
 
     return {

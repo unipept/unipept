@@ -11,27 +11,32 @@ export default function usePngDownload() {
         saveAs
     } = useFileSystemAccess();
 
-    const saveBlobAs = async (blob: Blob, filename: string) => {
+    const saveBlobAs = async (blob: Blob, filename: string): Promise<boolean> => {
         if (isSupported.value) {
             content.value = blob;
             try {
                 await saveAs({ suggestedName: filename });
+                return true;
             } catch (error) {
                 // Check if the user is simply the result of the user cancelling the request. Rethrow the error
                 // otherwise.
                 if (!JSON.stringify(error).includes('The user aborted a request')) {
                     throw error;
                 }
+                return false;
             }
         } else {
             console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
 
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
+            const url = URL.createObjectURL(blob);
+            link.href = url;
             link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            return true;
         }
     };
 
@@ -91,9 +96,11 @@ export default function usePngDownload() {
             throw new Error(`Could not create PNG blob!`);
         }
 
-        await saveBlobAs(pngBlob, filename);
+        const saved = await saveBlobAs(pngBlob, filename);
 
-        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'svg');
+        if (saved) {
+            analyticsCommunicator.logDownloadVisualization(filename, 'png', 'svg');
+        }
 
         // Clean up URL
         URL.revokeObjectURL(url);
@@ -105,20 +112,11 @@ export default function usePngDownload() {
             pixelRatio: scalingFactor
         });
 
-        content.value = await fetch(pngDataUrl).then(res => res.blob());
+        const pngBlob = await fetch(pngDataUrl).then(res => res.blob());
+        const saved = await saveBlobAs(pngBlob, filename);
 
-        try {
-            await saveAs({
-                suggestedName: filename
-            });
-
+        if (saved) {
             analyticsCommunicator.logDownloadVisualization(filename, 'png', 'html');
-        } catch (error) {
-            // Check if the user is simply the result of the user cancelling the request. Rethrow the error
-            // otherwise.
-            if (!JSON.stringify(error).includes("The user aborted a request")) {
-                throw error;
-            }
         }
     }
 
@@ -129,9 +127,11 @@ export default function usePngDownload() {
             throw new Error('Could not create PNG blob!');
         }
 
-        await saveBlobAs(pngBlob, filename);
+        const saved = await saveBlobAs(pngBlob, filename);
 
-        analyticsCommunicator.logDownloadVisualization(filename, 'png', 'canvas');
+        if (saved) {
+            analyticsCommunicator.logDownloadVisualization(filename, 'png', 'canvas');
+        }
     };
 
     return {

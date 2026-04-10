@@ -138,7 +138,10 @@ const usePathwayPilotStore = (sampleId: string) => defineStore(`pathwayPilotStor
     const setImportedData = (storeImport: PathwayPilotStoreImport) => {
         if (storeImport.selectedPathwayId) {
             _selectedPathwayId.value = storeImport.selectedPathwayId;
-            mappingStore.fetchMappings(); // warm the mapping so selectedPathway.name is available immediately
+            // warm the mapping so selectedPathway.name is available immediately
+            // If this function fails, it is not critical since the UI can handle missing names,
+            // so we don't await it or change the status.
+            void mappingStore.fetchMappings();
         }
     };
 
