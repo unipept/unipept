@@ -45,6 +45,7 @@
 import { ref, watch, onMounted } from 'vue';
 import Treeview, { TreeviewItem } from '@/components/visualization/treeview/Treeview.vue';
 import useTreeFilter, { FilteredTree } from '@/composables/useTreeFilter';
+import UnipeptCommunicator from '@/logic/communicators/unipept/UnipeptCommunicator';
 
 const RANKS = [
     'no rank', 'superkingdom', 'kingdom', 'phylum', 'class',
@@ -74,6 +75,8 @@ const localSelected = ref<TreeviewItem[]>(props.modelValue);
 
 const placeholder: FilteredTree = { id: 0, name: '', nameExtra: '', children: [], extra: null };
 const { filteredTree, filter, update } = useTreeFilter(placeholder);
+
+const communicator = new UnipeptCommunicator();
 
 const _compressRankTree = (tree: any, taxa: number[]): FilteredTree[] => {
     tree.highlighted = taxa.includes(tree.id) && tree.id !== 1;
@@ -120,10 +123,7 @@ const loadTree = async () => {
     loading.value = true;
     treeError.value = false;
     try {
-        const params = props.taxonIds.map(id => `input[]=${id}`).join('&');
-        const response = await fetch(`https://api.unipept.ugent.be/api/v2/taxa2tree.json?${params}`);
-        if (!response.ok) throw new Error(`taxa2tree request failed: ${response.status}`);
-        const tree = await response.json();
+        const tree = await communicator.taxa2tree(props.taxonIds.map(String));
         const compressed = compressRankTree(tree, props.taxonIds);
         update(compressed);
         treeLoaded.value = true;
