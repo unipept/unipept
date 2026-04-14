@@ -184,7 +184,7 @@
                                 >
                                     <template #tooltip-content="{ selectedRow, selectedCol }">
                                         <template v-if="selectedCol !== -1 && selectedRow !== -1 && rows[selectedRow]">
-                                            <div class="text-subtitle-1"><span class="font-italic">{{ rowNames[selectedRow] }}</span> in {{ analyses[selectedCol].name }}</div>
+                                            <div class="text-body-large"><span class="font-italic">{{ rowNames[selectedRow] }}</span> in {{ analyses[selectedCol].name }}</div>
                                             <div>
                                                 <span class="font-weight-bold">{{ rows[selectedRow].peptideCount[selectedCol] }} peptides</span>
                                                 in {{ props.analyses[selectedCol].name }} linked to {{ selectedTaxonomicRank }}
@@ -220,7 +220,7 @@
                             />
                             <div v-else>
                                 <div class="d-flex align-center my-2">
-                                    <div class="text-h5"><span class="font-italic">{{ rowNames[selectedCell.rowIdx] }}</span> in {{ colNames[selectedCell.colIdx] }}</div>
+                                    <div class="text-headline-medium"><span class="font-italic">{{ rowNames[selectedCell.rowIdx] }}</span> in {{ colNames[selectedCell.colIdx] }}</div>
                                 </div>
                                 <h3 class="mb-1">
                                     <span class="font-italic">{{ rowNames[selectedCell.rowIdx] }}</span> abundance across samples

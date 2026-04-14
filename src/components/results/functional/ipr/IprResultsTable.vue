@@ -117,7 +117,7 @@ import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/OntologyStore";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 import {DataNodeLike} from "unipept-visualizations";
-import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+type SortItem = { key: string; order?: boolean | 'asc' | 'desc' }
 import type { DataTableHeader } from "vuetify";
 
 const { displayPercentage } = usePercentage();

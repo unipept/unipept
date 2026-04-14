@@ -75,7 +75,7 @@
                         location="right"
                     >
                         <template v-if="highlightedData">
-                            <div class="text-subtitle-1">{{ highlightedData.organismName }}</div>
+                            <div class="text-body-large">{{ highlightedData.organismName }}</div>
                             <div v-for="organismValue of highlightedData.organismValues" :key="organismValue.sampleName">
                                 <span :class="{'font-weight-bold': organismValue.isHighlighted}"> {{ organismValue.sampleName }}:</span>
                                 {{ organismValue.organismLabel }}

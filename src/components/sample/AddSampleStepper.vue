@@ -3,7 +3,7 @@
         variant="flat"
         class="d-flex flex-column bg-mainBody pa-0"
     >
-        <v-card-title class="text-h5 font-weight-regular justify-space-between">
+        <v-card-title class="text-headline-medium font-weight-regular justify-space-between">
             <h2>Create sample</h2>
             <h3>Step {{ currentStep }}. {{ currentStepTitle }}</h3>
         </v-card-title>

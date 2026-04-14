@@ -114,7 +114,7 @@ import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
-import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+type SortItem = { key: string; order?: boolean | 'asc' | 'desc' }
 import type { DataTableHeader } from "vuetify";
 
 const { displayPercentage } = usePercentage();

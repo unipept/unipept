@@ -6,6 +6,7 @@
 
 // Styles
 import "@mdi/font/css/materialdesignicons.css";
+import "@/styles/base.css";
 import "@/styles/main.scss";
 import "@/styles/unipept-icons.css";
 

@@ -94,7 +94,7 @@ import {onMounted, ref, Ref, shallowRef, watch} from "vue";
 import {useDebounceFn} from "@vueuse/core";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+type SortItem = { key: string; order?: boolean | 'asc' | 'desc' }
 import type { DataTableHeader } from "vuetify";
 
 interface TopTaxon {

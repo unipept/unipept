@@ -1,5 +1,5 @@
 <template>
-    <v-unipept-card class="pa-0">
+    <v-unipept-card class="pa-0" style="padding: 0; overflow: hidden;">
         <v-card-title
             class="pa-4 bg-primary text-white"
             :class="{ 'large-title': largeTitle }"

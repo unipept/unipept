@@ -7,7 +7,7 @@
             class="control-bar"
             :style="overlap ? 'position: absolute' : 'position: relative'"
         >
-            <span class="align-self-center me-1 text-caption">
+            <span class="align-self-center me-1 text-body-small">
                 {{ caption }}
             </span>
 

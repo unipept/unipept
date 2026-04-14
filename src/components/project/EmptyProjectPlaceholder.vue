@@ -9,7 +9,7 @@
                 This project is currently empty. Follow the steps below to get started!
             </p>
 
-            <v-row class="mt-5" justify="center">
+            <v-row class="mt-5 justify-center">
                 <v-col cols="12" md="4">
                     <v-unipept-card class="step-card">
                         <v-card-title class="step-title">

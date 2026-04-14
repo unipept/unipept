@@ -8,7 +8,7 @@
                             Load recent project
                         </h2>
                     </v-col>
-                    <v-col cols="12" lg="4" class="pt-0 pt-lg-4">
+                    <v-col cols="12" lg="4" class="pt-0">
                         <v-tooltip text="Open an existing project (.unipept)">
                             <template v-slot:activator="{ props }">
                                 <upload-project-button
@@ -44,7 +44,7 @@
                                 <v-icon size="20" class="mr-5">mdi-folder-outline</v-icon>
                                 <div>
                                     <div>{{ item.name }}</div>
-                                    <div class="text-subtitle-2">
+                                    <div class="text-label-large">
                                         <span>Last opened on {{ item.lastAccessed.toLocaleDateString() }}</span>
                                         <span class="mx-2">•</span>
                                         <span>{{ formatNumber(item.totalPeptides) }} peptides</span>
@@ -119,7 +119,7 @@
             persistent
         >
             <v-unipept-card color="error" variant="tonal">
-                <v-card-title class="text-h6 font-weight-bold">
+                <v-card-title class="text-headline-small font-weight-bold">
                     Delete project
                 </v-card-title>
 
@@ -147,7 +147,7 @@
             persistent
         >
             <v-unipept-card color="error" variant="tonal">
-                <v-card-title class="text-h6 font-weight-bold">
+                <v-card-title class="text-headline-small font-weight-bold">
                     Delete all recent projects?
                 </v-card-title>
 

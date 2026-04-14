@@ -96,7 +96,7 @@
             class="mt-5"
             large-title
         >
-            <h2>--pattern / -p <span class="text-caption text-grey-darken-2">Specify cleavage pattern</span></h2>
+            <h2>--pattern / -p <span class="text-body-small text-grey-darken-2">Specify cleavage pattern</span></h2>
 
             <p>
                 By default, proteins are split by simulating a trypsin digest. This corresponds by splitting the input string by using the regular expression
@@ -114,7 +114,7 @@
                 <br>PLGAGLAKVIGAGIGIGK
             </boxed>
 
-            <h2>--help / -h <span class="text-caption text-grey-darken-2">Display help</span></h2>
+            <h2>--help / -h <span class="text-body-small text-grey-darken-2">Display help</span></h2>
 
             <p>
                 This flag displays the help.

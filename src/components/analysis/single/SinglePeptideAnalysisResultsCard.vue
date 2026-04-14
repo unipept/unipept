@@ -1,5 +1,5 @@
 <template>
-    <v-unipept-card class="pa-0">
+    <v-unipept-card class="pa-0" style="padding: 0; overflow: hidden;">
         <v-tabs
             v-model="currentTab"
             slider-color="secondary"

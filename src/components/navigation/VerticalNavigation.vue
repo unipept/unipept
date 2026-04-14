@@ -9,6 +9,7 @@
         >
             <v-tab
                 :to="item.link"
+                color="secondary"
                 exact
             >
                 {{ item.name }}
@@ -21,6 +22,7 @@
                     v-for="child in item.children"
                     :key="child.name"
                     class="v-tab-child"
+                    color="secondary"
                     @click="navigate(child.link)"
                 >
                     {{ child.name }}

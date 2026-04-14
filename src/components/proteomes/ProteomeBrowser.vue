@@ -162,7 +162,7 @@
                         />
                     </template>
                 </v-data-table-virtual>
-                <span class="text-caption">
+                <span class="text-body-small">
                     Resulting database will contain <b>{{ totalProteins }}</b> UniProtKB records.
                 </span>
             </v-col>
