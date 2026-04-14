@@ -278,13 +278,15 @@ LAVMPLLK`;
 
         // Check Barplot
         // TaxonomicBarplot uses custom SVG visualization, not Highcharts
-        const barplotSvg = page.locator('.v-window-item--active svg');
+        // The barplot root element contains both labels (HTML) and the plot (SVG)
+        const barplotRoot = page.locator('.v-window-item--active .d-flex.flex-row');
+        const barplotSvg = barplotRoot.locator('svg');
         await expect(barplotSvg).toBeVisible();
 
         // Check 2 bars (columns) labels visible
-        // Since showBarLabel is true, sample names should be text elements in the SVG
-        await expect(barplotSvg.getByText('Sample 7')).toBeVisible();
-        await expect(barplotSvg.getByText('Sample 8')).toBeVisible();
+        // Since showBarLabel is true, sample names should be visible in the barplot root container
+        await expect(barplotRoot.getByText('Sample 7')).toBeVisible();
+        await expect(barplotRoot.getByText('Sample 8')).toBeVisible();
 
         // Check for legend items or stacked bars.
         // We expect at least 5 species, so there should be at least 5 distinct colors/items.

@@ -64,8 +64,8 @@
                             </v-expansion-panel>
                         </v-expansion-panels>
                     </div>
-                    <div ref="barplotWrapper">
-                        <barplot :bars="barData" :settings="barplotSettings" />
+                    <div ref="barplotWrapper" class="mb-3">
+                        <barplot ref="barplotComponent" :bars="barData" :settings="barplotSettings" />
                     </div>
 
                     <v-tooltip
@@ -88,9 +88,9 @@
     </div>
 
     <download-image
-        v-if="svg"
+        v-if="imageElement"
         v-model="downloadImageModalOpen"
-        :image="svg"
+        :image="imageElement"
         filename="barplot"
     />
 </template>
@@ -129,13 +129,14 @@
     const taxonCount = ref(15);
 
     const barplotWrapper = ref<HTMLDivElement>();
+    const barplotComponent = ref<any>();
     const containerWidth: Ref<number> = ref(800);
     const barplotSettings: Ref<BarplotSettings> = ref(new BarplotSettings());
     const barData: Ref<Bar[]> = ref([]);
 
     const downloadImageModalOpen: Ref<boolean> = ref(false);
 
-    const svg: Ref<SVGElement | undefined | null> = ref();
+    const imageElement: Ref<HTMLElement | undefined | null> = ref();
 
     // Display the barplot below the visualization settings bar
     barplotSettings.value.chart.padding.left = 15;
@@ -143,7 +144,7 @@
     barplotSettings.value.legend.padding.top = 40;
     barplotSettings.value.legend.padding.left = 20;
     barplotSettings.value.height = 250 + 100 * props.analyses.length;
-    barplotSettings.value.showBarLabel = props.comparative;
+    barplotSettings.value.showBarLabel = props.analyses.length > 1;
     barplotSettings.value.barLabelWidth = 200;
     barplotSettings.value.displayMode = "relative";
     barplotSettings.value.maxItems = taxonCount.value;
@@ -276,7 +277,7 @@
 
     watch(barData, async () => {
         await nextTick();
-        svg.value = barplotWrapper.value?.querySelector("svg") as SVGElement;
+        imageElement.value = barplotComponent.value?.rootElement;
     }, { immediate: true })
 </script>
 

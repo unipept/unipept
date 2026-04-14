@@ -56,8 +56,8 @@ const matchRoute = (link: string, route: string) => {
     justify-content: start;
     text-align: start;
     padding-left: 5%;
-    text-transform: none;
     max-height: 35px;
+    text-transform: none;
 }
 
 :deep(.v-tabs .v-slide-group__wrapper) {
