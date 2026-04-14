@@ -115,7 +115,7 @@ import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import usePercentage from "@/composables/usePercentage";
 import useCsvDownload from "@/composables/useCsvDownload";
 import GoTableData from "@/components/results/functional/go/GoTableData";
-import {SortItem} from "vuetify/lib/components/VDataTable/composables/sort";
+import type {DataTableSortItem as SortItem} from "vuetify";
 import type { DataTableHeader } from "vuetify";
 
 const { displayPercentage } = usePercentage();
