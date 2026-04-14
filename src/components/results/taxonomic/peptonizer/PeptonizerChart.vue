@@ -45,6 +45,7 @@
             class="chart-tooltip"
             :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
         >
+            <div class="chart-tooltip-title">{{ tooltipKey }}</div>
             Confidence: <b>{{ tooltipValue }}</b>
         </div>
     </div>
@@ -66,6 +67,7 @@ const tooltipVisible = ref(false);
 const tooltipX = ref(0);
 const tooltipY = ref(0);
 const tooltipValue = ref("");
+const tooltipKey = ref("");
 
 let resizeObserver: ResizeObserver | null = null;
 
@@ -81,10 +83,10 @@ const drawChart = () => {
     const data = entries.slice(0, 20);
 
     // Dimensions
-    const margin = { top: 30, right: 50, bottom: 50, left: 150 };
+    const margin = { top: 30, right: 50, bottom: 50, left: 200 };
     const containerWidth = chartContainer.value.clientWidth || 800;
     const width = containerWidth - margin.left - margin.right;
-    const height = Math.max(500, data.length * 30); // Ensure minimum height
+    const height = Math.max(200, data.length * 22); // Ensure minimum height
 
     // Clear previous
     d3.select(chartContainer.value).selectAll("*").remove();
@@ -127,35 +129,63 @@ const drawChart = () => {
     const y = d3.scaleBand()
         .range([0, height])
         .domain(data.map(d => d.key))
-        .padding(0.2);
+        .padding(0.05);
+
+    // Gray vertical tick lines every 0.05
+    d3.range(0.05, 1.01, 0.05).forEach(v => {
+        svg.append("line")
+            .attr("x1", x(v))
+            .attr("x2", x(v))
+            .attr("y1", 0)
+            .attr("y2", height)
+            .attr("stroke", "#d0d0d0")
+            .attr("stroke-width", 1);
+    });
 
     // Y axis with truncation for long labels
     const yAxis = svg.append("g")
         .call(d3.axisLeft(y));
+
+    // Y axis label
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(${-margin.left + 15}, ${height / 2}) rotate(-90)`)
+        .style("font-size", "14px")
+        .text("Taxon");
+
+    // Available px for labels: margin minus space for Taxon label (~30px) and axis tick gap (~10px)
+    const maxLabelWidth = margin.left - 40;
 
     yAxis.selectAll("text")
         .style("font-size", "12px")
         .each(function(d: any) {
             const self = d3.select(this);
             const text = d as string;
-            // Simple truncation logic if needed, but margin is generous
-            if (text.length > 20) {
-                self.text(text.substring(0, 17) + "...");
+            self.text(text);
+            const node = self.node() as SVGTextElement;
+            if (node && node.getComputedTextLength() > maxLabelWidth) {
+                let truncated = text;
+                while (truncated.length > 0 && node.getComputedTextLength() > maxLabelWidth) {
+                    truncated = truncated.slice(0, -1);
+                    self.text(truncated + "...");
+                }
                 self.append("title").text(text);
             }
         });
 
-    // Bars
+    // Bars (half-height, centered in band)
+    const barHeight = y.bandwidth() / 2;
     svg.selectAll("myRect")
         .data(data)
         .join("rect")
         .attr("x", x(0))
-        .attr("y", d => y(d.key)!)
+        .attr("y", d => y(d.key)! + y.bandwidth() / 4)
         .attr("width", d => x(d.value))
-        .attr("height", y.bandwidth())
+        .attr("height", barHeight)
         .attr("fill", "#1976D2") // Vuetify primary blueish
-        .on("mouseover", function(event, d) {
+        .on("mouseover", function(_event, d) {
              tooltipVisible.value = true;
+             tooltipKey.value = d.key;
              tooltipValue.value = d.value.toFixed(2);
              d3.select(this).attr("fill", "#1565C0"); // Darker blue
         })
@@ -201,7 +231,7 @@ watch(() => props.peptonizerResult, drawChart, { deep: true });
 <style scoped>
 .chart-container {
     width: 100%;
-    min-height: 500px;
+    min-height: 200px;
 }
 .chart-tooltip {
     position: fixed;
@@ -213,5 +243,10 @@ watch(() => props.peptonizerResult, drawChart, { deep: true });
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     font-size: 14px;
+}
+.chart-tooltip-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 13px;
 }
 </style>
