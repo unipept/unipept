@@ -37,7 +37,7 @@
 
                     <template v-if="viz.loading.value">
                         <v-card-text>
-                            <div class="px-4 pt-1 pb-2">
+                            <div class="pt-1 pb-2">
                                 <span class="text-h6">{{ selectedPathway?.id }}: {{ selectedPathway?.name }}</span>
                             </div>
                             <v-progress-linear indeterminate color="primary" />
