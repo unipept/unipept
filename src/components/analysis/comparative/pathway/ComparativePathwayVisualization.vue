@@ -18,8 +18,8 @@
         <template #settings>
             <v-row class="mt-0" no-gutters>
                 <v-col cols="5" class="pr-4">
-                    <div class="text-subtitle-2 mb-1">Use groups</div>
-                    <div class="text-caption text-medium-emphasis mb-2">
+                    <div class="text-subtitle-1 font-weight-bold mb-1">Use groups</div>
+                    <div class="text-body-1 text-medium-emphasis mb-2">
                         Aggregates analyses by their group and colors each pathway node by which groups have matching EC numbers, rather than per individual analysis.
                     </div>
                     <v-checkbox
@@ -32,8 +32,8 @@
                 </v-col>
                 <v-divider vertical class="mx-0" />
                 <v-col cols="6" class="pl-4">
-                    <div class="text-subtitle-2 mb-1">Differential abundance</div>
-                    <div class="text-caption text-medium-emphasis mb-2">
+                    <div class="text-subtitle-1 font-weight-bold mb-1">Differential abundance</div>
+                    <div class="text-body-1 text-medium-emphasis mb-2">
                         Colors each pathway node by the relative abundance difference between two items. Requires exactly 2 groups (when grouping is enabled) or exactly 2 analyses.
                     </div>
                     <v-switch

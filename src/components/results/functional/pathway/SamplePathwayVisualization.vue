@@ -18,13 +18,13 @@
         <template #settings>
             <v-row class="mt-0" no-gutters>
                 <v-col cols="7" class="pr-4">
-                    <div class="text-subtitle-2 mb-1">
+                    <div class="text-subtitle-1 font-weight-bold mb-1">
                         Filter by taxon
                         <span v-if="selectedTreeviewItems.length > 0" class="text-caption font-weight-regular text-medium-emphasis">
                             ({{ selectedTreeviewItems.length }}/{{ MAX_TAXA }} selected)
                         </span>
                     </div>
-                    <div class="text-caption text-medium-emphasis mb-2">
+                    <div class="text-body-1 text-medium-emphasis mb-5">
                         Restrict pathway highlighting to peptides from selected taxa. Each taxon receives a distinct color on the map. Up to {{ MAX_TAXA }} taxa can be selected simultaneously.
                     </div>
                     <taxon-treeview
@@ -35,8 +35,8 @@
                 </v-col>
                 <v-divider vertical class="mx-0" />
                 <v-col cols="4" class="pl-4">
-                    <div class="text-subtitle-2 mb-1">Differential abundance</div>
-                    <div class="text-caption text-medium-emphasis mb-3">
+                    <div class="text-subtitle-1 font-weight-bold mb-1">Differential abundance</div>
+                    <div class="text-body-1 text-medium-emphasis mb-3">
                         Colors each pathway node by the relative abundance difference between the two selected taxa. Requires exactly 2 taxa selected.
                     </div>
                     <v-switch
