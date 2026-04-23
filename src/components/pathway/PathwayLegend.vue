@@ -2,19 +2,19 @@
     <div v-if="items.length > 0" class="legend-overlay">
         <template v-if="showDifferential && differentialLabels && differentialColors">
             <div class="d-flex flex-column align-center ga-1">
-                <span class="text-caption font-weight-medium" :style="{ color: differentialColors[0] }">{{ differentialLabels[0] }}</span>
+                <span class="text-subtitle-1 font-weight-medium" :style="{ color: differentialColors[0] }">{{ differentialLabels[0] }}</span>
                 <div
                     class="differential-gradient"
                     :style="{ background: `linear-gradient(to bottom, ${differentialColors[0]}, #ffffe0, ${differentialColors[1]})` }"
                 ></div>
-                <span class="text-caption font-weight-medium" :style="{ color: differentialColors[1] }">{{ differentialLabels[1] }}</span>
+                <span class="text-subtitle-1 font-weight-medium" :style="{ color: differentialColors[1] }">{{ differentialLabels[1] }}</span>
             </div>
         </template>
         <template v-else>
-            <div class="d-flex flex-column ga-1">
+            <div class="d-flex flex-column">
                 <div v-for="item in items" :key="item.label" class="d-flex align-center ga-2">
                     <div class="legend-swatch" :style="{ background: item.color }"></div>
-                    <span class="text-caption">{{ item.label }}</span>
+                    <span class="text-subtitle-1">{{ item.label }}</span>
                 </div>
             </div>
         </template>
