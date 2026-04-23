@@ -58,7 +58,7 @@ export default createVuetify({
         VUnipeptCard: {
             style: {
                 borderRadius: '12px',
-                padding: '4px',
+                padding: '0px',
                 textAlign: 'left',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
                 background: 'white',
