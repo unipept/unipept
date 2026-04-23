@@ -78,7 +78,9 @@
                 <div v-if="pageCount > 1" class="d-flex justify-center pa-2">
                     <v-pagination
                         v-model="filters.page.value"
+                        class="me-4"
                         :length="pageCount"
+                        :total-visible="10"
                         density="compact"
                     />
                 </div>
