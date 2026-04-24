@@ -77,33 +77,38 @@ const searchQuery = ref('');
 
 const { ecToNumericId, numericIdToEc, ecClasses } = useEcNumbers(() => props.ecIds);
 
-// When a search is active, filter the tree to only include matching paths
+const filterNode = (node: TreeviewItem, q: string): TreeviewItem | null => {
+    // Try matching this node itself (leaf or intermediate)
+    const namePos = node.name.toLowerCase().indexOf(q);
+    const extraPos = (node.nameExtra ?? '').toLowerCase().indexOf(q);
+
+    if (node.children.length === 0) {
+        // Leaf: match by name or nameExtra
+        if (namePos < 0 && extraPos < 0) return null;
+        return {
+            ...node,
+            ...(namePos >= 0 ? { match: { start: namePos, end: namePos + q.length } } : {}),
+            ...(extraPos >= 0 ? { nameExtraMatch: { start: extraPos, end: extraPos + q.length } } :
+                {}),
+        };
+    }
+
+    // Interior node: keep if any child survives
+    const filteredChildren = node.children.flatMap(child => {
+        const result = filterNode(child, q);
+        return result ? [result] : [];
+    });
+    if (filteredChildren.length === 0) return null;
+    return { ...node, children: filteredChildren };
+};
+
 const displayedClasses = computed<TreeviewItem[]>(() => {
     const q = (searchQuery.value ?? '').trim().toLowerCase();
     if (!q) return ecClasses.value;
-
-    return ecClasses.value.map(cls => {
-        const subclassItems = cls.children.map(subclass => {
-            const subSubItems = subclass.children.map(subSub => {
-                const leaves = subSub.children.map(leaf => {
-                    const namePos = leaf.name.toLowerCase().indexOf(q);
-                    const extraPos = (leaf.nameExtra ?? '').toLowerCase().indexOf(q);
-                    if (namePos < 0 && extraPos < 0) return null;
-                    return {
-                        ...leaf,
-                        ...(namePos >= 0 ? { match: { start: namePos, end: namePos + q.length } } : {}),
-                        ...(extraPos >= 0 ? { nameExtraMatch: { start: extraPos, end: extraPos + q.length } } : {}),
-                    };
-                }).filter((x): x is TreeviewItem => x !== null);
-                if (leaves.length === 0) return null;
-                return { ...subSub, children: leaves };
-            }).filter((x): x is TreeviewItem => x !== null);
-            if (subSubItems.length === 0) return null;
-            return { ...subclass, children: subSubItems };
-        }).filter((x): x is TreeviewItem => x !== null);
-        if (subclassItems.length === 0) return null;
-        return { ...cls, children: subclassItems };
-    }).filter((x): x is TreeviewItem => x !== null);
+    return ecClasses.value.flatMap(cls => {
+        const result = filterNode(cls, q);
+        return result ? [result] : [];
+    });
 });
 
 // Expand all levels when a search is active
