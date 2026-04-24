@@ -9,6 +9,7 @@
         :compound-options="compoundOptions"
         :row-props="(data: any) => ({ class: data.item.id === store.selectedPathway?.id ? 'active-row' : '' })"
         @select="onSelectPathway"
+        @retry="emit('retry')"
     />
 </template>
 
@@ -60,6 +61,8 @@ const compoundOptions = computed(() =>
         }))
         .sort((a, b) => a.value.localeCompare(b.value))
 );
+
+const emit = defineEmits<{ retry: [] }>();
 
 const onSelectPathway = (item: PathwayItem) => {
     props.store.setSelectedPathway(item);

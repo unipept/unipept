@@ -4,7 +4,9 @@
             v-if="!selectedPathway"
             :analyses="analyses"
             :loading="loadingMappings"
+            :error="failed"
             @select="selectPathway"
+            @retry="retry"
         />
 
         <comparative-pathway-visualization
@@ -42,12 +44,14 @@ const selectedPathway = computed({
 });
 
 const loadingMappings = ref(false);
+const failed = ref(false);
 
 const selectPathway = (item: MergedPathwayItem) => {
     selectedPathway.value = item;
 };
 
 const ensureInitialized = async () => {
+    failed.value = false;
     loadingMappings.value = true;
     try {
         await mappingStore.fetchMappings();
@@ -76,9 +80,15 @@ const ensureInitialized = async () => {
                     analysis.peptidesTable!
                 ))
         );
+    } catch {
+        failed.value = true;
     } finally {
         loadingMappings.value = false;
     }
+};
+
+const retry = () => {
+    ensureInitialized();
 };
 
 onMounted(ensureInitialized);

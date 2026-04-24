@@ -4,10 +4,12 @@
         :headers="headers"
         sort-key="totalCount"
         :loading="loading"
+        :error="error"
         :category-options="categoryOptions"
         :compound-options="compoundOptions"
         :subtitle="`Select a KEGG metabolic pathway to compare EC number coverage across all selected analyses. Colors indicate which analyses have matching EC numbers for each pathway area.`"
         @select="emit('select', $event)"
+        @retry="emit('retry')"
     />
 </template>
 
@@ -29,10 +31,12 @@ export interface MergedPathwayItem extends PathwayItem {
 const props = defineProps<{
     analyses: SingleAnalysisStore[];
     loading?: boolean;
+    error?: boolean;
 }>();
 
 const emit = defineEmits<{
     select: [item: MergedPathwayItem];
+    retry: [];
 }>();
 
 const mappingStore = usePathwayPilotMappingStore();

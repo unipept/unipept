@@ -23,6 +23,9 @@
 
         <v-alert v-if="error" type="error" variant="tonal">
             Failed to load pathway data. Please check your network connection and try again.
+            <template #append>
+                <v-btn variant="text" @click="emit('retry')">Retry</v-btn>
+            </template>
         </v-alert>
 
         <div v-else-if="loading" class="d-flex justify-center align-center py-8">
@@ -108,5 +111,6 @@ defineProps<{
 
 const emit = defineEmits<{
     select: [item: any];
+    retry: [];
 }>();
 </script>
