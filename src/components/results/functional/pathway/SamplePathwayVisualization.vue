@@ -94,11 +94,7 @@ const { legendItems, showDifferential, canShowDifferential, differentialLabels, 
 
 const totalSpectralCount = computed(() => {
     if (!props.analysis.peptidesTable) return 0;
-    let total = 0;
-    for (const [, count] of props.analysis.peptidesTable.counts.entries()) {
-        total += count;
-    }
-    return total;
+    return Array.from(props.analysis.peptidesTable.counts.values()).reduce((total, count) => total + count, 0);
 });
 
 const availableTaxaIds = computed<number[]>(() => {

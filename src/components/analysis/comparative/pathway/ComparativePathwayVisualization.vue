@@ -96,29 +96,18 @@ const analysesForGroup = (group: GroupAnalysisStore): SingleAnalysisStore[] =>
     (group.analyses as SingleAnalysisStore[]).filter(a => props.analyses.some(pa => pa.id === a.id));
 
 const groupTotalCounts = computed<number[]>(() =>
-    effectiveGroups.value.map(group => {
-        let total = 0;
-        for (const analysis of analysesForGroup(group)) {
-            if (analysis.peptidesTable) {
-                for (const count of analysis.peptidesTable.counts.values()) {
-                    total += count;
-                }
-            }
-        }
-        return total;
-    })
+    effectiveGroups.value.map(group =>
+        analysesForGroup(group)
+            .flatMap(analysis => analysis.peptidesTable ? [...analysis.peptidesTable.counts.values()] : [])
+            .reduce((total, count) => total + count, 0)
+    )
 );
 
 const analysisTotalCounts = computed<number[]>(() =>
-    props.analyses.map(analysis => {
-        let total = 0;
-        if (analysis.peptidesTable) {
-            for (const count of analysis.peptidesTable.counts.values()) {
-                total += count;
-            }
-        }
-        return total;
-    })
+    props.analyses.map(analysis =>
+        (analysis.peptidesTable ? [...analysis.peptidesTable.counts.values()] : [])
+            .reduce((total, count) => total + count, 0)
+    )
 );
 
 const getGroupCountForArea = (groupAnalyses: SingleAnalysisStore[], area: any): number => {
