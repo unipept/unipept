@@ -1,15 +1,18 @@
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
 import type { TreeviewItem } from '@/components/visualization/treeview/Treeview.vue';
 import usePathwayPilotMappingStore from '@/store/PathwayPilotMappingStore';
+import {EcNamespace} from "@/logic/communicators/unipept/functional/EcResponse";
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const EC_CLASSES = [
-    { prefix: '1', label: 'Oxidoreductases' },
-    { prefix: '2', label: 'Transferases' },
-    { prefix: '3', label: 'Hydrolases' },
-    { prefix: '4', label: 'Lyases' },
-    { prefix: '5', label: 'Isomerases' },
-    { prefix: '6', label: 'Ligases' },
-    { prefix: '7', label: 'Translocases' },
+    { prefix: '1', label: capitalize(EcNamespace.Oxidoreductases) },
+    { prefix: '2', label: capitalize(EcNamespace.Transferases) },
+    { prefix: '3', label: capitalize(EcNamespace.Hydrolases) },
+    { prefix: '4', label: capitalize(EcNamespace.Lyases) },
+    { prefix: '5', label: capitalize(EcNamespace.Isomerases) },
+    { prefix: '6', label: capitalize(EcNamespace.Ligases) },
+    { prefix: '7', label: capitalize(EcNamespace.Translocases) },
 ];
 
 // Chip colors per EC class (EC 1–7)
