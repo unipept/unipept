@@ -77,7 +77,7 @@
             class="mt-5"
             large-title
         >
-            <h2>--format / -f <span class="text-caption text-grey-darken-2">Specify the output format</span></h2>
+            <h2>--format / -f <span class="text-body-small text-grey-darken-2">Specify the output format</span></h2>
 
             <p>
                 By default, the <inline-code>uniprot</inline-code> command only returns the protein sequence of the UniProt entry. The <inline-code>--format</inline-code> option allows you
@@ -94,7 +94,7 @@
                 <br>MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN
             </boxed>
 
-            <h2>--help / -h <span class="text-caption text-grey-darken-2">Display help</span></h2>
+            <h2>--help / -h <span class="text-body-small text-grey-darken-2">Display help</span></h2>
 
             <p>
                 This flag displays the help.

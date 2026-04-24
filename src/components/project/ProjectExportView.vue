@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-unipept-card class="mb-6">
-            <v-card-title class="text-h5 font-weight-bold mb-2">
+            <v-card-title class="text-headline-medium font-weight-bold mb-2">
                 <v-icon icon="mdi-file-download-outline" size="30" class="me-2" color="primary"/>
                 Export Project
             </v-card-title>
@@ -32,50 +32,50 @@
             </div>
         </v-alert>
 
-        <v-row class="mb-6" dense>
+        <v-row class="mb-6" density="compact">
             <v-col cols="12" sm="3">
-                <v-unipept-card class="d-flex flex-row py-2 px-4 align-center">
+                <v-unipept-card class="d-flex align-center" style="flex-direction: row; padding: 8px 16px;">
                     <v-icon icon="mdi-account-group-outline" size="36" class="me-4" color="primary"/>
                     <div>
-                        <div class="text-subtitle-1 font-weight-medium">Groups</div>
-                        <div class="text-h5 font-weight-bold">{{ amountOfGroups }}</div>
+                        <div class="text-body-large font-weight-medium">Groups</div>
+                        <div class="text-headline-medium font-weight-bold">{{ amountOfGroups }}</div>
                     </div>
                 </v-unipept-card>
             </v-col>
 
             <v-col cols="12" sm="3">
-                <v-unipept-card class="d-flex flex-row py-2 px-4 align-center">
+                <v-unipept-card class="d-flex align-center" style="flex-direction: row; padding: 8px 16px;">
                     <v-icon icon="mdi-flask-outline" size="36" class="me-4" color="primary"/>
                     <div>
-                        <div class="text-subtitle-1 font-weight-medium">Samples</div>
-                        <div class="text-h5 font-weight-bold">{{ amountOfSamples }}</div>
+                        <div class="text-body-large font-weight-medium">Samples</div>
+                        <div class="text-headline-medium font-weight-bold">{{ amountOfSamples }}</div>
                     </div>
                 </v-unipept-card>
             </v-col>
 
             <v-col cols="12" sm="3">
-                <v-unipept-card class="d-flex flex-row py-2 px-4 align-center">
+                <v-unipept-card class="d-flex align-center" style="flex-direction: row; padding: 8px 16px;">
                     <v-icon icon="mdi-dna" size="36" class="me-4" color="primary"/>
                     <div>
-                        <div class="text-subtitle-1 font-weight-medium">Total Peptides</div>
-                        <div class="text-h5 font-weight-bold">{{ formatNumber(amountOfPeptides) }}</div>
+                        <div class="text-body-large font-weight-medium">Total Peptides</div>
+                        <div class="text-headline-medium font-weight-bold">{{ formatNumber(amountOfPeptides) }}</div>
                     </div>
                 </v-unipept-card>
             </v-col>
 
             <v-col cols="12" sm="3">
-                <v-unipept-card class="d-flex flex-row py-2 px-4 align-center">
+                <v-unipept-card class="d-flex align-center" style="flex-direction: row; padding: 8px 16px;">
                     <v-icon icon="mdi-dna" size="36" class="me-4" color="primary"/>
                     <div>
-                        <div class="text-subtitle-1 font-weight-medium">Unique Peptides</div>
-                        <div class="text-h5 font-weight-bold">{{ formatNumber(amountOfUniquePeptides) }}</div>
+                        <div class="text-body-large font-weight-medium">Unique Peptides</div>
+                        <div class="text-headline-medium font-weight-bold">{{ formatNumber(amountOfUniquePeptides) }}</div>
                     </div>
                 </v-unipept-card>
             </v-col>
         </v-row>
 
         <v-unipept-card>
-            <v-card-title class="text-h6">
+            <v-card-title class="text-headline-small">
                 Sample Statistics per Group
             </v-card-title>
 
@@ -90,7 +90,7 @@
             </v-card-text>
         </v-unipept-card>
 
-        <v-row justify="center" class="mt-6">
+        <v-row class="mt-6 justify-center">
             <download-dialog @download="download">
                 <template #default="{ startPreparing }">
                     <v-btn

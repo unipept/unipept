@@ -1,7 +1,7 @@
 <template>
     <v-unipept-card style="width: 800px;" elevation="5">
         <v-card-title>
-            <div class="text-h5">Add {{ selectedTaxonomicRank }}</div>
+            <div class="text-headline-medium">Add {{ selectedTaxonomicRank }}</div>
         </v-card-title>
         <v-card-text style="padding-top: 4px !important;">
             <v-text-field
@@ -101,9 +101,8 @@
 
 <script setup lang="ts">
 import {ref, computed, watch} from 'vue';
-import type {DataTableSortItem as SortItem} from "vuetify";
+import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 import {FeatureData, FeatureId} from "@/components/analysis/comparative/heatmap/ComparativeHeatmap.vue";
-import type { DataTableHeader } from "vuetify";
 
 interface TableFeature {
     id: number | string,

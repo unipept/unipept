@@ -16,7 +16,7 @@
                     :groups="project.groups"
                 />
 
-                <v-unipept-card class="mt-4 pa-0">
+                <v-unipept-card class="mt-4 pa-0" style="padding: 0; overflow: hidden;">
                     <v-tabs
                         v-model="selectedComparativeTab"
                         bg-color="primary"

@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="dialogOpen" max-width="600" persistent>
         <v-unipept-card>
-            <v-card-title class="text-h6 font-weight-bold">
+            <v-card-title class="text-headline-small font-weight-bold">
                 Delete Group
             </v-card-title>
             <v-card-text class="pb-0">

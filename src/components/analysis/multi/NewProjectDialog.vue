@@ -6,7 +6,7 @@
         @keydown.enter="() => projectName && !projectExists && confirm()"
     >
         <v-unipept-card>
-            <v-card-title class="text-h6 font-weight-bold">
+            <v-card-title class="text-headline-small font-weight-bold">
                 Create a new project
             </v-card-title>
 

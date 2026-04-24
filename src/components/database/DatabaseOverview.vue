@@ -1,11 +1,11 @@
 <template>
     <div>
         <v-unipept-card class="mb-6">
-            <v-card-title class="text-h5 font-weight-bold">
+            <v-card-title class="text-headline-medium font-weight-bold">
                 <v-icon icon="mdi-database" size="30" class="me-2" color="primary"/>
                 Custom Databases
             </v-card-title>
-            <v-card-text class="text-body-1">
+            <v-card-text class="text-body-large">
                 Below you can find a complete list of all custom databases that are currently registered to this
                 project. To create a new custom database, press the button below the table. A wizard will guide you
                 through the custom database construction process.
@@ -54,7 +54,7 @@
             </v-data-table>
         </v-unipept-card>
 
-        <v-row justify="center" class="mt-6">
+        <v-row class="mt-6 justify-center">
             <v-btn
                 color="primary"
                 variant="tonal"

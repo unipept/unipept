@@ -7,6 +7,7 @@
                         v-bind="props"
                         text="Export results"
                         color="primary"
+                        class="float-end"
                         variant="tonal"
                         prepend-icon="mdi-download"
                         append-icon="mdi-chevron-down"

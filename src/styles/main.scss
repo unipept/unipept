@@ -1,6 +1,18 @@
 // We can add extra SASS variables that are globally available here.
 // In order to override existing variables, see the settings.scss file!
+
 @use 'vuetify';
+
+// Vuetify 3 had a global `* { margin: 0; padding: 0 }` CSS reset that v4 removed.
+// Restore margin resets for text elements so headings/paragraphs inside cards
+// and other components don't inherit browser-default block margins.
+// Placed in @layer base (established in base.css before Vuetify's layers) so
+// Vuetify utility classes like mb-3 can override it.
+@layer base {
+  h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+  }
+}
 
 // replace with @use 'vuetify' with (...)
 
@@ -20,6 +32,19 @@
 
 ul {
   margin-left: 16px;
+}
+
+// Pin button typography to match Vuetify v3 defaults. In Vuetify 4 these are
+// set inside @layer vuetify-components, which is overridden by the higher-
+// priority @layer vuetify-utilities.typography and by non-layered inherited
+// styles. A non-layered rule here beats all layered styles unconditionally.
+.v-btn {
+  font-weight: 500;
+  letter-spacing: 1.25px;
+}
+
+.v-btn--size-default {
+  font-size: 14px;
 }
 
 .dark-label .v-label {

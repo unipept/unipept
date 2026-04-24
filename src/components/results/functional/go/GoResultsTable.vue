@@ -113,10 +113,8 @@ import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import usePercentage from "@/composables/usePercentage";
-import useCsvDownload from "@/composables/useCsvDownload";
 import GoTableData from "@/components/results/functional/go/GoTableData";
-import type {DataTableSortItem as SortItem} from "vuetify";
-import type { DataTableHeader } from "vuetify";
+import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();

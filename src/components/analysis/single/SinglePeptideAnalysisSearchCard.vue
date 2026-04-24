@@ -1,17 +1,6 @@
 <template>
-    <v-unipept-card class="pa-0">
-        <v-tabs
-            style="pointer-events: none;"
-            slider-color="primary"
-            bg-color="primary"
-            dark
-        >
-            <v-tab>
-                Search for a single peptide
-            </v-tab>
-        </v-tabs>
-
-        <v-card-text>
+    <HeaderBodyCard title="Search for a single peptide">
+        <template #default>
             <v-form
                 ref="form"
                 v-model="validForm"
@@ -84,11 +73,12 @@
                     </v-col>
                 </v-row>
             </v-form>
-        </v-card-text>
-    </v-unipept-card>
+        </template>
+    </HeaderBodyCard>
 </template>
 
 <script setup lang="ts">
+import HeaderBodyCard from '@/components/cards/HeaderBodyCard.vue';
 import ResourceLink from '@/components/highlights/ResourceLink.vue';
 import { Ref, ref } from "vue";
 import { VForm } from "vuetify/components";

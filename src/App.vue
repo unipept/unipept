@@ -265,4 +265,8 @@ td {
 .v-tab {
     text-transform: none !important;
 }
+
+.v-app-bar .v-btn--variant-text {
+    color: white !important;
+}
 </style>

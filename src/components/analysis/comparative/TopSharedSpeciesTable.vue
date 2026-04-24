@@ -94,8 +94,7 @@ import {onMounted, ref, Ref, shallowRef, watch} from "vue";
 import {useDebounceFn} from "@vueuse/core";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-import type {DataTableSortItem as SortItem} from "vuetify";
-import type { DataTableHeader } from "vuetify";
+import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 
 interface TopTaxon {
     // NcbiID of this taxon

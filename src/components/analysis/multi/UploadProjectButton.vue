@@ -17,7 +17,7 @@
             @keydown.enter="() => projectName && openProject()"
         >
             <v-unipept-card>
-                <v-card-title class="text-h6 font-weight-bold">
+                <v-card-title class="text-headline-small font-weight-bold">
                     Upload project
                 </v-card-title>
 

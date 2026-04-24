@@ -14,7 +14,7 @@
                             present in the analyzed ecosystem. Follow the steps in the wizard down below to try the
                             Peptonizer2000 right now!
                         </p>
-                        <span class="text-subtitle-2 mt-0">Holstein et al. (2024) BioRXiv <a
+                        <span class="text-label-large mt-0">Holstein et al. (2024) BioRXiv <a
                             href="https://doi.org/10.1101/2024.05.20.594958"
                             target="_blank"
                         >doi.org/10.1101/2024.05.20.594958</a></span>
