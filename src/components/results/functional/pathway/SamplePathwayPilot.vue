@@ -37,6 +37,7 @@ const props = defineProps<{
 }>();
 
 const retry = () => {
+    if (!props.analysis.ecToPeptides || !props.analysis.peptidesTable) return;
     props.analysis.pathwayPilotStore.initialize(
         props.analysis.ecToPeptides,
         props.analysis.peptidesTable
