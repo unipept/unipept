@@ -1,44 +1,10 @@
-import {useFileSystemAccess} from "@vueuse/core";
 import {toPng} from "html-to-image";
 import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
+import useBlobDownload from "@/composables/useBlobDownload";
 
 export default function usePngDownload() {
     const analyticsCommunicator = new AnalyticsCommunicator();
-
-    const {
-        isSupported,
-        data: content,
-        saveAs
-    } = useFileSystemAccess();
-
-    const saveBlobAs = async (blob: Blob, filename: string): Promise<boolean> => {
-        if (isSupported.value) {
-            content.value = blob;
-            try {
-                await saveAs({ suggestedName: filename });
-                return true;
-            } catch (error) {
-                // Check if the user is simply the result of the user cancelling the request. Rethrow the error
-                // otherwise.
-                if (!JSON.stringify(error).includes('The user aborted a request')) {
-                    throw error;
-                }
-                return false;
-            }
-        } else {
-            console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
-
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            return true;
-        }
-    };
+    const { saveBlobAs } = useBlobDownload();
 
     const downloadPng = async (
         svgElement: SVGElement,

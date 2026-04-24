@@ -75,9 +75,8 @@ import {computed, ref, watch} from "vue";
 import useSvgDownload from "@/composables/useSvgDownload";
 import usePngDownload from "@/composables/usePngDownload";
 import {toSvg} from "html-to-image";
-import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 
-const { downloadSvg } = useSvgDownload();
+const { downloadSvg, downloadHtmlAsSvg } = useSvgDownload();
 const { downloadPng, downloadDomPng } = usePngDownload();
 
 const dialogOpen = defineModel<boolean>();
@@ -119,19 +118,8 @@ const resolution = computed(() => {
 })
 
 const download = async () => {
-    const analyticsCommunicator = new AnalyticsCommunicator();
-
     if (image instanceof HTMLElement && selectedFormat.value === Format.SVG.valueOf()) {
-        const svgDataUrl = await toSvg(image, { skipFonts: true });
-        const svgString = decodeURIComponent(svgDataUrl.split(",")[1]);
-        const blob = new Blob([svgString], { type: "image/svg+xml" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `${filename}.svg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'html');
+        await downloadHtmlAsSvg(image, `${filename}.svg`);
     } else if (image instanceof HTMLElement) {
         await downloadDomPng(image, `${filename}.png`, scalingFactorToNumber(selectedScalingFactor.value));
     } else if (selectedFormat.value === Format.SVG.valueOf()) {
