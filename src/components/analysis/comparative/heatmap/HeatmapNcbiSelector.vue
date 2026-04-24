@@ -101,9 +101,8 @@
 
 <script setup lang="ts">
 import {ref, computed, watch} from 'vue';
-type SortItem = { key: string; order?: boolean | 'asc' | 'desc' }
+import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 import {FeatureData, FeatureId} from "@/components/analysis/comparative/heatmap/ComparativeHeatmap.vue";
-import type { DataTableHeader } from "vuetify";
 
 interface TableFeature {
     id: number | string,
