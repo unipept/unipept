@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-unipept-card :height="height" :disabled="disabled">
-            <v-card-title ref="header">
+            <v-card-title ref="header" class="mt-2">
                 <v-row>
                     <v-col cols="12" lg="8">
                         <h2 class="font-weight-light">

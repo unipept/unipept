@@ -2,7 +2,7 @@
     <div>
         <v-unipept-card :disabled="disabled">
             <v-card-title>
-                <h2 style="white-space: normal;">New here? Try a demo project</h2>
+                <h2 class="mt-2" style="white-space: normal;">New here? Try a demo project</h2>
             </v-card-title>
 
             <v-card-text>

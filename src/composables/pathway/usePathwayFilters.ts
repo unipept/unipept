@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue';
+import { refDebounced } from '@vueuse/core';
 
 export interface FilterablePathwayItem {
     id: string;
@@ -16,6 +17,7 @@ export interface PathwayFiltersOptions<T extends FilterablePathwayItem> {
 
 export function usePathwayFilters<T extends FilterablePathwayItem>(options: PathwayFiltersOptions<T>) {
     const search = ref('');
+    const debouncedSearch = refDebounced(search, 300);
     const page = ref(1);
     const filterDialog = ref(false);
 
@@ -74,8 +76,8 @@ export function usePathwayFilters<T extends FilterablePathwayItem>(options: Path
 
     const filteredItems = computed(() => {
         let items = filterItems(options.items(), appliedEcs.value, appliedCompounds.value, appliedCategories.value);
-        if (search.value) {
-            const q = search.value.toLowerCase();
+        if (debouncedSearch.value) {
+            const q = debouncedSearch.value.toLowerCase();
             items = items.filter(item =>
                 item.id.toLowerCase().includes(q) ||
                 item.name.toLowerCase().includes(q) ||

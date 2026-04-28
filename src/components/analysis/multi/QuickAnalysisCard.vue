@@ -1,7 +1,7 @@
 <template>
     <v-unipept-card :disabled="disabled">
         <v-card-title>
-            <h2>Quick analysis</h2>
+            <h2 class="mt-2">Quick analysis</h2>
         </v-card-title>
         <v-card-text>
             <p>
