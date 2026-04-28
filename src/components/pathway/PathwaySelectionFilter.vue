@@ -65,14 +65,14 @@
                                 <template #item="{ props: itemProps, item }">
                                     <v-list-item v-bind="itemProps" active-color="primary">
                                         <template #prepend>
-                                            <div :style="{ width: '8px', height: '8px', borderRadius: '50%', marginRight: '8px', flexShrink: '0', background: item.raw.color }" />
+                                            <div :style="{ width: '8px', height: '8px', borderRadius: '50%', marginRight: '8px', flexShrink: '0', background: item.color }" />
                                         </template>
                                     </v-list-item>
                                 </template>
                                 <template #chip="{ props: chipProps, item }">
                                     <v-chip v-bind="chipProps" size="small">
                                         <template #prepend>
-                                            <div :style="{ width: '8px', height: '8px', borderRadius: '50%', marginRight: '4px', flexShrink: '0', background: item.raw.color }" />
+                                            <div :style="{ width: '8px', height: '8px', borderRadius: '50%', marginRight: '4px', flexShrink: '0', background: item.color }" />
                                         </template>
                                     </v-chip>
                                 </template>
