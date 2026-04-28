@@ -25,7 +25,7 @@
         </v-unipept-card>
 
         <v-dialog v-model="dialogOpen">
-            <v-unipept-card class="bg-mainBody">
+            <v-unipept-card class="bg-mainBody" style="background: rgb(var(--v-theme-mainBody));">
                 <v-card-title class="d-flex align-center">
                     <h2>Select a demo project</h2>
                     <v-spacer/>
@@ -56,7 +56,7 @@
                                         {{ sample.environment }}
                                     </v-card-title>
                                     <v-card-text style="padding-top: 0 !important;" class="mb-md-8">
-                                        <div class="text-body-2 mb-2">{{ sample.reference }}</div>
+                                        <div class="text-body-medium mb-2">{{ sample.reference }}</div>
                                         <div>
                                             <v-btn
                                                 color="primary"

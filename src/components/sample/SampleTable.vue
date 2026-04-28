@@ -239,7 +239,7 @@ export interface SampleTableItem {
 </script>
 
 <style>
-.name-text-field:deep(input) {
+.name-text-field input {
     padding-top: 0;
 }
 

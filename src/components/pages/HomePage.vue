@@ -5,7 +5,7 @@
                 cols="12"
                 md="6"
             >
-                <div class="text-h3 font-weight-light mb-2">
+                <div class="text-display-small font-weight-light mb-2">
                     Welcome
                 </div>
                 Unipept is an open source web application developed at

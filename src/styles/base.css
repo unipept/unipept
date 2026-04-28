@@ -1,0 +1,4 @@
+/* Establish @layer base before Vuetify's layers are imported so that
+   Vuetify's utility layer (vuetify-utilities) has higher priority than base.
+   This allows utility classes like mb-3 to override the base reset in main.scss. */
+@layer base;

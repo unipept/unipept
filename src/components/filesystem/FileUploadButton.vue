@@ -1,7 +1,6 @@
 <template>
     <div class="file-upload-container">
         <v-btn
-            style="width: 100%;"
             :text="text"
             :prepend-icon="prependIcon"
             :variant="variant"

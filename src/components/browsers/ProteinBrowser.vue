@@ -70,7 +70,7 @@
                         </v-btn>
                     </template>
                 </v-data-table-server>
-                <div class="text-caption mt-n2 ml-1">
+                <div class="text-body-small mt-n2 ml-1">
                     <span>Hint:</span>
                     enter a keyword to search for proteins. You can search by name, accession ID, organism ID or database type.
                 </div>

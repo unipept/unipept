@@ -13,7 +13,7 @@
                         :text="`Some items from the file you've uploaded are invalid: ${invalidItems.join(', ')}. Please check and correct any mistakes.`"
                     />
                     <h4>{{ title }}</h4>
-                    <div class="text-caption">
+                    <div class="text-body-small">
                         {{ description }}
                     </div>
                     <div class="d-flex align-center mt-4">
@@ -89,7 +89,7 @@
 
                 <v-col cols="3">
                     <h4>Statistics</h4>
-                    <div class="text-caption">
+                    <div class="text-body-small">
                         Final database composition statistics
                     </div>
                     <div class="d-flex align-center mt-2">

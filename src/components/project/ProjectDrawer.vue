@@ -12,6 +12,7 @@
                     <v-list-item
                         v-bind="props"
                         color="primary"
+                        base-color="grey-darken-1"
                         prepend-icon="mdi-home"
                         to="home"
                     />
@@ -25,6 +26,7 @@
                     <v-list-item
                         v-bind="props"
                         color="primary"
+                        base-color="grey-darken-1"
                         prepend-icon="mdi-test-tube"
                         to="single"
                     />
@@ -35,6 +37,7 @@
                     <v-list-item
                         v-bind="props"
                         color="primary"
+                        base-color="grey-darken-1"
                         prepend-icon="unipept:test-tube-multiple"
                         to="compare"
                     />
@@ -52,6 +55,7 @@
                         <v-list-item
                             v-bind="props"
                             color="primary"
+                            base-color="grey-darken-1"
                             prepend-icon="mdi-file-download"
                             to="export"
                         />
@@ -62,6 +66,7 @@
                         <v-list-item
                             v-bind="props"
                             color="primary"
+                            base-color="grey-darken-1"
                             prepend-icon="mdi-database-cog"
                             to="database"
                         />
@@ -75,3 +80,9 @@
 <script setup lang="ts">
 
 </script>
+
+<style scoped>
+:deep(.v-list-item:not(.v-list-item--active) .v-icon) {
+    color: rgb(97, 97, 97);
+}
+</style>

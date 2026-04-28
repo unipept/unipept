@@ -1,5 +1,5 @@
 <template>
-    <v-unipept-card class="pa-0">
+    <v-unipept-card class="pa-0" style="padding: 0; overflow: hidden;">
         <v-card-title
             class="bg-blue text-white"
             style="letter-spacing: 0.0125rem"
@@ -68,7 +68,7 @@
                         <v-hover v-slot="{ isHovering, props }">
                             <v-unipept-card
                                 class="pa-0"
-                                :elevation="isHovering ? 6 : 2"
+                                :elevation="isHovering ? 5 : 2"
                                 v-bind="props"
                             >
                                 <v-img

@@ -198,7 +198,7 @@
             class="mt-5"
             large-title
         >
-            <h2>--equate / -e <span class="text-caption grey--text text--darken-2">Equate isoleucine and leucine</span></h2>
+            <h2>--equate / -e <span class="text-body-small text-grey-darken-2">Equate isoleucine and leucine</span></h2>
 
             <p>
                 If the <inline-code>--equate</inline-code> flag is set, isoleucine (I) and leucine (L) are equated when matching tryptic peptides to UniProt entries. This is
@@ -213,7 +213,7 @@
                 <br>LLELGAPDLLVR,499,2.7.7.6,495
             </boxed>
 
-            <h2>--input / -i <span class="text-caption grey--text text--darken-2">Specify an input file</span></h2>
+            <h2>--input / -i <span class="text-body-small text-grey-darken-2">Specify an input file</span></h2>
 
             <p>
                 All Unipept <initialism>CLI</initialism> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <inline-code>--input</inline-code>
@@ -232,7 +232,7 @@
                 <br>MDGTEYIIVK,4,,
             </boxed>
 
-            <h2>--output / -o <span class="text-caption grey--text text--darken-2">Specify an output file</span></h2>
+            <h2>--output / -o <span class="text-body-small text-grey-darken-2">Specify an output file</span></h2>
 
             <p>
                 By default, the unipept commands write their output to <i>standard output</i>. Using the optional <inline-code>--output</inline-code> option allows you to
@@ -247,7 +247,7 @@
                 <br>AALTER,1425,2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15 2.3.1.234 2.1.1.13 4.2.1.17 6.3.2.8 3.1.3.3 2.7.4.16 2.4.-.- 5.3.1.1 3.1.4.- 2.8.1.7 6.5.1.2 6.1.1.2 3.4.11.10 3.4.11.1 1.1.1.100 6.3.2.10 3.6.4.- 6.1.1.23 3.1.1.61 3.1.1.4 2.7.1.50 2.7.1.48 1.8.1.2 2.6.1.- 3.4.-.- 2.4.1.227 6.3.4.2 6.3.4.4 4.1.2.- 1.10.9.1 1.14.13.- 2.5.1.- 2.6.1.16 3.1.-.- 4.2.1.153 3.1.2.6 4.6.1.17 2.4.1.- 2.5.1.75 4.2.1.3 6.3.2.31 6.3.2.34 6.3.3.2 1.2.1.2 5.2.1.8 4.99.1.1 2.3.2.2 2.-.-.- 2.7.3.9 4.1.3.27 1.1.1.262 5.4.99.2 2.7.7.59 3.1.21.3 4.2.99.20 6.1.1.12 1.7.99.4,111 11 11 8 8 7 6 4 4 3 3 3 3 3 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
             </boxed>
 
-            <h2>--select / -s <span class="text-caption grey--text text--darken-2">Specify the output fields</span></h2>
+            <h2>--select / -s <span class="text-body-small text-grey-darken-2">Specify the output fields</span></h2>
 
             <p>
                 By default, the Unipept <initialism>CLI</initialism> commands output all information fields received from the Unipept server. The <inline-code>--select</inline-code> option allows you
@@ -266,7 +266,7 @@
                 <br>2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15,AALTER
             </boxed>
 
-            <h2>--format / -f <span class="text-caption grey--text text--darken-2">Specify the output format</span></h2>
+            <h2>--format / -f <span class="text-body-small text-grey-darken-2">Specify the output format</span></h2>
 
             <p>
                 By default, the Unipept <initialism>CLI</initialism> commands return their output in csv format. The <inline-code>--format</inline-code> option allows you to select another format.
@@ -281,7 +281,7 @@
                 <br>{{ htmlFragment }}
             </boxed>
 
-            <h2>--all / -a <span class="text-caption grey--text text--darken-2">Request additional information</span></h2>
+            <h2>--all / -a <span class="text-body-small text-grey-darken-2">Request additional information</span></h2>
 
             <p>
                 By default, the Unipept <initialism>CLI</initialism> commands only request basic information from the Unipept server. By using the <inline-code>--all</inline-code> flag, you can request
@@ -303,7 +303,7 @@
                 <br>2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15,"RING-type E3 ubiquitin transferase Histidine kinase Long-chain-fatty-acid--CoA ligase Lysine--tRNA ligase UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate ligase (d)CMP kinase Asparagine--tRNA ligase Endoribonucleases producing 5'-phosphomonoesters Glycine C-acetyltransferase Ribokinase",AALTER
             </boxed>
 
-            <h2>--help / -h <span class="text-caption grey--text text--darken-2">Display help</span></h2>
+            <h2>--help / -h <span class="text-body-small text-grey-darken-2">Display help</span></h2>
 
             <p>
                 This flag displays the help.

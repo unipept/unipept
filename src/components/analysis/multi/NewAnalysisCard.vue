@@ -13,7 +13,6 @@
                 <div>
                     <v-btn
                         class="mt-1 w-100 w-lg-auto float-lg-right"
-                        style="width: 100%;"
                         variant="tonal"
                         color="primary"
                         text="Create new project"

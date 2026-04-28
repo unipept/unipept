@@ -8,6 +8,7 @@
             v-for="item in items"
             :key="item.name"
             :to="item.link"
+            style="text-transform: none"
             exact-path
         >
             {{ item.name }}
@@ -24,9 +25,3 @@ export interface Props {
 
 defineProps<Props>()
 </script>
-
-<style>
-.v-tab {
-    text-transform: none;
-}
-</style>

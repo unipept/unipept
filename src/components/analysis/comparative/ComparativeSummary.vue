@@ -1,7 +1,7 @@
 <template>
     <v-unipept-card>
         <v-card-title>
-            <span class="text-h4">Comparative analysis</span>
+            <span class="text-headline-large">Comparative analysis</span>
         </v-card-title>
         <v-card-text>
             <v-row>

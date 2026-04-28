@@ -8,7 +8,7 @@
             class="control-bar"
             :style="overlap ? 'position: absolute' : 'position: relative'"
         >
-            <span class="align-self-center me-1 text-caption">
+            <span class="align-self-center me-1 text-body-small">
                 {{ caption }}
             </span>
 
@@ -16,11 +16,13 @@
                 <template #activator="{ props }">
                     <v-btn
                         class="ma-1"
-                        icon="mdi-cog-outline"
+                        icon
                         size="x-small"
                         v-bind="props"
                         :elevation="0"
-                    />
+                    >
+                        <v-icon size="x-small">mdi-cog-outline</v-icon>
+                    </v-btn>
                 </template>
                 <v-list style="width: 350px; border-radius: 12px;">
                     <slot name="settings"/>
@@ -31,19 +33,23 @@
                 v-if="rotate"
                 class="ma-1"
                 size="x-small"
-                icon="mdi-format-rotate-90"
+                icon
                 :elevation="0"
                 @click="rotate"
-            />
+            >
+                <v-icon size="x-small">mdi-format-rotate-90</v-icon>
+            </v-btn>
 
             <v-btn
                 v-if="download && !hideDownload"
                 class="ma-1"
                 size="x-small"
-                icon="mdi-download"
+                icon
                 :elevation="0"
                 @click="download"
-            />
+            >
+                <v-icon size="x-small">mdi-download</v-icon>
+            </v-btn>
 
             <v-btn
                 v-else-if="internalDownload && !hideDownload"
@@ -51,27 +57,33 @@
                 size="x-small"
                 fab
                 :elevation="0"
-                icon="mdi-download"
+                icon
                 @click="downloadOpen = true"
-            />
+            >
+                <v-icon size="x-small">mdi-download</v-icon>
+            </v-btn>
 
             <v-btn
                 v-if="reset"
                 class="ma-1"
                 size="x-small"
-                icon="mdi-restore"
+                icon
                 :elevation="0"
                 @click="reset"
-            />
+            >
+                <v-icon size="x-small">mdi-restore</v-icon>
+            </v-btn>
 
             <v-btn
                 v-if="fullscreen"
                 class="ma-1"
                 size="x-small"
-                icon="mdi-fullscreen"
+                icon
                 :elevation="0"
                 @click="fullscreen"
-            />
+            >
+                <v-icon size="x-small">mdi-fullscreen</v-icon>
+            </v-btn>
         </div>
 
         <div :style="overlap ? 'height: 100%;' : 'height: calc(100% - 40px); position: relative'">

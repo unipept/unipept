@@ -12,7 +12,7 @@
         <header-body-card
             id="overview"
             title="Overview"
-            class="mb-5"
+            class="mb-5 mt-2"
             large-title
         >
             <div>
@@ -80,7 +80,7 @@
                 different operating systems are also available (these links will always point to the most recent
                 version):
             </p>
-            <v-row dense>
+            <v-row density="compact" class="mb-2">
                 <v-col
                     sm="12"
                     md="4"
@@ -425,6 +425,7 @@
             <v-alert
                 color="warning"
                 variant="outlined"
+                class="mb-2"
             >
                 <span class="font-weight-bold">Warning:</span>
                 Changes made to the demo project will not be saved! The demo project is read-only and all changes will

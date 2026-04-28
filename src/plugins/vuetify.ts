@@ -6,22 +6,22 @@
 
 // Styles
 import "@mdi/font/css/materialdesignicons.css";
+import "@/styles/base.css";
 import "@/styles/main.scss";
 import "@/styles/unipept-icons.css";
 
 // Composables
 import {createVuetify} from "vuetify"
 import * as components from 'vuetify/components'
-import * as labsComponents from 'vuetify/labs/components'
 
 // Icons
 import { unipeptIconsAliases, unipeptIcons } from './unipept-icons'
 import {VCard} from "vuetify/components/VCard";
-import {VStepperVerticalItem} from "vuetify/labs/VStepperVertical";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
     theme: {
+        defaultTheme: 'light',
         variations: {
             colors: ['primary'],
             lighten: 5,
@@ -29,6 +29,13 @@ export default createVuetify({
         },
         themes: {
             light: {
+                colors: {
+                    primary: "#2196F3",
+                    secondary: "#FFC107",
+                    mainBody: "#F9FAFC"
+                },
+            },
+            dark: {
                 colors: {
                     primary: "#2196F3",
                     secondary: "#FFC107",
@@ -51,7 +58,7 @@ export default createVuetify({
         VUnipeptCard: {
             style: {
                 borderRadius: '12px',
-                padding: '4px',
+                padding: '0px',
                 textAlign: 'left',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
                 background: 'white',
@@ -72,7 +79,6 @@ export default createVuetify({
         unipeptIconsAliases
     },
     components: {
-        ...components,
-        ...labsComponents
+        ...components
     }
 })

@@ -1,7 +1,7 @@
 <template>
     <v-unipept-card>
         <v-card-title>
-            <span class="text-h4">{{ analysis.name }} ({{ group.name }})</span>
+            <span class="text-headline-large">{{ analysis.name }} ({{ group.name }})</span>
         </v-card-title>
         <v-card-text>
             <v-row class="mt-n6 d-flex align-center">
@@ -14,7 +14,7 @@
                         <h3 class="font-weight-bold">
                             This sample contains {{ analysis.peptideTrust.searchedPeptides }} {{ analysis.config.filter ? "unique" : "" }} peptides, of which we matched {{ analysis.peptideTrust.matchedPeptides }} peptides.
                         </h3>
-                        <h1 class="text-subtitle-1">
+                        <h1 class="text-body-large">
                             <a
                                 @click="showMissingPeptides = true"
                             >
@@ -58,7 +58,7 @@
                                 <div class="font-weight-bold">Analysis Outdated</div>
                                 <div class="mb-1">Last analysed on {{ analysis.lastAnalysedString }}</div>
                                 <div>The results are based on database version {{ analysis.databaseVersion }}, but the latest UniProt release is {{ latest }}.</div>
-                                <div class="text-caption mt-1">
+                                <div class="text-body-small mt-1">
                                     Warning: Reanalysing will update results to the latest database version ({{ latest }}). You will not be able to revert to the previous results.
                                 </div>
                             </div>

@@ -160,7 +160,7 @@
             class="mt-5"
             large-title
         >
-            <h2>--input / -i <span class="text-caption grey--text text--darken-2">Specify an input file</span></h2>
+            <h2>--input / -i <span class="text-body-small text-grey-darken-2">Specify an input file</span></h2>
 
             <p>
                 All Unipept <initialism>CLI</initialism> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <inline-code>--input</inline-code>
@@ -178,7 +178,7 @@
                 <br>171549,Bacteroidales,order
             </boxed>
 
-            <h2>--output / -o <span class="text-caption grey--text text--darken-2">Specify an output file</span></h2>
+            <h2>--output / -o <span class="text-body-small text-grey-darken-2">Specify an output file</span></h2>
 
             <p>
                 By default, the unipept commands write their output to <i>standard output</i>. Using the optional <inline-code>--output</inline-code> option allows you to
@@ -193,7 +193,7 @@
                 <br>171549,Bacteroidales,order
             </boxed>
 
-            <h2>--select / -s <span class="text-caption grey--text text--darken-2">Specify the output fields</span></h2>
+            <h2>--select / -s <span class="text-body-small text-grey-darken-2">Specify the output fields</span></h2>
 
             <p>
                 By default, the Unipept <initialism>CLI</initialism> commands output all information fields received from the Unipept server. The <inline-code>--select</inline-code> option allows you
@@ -212,7 +212,7 @@
                 <br>171549,order
             </boxed>
 
-            <h2>--format / -f <span class="text-caption grey--text text--darken-2">Specify the output format</span></h2>
+            <h2>--format / -f <span class="text-body-small text-grey-darken-2">Specify the output format</span></h2>
 
             <p>
                 By default, the Unipept <initialism>CLI</initialism> commands return their output in csv format. The <inline-code>--format</inline-code> option allows you to select another format.
@@ -227,7 +227,7 @@
                 <br>{{ htmlFragment }}
             </boxed>
 
-            <h2>--all / -a <span class="text-caption grey--text text--darken-2">Request additional information</span></h2>
+            <h2>--all / -a <span class="text-body-small text-grey-darken-2">Request additional information</span></h2>
 
             <p>
                 By default, the Unipept <initialism>CLI</initialism> commands only request basic information from the Unipept server. By using the <inline-code>--all</inline-code> flag, you can request
@@ -249,7 +249,7 @@
                 <br>171549,976,Bacteroidetes
             </boxed>
 
-            <h2>--help / -h <span class="text-caption grey--text text--darken-2">Display help</span></h2>
+            <h2>--help / -h <span class="text-body-small text-grey-darken-2">Display help</span></h2>
 
             <p>
                 This flag displays the help.
