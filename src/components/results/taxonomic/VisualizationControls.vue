@@ -4,6 +4,7 @@
         style="height: 100%; position: relative; background-color: white;"
     >
         <div
+            v-show="hasControls"
             class="control-bar"
             :style="overlap ? 'position: absolute' : 'position: relative'"
         >
@@ -92,10 +93,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 export interface Props {
-    caption: string
+    caption?: string
     overlap?: boolean
     hideDownload?: boolean
     internalDownload?: boolean
@@ -107,12 +108,21 @@ export interface Props {
     fullscreen?: () => void
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     overlap: true,
     hideDownload: false,
     internalDownload: false,
     settings: false
 });
+
+const hasControls = computed(() =>
+    !!props.caption ||
+    props.settings ||
+    !!props.rotate ||
+    (!!props.download || !!props.internalDownload) && !props.hideDownload ||
+    !!props.reset ||
+    !!props.fullscreen
+);
 
 const emits = defineEmits<{
     reset: () => void

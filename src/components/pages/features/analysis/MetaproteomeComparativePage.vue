@@ -36,6 +36,38 @@
                         </v-tabs-window>
                     </v-card-text>
                 </v-unipept-card>
+
+                <v-unipept-card class="mt-4 pa-0">
+                    <v-tabs
+                        v-model="selectedFunctionalComparativeTab"
+                        bg-color="primary"
+                        slider-color="secondary"
+                    >
+                        <v-tab>
+                            <v-tooltip>
+                                <template #activator="{ props: tooltip }">
+                                    <span v-bind="tooltip">
+                                        PathwayPilot
+                                        <v-icon
+                                            v-bind="tooltip"
+                                            color="yellow"
+                                        >
+                                            mdi-creation-outline
+                                        </v-icon>
+                                    </span>
+                                </template>
+                                <span>New since Unipept 6.5.0!</span>
+                            </v-tooltip>
+                        </v-tab>
+                    </v-tabs>
+                    <v-card-text class="pa-0">
+                        <v-tabs-window v-model="selectedFunctionalComparativeTab">
+                            <v-tabs-window-item>
+                                <comparative-pathway-pilot :analyses="comparativeAnalysisState.selectedAnalyses" :groups="project.groups" />
+                            </v-tabs-window-item>
+                        </v-tabs-window>
+                    </v-card-text>
+                </v-unipept-card>
             </template>
             <div
                 v-else-if="isAnalysing"
@@ -73,10 +105,12 @@ import NoSelectedSamplesPlaceholder from "@/components/analysis/comparative/NoSe
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import AnalysisSummaryProgress from "@/components/analysis/multi/AnalysisSummaryProgress.vue";
 import ComparativeHeatmap from "@/components/analysis/comparative/heatmap/ComparativeHeatmap.vue";
+import ComparativePathwayPilot from "@/components/analysis/comparative/pathway/ComparativePathwayPilot.vue";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 
 const manageSamplesDialogOpen: Ref<[boolean, GroupAnalysisStore | undefined]> = ref([false, undefined]);
 const selectedComparativeTab = ref(0);
+const selectedFunctionalComparativeTab = ref(0);
 
 const { project } = useUnipeptAnalysisStore();
 

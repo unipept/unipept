@@ -1,16 +1,13 @@
-import {useFileSystemAccess} from "@vueuse/core";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
+import {toSvg} from "html-to-image";
+import useBlobDownload from "@/composables/useBlobDownload";
 
 export default function useSvgDownload() {
-    const serializer = new XMLSerializer();
+    const analyticsCommunicator = new AnalyticsCommunicator();
+    const { saveBlobAs } = useBlobDownload();
 
-    const {
-        isSupported,
-        data: content,
-        saveAs
-    } = useFileSystemAccess();
-
-    const downloadSvg = async (svg: SVGElement, filename = 'image.png') => {
-        let svgString = serializer.serializeToString(svg);
+    const downloadSvg = async (svg: SVGElement, filename = 'image.svg') => {
+        let svgString = new XMLSerializer().serializeToString(svg);
 
         if (svg.hasAttribute("viewport")) {
             svgString = svgString
@@ -18,34 +15,27 @@ export default function useSvgDownload() {
                 .replace(/height="[0-9]*%?"/, `height="100%"`);
         }
 
-        if (isSupported.value) {
-            content.value = svgString;
+        const blob = new Blob([svgString], { type: "image/svg+xml" });
+        const saved = await saveBlobAs(blob, filename);
 
-            try {
-                await saveAs({
-                    suggestedName: filename
-                });
-            } catch (error) {
-                // Check if the user is simply the result of the user cancelling the request. Rethrow the error
-                // otherwise.
-                if (!JSON.stringify(error).includes("The user aborted a request")) {
-                    throw error;
-                }
-            }
-        } else {
-            console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
-
-            const blob = new Blob([svgString], { type: "image/svg+xml" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        if (saved) {
+            analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'svg');
         }
     }
 
+    const downloadHtmlAsSvg = async (element: HTMLElement, filename = 'image.svg') => {
+        const svgDataUrl = await toSvg(element, { skipFonts: true });
+        const svgString = decodeURIComponent(svgDataUrl.split(",")[1]);
+        const blob = new Blob([svgString], { type: "image/svg+xml" });
+        const saved = await saveBlobAs(blob, filename);
+
+        if (saved) {
+            analyticsCommunicator.logDownloadVisualization(filename, 'svg', 'html');
+        }
+    };
+
     return {
-        downloadSvg
+        downloadSvg,
+        downloadHtmlAsSvg
     }
 }

@@ -1,14 +1,10 @@
-import {useFileSystemAccess} from "@vueuse/core";
 import {toPng} from "html-to-image";
+import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
+import useBlobDownload from "@/composables/useBlobDownload";
 
 export default function usePngDownload() {
-    const serializer = new XMLSerializer();
-
-    const {
-        isSupported,
-        data: content,
-        saveAs
-    } = useFileSystemAccess();
+    const analyticsCommunicator = new AnalyticsCommunicator();
+    const { saveBlobAs } = useBlobDownload();
 
     const downloadPng = async (
         svgElement: SVGElement,
@@ -66,30 +62,10 @@ export default function usePngDownload() {
             throw new Error(`Could not create PNG blob!`);
         }
 
-        if (isSupported.value) {
-            // Convert canvas to a PNG blob
-            content.value = pngBlob;
+        const saved = await saveBlobAs(pngBlob, filename);
 
-            try {
-                await saveAs({
-                    suggestedName: filename
-                });
-            } catch (error) {
-                // Check if the user is simply the result of the user cancelling the request. Rethrow the error
-                // otherwise.
-                if (!JSON.stringify(error).includes("The user aborted a request")) {
-                    throw error;
-                }
-            }
-        } else {
-            console.warn("Saving files is not supported by this browser. Falling back to direct download alternative...");
-
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(pngBlob);
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        if (saved) {
+            analyticsCommunicator.logDownloadVisualization(filename, 'png', 'svg');
         }
 
         // Clean up URL
@@ -102,23 +78,31 @@ export default function usePngDownload() {
             pixelRatio: scalingFactor
         });
 
-        content.value = await fetch(pngDataUrl).then(res => res.blob());
+        const pngBlob = await fetch(pngDataUrl).then(res => res.blob());
+        const saved = await saveBlobAs(pngBlob, filename);
 
-        try {
-            await saveAs({
-                suggestedName: filename
-            });
-        } catch (error) {
-            // Check if the user is simply the result of the user cancelling the request. Rethrow the error
-            // otherwise.
-            if (!JSON.stringify(error).includes("The user aborted a request")) {
-                throw error;
-            }
+        if (saved) {
+            analyticsCommunicator.logDownloadVisualization(filename, 'png', 'html');
         }
     }
 
+    const downloadCanvasPng = async (canvas: HTMLCanvasElement, filename = 'image.png') => {
+        const pngBlob = await new Promise<Blob | null>(resolve => canvas.toBlob(b => resolve(b), 'image/png'));
+
+        if (pngBlob === null) {
+            throw new Error('Could not create PNG blob!');
+        }
+
+        const saved = await saveBlobAs(pngBlob, filename);
+
+        if (saved) {
+            analyticsCommunicator.logDownloadVisualization(filename, 'png', 'canvas');
+        }
+    };
+
     return {
         downloadPng,
-        downloadDomPng
+        downloadDomPng,
+        downloadCanvasPng
     }
 }
