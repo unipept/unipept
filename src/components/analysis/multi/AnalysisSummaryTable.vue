@@ -249,7 +249,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeUnmount, ref } from "vue";
 import { SingleAnalysisStore } from "@/store/SingleAnalysisStore";
 import { useTableSortFilter } from "@/composables/useTableSortFilter";
 
@@ -313,6 +313,10 @@ const applyHint = (query: string) => {
     onSearchInput(query);
     hintsOpen.value = false;
 };
+
+onBeforeUnmount(() => {
+    if (blurTimeout) clearTimeout(blurTimeout);
+});
 </script>
 
 <script lang="ts">

@@ -139,11 +139,9 @@ const process = ({
         if (query.hasAny && (!faCounts || (faCounts.go === 0 && faCounts.ec === 0 && faCounts.ipr === 0))) continue;
 
         // ── Quick filter chips ────────────────────────────────────────────────
+        // speciesLevel uses exact-match; rank:species in the search bar is substring-match
         if (quickFilters.speciesLevel && ncbiEntry?.rank !== "species") continue;
-        if (quickFilters.hasGo          && (!faCounts || faCounts.go  === 0)) continue;
-        if (quickFilters.hasEc          && (!faCounts || faCounts.ec  === 0)) continue;
-        if (quickFilters.hasIpr         && (!faCounts || faCounts.ipr === 0)) continue;
-        if (quickFilters.notFound       && lcaId !== undefined) continue;
+        if (quickFilters.notFound     && lcaId !== undefined) continue;
 
         rows.push({
             peptide,

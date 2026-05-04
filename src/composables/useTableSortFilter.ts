@@ -22,10 +22,10 @@ export interface NcbiSubsetEntry {
 }
 
 export interface QuickFilters {
-    speciesLevel: boolean;  // ncbiEntry.rank === "species"
-    hasGo:        boolean;  // go count > 0
-    hasEc:        boolean;  // ec count > 0
-    hasIpr:       boolean;  // ipr count > 0
+    speciesLevel: boolean;  // exact rank match — distinct from the rank: substring search
+    hasGo:        boolean;
+    hasEc:        boolean;
+    hasIpr:       boolean;
     notFound:     boolean;  // peptide not matched by Unipept
 }
 
@@ -50,6 +50,14 @@ export interface TableSortFilterWorkerOutput {
     rows:       AnalysisSummaryTableItem[];
     totalCount: number;
 }
+
+// Chip → query string mapping (chips without an entry are chip-only filters with no search equivalent)
+const CHIP_QUERIES: Partial<Record<keyof QuickFilters, string>> = {
+    speciesLevel: "rank:species",
+    hasGo:        "has:go",
+    hasEc:        "has:ec",
+    hasIpr:       "has:ipr",
+};
 
 // ─── Composable ───────────────────────────────────────────────────────────────
 
@@ -180,14 +188,6 @@ export function useTableSortFilter(analysis: SingleAnalysisStore) {
         search.value = value ?? "";
         page.value   = 1;
         scheduleWorker(300);
-    };
-
-    // Query strings that correspond to each chip (chips without an entry here are chip-only filters)
-    const CHIP_QUERIES: Partial<Record<keyof QuickFilters, string>> = {
-        speciesLevel: "rank:species",
-        hasGo:        "has:go",
-        hasEc:        "has:ec",
-        hasIpr:       "has:ipr",
     };
 
     /** Immediate handler for quick filter chip toggles */
