@@ -110,15 +110,22 @@ const process = ({
     const rows: TableSortFilterWorkerOutput["rows"] = [];
 
     for (const [peptide, count] of peptideCounts.entries()) {
-        // ── Free-text filter (peptide sequence) ──────────────────────────────
-        if (query.freeText && !peptide.toLowerCase().includes(query.freeText)) {
-            continue;
+        const lcaId     = peptideToLca.get(peptide);
+        const ncbiEntry = lcaId !== undefined ? ncbiSubset[lcaId] : undefined;
+
+        // ── Free-text filter (peptide, LCA name, rank) ───────────────────────
+        if (query.freeText) {
+            const lcaName = ncbiEntry?.name.toLowerCase() ?? "";
+            const rank    = ncbiEntry?.rank.toLowerCase() ?? "";
+            if (
+                !peptide.toLowerCase().includes(query.freeText) &&
+                !lcaName.includes(query.freeText) &&
+                !rank.includes(query.freeText)
+            ) continue;
         }
 
-        const lcaId      = peptideToLca.get(peptide);
-        const ncbiEntry  = lcaId !== undefined ? ncbiSubset[lcaId] : undefined;
         const peptideData = peptideToData.get(peptide);
-        const faCounts   = peptideData?.faCounts;
+        const faCounts    = peptideData?.faCounts;
 
         // ── LCA name filter ───────────────────────────────────────────────────
         if (query.lcaFilter) {

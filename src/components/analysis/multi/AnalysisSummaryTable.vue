@@ -384,6 +384,11 @@ a:hover {
     text-decoration: none;
 }
 
+/* Lighter border for inactive (outlined) quick filter chips */
+:deep(.v-chip--variant-outlined) {
+    border-color: rgba(0, 0, 0, 0.18) !important;
+}
+
 /* Align prepend icons vertically with chip text */
 :deep(.chip-icon) {
     font-size: 14px !important;
