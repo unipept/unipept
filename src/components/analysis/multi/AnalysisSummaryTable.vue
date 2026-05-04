@@ -1,7 +1,14 @@
 <template>
     <div>
+
+
+        <!-- ── Search hint ────────────────────────────────────────────────────── -->
+        <p class="text-caption text-medium-emphasis mb-1">
+            Type freely or use <code>field:value</code>. Each term gets auto-classified — dashed chips show inferred fields you can confirm or reassign.
+        </p>
+
         <!-- ── Search bar with hints dropdown ─────────────────────────────────── -->
-        <v-row density="compact" class="mb-1 px-1">
+        <v-row density="compact">
             <v-col cols="12" style="position: relative;">
                 <v-text-field
                     :model-value="search"
@@ -49,7 +56,7 @@
         </v-row>
 
         <!-- ── Quick filters + peptide count ─────────────────────────────────── -->
-        <v-row density="compact" class="mb-2 px-1 align-center">
+        <v-row density="compact" class="mb-2 align-center">
             <v-col cols="12" md="auto" class="d-flex align-center flex-wrap ga-1">
                 <span class="text-caption text-medium-emphasis me-1">Quick filters:</span>
 
