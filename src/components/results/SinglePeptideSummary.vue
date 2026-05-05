@@ -68,8 +68,8 @@
                     Function
                 </div>
                 <div v-if="assay.goTrust">
-                    <span class="font-weight-bold">{{ assay.goTrust.annotatedItems }} proteins</span>
-                    ({{ assay.goTrust.totalItems > 0 ? displayPercentage(assay.goTrust.annotatedItems / assay.goTrust.totalItems) : '0%' }})
+                    <span class="font-weight-bold">{{ peptideData!.faCounts.go }} proteins</span>
+                    ({{ assay.proteins.length > 0 ? displayPercentage(peptideData!.faCounts.go / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="goLink"
@@ -91,8 +91,8 @@
                 </div>
 
                 <div v-if="assay.ecTrust">
-                    <span class="font-weight-bold">{{ assay.ecTrust.annotatedItems }} proteins</span>
-                    ({{ assay.ecTrust.totalItems > 0 ? displayPercentage(assay.ecTrust.annotatedItems / assay.ecTrust.totalItems) : '0%' }})
+                    <span class="font-weight-bold">{{ peptideData!.faCounts.ec }} proteins</span>
+                    ({{ assay.proteins.length > 0 ? displayPercentage(peptideData!.faCounts.ec / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="ecLink"
@@ -115,9 +115,9 @@
 
                 <div v-if="assay.iprTrust">
                     <span class="font-weight-bold">
-                        {{ assay.iprTrust.annotatedItems }} proteins
+                        {{ peptideData!.faCounts.ipr }} proteins
                     </span>
-                    ({{ assay.iprTrust.totalItems > 0 ? displayPercentage(assay.iprTrust.annotatedItems / assay.iprTrust.totalItems) : '0%' }})
+                    ({{ assay.proteins.length > 0 ? displayPercentage(peptideData!.faCounts.ipr / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="interproLink"
@@ -143,12 +143,13 @@
 </template>
 
 <script setup lang="ts">
-import {computed} from "vue";
+import {computed, ComputedRef} from "vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import useOntologyStore from "@/store/OntologyStore";
 import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import usePercentage from "@/composables/usePercentage";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
+import PeptideData from "@/logic/ontology/peptides/PeptideData";
 
 export interface Props {
     assay: PeptideAnalysisStore
@@ -166,6 +167,10 @@ const { displayPercentage } = usePercentage();
 
 const lcaDefinition = computed(() => {
     return getNcbiDefinition(props.assay.lca)
+});
+
+const peptideData: ComputedRef<PeptideData | undefined> = computed(() => {
+    return props.assay.peptideToData!.get(props.assay.peptide);
 });
 
 const taxonomyUrl = (taxon: NcbiTaxon | undefined): string => {
