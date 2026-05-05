@@ -416,6 +416,7 @@ export class PeptideData_v6_3_5 {
                 data: dataObject
             },
             taxa: this.taxa,
+            cutoff_used: false
         }
     }
 }
