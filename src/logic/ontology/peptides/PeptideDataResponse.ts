@@ -12,7 +12,8 @@ type PeptideDataResponse = {
                 },
             data: any
         },
-    taxa: number[]
+    taxa: number[],
+    cutoff_used: boolean
 };
 
 export default PeptideDataResponse;

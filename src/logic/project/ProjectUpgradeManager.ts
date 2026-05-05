@@ -2,6 +2,7 @@ import { SemVer } from "@/logic/project/SemVer";
 import type JSZip from "jszip";
 import type { ProjectUpgrader } from "@/logic/project/ProjectUpgrader";
 import { From635To640Upgrader } from "@/logic/project/upgraders/From635To640Upgrader";
+import { From640To651Upgrader } from "@/logic/project/upgraders/From640To651Upgrader";
 
 /**
  * Coordinates running a chain of {@link ProjectUpgrader}s until a project is
@@ -14,6 +15,7 @@ export class ProjectUpgradeManager {
      */
     private static readonly upgraders: ProjectUpgrader[] = [
         new From635To640Upgrader(),
+        new From640To651Upgrader(),
     ];
 
     private static readonly currentVersion: string = APP_VERSION;
