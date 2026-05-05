@@ -118,6 +118,28 @@
             </v-tooltip>
         </template>
 
+        <template #item.cutoff="{ item }">
+            <v-tooltip v-if="item.found" location="top">
+                <template #activator="{ props }">
+                    <v-icon
+                        v-bind="props"
+                        :color="item.cutoffUsed ? 'warning' : 'success'"
+                        size="20"
+                        :icon="item.cutoffUsed ? 'mdi-alert-circle-outline' : 'mdi-check-circle-outline'"
+                    />
+                </template>
+                <div style="max-width: 500px">
+                    <span v-if="item.cutoffUsed">
+                        The number of matching proteins exceeded the Unipept API limit of 10,000 entries.
+                        Results shown are based on a subset of all matching proteins and may not be fully representative.
+                    </span>
+                    <span v-else>
+                        All matching proteins were included in the analysis for this peptide.
+                    </span>
+                </div>
+            </v-tooltip>
+        </template>
+
         <template #item.warning="{ item }">
             <v-tooltip
                 v-if="!item.found"
@@ -170,7 +192,8 @@ const computeShownItems = (params: ConfigParams) => {
                 lca: getNcbiDefinition(lca)?.name ?? "N/A",
                 rank: getNcbiDefinition(lca)?.rank ?? "N/A",
                 found: analysis.peptideToLca!.has(peptide),
-                faCounts: analysis.peptideToData!.get(peptide)?.faCounts
+                faCounts: analysis.peptideToData!.get(peptide)?.faCounts,
+                cutoffUsed: analysis.peptideToData!.get(peptide)?.cutoffUsed ?? false
             };
         });
 }
@@ -202,7 +225,7 @@ const headers: DataTableHeader[] = [
         title: "Lowest common ancestor",
         align: "start",
         key: "lca",
-        width: "30%"
+        width: "25%"
     },
     {
         title: "Rank",
@@ -215,6 +238,12 @@ const headers: DataTableHeader[] = [
         align: "start",
         key: "faCounts",
         width: "15%"
+    },
+    {
+        title: "Match completeness",
+        align: "center",
+        key: "cutoff",
+        width: "5%"
     },
     {
         title: "",
@@ -231,6 +260,7 @@ export interface AnalysisSummaryTableItem {
     rank: string;
     found: boolean;
     faCounts: { all: number, ec: number, go: number, ipr: number } | undefined;
+    cutoffUsed: boolean;
 }
 
 interface ConfigParams {

@@ -25,6 +25,17 @@
                 Equate I/L is disabled.
             </span>
         </div>
+        <v-alert
+            v-if="cutoffUsed"
+            type="warning"
+            variant="tonal"
+            class="my-3"
+            icon="mdi-alert-circle-outline"
+        >
+            The number of matching proteins for this peptide exceeds the Unipept API limit of 10,000 entries.
+            Biodiversity and functional annotation results are based on a subset of all matching proteins
+            and may not be fully representative.
+        </v-alert>
         <v-row>
             <v-col :cols="12" md="6">
                 <div class="headline">
@@ -167,6 +178,10 @@ const { displayPercentage } = usePercentage();
 const lcaDefinition = computed(() => {
     return getNcbiDefinition(props.assay.lca)
 });
+
+const cutoffUsed = computed(() =>
+    props.assay.peptideToData?.get(props.assay.peptide)?.cutoffUsed ?? false
+);
 
 const taxonomyUrl = (taxon: NcbiTaxon | undefined): string => {
     if (taxon === undefined || taxon.id === 1) {
