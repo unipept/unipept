@@ -128,6 +128,7 @@
 
                 <ul class="my-3">
                     <li><inline-code>peptide</inline-code>: the peptide that matched this record</li>
+                    <li><inline-code>cutoff_used</inline-code>: <inline-code>true</inline-code> if the number of matched proteins exceeded the cutoff and the response was truncated; <inline-code>false</inline-code> otherwise</li>
                     <li><inline-code>uniprot_id</inline-code>: the UniProt accession number of the matching record</li>
                     <li><inline-code>protein_name</inline-code>: the name of the protein of the matching record</li>
                     <li><inline-code>taxon_id</inline-code>: the NCBI taxon id of the organism associated with the matching record</li>

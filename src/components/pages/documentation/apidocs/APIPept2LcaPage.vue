@@ -124,6 +124,7 @@
 
             <ul class="my-3">
                 <li><inline-code>peptide</inline-code>: the peptide that was searched for</li>
+                <li><inline-code>cutoff_used</inline-code>: <inline-code>true</inline-code> if the number of matched proteins exceeded the cutoff and the response was truncated; <inline-code>false</inline-code> otherwise</li>
                 <li><inline-code>taxon_id</inline-code>: the <initialism>NCBI</initialism> taxon id of the taxonomic lowest common ancestor</li>
                 <li><inline-code>taxon_name</inline-code>: the name of the taxonomic lowest common ancestor</li>
                 <li><inline-code>taxon_rank</inline-code>: the taxonomic rank of the taxonomic lowest common ancestor</li>

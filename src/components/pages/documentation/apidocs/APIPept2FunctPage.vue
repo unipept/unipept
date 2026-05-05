@@ -112,6 +112,7 @@
 
                 <ul class="my-3">
                     <li><inline-code>peptide</inline-code>: the peptide that was searched for.</li>
+                    <li><inline-code>cutoff_used</inline-code>: <inline-code>true</inline-code> if the number of matched proteins exceeded the cutoff and the response was truncated; <inline-code>false</inline-code> otherwise.</li>
                     <li><inline-code>total_protein_count</inline-code>: total amount of proteins matched with the given peptide.</li>
                     <li>
                         <inline-code>ec</inline-code>:
