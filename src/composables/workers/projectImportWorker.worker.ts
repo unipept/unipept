@@ -12,7 +12,7 @@ self.onunhandledrejection = (event) => {
 };
 
 self.onmessage = async (event) => {
-    self.postMessage(await process(event.data));
+    self.postMessage({ type: "done", data: await process(event.data) });
 }
 
 const process = async({ input }: ProjectImportData): Promise<SerializedStateData> => {
@@ -20,6 +20,10 @@ const process = async({ input }: ProjectImportData): Promise<SerializedStateData
 
     // If the user is trying to import an older Unipept project, we need to upgrade it here.
     const projectUpgradeManager = new ProjectUpgradeManager();
+    const needsUpgrade = await projectUpgradeManager.needsUpgrade(zipper);
+    if (needsUpgrade) {
+        self.postMessage({ type: "status", message: "Upgrading project format. This may take a moment..." });
+    }
     zipper = await projectUpgradeManager.upgradeIfNeeded(zipper);
 
     const metadataFile = zipper.file("metadata.json");

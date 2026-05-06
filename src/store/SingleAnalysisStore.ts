@@ -105,7 +105,7 @@ const useSingleAnalysisStore = (
     // ===============================================================
     // ======================== PROCESSORS ===========================
     // ===============================================================
-    const { peptideData: peptideToData, process: processPept2Filtered } = usePept2filtered();
+    const { peptideData: peptideToData, crapFilteredPeptides, process: processPept2Filtered } = usePept2filtered();
 
     const { databaseVersion, process: processMetadata } = useMetaData();
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
@@ -165,7 +165,7 @@ const useSingleAnalysisStore = (
                     lastAnalysed.value = new Date();
                 }
 
-                processPeptideTrust(peptidesTable!.value!, peptideToData.value!);
+                processPeptideTrust(peptidesTable!.value!, peptideToData.value!, crapFilteredPeptides.value);
 
                 await processLca(peptidesTable.value!, peptideToData.value!);
                 await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);

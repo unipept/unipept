@@ -21,6 +21,19 @@ export class ProjectUpgradeManager {
     private static readonly currentVersion: string = APP_VERSION;
 
     /**
+     * Returns true if any registered upgrader can be applied to the given project.
+     */
+    public async needsUpgrade(zippedProject: JSZip): Promise<boolean> {
+        const metadataFile = zippedProject.file("metadata.json");
+        if (!metadataFile) return false;
+
+        const metadata = JSON.parse(await metadataFile.async("string")) as { version?: string };
+        if (!metadata.version) return false;
+
+        return SemVer.isOlder(metadata.version, ProjectUpgradeManager.currentVersion);
+    }
+
+    /**
      * Upgrade the given zipped project in-place until its metadata version
      * matches the current application version, or no more upgraders apply.
      *

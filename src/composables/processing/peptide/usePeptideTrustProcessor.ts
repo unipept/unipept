@@ -9,14 +9,18 @@ export default function usePeptideTrustProcessor() {
 
     const process = (
         countTable: CountTable<string>,
-        peptideData: ShareableMap<string, PeptideData>
+        peptideData: ShareableMap<string, PeptideData>,
+        crapFilteredPeptides: string[] = []
     ): void => {
         let matchedPeptides = 0;
         const missedPeptides: string[] = [];
+        const crapSet = new Set(crapFilteredPeptides);
 
         for (const peptide of countTable.counts.keys()) {
             if (peptideData.has(peptide)) {
                 matchedPeptides += countTable.getOrDefault(peptide);
+            } else if (crapSet.has(peptide)) {
+                // peptide was found but excluded by CRAP blacklist filtering
             } else {
                 missedPeptides.push(peptide);
             }
@@ -24,6 +28,7 @@ export default function usePeptideTrustProcessor() {
 
         trust.value = markRaw({
             missedPeptides,
+            crapFilteredPeptides,
             matchedPeptides,
             searchedPeptides: countTable.totalCount
         });

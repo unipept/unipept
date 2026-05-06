@@ -26,6 +26,7 @@
 
             <div v-if="loading" class="d-flex flex-column justify-center align-center h-100">
                 <v-progress-circular color="primary" indeterminate />
+                <p v-if="loadingMessage" class="mt-3 text-body-2 text-medium-emphasis">{{ loadingMessage }}</p>
             </div>
 
             <div v-else-if="projects.length > 0">
@@ -181,7 +182,8 @@ const props = defineProps<{
     height: number,
     projects: { name: string, totalPeptides: number, lastAccessed: Date }[],
     loading: boolean,
-    disabled: boolean
+    disabled: boolean,
+    loadingMessage?: string
 }>();
 
 const emits = defineEmits<{

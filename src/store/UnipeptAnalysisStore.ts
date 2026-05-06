@@ -24,7 +24,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     });
 
     const { process: storeToBlob } = useProjectExport();
-    const { process: blobToStore } = useProjectImport();
+    const { process: blobToStore, status: importStatus } = useProjectImport();
 
     const project = useProjectAnalysisStore();
     const customDatabases = useCustomFilterStore();
@@ -147,6 +147,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
 
     return {
         project,
+        importStatus,
 
         getProjects,
         loadNewProject,

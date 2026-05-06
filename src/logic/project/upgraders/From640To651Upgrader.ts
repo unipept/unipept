@@ -7,6 +7,7 @@ import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializ
 import { ArrayBufferUtils } from "@/logic/utils/ArrayBufferUtils";
 import { Serializable } from "shared-memory-datastructures";
 import PeptideDataResponse from "@/logic/ontology/peptides/PeptideDataResponse";
+import { DEFAULT_API_BASE_URL, DEFAULT_BATCH_SIZE } from "@/logic/Constants";
 
 
 /**
@@ -52,7 +53,7 @@ export class From640To651Upgrader implements ProjectUpgrader {
 
         const metadata = JSON.parse(await metadataFile.async("string")) as {
             groups: Array<{
-                analyses: Array<{ id: string }>;
+                analyses: Array<{ id: string; config: { equate: boolean } }>;
             }>;
         };
 
@@ -81,11 +82,15 @@ export class From640To651Upgrader implements ProjectUpgrader {
                     { serializer: new PeptideDataSerializer_v6_4_0() }
                 );
 
+                const sequences = Array.from(oldMap.keys());
+                const crapFilteredMap = await this.fetchCrapFiltered(sequences, analysis.config.equate);
+
                 const newMap = new ShareableMap<string, PeptideData>({ serializer: new PeptideDataSerializer() });
 
                 for (const [peptide, old] of oldMap) {
                     const response = old.toPeptideDataResponse();
                     response.cutoff_used = response.fa.counts.all > 9000;
+                    response.crap_filtered = crapFilteredMap.get(peptide) ?? false;
                     newMap.set(peptide, PeptideData.createFromPeptideDataResponse(response));
                 }
 
@@ -104,6 +109,29 @@ export class From640To651Upgrader implements ProjectUpgrader {
         zippedProject.file("metadata.json", JSON.stringify(updatedMetadata));
 
         return zippedProject;
+    }
+
+    private async fetchCrapFiltered(sequences: string[], equate: boolean): Promise<Map<string, boolean>> {
+        const result = new Map<string, boolean>();
+
+        for (let i = 0; i < sequences.length; i += DEFAULT_BATCH_SIZE) {
+            const batch = sequences.slice(i, i + DEFAULT_BATCH_SIZE);
+            const response = await fetch(`${DEFAULT_API_BASE_URL}/mpa/pept2data`, {
+                method: "POST",
+                body: JSON.stringify({
+                    peptides: batch,
+                    equate_il: equate,
+                    report_taxa: false
+                }),
+                headers: { "Content-Type": "application/json" }
+            }).then(r => r.json());
+
+            for (const peptide of response.peptides ?? []) {
+                result.set(peptide.sequence, peptide.crap_filtered ?? false);
+            }
+        }
+
+        return result;
     }
 }
 
@@ -272,7 +300,8 @@ export class PeptideData_v6_4_0 {
                 data: dataObject
             },
             taxa: this.taxa,
-            cutoff_used: false
+            cutoff_used: false,
+            crap_filtered: false
         };
     }
 }

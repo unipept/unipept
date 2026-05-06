@@ -33,6 +33,7 @@
                     :projects="projects"
                     :disabled="loadingProject || loadingDemoProject"
                     :loading="loadingProject"
+                    :loading-message="importStatus"
                     @open="loadFromIndexedDB"
                     @upload="importProject"
                     @delete="deleteFromIndexedDB"
@@ -59,6 +60,7 @@ const router = useRouter();
 
 const {
     project,
+    importStatus,
 
     getProjects,
     loadNewProject,

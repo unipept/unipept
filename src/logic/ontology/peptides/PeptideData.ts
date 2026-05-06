@@ -38,8 +38,12 @@ export default class PeptideData {
     public static readonly CUTOFF_USED_OFFSET = PeptideData.FA_IPR_INDEX_OFFSET + PeptideData.FA_POINTER_SIZE;
     public static readonly CUTOFF_USED_SIZE = 1;
 
+    // 1-byte flag: 1 if the peptide matches the CRAP blacklist, 0 otherwise.
+    public static readonly CRAP_FILTERED_OFFSET = PeptideData.CUTOFF_USED_OFFSET + PeptideData.CUTOFF_USED_SIZE;
+    public static readonly CRAP_FILTERED_SIZE = 1;
+
     // Where does the variable length data portion of the array start?
-    public static readonly DATA_START = PeptideData.CUTOFF_USED_OFFSET + PeptideData.CUTOFF_USED_SIZE;
+    public static readonly DATA_START = PeptideData.CRAP_FILTERED_OFFSET + PeptideData.CRAP_FILTERED_SIZE;
 
     // How many bytes do we reserve to keep track of the length of the taxon array?
     public static readonly TAXON_COUNT_SIZE = 4;
@@ -102,6 +106,7 @@ export default class PeptideData {
         const dataView = new DataView(dataBuffer);
         dataView.setUint32(this.LCA_OFFSET, response.lca);
         dataView.setUint8(this.CUTOFF_USED_OFFSET, response.cutoff_used ? 1 : 0);
+        dataView.setUint8(this.CRAP_FILTERED_OFFSET, response.crap_filtered ? 1 : 0);
 
         // Keep track of the length of the lineage array
         dataView.setUint32(this.LINEAGE_COUNT_OFFSET, response.lineage.length);
@@ -189,6 +194,10 @@ export default class PeptideData {
 
     public get cutoffUsed(): boolean {
         return this.dataView.getUint8(PeptideData.CUTOFF_USED_OFFSET) !== 0;
+    }
+
+    public get crapFiltered(): boolean {
+        return this.dataView.getUint8(PeptideData.CRAP_FILTERED_OFFSET) !== 0;
     }
 
     public get lca(): number {
@@ -322,7 +331,8 @@ export default class PeptideData {
                 data: dataObject
             },
             taxa: this.taxa,
-            cutoff_used: this.cutoffUsed
+            cutoff_used: this.cutoffUsed,
+            crap_filtered: this.crapFiltered
         }
     }
 }
