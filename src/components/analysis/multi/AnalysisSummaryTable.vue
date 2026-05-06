@@ -21,13 +21,31 @@
         </template>
 
         <template #item.peptide="{ item }">
-            <a
-                class="cursor-pointer"
-                @click="openPeptideAnalysis(item.peptide)"
-                :style="$vuetify.display.mobile ? 'display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' : ''"
-            >
-                {{ item.peptide }}
-            </a>
+            <v-tooltip location="top" :text="item.peptide">
+                <template #activator="{ props }">
+                    <a
+                        v-bind="props"
+                        class="cursor-pointer"
+                        style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                        @click="openPeptideAnalysis(item.peptide)"
+                    >
+                        {{ item.peptide }}
+                    </a>
+                </template>
+            </v-tooltip>
+        </template>
+
+        <template #item.lca="{ item }">
+            <v-tooltip location="top" :text="item.lca">
+                <template #activator="{ props }">
+                    <span
+                        v-bind="props"
+                        style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                    >
+                        {{ item.lca }}
+                    </span>
+                </template>
+            </v-tooltip>
         </template>
 
         <template #item.faCounts="{ item }">
@@ -118,42 +136,66 @@
             </v-tooltip>
         </template>
 
-        <template #item.cutoff="{ item }">
-            <v-tooltip v-if="item.found" location="top">
+        <template #item.status="{ item }">
+            <v-tooltip location="top">
                 <template #activator="{ props }">
-                    <v-icon
+                    <v-avatar
                         v-bind="props"
-                        :color="item.cutoffUsed ? 'warning' : 'success'"
-                        size="20"
-                        :icon="item.cutoffUsed ? 'mdi-alert-circle-outline' : 'mdi-check-circle-outline'"
-                    />
+                        size="30"
+                        :color="item.found ? 'success' : 'green-lighten-4'"
+                        class="me-1"
+                    >
+                        <v-icon
+                            size="18"
+                            :class="item.found ? 'text-white' : 'text-grey'"
+                            :icon="item.found ? 'mdi-database' : 'mdi-database-alert'"
+                        />
+                    </v-avatar>
+                </template>
+                <span v-if="item.found">Peptide was found by Unipept.</span>
+                <span v-else>This peptide was not found by Unipept.</span>
+            </v-tooltip>
+
+            <v-tooltip location="top">
+                <template #activator="{ props }">
+                    <v-avatar
+                        v-bind="props"
+                        size="30"
+                        :color="item.cutoffUsed ? 'amber' : 'amber-lighten-4'"
+                        class="me-1"
+                    >
+                        <v-icon
+                            size="18"
+                            :class="item.cutoffUsed ? 'text-black' : 'text-grey'"
+                            :icon="item.cutoffUsed ? 'mdi-gauge-full' : 'mdi-gauge-low'"
+                        />
+                    </v-avatar>
                 </template>
                 <div style="max-width: 500px">
                     <span v-if="item.cutoffUsed">
                         The number of matching proteins exceeded the Unipept API limit of 10,000 entries.
-                        Results shown are based on a subset of all matching proteins and may not be fully representative.
+                        Results are based on a subset and may not be fully representative.
                     </span>
-                    <span v-else>
-                        All matching proteins were included in the analysis for this peptide.
-                    </span>
+                    <span v-else>All matching proteins were included in the analysis for this peptide.</span>
                 </div>
             </v-tooltip>
-        </template>
 
-        <template #item.warning="{ item }">
-            <v-tooltip
-                v-if="!item.found"
-                text="This peptide was not found by Unipept"
-            >
+            <v-tooltip location="top">
                 <template #activator="{ props }">
-                    <v-icon
-                        v-if="!item.found"
+                    <v-avatar
                         v-bind="props"
-                        color="warning"
-                        size="20"
-                        icon="mdi-alert-circle-outline"
-                    />
+                        size="30"
+                        :color="item.crapFiltered ? 'red' : 'red-lighten-4'"
+                    >
+                        <v-icon
+                            size="18"
+                            :class="item.crapFiltered ? 'text-white' : 'text-grey'"
+                            :icon="item.crapFiltered ? 'mdi-filter-minus' : 'mdi-filter'"
+                        />
+                    </v-avatar>
                 </template>
+                <span v-if="item.crapFiltered">This peptide was filtered out by the cRAP filter and excluded from the analysis.</span>
+                <span v-else>This peptide was not filtered by the cRAP filter.</span>
             </v-tooltip>
         </template>
     </v-data-table-server>
@@ -193,7 +235,8 @@ const computeShownItems = (params: ConfigParams) => {
                 rank: getNcbiDefinition(lca)?.rank ?? "N/A",
                 found: analysis.peptideToLca!.has(peptide),
                 faCounts: analysis.peptideToData!.get(peptide)?.faCounts,
-                cutoffUsed: analysis.peptideToData!.get(peptide)?.cutoffUsed ?? false
+                cutoffUsed: analysis.peptideToData!.get(peptide)?.cutoffUsed ?? false,
+                crapFiltered: analysis.peptideToData!.get(peptide)?.crapFiltered ?? false
             };
         });
 }
@@ -213,7 +256,9 @@ const headers: DataTableHeader[] = [
         title: "Peptide",
         align: "start",
         key: "peptide",
-        width: "25%"
+        width: "25%",
+        maxWidth: "25%",
+        cellProps: { style: "max-width: 0; overflow: hidden;" }
     },
     {
         title: "Occurrence",
@@ -225,7 +270,9 @@ const headers: DataTableHeader[] = [
         title: "Lowest common ancestor",
         align: "start",
         key: "lca",
-        width: "25%"
+        width: "25%",
+        maxWidth: "25%",
+        cellProps: { style: "max-width: 0; overflow: hidden;" }
     },
     {
         title: "Rank",
@@ -240,16 +287,10 @@ const headers: DataTableHeader[] = [
         width: "15%"
     },
     {
-        title: "Match completeness",
+        title: "Status",
         align: "center",
-        key: "cutoff",
-        width: "5%"
-    },
-    {
-        title: "",
-        align: "start",
-        key: "warning",
-        width: "5%"
+        key: "status",
+        width: "10%"
     }
 ];
 
@@ -261,6 +302,7 @@ export interface AnalysisSummaryTableItem {
     found: boolean;
     faCounts: { all: number, ec: number, go: number, ipr: number } | undefined;
     cutoffUsed: boolean;
+    crapFiltered: boolean;
 }
 
 interface ConfigParams {
