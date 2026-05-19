@@ -74,6 +74,6 @@ const copyToClipboard = () => {
 
 <script lang="ts">
 const headers = [
-    { text: 'Peptide', value: 'name', width: '100%' }
+    { title: 'Peptide', value: 'name', width: '100%' }
 ];
 </script>

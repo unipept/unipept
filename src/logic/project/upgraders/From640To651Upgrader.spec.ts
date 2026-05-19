@@ -144,14 +144,15 @@ describe("From640To651Upgrader.canUpgrade", () => {
 });
 
 /**
- * Creates a mock fetch that returns crap_filtered values for the given peptide sequences.
+ * Creates a mock fetch that returns crap_filtered and cutoff_used values for the given peptide sequences.
  */
-function mockFetchCrapFiltered(crapMap: Record<string, boolean>) {
+function mockFetchApiFlags(flagsMap: Record<string, { crap_filtered?: boolean; cutoff_used?: boolean }>) {
     vi.stubGlobal("fetch", vi.fn((_url: string, options: RequestInit) => {
         const body = JSON.parse(options.body as string);
         const peptides = (body.peptides as string[]).map((sequence) => ({
             sequence,
-            crap_filtered: crapMap[sequence] ?? false
+            crap_filtered: flagsMap[sequence]?.crap_filtered ?? false,
+            cutoff_used: flagsMap[sequence]?.cutoff_used ?? false
         }));
         return Promise.resolve({
             json: () => Promise.resolve({ peptides })
@@ -182,7 +183,7 @@ describe("From640To651Upgrader.upgrade", () => {
     });
 
     it("throws when peptide data buffers for an analysis are missing", async () => {
-        mockFetchCrapFiltered({});
+        mockFetchApiFlags({});
         const metadata = createMetadata("6.5.0", ["missing"]);
         const zip = await createZipWithMetadata(metadata);
         zip.folder("buffers");
@@ -195,9 +196,9 @@ describe("From640To651Upgrader.upgrade", () => {
     });
 
     it("upgrades buffers, sets cutoff_used and crap_filtered, and bumps version to 6.5.1", async () => {
-        mockFetchCrapFiltered({
-            PEPTIDE_OVER: true,
-            PEPTIDE_UNDER: false
+        mockFetchApiFlags({
+            PEPTIDE_OVER: { crap_filtered: true, cutoff_used: true },
+            PEPTIDE_UNDER: { crap_filtered: false, cutoff_used: false }
         });
 
         const metadata = createMetadata("6.5.0", ["a1"]);
@@ -205,7 +206,7 @@ describe("From640To651Upgrader.upgrade", () => {
         zip.folder("buffers");
 
         const responses: Record<string, PeptideDataResponse> = {
-            // all > 9000 → cutoff_used should be true after upgrade
+            // API returns cutoff_used: true and crap_filtered: true for this peptide
             PEPTIDE_OVER: {
                 lca: 1,
                 lineage: [1, 2, 3],
@@ -217,7 +218,7 @@ describe("From640To651Upgrader.upgrade", () => {
                 cutoff_used: false,
                 crap_filtered: false
             },
-            // all <= 9000 → cutoff_used should be false after upgrade
+            // API returns cutoff_used: false and crap_filtered: false for this peptide
             PEPTIDE_UNDER: {
                 lca: 2,
                 lineage: [4, 5, 6],
