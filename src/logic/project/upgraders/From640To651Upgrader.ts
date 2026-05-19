@@ -16,7 +16,7 @@ import { DEFAULT_API_BASE_URL, DEFAULT_BATCH_SIZE } from "@/logic/Constants";
  * Between 6.5.0 and 6.5.1 a `cutoff_used` flag was added to the binary
  * PeptideData format (1 byte at offset 40). Projects created before this
  * change lack that byte; the upgrader re-encodes every PeptideData entry and
- * back-fills the flag: true when fa.counts.all > 9000, false otherwise.
+ * back-fills both `cutoff_used` and `crap_filtered` by querying the API.
  *
  * @author Pieter Verschaffelt
  */
@@ -52,6 +52,7 @@ export class From640To651Upgrader implements ProjectUpgrader {
         }
 
         const metadata = JSON.parse(await metadataFile.async("string")) as {
+            version: string;
             groups: Array<{
                 analyses: Array<{ id: string; config: { equate: boolean } }>;
             }>;
@@ -83,14 +84,15 @@ export class From640To651Upgrader implements ProjectUpgrader {
                 );
 
                 const sequences = Array.from(oldMap.keys());
-                const crapFilteredMap = await this.fetchCrapFiltered(sequences, analysis.config.equate);
+                const crapFilteredMap = await this.fetchApiFlags(sequences, analysis.config.equate);
 
                 const newMap = new ShareableMap<string, PeptideData>({ serializer: new PeptideDataSerializer() });
 
                 for (const [peptide, old] of oldMap) {
                     const response = old.toPeptideDataResponse();
-                    response.cutoff_used = response.fa.counts.all > 9000;
-                    response.crap_filtered = crapFilteredMap.get(peptide) ?? false;
+                    const flags = crapFilteredMap.get(peptide);
+                    response.cutoff_used = flags?.cutoff_used ?? false;
+                    response.crap_filtered = flags?.crap_filtered ?? false;
                     newMap.set(peptide, PeptideData.createFromPeptideDataResponse(response));
                 }
 
@@ -104,15 +106,17 @@ export class From640To651Upgrader implements ProjectUpgrader {
             }
         }
 
-        const updatedMetadata = JSON.parse(await metadataFile.async("string"));
-        updatedMetadata.version = "6.5.1";
-        zippedProject.file("metadata.json", JSON.stringify(updatedMetadata));
+        metadata.version = "6.5.1";
+        zippedProject.file("metadata.json", JSON.stringify(metadata));
 
         return zippedProject;
     }
 
-    private async fetchCrapFiltered(sequences: string[], equate: boolean): Promise<Map<string, boolean>> {
-        const result = new Map<string, boolean>();
+    private async fetchApiFlags(
+        sequences: string[],
+        equate: boolean
+    ): Promise<Map<string, { crap_filtered: boolean; cutoff_used: boolean }>> {
+        const result = new Map<string, { crap_filtered: boolean; cutoff_used: boolean }>();
 
         for (let i = 0; i < sequences.length; i += DEFAULT_BATCH_SIZE) {
             const batch = sequences.slice(i, i + DEFAULT_BATCH_SIZE);
@@ -127,7 +131,10 @@ export class From640To651Upgrader implements ProjectUpgrader {
             }).then(r => r.json());
 
             for (const peptide of response.peptides ?? []) {
-                result.set(peptide.sequence, peptide.crap_filtered ?? false);
+                result.set(peptide.sequence, {
+                    crap_filtered: peptide.crap_filtered ?? false,
+                    cutoff_used: peptide.cutoff_used ?? false
+                });
             }
         }
 
@@ -213,8 +220,8 @@ export class PeptideData_v6_4_0 {
         return lin;
     }
 
-    public get ec(): any {
-        const output: any = {};
+    public get ec(): Record<string, number> {
+        const output: Record<string, number> = {};
 
         let ecStart = this.dataView.getUint32(PeptideData_v6_4_0.FA_EC_INDEX_OFFSET);
         const ecLength = this.dataView.getUint32(ecStart);
@@ -236,8 +243,8 @@ export class PeptideData_v6_4_0 {
         return value === -1 ? "-" : value.toString();
     }
 
-    public get go(): any {
-        const output: any = {};
+    public get go(): Record<string, number> {
+        const output: Record<string, number> = {};
 
         let goStart = this.dataView.getUint32(PeptideData_v6_4_0.FA_GO_INDEX_OFFSET);
         const goLength = this.dataView.getUint32(goStart);
@@ -252,8 +259,8 @@ export class PeptideData_v6_4_0 {
         return output;
     }
 
-    public get ipr(): any {
-        const output: any = {};
+    public get ipr(): Record<string, number> {
+        const output: Record<string, number> = {};
 
         let iprStart = this.dataView.getUint32(PeptideData_v6_4_0.FA_IPR_INDEX_OFFSET);
         const iprLength = this.dataView.getUint32(iprStart);
