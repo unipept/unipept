@@ -26,6 +26,7 @@
 
             <div v-if="loading" class="d-flex flex-column justify-center align-center h-100">
                 <v-progress-circular color="primary" indeterminate />
+                <p v-if="loadingMessage" class="mt-3 text-body-2 text-medium-emphasis">{{ loadingMessage }}</p>
             </div>
 
             <div v-else-if="projects.length > 0">
@@ -52,6 +53,23 @@
                                 </div>
 
                                 <v-spacer />
+
+                                <v-tooltip
+                                    v-if="item.upgradeError"
+                                    :text="item.upgradeError"
+                                    max-width="320"
+                                >
+                                    <template #activator="{ props }">
+                                        <v-btn
+                                            v-bind="props"
+                                            variant="text"
+                                            color="warning"
+                                            icon="mdi-alert"
+                                            size="small"
+                                            @click.stop
+                                        />
+                                    </template>
+                                </v-tooltip>
 
                                 <v-btn
                                     variant="text"
@@ -179,9 +197,10 @@ import UploadProjectButton from "@/components/analysis/multi/UploadProjectButton
 
 const props = defineProps<{
     height: number,
-    projects: { name: string, totalPeptides: number, lastAccessed: Date }[],
+    projects: { name: string, totalPeptides: number, lastAccessed: Date, upgradeError?: string | null }[],
     loading: boolean,
-    disabled: boolean
+    disabled: boolean,
+    loadingMessage?: string
 }>();
 
 const emits = defineEmits<{

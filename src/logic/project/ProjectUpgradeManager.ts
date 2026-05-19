@@ -2,7 +2,7 @@ import { SemVer } from "@/logic/project/SemVer";
 import type JSZip from "jszip";
 import type { ProjectUpgrader } from "@/logic/project/ProjectUpgrader";
 import { From635To640Upgrader } from "@/logic/project/upgraders/From635To640Upgrader";
-import { From640To651Upgrader } from "@/logic/project/upgraders/From640To651Upgrader";
+import { From650To651Upgrader } from "@/logic/project/upgraders/From650To651Upgrader";
 
 /**
  * Coordinates running a chain of {@link ProjectUpgrader}s until a project is
@@ -15,10 +15,23 @@ export class ProjectUpgradeManager {
      */
     private static readonly upgraders: ProjectUpgrader[] = [
         new From635To640Upgrader(),
-        new From640To651Upgrader(),
+        new From650To651Upgrader(),
     ];
 
     private static readonly currentVersion: string = APP_VERSION;
+
+    /**
+     * Returns true if any registered upgrader can be applied to the given project.
+     */
+    public async needsUpgrade(zippedProject: JSZip): Promise<boolean> {
+        const metadataFile = zippedProject.file("metadata.json");
+        if (!metadataFile) return false;
+
+        const metadata = JSON.parse(await metadataFile.async("string")) as { version?: string };
+        if (!metadata.version) return false;
+
+        return SemVer.isOlder(metadata.version, ProjectUpgradeManager.currentVersion);
+    }
 
     /**
      * Upgrade the given zipped project in-place until its metadata version

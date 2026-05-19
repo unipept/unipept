@@ -19,6 +19,7 @@ export interface Pept2filteredData {
 
 export interface Pept2filteredWorkerOutput {
     peptToDataTransferable: TransferableState;
+    crapFilteredPeptides: string[];
 }
 
 export default function usePept2filtered(
@@ -27,6 +28,7 @@ export default function usePept2filtered(
     parallelRequests = 5,
 ) {
     const peptideData = shallowRef<ShareableMap<string, PeptideData>>();
+    const crapFilteredPeptides = shallowRef<string[]>([]);
 
     const { post } = useAsyncWebWorker<Pept2filteredData, Pept2filteredWorkerOutput>(
         () => new Pept2filteredWebWorker()
@@ -38,7 +40,7 @@ export default function usePept2filtered(
         useCrap: boolean,
         filter: Filter | undefined
     ) => {
-        const { peptToDataTransferable } = await post({
+        const { peptToDataTransferable, crapFilteredPeptides: filtered } = await post({
             peptides,
             equate,
             useCrap,
@@ -49,10 +51,12 @@ export default function usePept2filtered(
         });
 
         peptideData.value = markRaw(ShareableMap.fromTransferableState<string, PeptideData>(peptToDataTransferable, { serializer: new PeptideDataSerializer() }));
+        crapFilteredPeptides.value = filtered;
     }
 
     return {
         peptideData,
+        crapFilteredPeptides,
 
         process
     }

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import JSZip from "jszip";
 import {
-    From640To651Upgrader,
+    From650To651Upgrader,
     PeptideData_v6_4_0,
     PeptideDataSerializer_v6_4_0
-} from "@/logic/project/upgraders/From640To651Upgrader";
+} from "@/logic/project/upgraders/From650To651Upgrader";
 import { SemVer } from "@/logic/project/SemVer";
 import { ShareableMap, type TransferableState } from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
@@ -100,10 +100,10 @@ function stripCutoffByte(view: DataView): DataView {
     return dstView;
 }
 
-describe("From640To651Upgrader.canUpgrade", () => {
+describe("From650To651Upgrader.canUpgrade", () => {
     it("throws when metadata.json is missing", async () => {
         const zip = new JSZip();
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).rejects.toThrow(
             "Failed to find metadata.json while determining upgrade eligibility."
@@ -112,7 +112,7 @@ describe("From640To651Upgrader.canUpgrade", () => {
 
     it("throws when version is missing from metadata", async () => {
         const zip = await createZipWithMetadata({});
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).rejects.toThrow(
             "Project version is missing in metadata.json. Unable to determine upgrade eligibility."
@@ -122,7 +122,7 @@ describe("From640To651Upgrader.canUpgrade", () => {
     it("returns true for version equal to 6.5.0", async () => {
         const spyCompare = vi.spyOn(SemVer, "compare");
         const zip = await createZipWithMetadata({ version: "6.5.0" });
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).resolves.toBe(true);
         expect(spyCompare).toHaveBeenCalledWith("6.5.0", "6.5.0");
@@ -130,33 +130,53 @@ describe("From640To651Upgrader.canUpgrade", () => {
 
     it("returns true for version older than 6.5.0", async () => {
         const zip = await createZipWithMetadata({ version: "6.4.0" });
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).resolves.toBe(true);
     });
 
     it("returns false for version newer than 6.5.0", async () => {
         const zip = await createZipWithMetadata({ version: "6.5.1" });
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).resolves.toBe(false);
     });
 });
 
-describe("From640To651Upgrader.upgrade", () => {
+/**
+ * Creates a mock fetch that returns crap_filtered and cutoff_used values for the given peptide sequences.
+ */
+function mockFetchApiFlags(flagsMap: Record<string, { crap_filtered?: boolean; cutoff_used?: boolean }>) {
+    vi.stubGlobal("fetch", vi.fn((_url: string, options: RequestInit) => {
+        const body = JSON.parse(options.body as string);
+        const peptides = (body.peptides as string[]).map((sequence) => ({
+            sequence,
+            crap_filtered: flagsMap[sequence]?.crap_filtered ?? false,
+            cutoff_used: flagsMap[sequence]?.cutoff_used ?? false
+        }));
+        return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ peptides })
+        });
+    }));
+}
+
+describe("From650To651Upgrader.upgrade", () => {
     beforeEach(() => {
         vi.restoreAllMocks();
+        vi.unstubAllGlobals();
     });
 
     afterEach(() => {
         vi.restoreAllMocks();
+        vi.unstubAllGlobals();
     });
 
     it("throws when metadata.json is missing during upgrade", async () => {
         const zip = new JSZip();
         zip.folder("buffers");
 
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.upgrade(zip)).rejects.toThrow(
             "Failed to find metadata.json while upgrading project from 6.4.0 to 6.5.1."
@@ -164,24 +184,30 @@ describe("From640To651Upgrader.upgrade", () => {
     });
 
     it("throws when peptide data buffers for an analysis are missing", async () => {
+        mockFetchApiFlags({});
         const metadata = createMetadata("6.5.0", ["missing"]);
         const zip = await createZipWithMetadata(metadata);
         zip.folder("buffers");
 
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.upgrade(zip)).rejects.toThrow(
             "Failed to find peptide data buffers for analysis 'missing' while upgrading project from 6.4.0 to 6.5.1."
         );
     });
 
-    it("upgrades buffers, sets cutoff_used based on fa.counts.all, and bumps version to 6.5.1", async () => {
+    it("upgrades buffers, sets cutoff_used and crap_filtered, and bumps version to 6.5.1", async () => {
+        mockFetchApiFlags({
+            PEPTIDE_OVER: { crap_filtered: true, cutoff_used: true },
+            PEPTIDE_UNDER: { crap_filtered: false, cutoff_used: false }
+        });
+
         const metadata = createMetadata("6.5.0", ["a1"]);
         const zip = await createZipWithMetadata(metadata);
         zip.folder("buffers");
 
         const responses: Record<string, PeptideDataResponse> = {
-            // all > 9000 → cutoff_used should be true after upgrade
+            // API returns cutoff_used: true and crap_filtered: true for this peptide
             PEPTIDE_OVER: {
                 lca: 1,
                 lineage: [1, 2, 3],
@@ -190,9 +216,10 @@ describe("From640To651Upgrader.upgrade", () => {
                     data: { "EC:1.2.3.4": 2, "GO:0000001": 10, "IPR:IPR000001": 5 }
                 },
                 taxa: [10, 20],
-                cutoff_used: false
+                cutoff_used: false,
+                crap_filtered: false
             },
-            // all <= 9000 → cutoff_used should be false after upgrade
+            // API returns cutoff_used: false and crap_filtered: false for this peptide
             PEPTIDE_UNDER: {
                 lca: 2,
                 lineage: [4, 5, 6],
@@ -201,14 +228,14 @@ describe("From640To651Upgrader.upgrade", () => {
                     data: { "EC:9.9.9.9": 1 }
                 },
                 taxa: [30],
-                cutoff_used: false
+                cutoff_used: false,
+                crap_filtered: false
             }
         };
 
         await writeV640Map(zip, "a1", responses);
 
-        const upgrader = new From640To651Upgrader();
-        const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+        const upgrader = new From650To651Upgrader();
 
         const upgraded = await upgrader.upgrade(zip);
 
@@ -236,14 +263,14 @@ describe("From640To651Upgrader.upgrade", () => {
 
         const over = mapV2.get("PEPTIDE_OVER")!;
         expect(over.cutoffUsed).toBe(true);
+        expect(over.crapFiltered).toBe(true);
         expect(over.lca).toBe(responses["PEPTIDE_OVER"].lca);
         expect(over.faCounts.all).toBe(10000);
 
         const under = mapV2.get("PEPTIDE_UNDER")!;
         expect(under.cutoffUsed).toBe(false);
+        expect(under.crapFiltered).toBe(false);
         expect(under.lca).toBe(responses["PEPTIDE_UNDER"].lca);
         expect(under.faCounts.all).toBe(5000);
-
-        consoleSpy.mockRestore();
     });
 });

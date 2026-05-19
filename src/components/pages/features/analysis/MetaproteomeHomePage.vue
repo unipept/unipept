@@ -1,5 +1,17 @@
 <template>
     <v-container>
+        <v-snackbar
+            v-model="showUpgradeError"
+            color="error"
+            :timeout="-1"
+            multi-line
+        >
+            {{ upgradeError }}
+            <template #actions>
+                <v-btn variant="text" @click="showUpgradeError = false">Dismiss</v-btn>
+            </template>
+        </v-snackbar>
+
         <v-row>
             <v-col cols="12" md="6">
                 <div ref="firstColumn">
@@ -33,6 +45,7 @@
                     :projects="projects"
                     :disabled="loadingProject || loadingDemoProject"
                     :loading="loadingProject"
+                    :loading-message="importStatus"
                     @open="loadFromIndexedDB"
                     @upload="importProject"
                     @delete="deleteFromIndexedDB"
@@ -54,12 +67,14 @@ import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import NewAnalysisCard from "@/components/analysis/multi/NewAnalysisCard.vue";
 import RecentAnalysisCard from "@/components/analysis/multi/RecentAnalysisCard.vue";
 import {useElementBounding} from "@vueuse/core";
+import {storeToRefs} from "pinia";
 
 const router = useRouter();
 
+const store = useUnipeptAnalysisStore();
+const { importStatus } = storeToRefs(store);
 const {
     project,
-
     getProjects,
     loadNewProject,
     loadProjectFromStorage,
@@ -67,7 +82,7 @@ const {
     loadProjectFromSample,
     loadProjectFromPeptides,
     deleteProject
-} = useUnipeptAnalysisStore();
+} = store;
 const sampleDataStore = useSampleDataStore();
 
 const firstColumn = useTemplateRef("firstColumn");
@@ -80,7 +95,10 @@ const loadingSampleData: Ref<boolean> = ref(true);
 const loadingProject: Ref<boolean> = ref(false);
 const loadingDemoProject: Ref<boolean> = ref(false);
 
-const projects = ref<{ name: string, totalPeptides: number, lastAccessed: Date }[]>([]);
+const upgradeError: Ref<string | null> = ref(null);
+const showUpgradeError = ref(false);
+
+const projects = ref<{ name: string, totalPeptides: number, lastAccessed: Date, upgradeError?: string | null }[]>([]);
 
 const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
     await loadProjectFromPeptides(rawPeptides, config);
@@ -90,18 +108,35 @@ const quickAnalyze = async (rawPeptides: string, config: AnalysisConfig) => {
 
 const importProject = async (projectName: string, file: File) => {
     loadingProject.value = true;
-    await loadProjectFromFile(projectName, file)
-    await router.push({ name: "mpaSingle" });
-    await startImport();
-    loadingProject.value = false;
+    try {
+        await loadProjectFromFile(projectName, file);
+        await router.push({ name: "mpaSingle" });
+        await startImport();
+    } catch (e) {
+        upgradeError.value = (e instanceof Error && e.message)
+            ? e.message
+            : "Failed to open this project. If it requires an upgrade, please check your internet connection and try again.";
+        showUpgradeError.value = true;
+    } finally {
+        loadingProject.value = false;
+    }
 }
 
 const loadFromIndexedDB = async (projectName: string) => {
     loadingProject.value = true;
-    await loadProjectFromStorage(projectName);
-    await router.push({ name: "mpaSingle" });
-    await startImport();
-    loadingProject.value = false;
+    try {
+        await loadProjectFromStorage(projectName);
+        await router.push({ name: "mpaSingle" });
+        await startImport();
+    } catch (e) {
+        upgradeError.value = (e instanceof Error && e.message)
+            ? e.message
+            : "Failed to open this project. If it requires an upgrade, please check your internet connection and try again.";
+        showUpgradeError.value = true;
+        projects.value = await getProjects();
+    } finally {
+        loadingProject.value = false;
+    }
 }
 
 const deleteFromIndexedDB = async (projectName: string) => {
