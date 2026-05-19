@@ -14,7 +14,8 @@ export interface SerializedStateData {
 
 type WorkerMessage =
     | { type: "status"; message: string }
-    | { type: "done"; data: SerializedStateData };
+    | { type: "done"; data: SerializedStateData }
+    | { type: "error"; message: string };
 
 export default function useProjectImport() {
     const status: Ref<string> = ref("");
@@ -26,6 +27,12 @@ export default function useProjectImport() {
             worker.onmessage = (event: MessageEvent<WorkerMessage>) => {
                 if (event.data.type === "status") {
                     status.value = event.data.message;
+                } else if (event.data.type === "error") {
+                    worker.terminate();
+                    status.value = "";
+                    reject(new Error(
+                        event.data.message || "An unexpected error occurred while loading this project. Try again later."
+                    ));
                 } else {
                     worker.terminate();
                     status.value = "";
@@ -36,7 +43,9 @@ export default function useProjectImport() {
             worker.onerror = (error) => {
                 worker.terminate();
                 status.value = "";
-                reject(error.message);
+                reject(new Error(
+                    error.message || "An unexpected error occurred while loading this project. Try again later."
+                ));
             };
 
             worker.postMessage({ input });

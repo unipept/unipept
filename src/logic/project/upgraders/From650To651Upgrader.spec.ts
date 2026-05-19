@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import JSZip from "jszip";
 import {
-    From640To651Upgrader,
+    From650To651Upgrader,
     PeptideData_v6_4_0,
     PeptideDataSerializer_v6_4_0
-} from "@/logic/project/upgraders/From640To651Upgrader";
+} from "@/logic/project/upgraders/From650To651Upgrader";
 import { SemVer } from "@/logic/project/SemVer";
 import { ShareableMap, type TransferableState } from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
@@ -100,10 +100,10 @@ function stripCutoffByte(view: DataView): DataView {
     return dstView;
 }
 
-describe("From640To651Upgrader.canUpgrade", () => {
+describe("From650To651Upgrader.canUpgrade", () => {
     it("throws when metadata.json is missing", async () => {
         const zip = new JSZip();
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).rejects.toThrow(
             "Failed to find metadata.json while determining upgrade eligibility."
@@ -112,7 +112,7 @@ describe("From640To651Upgrader.canUpgrade", () => {
 
     it("throws when version is missing from metadata", async () => {
         const zip = await createZipWithMetadata({});
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).rejects.toThrow(
             "Project version is missing in metadata.json. Unable to determine upgrade eligibility."
@@ -122,7 +122,7 @@ describe("From640To651Upgrader.canUpgrade", () => {
     it("returns true for version equal to 6.5.0", async () => {
         const spyCompare = vi.spyOn(SemVer, "compare");
         const zip = await createZipWithMetadata({ version: "6.5.0" });
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).resolves.toBe(true);
         expect(spyCompare).toHaveBeenCalledWith("6.5.0", "6.5.0");
@@ -130,14 +130,14 @@ describe("From640To651Upgrader.canUpgrade", () => {
 
     it("returns true for version older than 6.5.0", async () => {
         const zip = await createZipWithMetadata({ version: "6.4.0" });
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).resolves.toBe(true);
     });
 
     it("returns false for version newer than 6.5.0", async () => {
         const zip = await createZipWithMetadata({ version: "6.5.1" });
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.canUpgrade(zip)).resolves.toBe(false);
     });
@@ -155,12 +155,13 @@ function mockFetchApiFlags(flagsMap: Record<string, { crap_filtered?: boolean; c
             cutoff_used: flagsMap[sequence]?.cutoff_used ?? false
         }));
         return Promise.resolve({
+            ok: true,
             json: () => Promise.resolve({ peptides })
         });
     }));
 }
 
-describe("From640To651Upgrader.upgrade", () => {
+describe("From650To651Upgrader.upgrade", () => {
     beforeEach(() => {
         vi.restoreAllMocks();
         vi.unstubAllGlobals();
@@ -175,7 +176,7 @@ describe("From640To651Upgrader.upgrade", () => {
         const zip = new JSZip();
         zip.folder("buffers");
 
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.upgrade(zip)).rejects.toThrow(
             "Failed to find metadata.json while upgrading project from 6.4.0 to 6.5.1."
@@ -188,7 +189,7 @@ describe("From640To651Upgrader.upgrade", () => {
         const zip = await createZipWithMetadata(metadata);
         zip.folder("buffers");
 
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         await expect(upgrader.upgrade(zip)).rejects.toThrow(
             "Failed to find peptide data buffers for analysis 'missing' while upgrading project from 6.4.0 to 6.5.1."
@@ -234,7 +235,7 @@ describe("From640To651Upgrader.upgrade", () => {
 
         await writeV640Map(zip, "a1", responses);
 
-        const upgrader = new From640To651Upgrader();
+        const upgrader = new From650To651Upgrader();
 
         const upgraded = await upgrader.upgrade(zip);
 

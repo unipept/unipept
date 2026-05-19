@@ -6,13 +6,12 @@ import {ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
 import {TransferableState} from "shared-memory-datastructures";
 import {ArrayBufferUtils} from "@/logic/utils/ArrayBufferUtils";
 
-self.onunhandledrejection = (event) => {
-    // This will propagate to the main thread's `onerror` handler
-    throw event.reason;
-};
-
 self.onmessage = async (event) => {
-    self.postMessage({ type: "done", data: await process(event.data) });
+    try {
+        self.postMessage({ type: "done", data: await process(event.data) });
+    } catch (e) {
+        self.postMessage({ type: "error", message: (e as Error).message ?? String(e) });
+    }
 }
 
 const process = async({ input }: ProjectImportData): Promise<SerializedStateData> => {

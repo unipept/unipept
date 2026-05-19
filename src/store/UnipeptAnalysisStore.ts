@@ -14,6 +14,7 @@ interface StoreValue {
     lastAccessed: number;
     totalPeptides: number;
     project: Blob;
+    upgradeError?: string | null;
 }
 
 const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
@@ -37,7 +38,8 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
             return {
                 name: key,
                 totalPeptides: value?.totalPeptides || 0,
-                lastAccessed: new Date(value!.lastAccessed)
+                lastAccessed: new Date(value!.lastAccessed),
+                upgradeError: value?.upgradeError || null
             };
         }));
     }
@@ -56,16 +58,23 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const loadProjectFromStorage = async (projectName: string) => {
         const value: StoreValue | null = await store.getItem(projectName);
         if (value !== null) {
+            const processedImport = await blobToStore(value.project).catch(async (e: unknown) => {
+                const message = e instanceof Error ? e.message : String(e);
+                await store.setItem(projectName, { ...value, upgradeError: message });
+                throw e;
+            });
+
+            if (value.upgradeError) {
+                await store.setItem(projectName, { ...value, upgradeError: null });
+            }
+
             appState.clear();
             project.clear();
-
-            const processedImport = await blobToStore(value.project);
-
             project.setImportedData(processedImport.project);
             project.setName(projectName);
             project.setDemoMode(false);
             appState.setImportedData(processedImport.appState, project);
-            
+
             // Track project loading
             const analyticsCommunicator = new AnalyticsCommunicator();
             analyticsCommunicator.logLoadProjectFromStorage();
@@ -73,11 +82,10 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     }
 
     const loadProjectFromFile = async (projectName: string, file: File) => {
-        appState.clear();
-        project.clear();
-
         const processedImport = await blobToStore(file);
 
+        appState.clear();
+        project.clear();
         project.setImportedData(processedImport.project);
         project.setName(projectName);
         project.setDemoMode(false);

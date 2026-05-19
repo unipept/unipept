@@ -20,7 +20,7 @@ import { DEFAULT_API_BASE_URL, DEFAULT_BATCH_SIZE } from "@/logic/Constants";
  *
  * @author Pieter Verschaffelt
  */
-export class From640To651Upgrader implements ProjectUpgrader {
+export class From650To651Upgrader implements ProjectUpgrader {
     public readonly name = "From 6.4.0 to 6.5.1";
 
     public async canUpgrade(zippedProject: JSZip): Promise<boolean> {
@@ -120,17 +120,35 @@ export class From640To651Upgrader implements ProjectUpgrader {
 
         for (let i = 0; i < sequences.length; i += DEFAULT_BATCH_SIZE) {
             const batch = sequences.slice(i, i + DEFAULT_BATCH_SIZE);
-            const response = await fetch(`${DEFAULT_API_BASE_URL}/mpa/pept2data`, {
-                method: "POST",
-                body: JSON.stringify({
-                    peptides: batch,
-                    equate_il: equate,
-                    report_taxa: false
-                }),
-                headers: { "Content-Type": "application/json" }
-            }).then(r => r.json());
 
-            for (const peptide of response.peptides ?? []) {
+            let response: Response;
+            try {
+                response = await fetch(`${DEFAULT_API_BASE_URL}/mpa/pept2data`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        peptides: batch,
+                        equate_il: equate,
+                        report_taxa: false
+                    }),
+                    headers: { "Content-Type": "application/json" }
+                });
+            } catch {
+                throw new Error(
+                    "Could not reach the Unipept API while upgrading this project. " +
+                    "Please check your internet connection and try opening the project again."
+                );
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    `The Unipept API returned an error (HTTP ${response.status}) while upgrading this project. ` +
+                    "Please try again later."
+                );
+            }
+
+            const json = await response.json();
+
+            for (const peptide of json.peptides ?? []) {
                 result.set(peptide.sequence, {
                     crap_filtered: peptide.crap_filtered ?? false,
                     cutoff_used: peptide.cutoff_used ?? false

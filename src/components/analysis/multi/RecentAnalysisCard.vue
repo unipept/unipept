@@ -54,6 +54,23 @@
 
                                 <v-spacer />
 
+                                <v-tooltip
+                                    v-if="item.upgradeError"
+                                    :text="item.upgradeError"
+                                    max-width="320"
+                                >
+                                    <template #activator="{ props }">
+                                        <v-btn
+                                            v-bind="props"
+                                            variant="text"
+                                            color="warning"
+                                            icon="mdi-alert"
+                                            size="small"
+                                            @click.stop
+                                        />
+                                    </template>
+                                </v-tooltip>
+
                                 <v-btn
                                     variant="text"
                                     class="me-2"
@@ -180,7 +197,7 @@ import UploadProjectButton from "@/components/analysis/multi/UploadProjectButton
 
 const props = defineProps<{
     height: number,
-    projects: { name: string, totalPeptides: number, lastAccessed: Date }[],
+    projects: { name: string, totalPeptides: number, lastAccessed: Date, upgradeError?: string | null }[],
     loading: boolean,
     disabled: boolean,
     loadingMessage?: string
