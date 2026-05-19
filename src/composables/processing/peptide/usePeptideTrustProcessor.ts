@@ -19,11 +19,10 @@ export default function usePeptideTrustProcessor() {
         for (const peptide of countTable.counts.keys()) {
             if (peptideData.has(peptide)) {
                 matchedPeptides += countTable.getOrDefault(peptide);
-            } else if (crapSet.has(peptide)) {
-                // peptide was found but excluded by CRAP blacklist filtering
-            } else {
+            } else if (!crapSet.has(peptide)) {
                 missedPeptides.push(peptide);
             }
+            // In all other cases, the peptide was found but excluded by CRAP blacklist filtering
         }
 
         trust.value = markRaw({
