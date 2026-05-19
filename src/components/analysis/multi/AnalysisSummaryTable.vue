@@ -142,12 +142,13 @@
                     <v-avatar
                         v-bind="props"
                         size="30"
-                        :color="item.found ? 'success' : 'green-lighten-4'"
+                        color="transparent"
+                        :style="item.found ? 'border: 2px solid rgb(var(--v-theme-success));' : 'border: 2px solid #C8E6C9;'"
                         class="me-1"
                     >
                         <v-icon
                             size="18"
-                            :class="item.found ? 'text-white' : 'text-grey'"
+                            :class="item.found ? 'text-success' : 'text-green-lighten-4'"
                             :icon="item.found ? 'mdi-database' : 'mdi-database-alert'"
                         />
                     </v-avatar>
@@ -161,22 +162,22 @@
                     <v-avatar
                         v-bind="props"
                         size="30"
-                        :color="item.cutoffUsed ? 'amber' : 'amber-lighten-4'"
+                        color="transparent"
+                        :style="item.cutoffUsed ? 'border: 2px solid #FFC107;' : 'border: 2px solid #FFECB3;'"
                         class="me-1"
                     >
                         <v-icon
                             size="18"
-                            :class="item.cutoffUsed ? 'text-black' : 'text-grey'"
+                            :class="item.cutoffUsed ? 'text-amber' : 'text-amber-lighten-4'"
                             :icon="item.cutoffUsed ? 'mdi-gauge-full' : 'mdi-gauge-low'"
                         />
                     </v-avatar>
                 </template>
                 <div style="max-width: 500px">
                     <span v-if="item.cutoffUsed">
-                        The number of matching proteins exceeded the Unipept API limit of 10,000 entries.
-                        Results are based on a subset and may not be fully representative.
+                        Protein match cutoff exceeded for this peptide. Results are based on a subset of matching proteins and may not be fully representative.
                     </span>
-                    <span v-else>All matching proteins were included in the analysis for this peptide.</span>
+                    <span v-else>Protein match cutoff not exceeded for this peptide. All matching proteins were included for the analysis of this peptide.</span>
                 </div>
             </v-tooltip>
 
@@ -185,11 +186,12 @@
                     <v-avatar
                         v-bind="props"
                         size="30"
-                        :color="item.crapFiltered ? 'red' : 'red-lighten-4'"
+                        color="transparent"
+                        :style="item.crapFiltered ? 'border: 2px solid #F44336;' : 'border: 2px solid #FFCDD2;'"
                     >
                         <v-icon
                             size="18"
-                            :class="item.crapFiltered ? 'text-white' : 'text-grey'"
+                            :class="item.crapFiltered ? 'text-red' : 'text-red-lighten-4'"
                             :icon="item.crapFiltered ? 'mdi-filter-minus' : 'mdi-filter'"
                         />
                     </v-avatar>
