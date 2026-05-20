@@ -136,15 +136,15 @@
                 </v-col>
             </v-row>
             <v-row>
-                <v-col cols="12" lg="8" class="pb-0">
+                <v-col cols="12" lg="8" class="pb-0 mb-n3">
                     <h2>
                         Peptide matches
                     </h2>
                 </v-col>
-                <v-col cols="12" lg="4" class="pb-0 pb-1">
+                <v-col cols="12" lg="4" class="pb-0 mb-n3">
                     <analysis-summary-export @prepareDownload="prepareDownload" @download="download" />
                 </v-col>
-                <v-col cols="12">
+                <v-col cols="12" class="pt-0 mt-n2">
                     <analysis-summary-table :analysis="analysis" />
                 </v-col>
             </v-row>
