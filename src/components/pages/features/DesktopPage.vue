@@ -22,6 +22,7 @@
             </v-col>
             <v-col
                 class="order-sm-0 order-lg-1"
+                style="position: sticky; top: calc(var(--v-layout-top, 0px) + 16px); align-self: flex-start;"
                 sm="12"
                 lg="2"
             >
