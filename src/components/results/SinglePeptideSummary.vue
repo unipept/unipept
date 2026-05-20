@@ -25,6 +25,17 @@
                 Equate I/L is disabled.
             </span>
         </div>
+        <v-alert
+            v-if="cutoffUsed"
+            type="warning"
+            variant="tonal"
+            class="my-3"
+            icon="mdi-alert-circle-outline"
+        >
+            The number of matching proteins for this peptide exceeds the Unipept API limit of 10,000 entries.
+            Biodiversity and functional annotation results are based on a subset of all matching proteins
+            and may not be fully representative.
+        </v-alert>
         <v-row>
             <v-col :cols="12" md="6">
                 <div class="headline">
@@ -68,8 +79,8 @@
                     Function
                 </div>
                 <div v-if="assay.goTrust">
-                    <span class="font-weight-bold">{{ peptideData!.faCounts.go }} proteins</span>
-                    ({{ assay.proteins.length > 0 ? displayPercentage(peptideData!.faCounts.go / assay.proteins.length) : '0%' }})
+                    <span class="font-weight-bold">{{ faCounts!.go }} proteins</span>
+                    ({{ assay.proteins.length > 0 ? displayPercentage(faCounts!.go / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="goLink"
@@ -91,8 +102,8 @@
                 </div>
 
                 <div v-if="assay.ecTrust">
-                    <span class="font-weight-bold">{{ peptideData!.faCounts.ec }} proteins</span>
-                    ({{ assay.proteins.length > 0 ? displayPercentage(peptideData!.faCounts.ec / assay.proteins.length) : '0%' }})
+                    <span class="font-weight-bold">{{ faCounts!.ec }} proteins</span>
+                    ({{ assay.proteins.length > 0 ? displayPercentage(faCounts!.ec / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="ecLink"
@@ -115,9 +126,9 @@
 
                 <div v-if="assay.iprTrust">
                     <span class="font-weight-bold">
-                        {{ peptideData!.faCounts.ipr }} proteins
+                        {{ faCounts!.ipr }} proteins
                     </span>
-                    ({{ assay.proteins.length > 0 ? displayPercentage(peptideData!.faCounts.ipr / assay.proteins.length) : '0%' }})
+                    ({{ assay.proteins.length > 0 ? displayPercentage(faCounts!.ipr / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="interproLink"
@@ -143,13 +154,12 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ComputedRef} from "vue";
+import {computed} from "vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import useOntologyStore from "@/store/OntologyStore";
 import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import usePercentage from "@/composables/usePercentage";
 import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
 
 export interface Props {
     assay: PeptideAnalysisStore
@@ -169,9 +179,10 @@ const lcaDefinition = computed(() => {
     return getNcbiDefinition(props.assay.lca)
 });
 
-const peptideData: ComputedRef<PeptideData | undefined> = computed(() => {
-    return props.assay.peptideToData!.get(props.assay.peptide);
-});
+const peptideData = computed(() => props.assay.peptideToData?.get(props.assay.peptide));
+
+const faCounts = computed(() => peptideData.value?.faCounts);
+const cutoffUsed = computed(() => peptideData.value?.cutoffUsed ?? false);
 
 const taxonomyUrl = (taxon: NcbiTaxon | undefined): string => {
     if (taxon === undefined || taxon.id === 1) {

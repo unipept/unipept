@@ -22,6 +22,16 @@
                             </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found.
                         </h1>
 
+                        <h1
+                            v-if="analysis.config.useCrap && analysis.peptideTrust.crapFilteredPeptides.length > 0"
+                            class="text-body-large"
+                        >
+                            <a @click="showCrapFilteredPeptides = true">
+                                {{ analysis.peptideTrust.crapFilteredPeptides.length }} peptides
+                            </a>
+                            ({{ displayPercentage(analysis.peptideTrust.crapFilteredPeptides.length / analysis.peptideTrust.searchedPeptides) }}) were removed by the cRAP filter.
+                        </h1>
+
                         <v-alert
                             v-if="latest === analysis.databaseVersion"
                             color="success"
@@ -154,6 +164,11 @@
             v-model="showMissingPeptides"
             :peptides="missedPeptides"
         />
+
+        <crap-filtered-peptides-dialog
+            v-model="showCrapFilteredPeptides"
+            :peptides="crapFilteredPeptides"
+        />
     </v-unipept-card>
 </template>
 
@@ -166,6 +181,7 @@ import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryEx
 import useCsvDownload from "@/composables/useCsvDownload";
 import usePeptideExport from "@/composables/usePeptideExport";
 import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDialog.vue";
+import CrapFilteredPeptidesDialog from "@/components/analysis/multi/CrapFilteredPeptidesDialog.vue";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
@@ -187,10 +203,12 @@ const emits = defineEmits<{
 }>();
 
 const showMissingPeptides = ref(false);
+const showCrapFilteredPeptides = ref(false);
 
 const databaseName = computed(() => customFilterStore.getFilterNameById(analysis.config.database) || "Invalid database");
 
 const missedPeptides = computed(() => analysis.peptideTrust!.missedPeptides);
+const crapFilteredPeptides = computed(() => analysis.peptideTrust!.crapFilteredPeptides);
 
 let peptideExportContent: string[][] = [];
 let exportDelimiter: string = "";

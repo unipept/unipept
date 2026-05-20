@@ -24,6 +24,7 @@ const process = async ({
     parallelRequests
 }: Pept2filteredData) => {
     const result = new ShareableMap<string, PeptideData>({ serializer: new PeptideDataSerializer() });
+    const crapFilteredPeptides: string[] = [];
 
     const requests: (() => Promise<void>)[] = [];
     for (let i = 0; i < peptides.length; i += batchSize) {
@@ -33,7 +34,6 @@ const process = async ({
                 body: JSON.stringify({
                     peptides: peptides.slice(i, i + batchSize),
                     equate_il: equate,
-                    blacklist_crap: useCrap,
                     report_taxa: true,
                     ...constructFilterJson(filter)
                 }),
@@ -41,6 +41,10 @@ const process = async ({
             }).then(r => r.json());
 
             for (const peptide of response.peptides) {
+                if (useCrap && peptide.crap_filtered) {
+                    crapFilteredPeptides.push(peptide.sequence);
+                    continue;
+                }
                 result.set(peptide.sequence, PeptideData.createFromPeptideDataResponse(peptide));
             }
         });
@@ -49,7 +53,8 @@ const process = async ({
     await runParallel(requests, parallelRequests);
 
     return {
-        peptToDataTransferable: result.toTransferableState()
+        peptToDataTransferable: result.toTransferableState(),
+        crapFilteredPeptides
     };
 }
 

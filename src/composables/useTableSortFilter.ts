@@ -1,5 +1,6 @@
 import { computed, ref, toRaw, watch } from "vue";
 import { markRaw } from "vue";
+import { useDebounceFn } from "@vueuse/core";
 import { ShareableMap, TransferableState } from "shared-memory-datastructures";
 import type { SingleAnalysisStore } from "@/store/SingleAnalysisStore";
 import TableSortFilterWebWorker from "@/composables/processing/workers/tableSortFilter.worker.ts?worker&inline";
@@ -8,12 +9,14 @@ import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 // ─── Shared types (also imported by the worker) ───────────────────────────────
 
 export interface AnalysisSummaryTableItem {
-    peptide:    string;
-    occurrence: number;
-    lca:        string;
-    rank:       string;
-    found:      boolean;
-    faCounts:   { all: number; ec: number; go: number; ipr: number } | undefined;
+    peptide:      string;
+    occurrence:   number;
+    lca:          string;
+    rank:         string;
+    found:        boolean;
+    faCounts:     { all: number; ec: number; go: number; ipr: number } | undefined;
+    cutoffUsed:   boolean;
+    crapFiltered: boolean;
 }
 
 export interface NcbiSubsetEntry {
@@ -38,6 +41,8 @@ export interface TableSortFilterWorkerInput {
     peptideToLcaTransferable:   TransferableState;
     /** Tiny NCBI name/rank subset for unique LCA ids — structured-cloned (small) */
     ncbiSubset:                 Record<number, NcbiSubsetEntry>;
+    /** Peptides excluded by the cRAP filter (only populated when useCrap is true) */
+    crapFilteredPeptides:       string[];
     search:       string;
     quickFilters: QuickFilters;
     sortKey:      string;
@@ -93,9 +98,11 @@ export function useTableSortFilter(analysis: SingleAnalysisStore) {
     // ── Cache builder ─────────────────────────────────────────────────────
     const buildCaches = () => {
         const lcaMap = analysis.peptideToLca;
-        if (!lcaMap || !lcaMap.size) return;
+        // Only bail if peptideToLca hasn't been set at all yet; an empty map is valid
+        // (can happen when all peptides are cRAP-filtered).
+        if (!lcaMap) return;
 
-        const shareable = new ShareableMap<string, number>({ expectedSize: lcaMap.size });
+        const shareable = new ShareableMap<string, number>();
         for (const [peptide, lcaId] of lcaMap) {
             shareable.set(peptide, lcaId);
         }
@@ -132,6 +139,7 @@ export function useTableSortFilter(analysis: SingleAnalysisStore) {
                 peptideToDataTransferable: analysis.peptideToData.toTransferableState(),
                 peptideToLcaTransferable:  peptideToLcaShareable.toTransferableState(),
                 ncbiSubset: toRaw(ncbiSubset),
+                crapFilteredPeptides: toRaw(analysis.crapFilteredPeptides),
                 search:       search.value,
                 quickFilters: toRaw(quickFilters.value),
                 sortKey:      sortKey.value,
@@ -151,13 +159,9 @@ export function useTableSortFilter(analysis: SingleAnalysisStore) {
         }
     };
 
-    // ── Debounce helpers ──────────────────────────────────────────────────
-    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const scheduleWorker = (delayMs = 100) => {
-        if (debounceTimer) clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(runWorker, delayMs);
-    };
+    // ── Debounced worker triggers ─────────────────────────────────────────
+    const scheduleWorker       = useDebounceFn(runWorker, 100);
+    const scheduleWorkerSearch = useDebounceFn(runWorker, 300);
 
     // ── Public API ────────────────────────────────────────────────────────
 
@@ -187,7 +191,7 @@ export function useTableSortFilter(analysis: SingleAnalysisStore) {
     const onSearchInput = (value: string | null) => {
         search.value = value ?? "";
         page.value   = 1;
-        scheduleWorker(300);
+        scheduleWorkerSearch();
     };
 
     /** Immediate handler for quick filter chip toggles */

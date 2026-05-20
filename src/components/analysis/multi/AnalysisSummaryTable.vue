@@ -1,7 +1,6 @@
 <template>
     <div>
 
-
         <!-- ── Search hint ────────────────────────────────────────────────────── -->
         <p class="text-caption text-medium-emphasis mb-1">
             Type freely or use <code>field:value</code>. Each term gets auto-classified — dashed chips show inferred fields you can confirm or reassign.
@@ -151,13 +150,30 @@
             </template>
 
             <template #item.peptide="{ item }">
-                <a
-                    class="cursor-pointer"
-                    @click="openPeptideAnalysis(item.peptide)"
-                    :style="$vuetify.display.mobile ? 'display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' : ''"
-                >
-                    {{ item.peptide }}
-                </a>
+                <v-tooltip location="top" :text="item.peptide">
+                    <template #activator="{ props }">
+                        <a
+                            class="cursor-pointer"
+                            @click="openPeptideAnalysis(item.peptide)"
+                            :style="$vuetify.display.mobile ? 'display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' : ''"
+                        >
+                            {{ item.peptide }}
+                        </a>
+                    </template>
+                </v-tooltip>
+            </template>
+
+            <template #item.lca="{ item }">
+                <v-tooltip location="top" :text="item.lca">
+                    <template #activator="{ props }">
+                    <span
+                        v-bind="props"
+                        style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                    >
+                        {{ item.lca }}
+                    </span>
+                    </template>
+                </v-tooltip>
             </template>
 
             <template #item.faCounts="{ item }">
@@ -229,22 +245,71 @@
                 </v-tooltip>
             </template>
 
-            <template #item.warning="{ item }">
-                <v-tooltip
-                    v-if="!item.found"
-                    text="This peptide was not found by Unipept"
-                >
-                    <template #activator="{ props }">
+        <template #item.status="{ item }">
+            <v-tooltip location="top">
+                <template #activator="{ props }">
+                    <v-avatar
+                        v-bind="props"
+                        size="30"
+                        color="transparent"
+                        :style="item.found ? 'border: 2px solid rgb(var(--v-theme-success));' : 'border: 2px solid #C8E6C9;'"
+                        class="me-1"
+                    >
                         <v-icon
-                            v-bind="props"
-                            color="warning"
-                            size="20"
-                            icon="mdi-alert-circle-outline"
+                            size="18"
+                            :class="item.found ? 'text-success' : 'text-green-lighten-4'"
+                            :icon="item.found ? 'mdi-database' : 'mdi-database-alert'"
                         />
-                    </template>
-                </v-tooltip>
-            </template>
-        </v-data-table-server>
+                    </v-avatar>
+                </template>
+                <span v-if="item.found">Peptide was found by Unipept.</span>
+                <span v-else>This peptide was not found by Unipept.</span>
+            </v-tooltip>
+
+            <v-tooltip location="top">
+                <template #activator="{ props }">
+                    <v-avatar
+                        v-bind="props"
+                        size="30"
+                        color="transparent"
+                        :style="item.cutoffUsed ? 'border: 2px solid #FFC107;' : 'border: 2px solid #FFECB3;'"
+                        class="me-1"
+                    >
+                        <v-icon
+                            size="18"
+                            :class="item.cutoffUsed ? 'text-amber' : 'text-amber-lighten-4'"
+                            :icon="item.cutoffUsed ? 'mdi-gauge-full' : 'mdi-gauge-low'"
+                        />
+                    </v-avatar>
+                </template>
+                <div style="max-width: 500px">
+                    <span v-if="item.cutoffUsed">
+                        Protein match cutoff exceeded for this peptide. Results are based on a subset of matching proteins and may not be fully representative.
+                    </span>
+                    <span v-else>Protein match cutoff not exceeded for this peptide. All matching proteins were included for the analysis of this peptide.</span>
+                </div>
+            </v-tooltip>
+
+            <v-tooltip v-if="analysis.config.useCrap" location="top">
+                <template #activator="{ props }">
+                    <v-avatar
+                        v-bind="props"
+                        size="30"
+                        color="transparent"
+                        :style="item.crapFiltered ? 'border: 2px solid #F44336;' : 'border: 2px solid #FFCDD2;'"
+                    >
+                        <v-icon
+                            size="18"
+                            :class="item.crapFiltered ? 'text-red' : 'text-red-lighten-4'"
+                            :icon="item.crapFiltered ? 'mdi-filter-minus' : 'mdi-filter'"
+                        />
+                    </v-avatar>
+                </template>
+                <span v-if="item.crapFiltered">This peptide was filtered out by the cRAP filter and excluded from the analysis.</span>
+                <span v-else>This peptide was not filtered by the cRAP filter.</span>
+            </v-tooltip>
+        </template>
+    </v-data-table-server>
     </div>
 </template>
 
@@ -327,7 +392,9 @@ const headers: DataTableHeader[] = [
         title: "Peptide",
         align: "start",
         key: "peptide",
-        width: "25%"
+        width: "25%",
+        maxWidth: "25%",
+        cellProps: { style: "max-width: 0; overflow: hidden;" }
     },
     {
         title: "Occurrence",
@@ -339,7 +406,9 @@ const headers: DataTableHeader[] = [
         title: "Lowest common ancestor",
         align: "start",
         key: "lca",
-        width: "30%"
+        width: "25%",
+        maxWidth: "25%",
+        cellProps: { style: "max-width: 0; overflow: hidden;" }
     },
     {
         title: "Rank",
@@ -355,10 +424,10 @@ const headers: DataTableHeader[] = [
         sortable: false
     },
     {
-        title: "",
-        align: "start",
-        key: "warning",
-        width: "5%",
+        title: "Status",
+        align: "center",
+        key: "status",
+        width: "10%",
         sortable: false
     }
 ];

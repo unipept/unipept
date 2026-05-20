@@ -87,6 +87,7 @@ const process = ({
     peptideToDataTransferable,
     peptideToLcaTransferable,
     ncbiSubset,
+    crapFilteredPeptides,
     search,
     quickFilters,
     sortKey,
@@ -105,18 +106,24 @@ const process = ({
         peptideToLcaTransferable
     );
 
+    const crapSet = new Set<string>(crapFilteredPeptides);
+
     const query = parseQuery(search);
+
+    // Pre-compute which lowercase string fields each iteration actually needs.
+    const needsLcaName = Boolean(query.freeText || query.lcaFilter);
+    const needsRank    = Boolean(query.freeText || query.rankFilter);
 
     const rows: TableSortFilterWorkerOutput["rows"] = [];
 
     for (const [peptide, count] of peptideCounts.entries()) {
         const lcaId     = peptideToLca.get(peptide);
         const ncbiEntry = lcaId !== undefined ? ncbiSubset[lcaId] : undefined;
+        const lcaName   = needsLcaName ? (ncbiEntry?.name.toLowerCase() ?? "") : "";
+        const rank      = needsRank    ? (ncbiEntry?.rank.toLowerCase() ?? "") : "";
 
         // ── Free-text filter (peptide, LCA name, rank) ───────────────────────
         if (query.freeText) {
-            const lcaName = ncbiEntry?.name.toLowerCase() ?? "";
-            const rank    = ncbiEntry?.rank.toLowerCase() ?? "";
             if (
                 !peptide.toLowerCase().includes(query.freeText) &&
                 !lcaName.includes(query.freeText) &&
@@ -128,16 +135,10 @@ const process = ({
         const faCounts    = peptideData?.faCounts;
 
         // ── LCA name filter ───────────────────────────────────────────────────
-        if (query.lcaFilter) {
-            const lcaName = ncbiEntry?.name.toLowerCase() ?? "";
-            if (!lcaName.includes(query.lcaFilter)) continue;
-        }
+        if (query.lcaFilter && !lcaName.includes(query.lcaFilter)) continue;
 
         // ── Rank filter ───────────────────────────────────────────────────────
-        if (query.rankFilter) {
-            const rank = ncbiEntry?.rank.toLowerCase() ?? "";
-            if (!rank.includes(query.rankFilter)) continue;
-        }
+        if (query.rankFilter && !rank.includes(query.rankFilter)) continue;
 
         // ── has: query filters ────────────────────────────────────────────────
         if (query.hasGo  && (!faCounts || faCounts.go  === 0)) continue;
@@ -152,11 +153,13 @@ const process = ({
 
         rows.push({
             peptide,
-            occurrence: count,
-            lca:   ncbiEntry?.name ?? "N/A",
-            rank:  ncbiEntry?.rank ?? "N/A",
-            found: lcaId !== undefined,
-            faCounts
+            occurrence:   count,
+            lca:          ncbiEntry?.name ?? "N/A",
+            rank:         ncbiEntry?.rank ?? "N/A",
+            found:        lcaId !== undefined,
+            faCounts,
+            cutoffUsed:   peptideData?.cutoffUsed ?? false,
+            crapFiltered: crapSet.has(peptide)
         });
     }
 
@@ -172,8 +175,8 @@ const process = ({
                 valA = a.faCounts?.all ?? 0;
                 valB = b.faCounts?.all ?? 0;
             } else {
-                valA = (a as Record<string, any>)[sortKey];
-                valB = (b as Record<string, any>)[sortKey];
+                valA = a[sortKey as keyof AnalysisSummaryTableItem] as string | number;
+                valB = b[sortKey as keyof AnalysisSummaryTableItem] as string | number;
             }
 
             if (typeof valA === "string") valA = valA.toLowerCase();

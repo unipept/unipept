@@ -5,7 +5,7 @@
     >
         <v-unipept-card>
             <v-card-title class="d-flex align-center">
-                <h1>{{ peptides.length }} missed peptides</h1>
+                <h2>{{ peptides.length }} missed peptides</h2>
                 <v-spacer />
                 <div class="justify-end">
                     <v-btn
