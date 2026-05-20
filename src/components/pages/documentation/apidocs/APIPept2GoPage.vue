@@ -111,14 +111,15 @@
             large-title
         >
             <p class="mb-2">
-                A list of <initialism>JSON</initialism> objects is returned. By default, each object contains the following information fields:
+                A list of <initialism>JSON</initialism> objects is returned. By default, each object contains the following information fields.
+                If a peptide matches more than 10,000 proteins, the response is truncated and <inline-code>cutoff_used</inline-code> is set to <inline-code>true</inline-code>.
 
                 <ul class="my-3">
                     <li>
                         <inline-code>peptide</inline-code>: the peptide that was searched for.
                     </li>
                     <li>
-                        <inline-code>cutoff_used</inline-code>: <inline-code>true</inline-code> if the number of matched proteins exceeded the cutoff and the response was truncated; <inline-code>false</inline-code> otherwise.
+                        <inline-code>cutoff_used</inline-code>: <inline-code>true</inline-code> if the number of matched proteins exceeded the cutoff (default: 10,000 proteins) and the response was truncated; <inline-code>false</inline-code> otherwise.
                     </li>
                     <li>
                         <inline-code>total_protein_count</inline-code>: total amount of proteins matched with the given peptide.
