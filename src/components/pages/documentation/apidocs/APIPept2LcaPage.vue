@@ -120,10 +120,12 @@
             large-title
         >
             The taxonomic lowest common ancestors associated with the given peptides are returned as a list of <initialism>JSON</initialism> objects.
-            By default, each object contains the following information fields extracted from the UniProt entry and <initialism>NCBI</initialism> taxonomy:
+            By default, each object contains the following information fields extracted from the UniProt entry and <initialism>NCBI</initialism> taxonomy.
+            If a peptide matches more than 10,000 proteins, the response is truncated and <inline-code>cutoff_used</inline-code> is set to <inline-code>true</inline-code>.
 
             <ul class="my-3">
                 <li><inline-code>peptide</inline-code>: the peptide that was searched for</li>
+                <li><inline-code>cutoff_used</inline-code>: <inline-code>true</inline-code> if the number of matched proteins exceeded the cutoff (default: 10,000 proteins) and the response was truncated; <inline-code>false</inline-code> otherwise</li>
                 <li><inline-code>taxon_id</inline-code>: the <initialism>NCBI</initialism> taxon id of the taxonomic lowest common ancestor</li>
                 <li><inline-code>taxon_name</inline-code>: the name of the taxonomic lowest common ancestor</li>
                 <li><inline-code>taxon_rank</inline-code>: the taxonomic rank of the taxonomic lowest common ancestor</li>
