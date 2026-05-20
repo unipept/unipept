@@ -34,7 +34,9 @@
                 <v-card-text>
                     This interactive tree bundles the complete taxonomic lineages of all UniProt entries whose protein sequence contains the tryptic peptide.
                 </v-card-text>
-                <treeview :ncbi-root="assay.ncbiTree!" />
+                <div style="height: 500px;">
+                    <treeview :ncbi-root="assay.ncbiTree!" />
+                </div>
             </v-window-item>
             <v-window-item value="lineage-table">
                 <lineage-table :assay="assay" />
