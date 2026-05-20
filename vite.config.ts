@@ -54,6 +54,10 @@ export default defineConfig({
     },
     server: {
         port: 3000,
+        // Prevents Vite 8 from eagerly warming up virtual Vuetify SASS modules
+        // before vite-plugin-vuetify has populated its tempFiles map, which
+        // causes spurious "Pre-transform error" warnings on startup.
+        preTransformRequests: false,
         headers: {
             "Cross-Origin-Opener-Policy": "same-origin",
             "Cross-Origin-Embedder-Policy": "require-corp"

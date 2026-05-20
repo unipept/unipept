@@ -325,6 +325,7 @@ const useSingleAnalysisStore = (
         analysisError,
 
         peptideToData,
+        crapFilteredPeptides,
         peptidesTable,
         peptideTrust,
         ecTable,
