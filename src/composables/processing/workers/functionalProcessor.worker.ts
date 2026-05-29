@@ -12,12 +12,15 @@ self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
 
+const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
+
 const process = async ({
     countsMapTransferable,
     peptideDataTransferable,
     percentage,
     termPrefix,
-    proteinCountProperty
+    proteinCountProperty,
+    extractFunctionsMap = false
 }: FunctionalProcessorData ) => {
     const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
     const peptideCounts = ShareableMap.fromTransferableState<string, number>(countsMapTransferable);
@@ -29,6 +32,8 @@ const process = async ({
     let annotatedCount = 0;
 
     const itemToPeptides: Map<string, string[]> = new Map();
+    // For EC functional analysis: map each peptide to all its EC terms (not filtered by percentage)
+    const peptidesFunctions: Map<string, string[]> = new Map();
 
     for (const [peptide, peptideCount] of peptideCounts) {
         const peptideData = peptideToResponseMap.get(peptide);
@@ -52,6 +57,14 @@ const process = async ({
             itemToPeptides.get(term)!.push(peptide);
         }
 
+        // If extracting functions map (for EC functional analysis), collect all EC terms for this peptide
+        if (extractFunctionsMap && termPrefix === "ec") {
+            const ecTerms = Object.keys(terms);
+            if (ecTerms.length > 0) {
+                peptidesFunctions.set(peptide, ecTerms);
+            }
+        }
+
         // If there is at least one protein that belongs to this peptide annotated with an annotation of the
         // kind we're currently investigating, we should increase the annotation count.
         if (proteinCount > 0) {
@@ -70,6 +83,7 @@ const process = async ({
     return {
         sortedCountsTransferable: countsPerCode.toTransferableState(),
         itemToPeptides,
-        annotatedCount
+        annotatedCount,
+        peptidesFunctions: extractFunctionsMap ? peptidesFunctions : undefined
     };
 };

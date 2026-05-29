@@ -109,6 +109,7 @@
                 <v-card-text>
                     <functional-ec-results
                         :data="ecData"
+                        :analysis="analysis"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         @download-item="downloadEcItem"

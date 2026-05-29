@@ -50,9 +50,9 @@ export default class PeptonizerProcessor {
         }
 
         // If the equate I / L option is enabled, we need to update the intensities as well
-        if (equateIl) {
+        /*if (equateIl) {
             peptideIntensities = new Map<string, number>(Array.from(peptideIntensities.entries()).map(([k, v]) => [k.replace(/I/g, "L"), v]))
-        }
+        }*/
 
         while (PeptonizerProcessor.inProgress) {
             await PeptonizerProcessor.inProgress;

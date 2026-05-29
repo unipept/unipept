@@ -14,6 +14,7 @@ import usePathwayPilotStore, {PathwayPilotStoreImport} from "@/store/PathwayPilo
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
+import useECFunctionalAnalysisStore, {ECFunctionalAnalysisStoreImport} from "@/store/ECFunctionalAnalysisStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
@@ -83,6 +84,7 @@ const useSingleAnalysisStore = (
     const customFilterStore = useCustomFilterStore();
     const peptonizerStore = usePeptonizerStore(_id);
     const pathwayPilotStore = usePathwayPilotStore(_id);
+    const ecFunctionalAnalysisStore = useECFunctionalAnalysisStore(_id);
 
     // ===============================================================
     // ======================== REFERENCES ===========================
@@ -111,7 +113,7 @@ const useSingleAnalysisStore = (
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
     const { countTable: filteredPeptidesTable, process: processFilteredPeptides } = usePeptideProcessor();
     const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
-    const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
+    const { countTable: ecTable, trust: ecTrust, ecToPeptides, peptidesFunctions, process: processEc } = useEcProcessor();
     const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
@@ -171,6 +173,17 @@ const useSingleAnalysisStore = (
                 await processEc(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
                 await processGo(peptidesTable!.value!, peptideToData.value!, functionalFilter.value!);
                 await processInterpro(peptidesTable.value!, peptideToData.value!, functionalFilter.value!);
+
+                // Run EC functional analysis using Peptonizer if peptidesFunctions are available
+                if (peptidesFunctions.value && peptidesFunctions.value.size > 0) {
+                    await ecFunctionalAnalysisStore.runECFunctionalAnalysis(
+                        peptidesTable.value!,
+                        peptideToData.value!,
+                        peptidesFunctions.value,
+                        config.value.equate,
+                        intensities.value
+                    );
+                }
 
                 await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
                 await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
@@ -278,7 +291,8 @@ const useSingleAnalysisStore = (
             peptideToDataTransferable,
 
             peptonizer: peptonizerStore.exportStore(),
-            pathwayPilot: pathwayPilotStore.exportStore()
+            pathwayPilot: pathwayPilotStore.exportStore(),
+            ecFunctionalAnalysis: ecFunctionalAnalysisStore.exportStore()
         }
     }
 
@@ -305,6 +319,10 @@ const useSingleAnalysisStore = (
 
         if (storeImport.pathwayPilot) {
             pathwayPilotStore.setImportedData(storeImport.pathwayPilot);
+
+                if (storeImport.ecFunctionalAnalysis) {
+                    ecFunctionalAnalysisStore.setImportedData(storeImport.ecFunctionalAnalysis);
+                }
         }
     }
 
@@ -331,6 +349,7 @@ const useSingleAnalysisStore = (
         ecTable,
         ecTrust,
         ecToPeptides,
+        peptidesFunctions,
         goTable,
         goTrust,
         goToPeptides,
@@ -347,6 +366,7 @@ const useSingleAnalysisStore = (
 
         peptonizerStore,
         pathwayPilotStore,
+        ecFunctionalAnalysisStore,
 
         analyse,
         updateName,
@@ -373,6 +393,7 @@ export interface SingleAnalysisStoreImport {
     peptideToDataTransferable: TransferableState | undefined;
     peptonizer: PeptonizerStoreImport | undefined;
     pathwayPilot: PathwayPilotStoreImport | undefined;
+    ecFunctionalAnalysis: ECFunctionalAnalysisStoreImport | undefined;
 }
 
 export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImport) => {
