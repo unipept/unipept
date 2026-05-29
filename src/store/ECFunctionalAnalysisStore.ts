@@ -1,11 +1,9 @@
-import {ref, Ref, toRaw} from "vue";
+import {ref, toRaw} from "vue";
 import {defineStore} from "pinia";
 import CountTable from "@/logic/processors/CountTable";
-import {PeptonizerProgressListener} from "peptonizer";
 import ECFunctionalAnalysisProcessor from "@/logic/processors/functional/ECFunctionalAnalysisProcessor";
 import useOntologyStore from "@/store/OntologyStore";
-import {ShareableMap} from "shared-memory-datastructures";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import usePeptonizerAnalysisProgress from "@/store/usePeptonizerAnalysisProgress";
 
 export enum ECFunctionalAnalysisStatus {
     Pending,
@@ -14,83 +12,18 @@ export enum ECFunctionalAnalysisStatus {
     Failed
 }
 
-class UnipeptECFunctionalAnalysisProgressListener implements PeptonizerProgressListener {
-    private totalTasks = 0;
-    private tasksFinished = 0;
-    private startEpoch = 0;
-
-    constructor(
-        private currentProgress: Ref<number>,
-        private etaSeconds: Ref<number>,
-        private started: Ref<boolean>,
-        private initializationFinished: Ref<boolean>,
-        private finished: Ref<boolean>
-    ) {
-        this.currentProgress.value = 0;
-        this.etaSeconds.value = 0;
-        this.started.value = false;
-        this.initializationFinished.value = false;
-        this.finished.value = false;
-    }
-
-    peptonizerStarted(totalTasks: number, _taskSpecifications: any[]): void {
-        this.started.value = true;
-        this.totalTasks = totalTasks;
-    }
-
-    peptonizerFinished(): void {
-        this.finished.value = true;
-    }
-
-    peptonizerCancelled() {
-        // Not required by Peptonizer
-    }
-
-    taskStarted(_parameterSet: any, _workerId: number) {
-        if (!this.initializationFinished.value) {
-            this.startEpoch = new Date().getTime();
-            this.initializationFinished.value = true;
-        }
-    }
-
-    taskFinished(_parameterSet: any, _workerId: number) {
-        this.tasksFinished++;
-        this.currentProgress.value = 100 * (this.tasksFinished / this.totalTasks);
-
-        // Avoid division by zero
-        if (this.currentProgress.value <= 0) {
-            this.etaSeconds.value = 0;
-            return
-        }
-
-        const currentEpoch = new Date().getTime();
-        const timeSinceStart = currentEpoch - this.startEpoch;
-
-        this.etaSeconds.value = (timeSinceStart / this.currentProgress.value) * (100 - this.currentProgress.value);
-    }
-
-    graphsUpdated(_currentGraph: number, _totalGraphs: number, _workerId: number): void {
-        // Not required
-    }
-
-    maxResidualUpdated(_maxResidual: number, _tolerance: number, _workerId: number): void {
-        // Not required
-    }
-
-    iterationsUpdated(_currentIteration: number, _totalIterations: number, _workerId: number): void {
-        // Not required
-    }
-}
-
 const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFunctionalAnalysisStore_${sampleId}`, () => {
     const status = ref<ECFunctionalAnalysisStatus>(ECFunctionalAnalysisStatus.Pending);
     const ecTermsToConfidence = ref<Map<string, number> | undefined>();
 
-    const currentProgress = ref<number>(0);
-    const etaSeconds = ref<number>(0);
-    const analysisStarted = ref<boolean>(false);
-    const analysisInitializationFinished = ref<boolean>(false);
-    const analysisFinished = ref<boolean>(false);
+    const {
+        currentProgress,
+        etaSeconds,
+        started: analysisStarted,
+        initializationFinished: analysisInitializationFinished,
+        finished: analysisFinished,
+        createListener
+    } = usePeptonizerAnalysisProgress();
     const analysisError = ref<string>("");
 
     let ecFunctionalAnalysisProcessor: ECFunctionalAnalysisProcessor | undefined;
@@ -109,13 +42,7 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
         ecTermsToConfidence.value = undefined;
         analysisError.value = "";
 
-        const listener = new UnipeptECFunctionalAnalysisProgressListener(
-            currentProgress,
-            etaSeconds,
-            analysisStarted,
-            analysisInitializationFinished,
-            analysisFinished
-        );
+        const listener = createListener();
 
         try {
             ecFunctionalAnalysisProcessor = new ECFunctionalAnalysisProcessor();

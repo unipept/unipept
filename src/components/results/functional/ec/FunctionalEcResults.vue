@@ -91,10 +91,9 @@ onMounted(() => {
         <v-row v-if="analysis && analysis.ecFunctionalAnalysisStore">
             <v-col cols="12">
                 <ECFunctionalAnalysisResults
-                    :uses-default-scores="!analysis.usesCustomPeptideScores"
-                    :sample-name="analysis.name || 'sample'"
-                    :peptide-count-table="data.ecTable"
-                    :ec-store="analysis.ecFunctionalAnalysisStore"
+                    :store="analysis.ecFunctionalAnalysisStore"
+                    :peptideCountTable="data.ecTable"
+                    :peptidesFunctions="analysis.peptidesFunctions"
                 />
             </v-col>
         </v-row>

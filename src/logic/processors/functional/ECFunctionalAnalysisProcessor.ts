@@ -1,8 +1,11 @@
 import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import CountTable from "@/logic/processors/CountTable";
 import { DEFAULT_PEPTONIZER_ALPHAS, DEFAULT_PEPTONIZER_BETAS, DEFAULT_PEPTONIZER_PRIORS, DEFAULT_PEPTONIZER_WORKERS } from "@/logic/processors/peptonizer/PeptonizerProcessor";
-
-export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
+import ExclusiveProcessorRunner from "@/logic/processors/peptonizer/ExclusiveProcessorRunner";
+import {
+    createDefaultPeptideIntensities,
+    DEFAULT_PEPTIDE_INTENSITIES
+} from "@/logic/processors/peptonizer/PeptonizerShared";
 
 const canonicalizePeptide = (peptide: string, equateIl: boolean): string => {
     return equateIl ? peptide.replace(/I/g, "L") : peptide;
@@ -19,7 +22,7 @@ export type ECFunctionalAnalysisResult = Map<string, number>;
  * This performs probability-based analysis of which EC terms are active.
  */
 export default class ECFunctionalAnalysisProcessor {
-    private static inProgress: Promise<ECFunctionalAnalysisResult | undefined> | undefined;
+    private static runner = new ExclusiveProcessorRunner<ECFunctionalAnalysisResult>();
 
     private peptonizer: Peptonizer;
 
@@ -51,11 +54,9 @@ export default class ECFunctionalAnalysisProcessor {
             normalizedCounts.set(normalizedPeptide, (normalizedCounts.get(normalizedPeptide) || 0) + count);
         }
 
-        const normalizedIntensities = new Map<string, number>();
+        let normalizedIntensities = new Map<string, number>();
         if (!peptideIntensities) {
-            for (const peptide of normalizedCounts.keys()) {
-                normalizedIntensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
-            }
+            normalizedIntensities = createDefaultPeptideIntensities(normalizedCounts.keys(), DEFAULT_PEPTIDE_INTENSITIES);
         } else {
             for (const [peptide, intensity] of peptideIntensities.entries()) {
                 const normalizedPeptide = canonicalizePeptide(peptide, equateIl);
@@ -104,14 +105,10 @@ export default class ECFunctionalAnalysisProcessor {
             peptidesFunctionsWithIds.set(peptide, numericIds);
         }
 
-        while (ECFunctionalAnalysisProcessor.inProgress) {
-            await ECFunctionalAnalysisProcessor.inProgress;
-        }
-
-        try {
+        return await ECFunctionalAnalysisProcessor.runner.run(async () => {
             console.log(`Starting EC Functional Analysis with up to ${DEFAULT_PEPTONIZER_WORKERS} workers...`);
 
-            ECFunctionalAnalysisProcessor.inProgress = (this.peptonizer as any).functionalAnalysis(
+            const rawResult = await (this.peptonizer as any).functionalAnalysis(
                 peptidesFunctionsWithIds,
                 normalizedIntensities,
                 normalizedCounts,
@@ -122,8 +119,6 @@ export default class ECFunctionalAnalysisProcessor {
                 listener,
                 DEFAULT_PEPTONIZER_WORKERS
             );
-
-            const rawResult = await ECFunctionalAnalysisProcessor.inProgress;
 
             // Map numeric IDs back to EC numbers
             if (rawResult) {
@@ -138,11 +133,7 @@ export default class ECFunctionalAnalysisProcessor {
             }
 
             return undefined;
-        } catch (error) {
-            throw error;
-        } finally {
-            ECFunctionalAnalysisProcessor.inProgress = undefined;
-        }
+        });
     }
 
     public cancelECFunctionalAnalysis() {

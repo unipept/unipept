@@ -2,10 +2,13 @@ import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptoniz
 import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import useBrowserCheck from "@/composables/useBrowserCheck";
+import ExclusiveProcessorRunner from "@/logic/processors/peptonizer/ExclusiveProcessorRunner";
+import {
+    createDefaultPeptideIntensities,
+    DEFAULT_PEPTIDE_INTENSITIES
+} from "@/logic/processors/peptonizer/PeptonizerShared";
 
 const { isSafari, isFirefox, isChromium } = useBrowserCheck();
-
-export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
 
 export const DEFAULT_PEPTONIZER_WORKERS = (() => {
     if (isSafari()) {
@@ -28,7 +31,7 @@ export const DEFAULT_PEPTONIZER_PRIORS: number[] = [0.3, 0.5];
 
 export default class PeptonizerProcessor {
     // Only one instance of the Peptonizer should be running at the same time in the application.
-    private static inProgress: Promise<PeptonizerResult | undefined> | undefined;
+    private static runner = new ExclusiveProcessorRunner<PeptonizerResult>();
 
     private peptonizer: Peptonizer;
 
@@ -46,7 +49,7 @@ export default class PeptonizerProcessor {
     ): Promise<PeptonizerResult | undefined> {
         // If no intensities are provided, we set them to the default value
         if (!peptideIntensities) {
-            peptideIntensities = new Map<string, number>(Array.from(peptideCountTable.counts.keys()).map((peptide: string) => [peptide, DEFAULT_PEPTIDE_INTENSITIES]));
+            peptideIntensities = createDefaultPeptideIntensities(peptideCountTable.counts.keys(), DEFAULT_PEPTIDE_INTENSITIES);
         }
 
         // If the equate I / L option is enabled, we need to update the intensities as well
@@ -54,14 +57,10 @@ export default class PeptonizerProcessor {
             peptideIntensities = new Map<string, number>(Array.from(peptideIntensities.entries()).map(([k, v]) => [k.replace(/I/g, "L"), v]))
         }*/
 
-        while (PeptonizerProcessor.inProgress) {
-            await PeptonizerProcessor.inProgress;
-        }
-
-        try {
+        return await PeptonizerProcessor.runner.run(async () => {
             console.log(`Starting Peptonizer with up to ${DEFAULT_PEPTONIZER_WORKERS} workers...`);
 
-            PeptonizerProcessor.inProgress = this.peptonizer.peptonize(
+            return await this.peptonizer.peptonize(
                 peptidesTaxa,
                 peptideIntensities,
                 new Map<string, number>(Array.from(peptideCountTable.counts.entries())),
@@ -73,13 +72,7 @@ export default class PeptonizerProcessor {
                 listener,
                 DEFAULT_PEPTONIZER_WORKERS
             );
-
-            return await PeptonizerProcessor.inProgress;
-        } catch (error) {
-            throw error;
-        } finally {
-            PeptonizerProcessor.inProgress = undefined;
-        }
+        });
     }
 
     public cancelPeptonizer() {
