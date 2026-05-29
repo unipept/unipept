@@ -84,7 +84,7 @@ class UnipeptECFunctionalAnalysisProgressListener implements PeptonizerProgressL
 
 const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFunctionalAnalysisStore_${sampleId}`, () => {
     const status = ref<ECFunctionalAnalysisStatus>(ECFunctionalAnalysisStatus.Pending);
-    const ecIdsToConfidence = ref<Map<string, number> | undefined>();
+    const ecTermsToConfidence = ref<Map<string, number> | undefined>();
 
     const currentProgress = ref<number>(0);
     const etaSeconds = ref<number>(0);
@@ -97,7 +97,6 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
 
     const runECFunctionalAnalysis = async (
         peptideCountTable: CountTable<string>,
-        peptideToData: ShareableMap<string, PeptideData>,
         peptidesFunctions: Map<string, string[]>,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
@@ -107,7 +106,7 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
         status.value = ECFunctionalAnalysisStatus.Running;
 
         // Reset to initial values
-        ecIdsToConfidence.value = undefined;
+        ecTermsToConfidence.value = undefined;
         analysisError.value = "";
 
         const listener = new UnipeptECFunctionalAnalysisProgressListener(
@@ -134,11 +133,11 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
                 return;
             }
 
-            ecIdsToConfidence.value = ecAnalysisData;
+            ecTermsToConfidence.value = ecAnalysisData;
 
             // Update ontology with EC terms
             const {updateEcOntology} = useOntologyStore();
-            await updateEcOntology(Array.from(ecIdsToConfidence.value.keys()));
+            await updateEcOntology(Array.from(ecTermsToConfidence.value.keys()));
 
             status.value = ECFunctionalAnalysisStatus.Finished;
         } catch (error) {
@@ -156,9 +155,9 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
     }
 
     const exportStore = (): ECFunctionalAnalysisStoreImport | undefined => {
-        if (ecIdsToConfidence.value) {
+        if (ecTermsToConfidence.value) {
             return {
-                ecIdsToConfidence: Array.from(toRaw(ecIdsToConfidence.value).entries()),
+                ecTermsToConfidence: Array.from(toRaw(ecTermsToConfidence.value).entries()),
                 status: status.value
             }
         }
@@ -167,12 +166,12 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
     }
 
     const setImportedData = (storeImport: ECFunctionalAnalysisStoreImport) => {
-        ecIdsToConfidence.value = new Map<string, number>(storeImport.ecIdsToConfidence);
+        ecTermsToConfidence.value = new Map<string, number>(storeImport.ecTermsToConfidence);
         status.value = ECFunctionalAnalysisStatus.Finished;
     }
 
     return {
-        ecIdsToConfidence,
+        ecTermsToConfidence,
 
         status,
         currentProgress,
@@ -190,7 +189,7 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
 })();
 
 export type ECFunctionalAnalysisStoreImport = {
-    ecIdsToConfidence: [string, number][];
+    ecTermsToConfidence: [string, number][];
     status: ECFunctionalAnalysisStatus;
 }
 

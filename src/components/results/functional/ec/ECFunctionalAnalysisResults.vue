@@ -1,33 +1,14 @@
 <template>
-    <div>
+    <v-card-text>
         <v-row v-if="status === ECFunctionalAnalysisStatus.Pending">
             <v-col>
                 <v-card class="pa-4">
                     <v-card-title>EC Functional Analysis</v-card-title>
                     <v-card-text>
                         <p>
-                            Use the EC functional analysis to determine which EC terms are likely active based on
-                            probabilistic inference. This analysis uses advanced Bayesian methods to compute confidence
-                            scores for each EC term.
+                            The EC functional analysis is queued and will appear once processing completes.
                         </p>
-                        <v-select
-                            v-model="ecPercentageFilter"
-                            :items="[1, 5, 10, 20]"
-                            label="EC Percentage Filter"
-                            outlined
-                            class="mt-4"
-                        />
                     </v-card-text>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            @click="startAnalysis"
-                            color="primary"
-                            variant="tonal"
-                        >
-                            Start Analysis
-                        </v-btn>
-                    </v-card-actions>
                 </v-card>
             </v-col>
         </v-row>
@@ -40,21 +21,11 @@
                         <peptonizer-progress
                             :progress="currentProgress"
                             :eta="etaSeconds * 1000"
-                            :peptonizer-started="true"
-                            :peptonizer-initialization-finished="true"
+                            :peptonizer-started="analysisStarted"
+                            :peptonizer-initialization-finished="analysisInitializationFinished"
                             :peptonizer-finished="false"
                         />
                     </v-card-text>
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            @click="cancelAnalysis"
-                            color="warning"
-                            variant="tonal"
-                        >
-                            Cancel
-                        </v-btn>
-                    </v-card-actions>
                 </v-card>
             </v-col>
         </v-row>
@@ -65,22 +36,17 @@
                     <v-card-title>EC Functional Analysis Results</v-card-title>
                     <v-card-text>
                         <peptonizer-chart
+                            v-if="ecTermsToConfidence"
                             :rank="'EC'"
-                            :usesDefaultScores="true"
-                            :peptonizer-result="ecIdsToConfidence || new Map()"
+                            :uses-default-scores="true"
+                            :peptonizer-result="ecTermsToConfidence"
                         />
-
-                        <!-- Visualization only: Peptonizer-style bar chart displays EC terms sorted by confidence -->
                     </v-card-text>
                     <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                            @click="downloadResults"
-                            color="secondary"
-                            variant="tonal"
-                        >
-                            Download Results
-                        </v-btn>
+                        <analysis-summary-export
+                            @prepareDownload="exportCsv"
+                            @download="downloadCsv"
+                        />
                     </v-card-actions>
                 </v-card>
             </v-col>
@@ -96,91 +62,51 @@
                 ></v-alert>
             </v-col>
         </v-row>
-    </div>
+    </v-card-text>
 </template>
 
 <script setup lang="ts">
-import {computed, ref, watch} from "vue";
-import useOntologyStore from "@/store/OntologyStore";
+import {computed} from "vue";
 import {ECFunctionalAnalysisStatus} from "@/store/ECFunctionalAnalysisStore";
 import useCsvDownload from "@/composables/useCsvDownload";
-import useTimeFormatter from "@/composables/useTimeFormatter";
-import CountTable from "@/logic/processors/CountTable";
-import {ShareableMap} from "shared-memory-datastructures";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import useEcFunctionalAnalysisExport from "@/composables/useEcFunctionalAnalysisExport";
+import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
 import PeptonizerProgress from "@/components/results/taxonomic/peptonizer/PeptonizerProgress.vue";
 import PeptonizerChart from "@/components/results/taxonomic/peptonizer/PeptonizerChart.vue";
+import type CountTable from "@/logic/processors/CountTable";
 
-const { getEcDefinition } = useOntologyStore();
 const { download } = useCsvDownload();
-const { convertDurationToString } = useTimeFormatter();
+const { generateExport: generateEcExport } = useEcFunctionalAnalysisExport();
 
 const props = defineProps<{
     store: any;
     peptideCountTable: CountTable<string>;
-    peptideToData: ShareableMap<string, PeptideData>;
     peptidesFunctions?: Map<string, string[]>;
 }>();
 
-const ecPercentageFilter = ref(5);
-
 const status = computed(() => props.store.status);
-const ecIdsToConfidence = computed<Map<string, number> | undefined>(() => props.store.ecIdsToConfidence);
+const ecTermsToConfidence = computed<Map<string, number> | undefined>(() => props.store.ecTermsToConfidence);
+const analysisStarted = computed(() => props.store.analysisStarted);
+const analysisInitializationFinished = computed(() => props.store.analysisInitializationFinished);
 const currentProgress = computed(() => props.store.currentProgress);
 const etaSeconds = computed(() => props.store.etaSeconds);
 const analysisError = computed(() => props.store.analysisError);
 
-// ECFunctionalAnalysisStatus enum is imported above and available in template
+let exportRows: string[][] = [];
+let exportDelimiter = "";
 
-const formatTime = (seconds: number) => {
-    return convertDurationToString(Math.round(seconds));
+const exportCsv = async (delimiter: string, callback: () => void): Promise<void> => {
+    exportDelimiter = delimiter;
+    exportRows = generateEcExport(ecTermsToConfidence.value || new Map());
+    callback();
 };
 
-const startAnalysis = async () => {
-    if (props.store.status !== ECFunctionalAnalysisStatus.Pending) {
-        return;
-    }
-
-    if (!props.peptidesFunctions || props.peptidesFunctions.size === 0) {
-        return;
-    }
-
-    await props.store.runECFunctionalAnalysis(
-        props.peptideCountTable,
-        props.peptideToData,
-        props.peptidesFunctions,
-        false,
-        undefined
-    );
+const downloadCsv = async (callback: () => void): Promise<void> => {
+    const exportExtension = exportDelimiter === "\t" ? "tsv" : "csv";
+    await download(exportRows, `unipept_ec_functional_analysis.${exportExtension}`, exportDelimiter);
+    callback();
 };
-
-const cancelAnalysis = () => {
-    props.store.cancelECFunctionalAnalysis();
-};
-
-const downloadResults = () => {
-    if (!ecIdsToConfidence.value) return;
-
-    const headers = ['EC Term', 'Description', 'Confidence Score (%)'];
-    const rows: string[][] = [headers];
-
-    const entries = Array.from(ecIdsToConfidence.value.entries()) as [string, number][];
-    entries.sort((a, b) => b[1] - a[1]);
-
-    for (const [ecTerm, confidence] of entries) {
-        rows.push([
-            ecTerm,
-            getEcDefinition(ecTerm)?.name ?? 'Unknown',
-            (confidence * 100).toFixed(2)
-        ]);
-    }
-
-    download(rows, 'ec_functional_analysis.csv', ',');
-};
-
-// Visualization (chart) shows ECs sorted by confidence; no table needed here.
 </script>
 
 <style scoped>
-
 </style>

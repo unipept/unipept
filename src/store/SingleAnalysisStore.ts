@@ -178,7 +178,6 @@ const useSingleAnalysisStore = (
                 if (peptidesFunctions.value && peptidesFunctions.value.size > 0) {
                     await ecFunctionalAnalysisStore.runECFunctionalAnalysis(
                         peptidesTable.value!,
-                        peptideToData.value!,
                         peptidesFunctions.value,
                         config.value.equate,
                         intensities.value
