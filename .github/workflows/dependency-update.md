@@ -26,6 +26,7 @@ network:
   allowed:
     - defaults
     - node
+    - "cdn.playwright.dev"
 
 runtimes:
   node:
@@ -54,6 +55,6 @@ Update all dependencies in `package.json` to their latest stable versions, follo
    - `yarn test`
    - `yarn test:e2e`
 6. If validation fails, use binary search to isolate the offending dependency or dependencies. Revert those entries in `package.json`, run `yarn install`, and repeat validation until the suite passes cleanly.
-7. Create a single pull request targeting the `develop` branch that bundles all successful updates, using:
+7. Create a single **non-draft** pull request targeting the `develop` branch that bundles all successful updates, using:
    - **Title**: `chore: weekly dependency updates YYYY-MM-DD` (today's date)
    - **Body**: a Markdown table with columns `Package | Old version | New version` for every updated dependency; if any were excluded due to validation failures, add a second table with columns `Package | Attempted version | Failure summary`.
