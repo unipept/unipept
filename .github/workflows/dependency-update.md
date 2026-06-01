@@ -27,6 +27,10 @@ network:
     - defaults
     - node
     - "cdn.playwright.dev"
+    - "api.unipept.ugent.be"
+    - "fonts.googleapis.com"
+    - "playwright.download.prss.microsoft.com"
+
 
 runtimes:
   node:
