@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "fantasticon": "^3.0.0",
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "1.61.0-alpha-2026-06-02",
     "@types/d3": "^7.4.3",
     "@types/node": "^25.9.1",
     "@typescript-eslint/eslint-plugin": "^8.59.4",
