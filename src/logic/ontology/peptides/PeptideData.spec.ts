@@ -16,7 +16,9 @@ describe("PeptideData", () => {
                 },
                 data: {"EC:1.2.3.5": 2, "GO:0000001": 35, "IPR:IPR000121": 18}
             },
-            taxa: [17, 45, 23]
+            taxa: [17, 45, 23],
+            cutoff_used: true,
+            crap_filtered: true
         };
 
         const peptideData = PeptideData.createFromPeptideDataResponse(response);
@@ -32,6 +34,8 @@ describe("PeptideData", () => {
         expect(peptideData.ipr["IPR:IPR000121"]).toBe(18);
         expect(peptideData.taxa[0]).toBe(17);
         expect(peptideData.taxa[1]).toBe(45);
+        expect(peptideData.cutoffUsed).toBe(true);
+        expect(peptideData.crapFiltered).toBe(true);
     });
 
     it("should correctly serialize and deserialize data", () => {
@@ -47,7 +51,9 @@ describe("PeptideData", () => {
                 },
                 data: {"EC:1.2.3.5": 2, "GO:0000001": 35, "IPR:IPR000121": 18}
             },
-            taxa: [59, 47, 78]
+            taxa: [59, 47, 78],
+            cutoff_used: false,
+            crap_filtered: true
         };
 
         const peptideData = PeptideData.createFromPeptideDataResponse(response);
@@ -56,5 +62,7 @@ describe("PeptideData", () => {
         expect(deserializedData.lca).toBe(peptideData.lca);
         expect(deserializedData.lineage).toEqual(peptideData.lineage);
         expect(deserializedData.faCounts).toEqual(peptideData.faCounts);
+        expect(deserializedData.cutoffUsed).toBe(false);
+        expect(deserializedData.crapFiltered).toBe(true);
     });
 });

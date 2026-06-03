@@ -130,7 +130,9 @@ describe("From635To640Upgrader.upgrade", () => {
                     counts: { all: 10, EC: 5, GO: 3, IPR: 2 },
                     data: { "EC:1.2.3.5": 2, "GO:0000001": 35, "IPR:IPR000121": 18 }
                 },
-                taxa: [17, 45, 23]
+                taxa: [17, 45, 23],
+                cutoff_used: false,
+                crap_filtered: false
             },
             PEPTIDE2: {
                 lca: 2,
@@ -139,7 +141,9 @@ describe("From635To640Upgrader.upgrade", () => {
                     counts: { all: 4, EC: 2, GO: 1, IPR: 1 },
                     data: { "EC:9.9.9.9": 1 }
                 },
-                taxa: [59, 47, 78]
+                taxa: [59, 47, 78],
+                cutoff_used: false,
+                crap_filtered: false
             }
         };
 

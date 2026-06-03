@@ -51,7 +51,7 @@ const usePeptideAnalysisStore = (
         await processProteins(peptide.value, config.value.equate);
 
         const peptideTableMap = new ShareableMap<string, number>();
-        peptideTableMap.set(peptide.value, proteins.value.length);
+        peptideTableMap.set(peptide.value, 1);
 
         const peptideTable: CountTable<string> = new CountTable(peptideTableMap);
 

@@ -22,6 +22,16 @@
                             </a> ({{ displayPercentage(analysis.peptideTrust.missedPeptides.length / analysis.peptideTrust.searchedPeptides) }}) could not be found.
                         </h1>
 
+                        <h1
+                            v-if="analysis.config.useCrap && analysis.peptideTrust.crapFilteredPeptides.length > 0"
+                            class="text-body-large"
+                        >
+                            <a @click="showCrapFilteredPeptides = true">
+                                {{ analysis.peptideTrust.crapFilteredPeptides.length }} peptides
+                            </a>
+                            ({{ displayPercentage(analysis.peptideTrust.crapFilteredPeptides.length / analysis.peptideTrust.searchedPeptides) }}) were removed by the cRAP filter.
+                        </h1>
+
                         <v-alert
                             v-if="latest === analysis.databaseVersion"
                             color="success"
@@ -136,15 +146,15 @@
                 </v-col>
             </v-row>
             <v-row>
-                <v-col cols="12" lg="8" class="pb-0">
+                <v-col cols="12" lg="8" class="pb-0 mb-n3">
                     <h2>
                         Peptide matches
                     </h2>
                 </v-col>
-                <v-col cols="12" lg="4" class="pb-0 pb-1">
+                <v-col cols="12" lg="4" class="pb-0 mb-n3">
                     <analysis-summary-export @prepareDownload="prepareDownload" @download="download" />
                 </v-col>
-                <v-col cols="12">
+                <v-col cols="12" class="pt-0 mt-n2">
                     <analysis-summary-table :analysis="analysis" />
                 </v-col>
             </v-row>
@@ -153,6 +163,11 @@
         <missing-peptides-dialog
             v-model="showMissingPeptides"
             :peptides="missedPeptides"
+        />
+
+        <crap-filtered-peptides-dialog
+            v-model="showCrapFilteredPeptides"
+            :peptides="crapFilteredPeptides"
         />
     </v-unipept-card>
 </template>
@@ -166,6 +181,7 @@ import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryEx
 import useCsvDownload from "@/composables/useCsvDownload";
 import usePeptideExport from "@/composables/usePeptideExport";
 import MissingPeptidesDialog from "@/components/analysis/multi/MissingPeptidesDialog.vue";
+import CrapFilteredPeptidesDialog from "@/components/analysis/multi/CrapFilteredPeptidesDialog.vue";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
@@ -187,10 +203,12 @@ const emits = defineEmits<{
 }>();
 
 const showMissingPeptides = ref(false);
+const showCrapFilteredPeptides = ref(false);
 
 const databaseName = computed(() => customFilterStore.getFilterNameById(analysis.config.database) || "Invalid database");
 
 const missedPeptides = computed(() => analysis.peptideTrust!.missedPeptides);
+const crapFilteredPeptides = computed(() => analysis.peptideTrust!.crapFilteredPeptides);
 
 let peptideExportContent: string[][] = [];
 let exportDelimiter: string = "";

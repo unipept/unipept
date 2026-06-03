@@ -5,10 +5,12 @@ test('Single Peptide Analysis works', async ({page}) => {
 
     await expect(page.getByText('Search for a single peptide').first()).toBeVisible();
 
-    const sequenceInput = page.locator('input').first();
+    const sequenceInput = page.locator('input[type="text"]').first();
     await sequenceInput.fill('MDGTEYIIVK');
 
-    await page.getByText('Search', {exact: true}).click();
+    const searchButton = page.getByRole('button', {name: 'Search'});
+    await expect(searchButton).toBeEnabled();
+    await searchButton.click();
 
     await expect(page).toHaveURL(/.*\/spa\/MDGTEYIIVK.*/, {timeout: 30000});
 

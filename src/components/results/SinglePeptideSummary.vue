@@ -25,6 +25,17 @@
                 Equate I/L is disabled.
             </span>
         </div>
+        <v-alert
+            v-if="cutoffUsed"
+            type="warning"
+            variant="tonal"
+            class="my-3"
+            icon="mdi-alert-circle-outline"
+        >
+            The number of matching proteins for this peptide exceeds the Unipept API limit of 10,000 entries.
+            Biodiversity and functional annotation results are based on a subset of all matching proteins
+            and may not be fully representative.
+        </v-alert>
         <v-row>
             <v-col :cols="12" md="6">
                 <div class="headline">
@@ -68,8 +79,8 @@
                     Function
                 </div>
                 <div v-if="assay.goTrust">
-                    <span class="font-weight-bold">{{ assay.goTrust.annotatedItems }} proteins</span>
-                    ({{ assay.goTrust.totalItems > 0 ? displayPercentage(assay.goTrust.annotatedItems / assay.goTrust.totalItems) : '0%' }})
+                    <span class="font-weight-bold">{{ faCounts!.go }} proteins</span>
+                    ({{ assay.proteins.length > 0 ? displayPercentage(faCounts!.go / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="goLink"
@@ -91,8 +102,8 @@
                 </div>
 
                 <div v-if="assay.ecTrust">
-                    <span class="font-weight-bold">{{ assay.ecTrust.annotatedItems }} proteins</span>
-                    ({{ assay.ecTrust.totalItems > 0 ? displayPercentage(assay.ecTrust.annotatedItems / assay.ecTrust.totalItems) : '0%' }})
+                    <span class="font-weight-bold">{{ faCounts!.ec }} proteins</span>
+                    ({{ assay.proteins.length > 0 ? displayPercentage(faCounts!.ec / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="ecLink"
@@ -115,9 +126,9 @@
 
                 <div v-if="assay.iprTrust">
                     <span class="font-weight-bold">
-                        {{ assay.iprTrust.annotatedItems }} proteins
+                        {{ faCounts!.ipr }} proteins
                     </span>
-                    ({{ assay.iprTrust.totalItems > 0 ? displayPercentage(assay.iprTrust.annotatedItems / assay.iprTrust.totalItems) : '0%' }})
+                    ({{ assay.proteins.length > 0 ? displayPercentage(faCounts!.ipr / assay.proteins.length) : '0%' }})
                     have at least one
                     <span
                         v-if="interproLink"
@@ -167,6 +178,11 @@ const { displayPercentage } = usePercentage();
 const lcaDefinition = computed(() => {
     return getNcbiDefinition(props.assay.lca)
 });
+
+const peptideData = computed(() => props.assay.peptideToData?.get(props.assay.peptide));
+
+const faCounts = computed(() => peptideData.value?.faCounts);
+const cutoffUsed = computed(() => peptideData.value?.cutoffUsed ?? false);
 
 const taxonomyUrl = (taxon: NcbiTaxon | undefined): string => {
     if (taxon === undefined || taxon.id === 1) {

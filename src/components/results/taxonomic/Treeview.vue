@@ -113,6 +113,10 @@ watch(width, () => {
     redraw();
 });
 
+watch(height, () => {
+    redraw();
+});
+
 watch(() => props.ncbiRoot, () => {
     redraw();
 });

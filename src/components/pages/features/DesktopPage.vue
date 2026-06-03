@@ -1,5 +1,17 @@
 <template>
     <v-container style="max-width: 1200px;">
+        <v-alert
+            type="warning"
+            variant="tonal"
+            class="mb-4"
+            icon="mdi-alert"
+        >
+            <strong>The Unipept Desktop application is deprecated.</strong>
+            The app still works, but will no longer receive updates or new features.
+            All functionality previously unique to the desktop app has been migrated to the
+            <a href="https://unipept.ugent.be" target="_blank" rel="noopener" class="deprecation-link">Unipept web application</a>,
+            which we recommend using going forward.
+        </v-alert>
         <v-row>
             <v-col
                 class="pt-0 order-sm-1 order-lg-0"
@@ -10,6 +22,7 @@
             </v-col>
             <v-col
                 class="order-sm-0 order-lg-1"
+                style="position: sticky; top: calc(var(--v-layout-top, 0px) + 16px); align-self: flex-start;"
                 sm="12"
                 lg="2"
             >
@@ -99,3 +112,9 @@ const navigation = [
     }
 ]
 </script>
+
+<style scoped>
+.deprecation-link {
+    color: rgb(var(--v-theme-primary));
+}
+</style>
