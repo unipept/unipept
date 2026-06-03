@@ -24,6 +24,7 @@
     "jszip": "^3.10.1",
     "localforage": "^1.10.0",
     "lru-cache-idb": "^0.5.2",
+    "marked": "^18.0.4",
     "peptonizer": "file:./peptonizer-0.1.0.tgz",
     "pinia": "^3.0.4",
     "shared-memory-datastructures": "1.0.0-alpha.9",
@@ -34,7 +35,6 @@
     "vuetify": "^4.0.7"
   },
   "devDependencies": {
-    "fantasticon": "^3.0.0",
     "@playwright/test": "1.61.0-alpha-2026-06-02",
     "@types/d3": "^7.4.3",
     "@types/node": "^25.9.1",
@@ -45,6 +45,7 @@
     "eslint": "^10.4.0",
     "eslint-define-config": "^2.1.0",
     "eslint-plugin-vue": "^10.9.1",
+    "fantasticon": "^3.0.0",
     "sass": "^1.100.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.14",
