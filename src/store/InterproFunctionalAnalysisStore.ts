@@ -6,11 +6,9 @@ import useOntologyStore from "@/store/OntologyStore";
 import usePeptonizerAnalysisProgress from "@/store/usePeptonizerAnalysisProgress";
 import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 
-export { FunctionalAnalysisStatus as ECFunctionalAnalysisStatus };
-
-const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFunctionalAnalysisStore_${sampleId}`, () => {
+const useInterproFunctionalAnalysisStore = (sampleId: string) => defineStore(`interproFunctionalAnalysisStore_${sampleId}`, () => {
     const status = ref<FunctionalAnalysisStatus>(FunctionalAnalysisStatus.Pending);
-    const ecTermsToConfidence = ref<Map<string, number> | undefined>();
+    const iprTermsToConfidence = ref<Map<string, number> | undefined>();
 
     const {
         currentProgress,
@@ -24,44 +22,40 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
 
     let processor: FunctionalAnalysisProcessor | undefined;
 
-    const runECFunctionalAnalysis = async (
+    const runInterproFunctionalAnalysis = async (
         peptideCountTable: CountTable<string>,
         peptidesFunctions: Map<string, string[]>,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
     ) => {
-        // Prevent concurrent runs
         if (status.value === FunctionalAnalysisStatus.Running) return;
         status.value = FunctionalAnalysisStatus.Running;
 
-        // Reset to initial values
-        ecTermsToConfidence.value = undefined;
+        iprTermsToConfidence.value = undefined;
         analysisError.value = "";
 
         const listener = createListener();
 
         try {
             processor = new FunctionalAnalysisProcessor();
-            const ecAnalysisData = await processor.runFunctionalAnalysis(
+            const analysisData = await processor.runFunctionalAnalysis(
                 peptidesFunctions,
                 peptideCountTable,
                 listener,
                 equateIl,
                 peptideIntensities,
-                { analysisLabel: "EC Functional Analysis" }
+                { analysisLabel: "InterPro Functional Analysis" }
             );
 
-            // No data is returned if execution has been cancelled by the user
-            if (!ecAnalysisData) {
+            if (!analysisData) {
                 status.value = FunctionalAnalysisStatus.Pending;
                 return;
             }
 
-            ecTermsToConfidence.value = ecAnalysisData;
+            iprTermsToConfidence.value = analysisData;
 
-            // Update ontology with EC terms
-            const {updateEcOntology} = useOntologyStore();
-            await updateEcOntology(Array.from(ecTermsToConfidence.value.keys()));
+            const {updateIprOntology} = useOntologyStore();
+            await updateIprOntology(Array.from(iprTermsToConfidence.value.keys()));
 
             status.value = FunctionalAnalysisStatus.Finished;
         } catch (error) {
@@ -71,31 +65,31 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
         }
     }
 
-    const cancelECFunctionalAnalysis = () => {
+    const cancelInterproFunctionalAnalysis = () => {
         if (processor) {
             processor.cancelFunctionalAnalysis();
         }
         status.value = FunctionalAnalysisStatus.Pending;
     }
 
-    const exportStore = (): ECFunctionalAnalysisStoreImport | undefined => {
-        if (ecTermsToConfidence.value) {
+    const exportStore = (): InterproFunctionalAnalysisStoreImport | undefined => {
+        if (iprTermsToConfidence.value) {
             return {
-                ecTermsToConfidence: Array.from(toRaw(ecTermsToConfidence.value).entries()),
+                iprTermsToConfidence: Array.from(toRaw(iprTermsToConfidence.value).entries()),
                 status: status.value
-            }
+            };
         }
 
         return undefined;
     }
 
-    const setImportedData = (storeImport: ECFunctionalAnalysisStoreImport) => {
-        ecTermsToConfidence.value = new Map<string, number>(storeImport.ecTermsToConfidence);
+    const setImportedData = (storeImport: InterproFunctionalAnalysisStoreImport) => {
+        iprTermsToConfidence.value = new Map<string, number>(storeImport.iprTermsToConfidence);
         status.value = FunctionalAnalysisStatus.Finished;
     }
 
     return {
-        ecTermsToConfidence,
+        iprTermsToConfidence,
 
         status,
         currentProgress,
@@ -105,18 +99,18 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
         analysisFinished,
         analysisError,
 
-        runECFunctionalAnalysis,
-        cancelECFunctionalAnalysis,
+        runInterproFunctionalAnalysis,
+        cancelInterproFunctionalAnalysis,
         exportStore,
         setImportedData
     }
 })();
 
-export type ECFunctionalAnalysisStoreImport = {
-    ecTermsToConfidence: [string, number][];
+export type InterproFunctionalAnalysisStoreImport = {
+    iprTermsToConfidence: [string, number][];
     status: FunctionalAnalysisStatus;
 }
 
-export type ECFunctionalAnalysisStore = ReturnType<typeof useECFunctionalAnalysisStore>;
+export type InterproFunctionalAnalysisStore = ReturnType<typeof useInterproFunctionalAnalysisStore>;
 
-export default useECFunctionalAnalysisStore;
+export default useInterproFunctionalAnalysisStore;

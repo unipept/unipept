@@ -92,8 +92,6 @@ onMounted(() => {
             <v-col cols="12">
                 <ECFunctionalAnalysisResults
                     :store="analysis.ecFunctionalAnalysisStore"
-                    :peptideCountTable="data.ecTable"
-                    :peptidesFunctions="analysis.peptidesFunctions"
                 />
             </v-col>
         </v-row>

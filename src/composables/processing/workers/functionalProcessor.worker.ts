@@ -12,8 +12,6 @@ self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 }
 
-const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
-
 const process = async ({
     countsMapTransferable,
     peptideDataTransferable,
@@ -32,7 +30,7 @@ const process = async ({
     let annotatedCount = 0;
 
     const itemToPeptides: Map<string, string[]> = new Map();
-    // For EC functional analysis: map each peptide to all its EC terms (not filtered by percentage)
+    // For functional analysis: map each peptide to all terms (not filtered by percentage)
     const peptidesFunctions: Map<string, string[]> = new Map();
 
     for (const [peptide, peptideCount] of peptideCounts) {
@@ -57,11 +55,10 @@ const process = async ({
             itemToPeptides.get(term)!.push(peptide);
         }
 
-        // If extracting functions map (for EC functional analysis), collect all EC terms for this peptide
-        if (extractFunctionsMap && termPrefix === "ec") {
-            const ecTerms = Object.keys(terms);
-            if (ecTerms.length > 0) {
-                peptidesFunctions.set(peptide, ecTerms);
+        if (extractFunctionsMap) {
+            const termsForPeptide = Object.keys(terms);
+            if (termsForPeptide.length > 0) {
+                peptidesFunctions.set(peptide, termsForPeptide);
             }
         }
 

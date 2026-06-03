@@ -8,14 +8,14 @@ export interface FunctionalProcessorData {
     percentage: number;
     termPrefix: string;
     proteinCountProperty: "all" | "ec" | "go" | "ipr";
-    extractFunctionsMap?: boolean; // For EC functional analysis
+    extractFunctionsMap?: boolean;
 }
 
 export interface FunctionalProcessorOutput {
     sortedCountsTransferable: TransferableState;
     itemToPeptides: Map<string, string[]>;
     annotatedCount: number;
-    peptidesFunctions?: Map<string, string[]>; // EC terms for functional analysis
+    peptidesFunctions?: Map<string, string[]>;
 }
 
 export default function useFunctionalProcessor() {

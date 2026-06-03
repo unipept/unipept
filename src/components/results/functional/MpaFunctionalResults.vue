@@ -89,6 +89,7 @@
                 <v-card-text>
                     <functional-go-results
                         :data="goData"
+                        :analysis="analysis"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         @download-item="downloadGoItem"
@@ -131,6 +132,7 @@
                 <v-card-text>
                     <functional-ipr-results
                         :data="iprData"
+                        :analysis="analysis"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         @download-item="downloadInterproItem"
