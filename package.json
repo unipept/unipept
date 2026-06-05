@@ -25,7 +25,7 @@
     "localforage": "^1.10.0",
     "lru-cache-idb": "^0.5.2",
     "marked": "^18.0.4",
-    "peptonizer": "file:./peptonizer-0.1.0.tgz",
+    "peptonizer": "file:./peptonizer-0.1.11.tgz",
     "pinia": "^3.0.4",
     "shared-memory-datastructures": "1.0.0-alpha.9",
     "unipept-visualizations": "^2.2.5",
