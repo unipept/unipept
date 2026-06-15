@@ -3,7 +3,7 @@
         <v-card-text>
             <h3 class="mb-2">Database summary</h3>
 
-            <div class="d-flex">
+            <v-row>
                 <v-col cols="9" :class="invalidItems.length !== 0 ? 'pt-0' : ''">
                     <v-alert
                         v-if="invalidItems.length !== 0"
@@ -103,7 +103,7 @@
                         <span v-else>~ {{ formatNumber(taxonCount) }} different taxa</span>
                     </div>
                 </v-col>
-            </div>
+            </v-row>
         </v-card-text>
     </v-unipept-card>
 </template>
