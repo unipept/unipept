@@ -44,6 +44,9 @@
                             <v-icon icon="mdi-database" />
                         </v-avatar>
                     </template>
+                    <template #append>
+                        <v-icon icon="mdi-chevron-right" />
+                    </template>
                 </v-list-item>
 
                 <v-list-item v-if="filtered.length === 0">
