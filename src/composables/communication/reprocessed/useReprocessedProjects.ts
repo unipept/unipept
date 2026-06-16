@@ -10,7 +10,7 @@ export interface ReprocessedFile {
 export default function useReprocessedProjects(
     baseUrl = DEFAULT_REPROCESSED_PROJECTS_BASE_URL,
 ) {
-    const loadAccessions = async (): Promise<string[]> => {
+    const loadReprocessedAccessions = async (): Promise<string[]> => {
         const response = await NetworkUtils.getJSON(`${baseUrl}/projects.json`);
         return response.map((entry: { accession: string }) => entry.accession);
     }
@@ -52,13 +52,13 @@ export default function useReprocessedProjects(
         };
     }
 
-    const loadProjectFiles = async (accession: string): Promise<ReprocessedFile[]> => {
+    const loadReprocessedProjectFiles = async (accession: string): Promise<ReprocessedFile[]> => {
         const fileNames = await loadFileIndex(accession);
         return Promise.all(fileNames.map(fileName => loadFile(accession, fileName)));
     }
 
     return {
-        loadAccessions,
-        loadProjectFiles
+        loadReprocessedAccessions,
+        loadReprocessedProjectFiles
     }
 }

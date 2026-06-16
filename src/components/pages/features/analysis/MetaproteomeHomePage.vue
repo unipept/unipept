@@ -95,7 +95,7 @@ const {
     deleteProject
 } = store;
 const sampleDataStore = useSampleDataStore();
-const { loadAccessions, loadProjectFiles } = useReprocessedProjects();
+const { loadReprocessedAccessions, loadReprocessedProjectFiles } = useReprocessedProjects();
 
 const firstColumn = useTemplateRef("firstColumn");
 const { height: firstColumnHeight } = useElementBounding(firstColumn);
@@ -176,7 +176,7 @@ const demoAnalyze = async (sample: SampleData) => {
 const reprocessedAnalyze = async (accession: string) => {
     loadingReprocessed.value = true;
     try {
-        const files = await loadProjectFiles(accession);
+        const files = await loadReprocessedProjectFiles(accession);
         await loadProjectFromReprocessed(accession, files);
         await router.push({ name: "mpaSingle" });
         await startAnalysis();
@@ -211,7 +211,7 @@ onMounted(async () => {
     loadingAccessions.value = true;
     const [, accessions] = await Promise.all([
         sampleDataStore.loadSampleData(),
-        loadAccessions().catch(() => [])
+        loadReprocessedAccessions().catch(() => [])
     ]);
     loadingSampleData.value = false;
     reprocessedAccessions.value = accessions;
