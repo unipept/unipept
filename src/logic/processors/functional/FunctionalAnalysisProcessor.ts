@@ -111,7 +111,7 @@ export default class FunctionalAnalysisProcessor {
         return await FunctionalAnalysisProcessor.runner.run(async () => {
             console.log(`Starting ${analysisLabel} with up to ${DEFAULT_PEPTONIZER_WORKERS} workers...`);
 
-            const rawResult = await (this.peptonizer as any).functionalAnalysis(
+            const rawResult = await (this.peptonizer as any).peptonize(
                 peptidesFunctionsWithIds,
                 normalizedIntensities,
                 normalizedCounts,
