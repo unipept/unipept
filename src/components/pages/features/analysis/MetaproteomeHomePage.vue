@@ -31,7 +31,7 @@
                     <reprocessed-project-card
                         class="mt-5"
                         :accessions="reprocessedAccessions"
-                        :loading="loadingAccessions"
+                        :loading="loadingAccessions || loadingReprocessed"
                         :disabled="loadingProject || loadingDemoProject || loadingReprocessed || loadingAccessions"
                         @select="reprocessedAnalyze"
                     />
