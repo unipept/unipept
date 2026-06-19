@@ -187,7 +187,6 @@ const useSingleAnalysisStore = (
                 if (ecPeptidesFunctions.value && ecPeptidesFunctions.value.size > 0) {
                     await ecFunctionalAnalysisStore.runECFunctionalAnalysis(
                         peptidesTable.value!,
-                        ecPeptidesFunctions.value,
                         config.value.equate,
                         intensities.value
                     );
@@ -196,7 +195,6 @@ const useSingleAnalysisStore = (
                 if (goPeptidesFunctions.value && goPeptidesFunctions.value.size > 0) {
                     await goFunctionalAnalysisStore.runGOFunctionalAnalysis(
                         peptidesTable.value!,
-                        goPeptidesFunctions.value,
                         config.value.equate,
                         intensities.value
                     );
@@ -205,7 +203,6 @@ const useSingleAnalysisStore = (
                 if (iprPeptidesFunctions.value && iprPeptidesFunctions.value.size > 0) {
                     await interproFunctionalAnalysisStore.runInterproFunctionalAnalysis(
                         peptidesTable.value!,
-                        iprPeptidesFunctions.value,
                         config.value.equate,
                         intensities.value
                     );

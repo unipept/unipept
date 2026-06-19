@@ -77,71 +77,76 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
 
     const processors: Partial<Record<GoDomainKey, FunctionalAnalysisProcessor>> = {};
 
-    const runDomainAnalysis = async (
-        domain: GoDomainKey,
+    const runGOFunctionalAnalysis = async (
         peptideCountTable: CountTable<string>,
-        peptidesFunctions: Map<string, string[]>,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
     ) => {
-        const domainState = domainStates[domain];
-        if (domainState.status.value === FunctionalAnalysisStatus.Running) {
+        const domains: GoDomainKey[] = ["biologicalProcess", "cellularComponent", "molecularFunction"];
+
+        if (domains.some(domain => domainStates[domain].status.value === FunctionalAnalysisStatus.Running)) {
             return;
         }
 
-        domainState.status.value = FunctionalAnalysisStatus.Running;
-        domainState.termsToConfidence.value = undefined;
-        domainState.analysisError.value = "";
+        for (const domain of domains) {
+            domainStates[domain].status.value = FunctionalAnalysisStatus.Running;
+            domainStates[domain].termsToConfidence.value = undefined;
+            domainStates[domain].analysisError.value = "";
+        }
 
-        const listener = domainState.createListener();
+        const listener = biologicalProcess.createListener();
 
         try {
-            processors[domain] = new FunctionalAnalysisProcessor();
-            const {namespace, label} = DOMAIN_CONFIG[domain];
-            const analysisData = await processors[domain]!.runFunctionalAnalysis(
-                peptidesFunctions,
+            processors.biologicalProcess = new FunctionalAnalysisProcessor();
+            const allGoTermConfidence = await processors.biologicalProcess.runFunctionalAnalysisFromPeptideProteinPairs(
+                "go",
                 peptideCountTable,
                 listener,
                 equateIl,
                 peptideIntensities,
-                {
-                    analysisLabel: label,
-                    termFilter: term => ontologyStore.getGoDefinition(term)?.namespace === namespace
-                }
+                { analysisLabel: "GO Functional Analysis" }
             );
 
-            if (!analysisData) {
-                domainState.status.value = FunctionalAnalysisStatus.Pending;
+            if (!allGoTermConfidence) {
+                for (const domain of domains) {
+                    domainStates[domain].status.value = FunctionalAnalysisStatus.Pending;
+                }
                 return;
             }
 
-            domainState.termsToConfidence.value = analysisData;
-            domainState.status.value = FunctionalAnalysisStatus.Finished;
+            const allTerms = Array.from(allGoTermConfidence.keys());
+            if (allTerms.length > 0) {
+                await ontologyStore.updateGoOntology(allTerms);
+            }
+
+            const byDomain: Record<GoDomainKey, Map<string, number>> = {
+                biologicalProcess: new Map<string, number>(),
+                cellularComponent: new Map<string, number>(),
+                molecularFunction: new Map<string, number>()
+            };
+
+            for (const [term, confidence] of allGoTermConfidence.entries()) {
+                const namespace = ontologyStore.getGoDefinition(term)?.namespace;
+                if (namespace === DOMAIN_CONFIG.biologicalProcess.namespace) {
+                    byDomain.biologicalProcess.set(term, confidence);
+                } else if (namespace === DOMAIN_CONFIG.cellularComponent.namespace) {
+                    byDomain.cellularComponent.set(term, confidence);
+                } else if (namespace === DOMAIN_CONFIG.molecularFunction.namespace) {
+                    byDomain.molecularFunction.set(term, confidence);
+                }
+            }
+
+            for (const domain of domains) {
+                domainStates[domain].termsToConfidence.value = byDomain[domain];
+                domainStates[domain].status.value = FunctionalAnalysisStatus.Finished;
+            }
         } catch (error) {
-            domainState.status.value = FunctionalAnalysisStatus.Failed;
+            const errorMessage = (error as any).toString();
+            for (const domain of domains) {
+                domainStates[domain].status.value = FunctionalAnalysisStatus.Failed;
+                domainStates[domain].analysisError.value = errorMessage;
+            }
             console.log(error);
-            domainState.analysisError.value = (error as any).toString();
-        }
-    };
-
-    const runGOFunctionalAnalysis = async (
-        peptideCountTable: CountTable<string>,
-        peptidesFunctions: Map<string, string[]>,
-        equateIl: boolean,
-        peptideIntensities?: Map<string, number>,
-    ) => {
-        await runDomainAnalysis("biologicalProcess", peptideCountTable, peptidesFunctions, equateIl, peptideIntensities);
-        await runDomainAnalysis("cellularComponent", peptideCountTable, peptidesFunctions, equateIl, peptideIntensities);
-        await runDomainAnalysis("molecularFunction", peptideCountTable, peptidesFunctions, equateIl, peptideIntensities);
-
-        const allTerms = [
-            ...(biologicalProcess.termsToConfidence.value?.keys() || []),
-            ...(cellularComponent.termsToConfidence.value?.keys() || []),
-            ...(molecularFunction.termsToConfidence.value?.keys() || [])
-        ];
-
-        if (allTerms.length > 0) {
-            await ontologyStore.updateGoOntology(Array.from(new Set(allTerms)));
         }
     };
 

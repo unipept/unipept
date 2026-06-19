@@ -67,7 +67,6 @@ export default class PeptonizerProcessor {
                 DEFAULT_PEPTONIZER_ALPHAS,
                 DEFAULT_PEPTONIZER_BETAS,
                 DEFAULT_PEPTONIZER_PRIORS,
-                rank,
                 DEFAULT_TAXA_IN_GRAPH,
                 listener,
                 DEFAULT_PEPTONIZER_WORKERS

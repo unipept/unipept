@@ -24,7 +24,6 @@ const useInterproFunctionalAnalysisStore = (sampleId: string) => defineStore(`in
 
     const runInterproFunctionalAnalysis = async (
         peptideCountTable: CountTable<string>,
-        peptidesFunctions: Map<string, string[]>,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
     ) => {
@@ -38,8 +37,8 @@ const useInterproFunctionalAnalysisStore = (sampleId: string) => defineStore(`in
 
         try {
             processor = new FunctionalAnalysisProcessor();
-            const analysisData = await processor.runFunctionalAnalysis(
-                peptidesFunctions,
+            const analysisData = await processor.runFunctionalAnalysisFromPeptideProteinPairs(
+                "ipr",
                 peptideCountTable,
                 listener,
                 equateIl,

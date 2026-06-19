@@ -26,7 +26,6 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
 
     const runECFunctionalAnalysis = async (
         peptideCountTable: CountTable<string>,
-        peptidesFunctions: Map<string, string[]>,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
     ) => {
@@ -42,8 +41,8 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
 
         try {
             processor = new FunctionalAnalysisProcessor();
-            const ecAnalysisData = await processor.runFunctionalAnalysis(
-                peptidesFunctions,
+            const ecAnalysisData = await processor.runFunctionalAnalysisFromPeptideProteinPairs(
+                "ec",
                 peptideCountTable,
                 listener,
                 equateIl,
