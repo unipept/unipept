@@ -1,5 +1,7 @@
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import {DEFAULT_REPROCESSED_PROJECTS_BASE_URL} from "@/logic/Constants";
+import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
+import ReprocessedProjectLoaderWorker from "./workers/reprocessedProjectLoader.worker.ts?worker";
 
 export interface ReprocessedFile {
     name: string;                      // e.g. "S061.tsv"
@@ -7,54 +9,47 @@ export interface ReprocessedFile {
     intensities: Map<string, number>;  // peptide -> score
 }
 
+export interface ReprocessedLoaderData {
+    accession: string;
+    baseUrl: string;
+}
+
+const EXCLUDED_ACCESSIONS = new Set<string>([
+    "PXD003527",
+    "PXD016298",
+    "PXD017035",
+    "PXD007220",
+    "PXD015757",
+    "PXD020005",
+    "PXD035496",
+    "PXD036037",
+    "PXD048273",
+    "PXD046928",
+    "PXD006129",
+    "PXD011735",
+    "PXD009564",
+    "PXD036445",
+    "PXD024291",
+    "PXD057056",
+    "PXD017059",
+]);
+
 export default function useReprocessedProjects(
     baseUrl = DEFAULT_REPROCESSED_PROJECTS_BASE_URL,
 ) {
+    const { post } = useAsyncWebWorker<ReprocessedLoaderData, ReprocessedFile[]>(
+        () => new ReprocessedProjectLoaderWorker()
+    );
+
     const loadReprocessedAccessions = async (): Promise<string[]> => {
         const response = await NetworkUtils.getJSON(`${baseUrl}/projects.json`);
-        return response.map((entry: { accession: string }) => entry.accession);
-    }
-
-    const loadFileIndex = async (accession: string): Promise<string[]> => {
-        const response = await NetworkUtils.getJSON(`${baseUrl}/${accession}/files.json`);
-        return response.map((entry: { result_file: string }) => entry.result_file);
-    }
-
-    const loadFile = async (accession: string, fileName: string): Promise<ReprocessedFile> => {
-        const text = await NetworkUtils.getText(`${baseUrl}/${accession}/${fileName}`);
-
-        const peptides: string[] = [];
-        const intensities = new Map<string, number>();
-
-        for (const line of text.split("\n")) {
-            const trimmed = line.trim();
-            if (trimmed.length === 0) {
-                continue;
-            }
-
-            const [peptide, score] = trimmed.split("\t");
-            if (!peptide) {
-                continue;
-            }
-
-            peptides.push(peptide);
-
-            const parsedScore = parseFloat(score);
-            if (!isNaN(parsedScore)) {
-                intensities.set(peptide, parsedScore);
-            }
-        }
-
-        return {
-            name: fileName,
-            rawPeptides: peptides.join("\n"),
-            intensities
-        };
+        return response
+            .map((entry: { accession: string }) => entry.accession)
+            .filter((accession: string) => !EXCLUDED_ACCESSIONS.has(accession));
     }
 
     const loadReprocessedProjectFiles = async (accession: string): Promise<ReprocessedFile[]> => {
-        const fileNames = await loadFileIndex(accession);
-        return Promise.all(fileNames.map(fileName => loadFile(accession, fileName)));
+        return await post({ accession, baseUrl });
     }
 
     return {
