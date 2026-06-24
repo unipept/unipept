@@ -16,16 +16,24 @@
             <v-col cols="12" md="6">
                 <div ref="firstColumn">
                     <quick-analysis-card
-                        :disabled="loadingProject || loadingDemoProject"
+                        :disabled="loadingProject || loadingDemoProject || loadingReprocessed"
                         @analyze="quickAnalyze"
                     />
 
                     <demo-analysis-card
                         class="mt-5"
                         :loading="loadingDemoProject"
-                        :disabled="loadingProject || loadingSampleData || loadingDemoProject"
+                        :disabled="loadingProject || loadingSampleData || loadingDemoProject || loadingReprocessed"
                         :samples="sampleDataStore.samples"
                         @select="demoAnalyze"
+                    />
+
+                    <reprocessed-project-card
+                        class="mt-5"
+                        :accessions="reprocessedAccessions"
+                        :loading="loadingAccessions || loadingReprocessed"
+                        :disabled="loadingProject || loadingDemoProject || loadingReprocessed || loadingAccessions"
+                        @select="reprocessedAnalyze"
                     />
                 </div>
             </v-col>
@@ -34,7 +42,7 @@
                 <div ref="topCard">
                     <new-analysis-card
                         :projects="projects"
-                        :disabled="loadingProject || loadingDemoProject"
+                        :disabled="loadingProject || loadingDemoProject || loadingReprocessed"
                         @project:new="advancedAnalyze"
                     />
                 </div>
@@ -43,7 +51,7 @@
                     class="mt-5"
                     :height="bottomCardHeight"
                     :projects="projects"
-                    :disabled="loadingProject || loadingDemoProject"
+                    :disabled="loadingProject || loadingDemoProject || loadingReprocessed"
                     :loading="loadingProject"
                     :loading-message="importStatus"
                     @open="loadFromIndexedDB"
@@ -66,6 +74,8 @@ import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useUnipeptAnalysisStore from "@/store/UnipeptAnalysisStore";
 import NewAnalysisCard from "@/components/analysis/multi/NewAnalysisCard.vue";
 import RecentAnalysisCard from "@/components/analysis/multi/RecentAnalysisCard.vue";
+import ReprocessedProjectCard from "@/components/analysis/multi/ReprocessedProjectCard.vue";
+import useReprocessedProjects from "@/composables/communication/reprocessed/useReprocessedProjects";
 import {useElementBounding} from "@vueuse/core";
 import {storeToRefs} from "pinia";
 
@@ -80,10 +90,12 @@ const {
     loadProjectFromStorage,
     loadProjectFromFile,
     loadProjectFromSample,
+    loadProjectFromReprocessed,
     loadProjectFromPeptides,
     deleteProject
 } = store;
 const sampleDataStore = useSampleDataStore();
+const { loadReprocessedAccessions, loadReprocessedProjectFiles } = useReprocessedProjects();
 
 const firstColumn = useTemplateRef("firstColumn");
 const { height: firstColumnHeight } = useElementBounding(firstColumn);
@@ -94,6 +106,10 @@ const bottomCardHeight = computed(() => firstColumnHeight.value - topCardHeight.
 const loadingSampleData: Ref<boolean> = ref(true);
 const loadingProject: Ref<boolean> = ref(false);
 const loadingDemoProject: Ref<boolean> = ref(false);
+const loadingAccessions: Ref<boolean> = ref(true);
+const loadingReprocessed: Ref<boolean> = ref(false);
+
+const reprocessedAccessions = ref<string[]>([]);
 
 const upgradeError: Ref<string | null> = ref(null);
 const showUpgradeError = ref(false);
@@ -157,6 +173,21 @@ const demoAnalyze = async (sample: SampleData) => {
     await startAnalysis();
 }
 
+const reprocessedAnalyze = async (accession: string) => {
+    loadingReprocessed.value = true;
+    try {
+        const files = await loadReprocessedProjectFiles(accession);
+        await loadProjectFromReprocessed(accession, files);
+        await router.push({ name: "mpaSingle" });
+        await startAnalysis();
+    } catch (e) {
+        upgradeError.value = "Failed to open this reprocessed project. Please check your internet connection and try again.";
+        showUpgradeError.value = true;
+    } finally {
+        loadingReprocessed.value = false;
+    }
+}
+
 const startAnalysis = async () => {
     for (const group of project.groups) {
         for (const analysis of group.analyses) {
@@ -175,8 +206,15 @@ const startImport = async () => {
 
 onMounted(async () => {
     projects.value = await getProjects();
+
     loadingSampleData.value = true;
-    await sampleDataStore.loadSampleData();
+    loadingAccessions.value = true;
+    const [, accessions] = await Promise.all([
+        sampleDataStore.loadSampleData(),
+        loadReprocessedAccessions().catch(() => [])
+    ]);
     loadingSampleData.value = false;
+    reprocessedAccessions.value = accessions;
+    loadingAccessions.value = false;
 })
 </script>
