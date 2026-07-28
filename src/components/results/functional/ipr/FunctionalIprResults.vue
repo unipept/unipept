@@ -31,20 +31,6 @@
                 />
             </v-col>
         </v-row>
-
-        <v-row v-if="analysis && analysis.interproFunctionalAnalysisStore">
-            <v-col cols="12">
-                <functional-terms-analysis-results
-                    :store="analysisStore"
-                    title="InterPro Functional Analysis"
-                    rank="InterPro"
-                    filename="unipept_interpro_functional_analysis"
-                    term-header="InterPro entry"
-                    name-header="InterPro name"
-                    :resolver="resolveName"
-                />
-            </v-col>
-        </v-row>
     </div>
 
     <div v-else>
@@ -58,7 +44,6 @@ import {computed, ref} from "vue";
 import useOntologyStore from "@/store/OntologyStore";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
-import FunctionalTermsAnalysisResults from "@/components/results/functional/FunctionalTermsAnalysisResults.vue";
 
 const { getIprDefinition } = useOntologyStore();
 
@@ -84,6 +69,7 @@ const items = computed(() => Array.from(data.iprTable!.counts.entries()).map(([k
         namespace: getIprDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.iprTrust!.totalItems,
+        confidence: analysis?.interproFunctionalAnalysisStore?.iprTermsToConfidence?.get(key) ?? 0,
     }
 }));
 
@@ -102,18 +88,6 @@ const downloadItem = (item: IprResultsTableItem) => {
 const downloadTable = (items: IprResultsTableItem[]) => {
     emits('downloadTable', items);
 }
-
-const analysisStore = computed(() => ({
-    status: analysis?.interproFunctionalAnalysisStore?.status,
-    termsToConfidence: analysis?.interproFunctionalAnalysisStore?.iprTermsToConfidence,
-    analysisStarted: analysis?.interproFunctionalAnalysisStore?.analysisStarted,
-    analysisInitializationFinished: analysis?.interproFunctionalAnalysisStore?.analysisInitializationFinished,
-    currentProgress: analysis?.interproFunctionalAnalysisStore?.currentProgress,
-    etaSeconds: analysis?.interproFunctionalAnalysisStore?.etaSeconds,
-    analysisError: analysis?.interproFunctionalAnalysisStore?.analysisError
-}));
-
-const resolveName = (term: string) => getIprDefinition(term)?.name || "";
 </script>
 
 <script lang="ts">

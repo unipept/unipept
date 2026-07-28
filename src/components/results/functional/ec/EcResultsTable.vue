@@ -1,114 +1,141 @@
 <template>
-    <v-data-table
-        v-model:expanded="expanded"
-        v-model:sort-by="sortBy"
-        :items="items"
-        :headers="headers"
-        :items-per-page="5"
-        :loading="false"
-        item-value="code"
-        density="compact"
-        :show-expand="data.ncbiTree !== undefined"
-        @update:expanded="singleExpand"
-        mobile-breakpoint="md"
-    >
-        <template #header.action>
-            <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV">
-                <template #activator="{ props }">
-                    <v-btn
-                        v-bind="props"
-                        color="primary"
-                        density="compact"
-                        variant="text"
-                        icon="mdi-download"
-                        @click="downloadTable"
-                    />
-                </template>
-            </v-tooltip>
-            <div v-else>
-                Download
-            </div>
-        </template>
+    <div>
+        <div class="d-flex align-center mb-2 ga-4">
+            <span class="text-body-2">Probability threshold</span>
+            <v-slider
+                v-model="probabilityThreshold"
+                class="threshold-slider"
+                min="0"
+                max="1"
+                step="0.01"
+                thumb-label
+                hide-details
+            />
+            <span class="text-body-2">{{ displayPercentage(probabilityThreshold) }}</span>
+        </div>
 
-        <template #item.count="{ item }">
-            <div
-                :style="{
-                    padding: '8px 12px',
-                    background: `linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ${(item.count / item.totalCount) * 100}%, rgb(240, 240, 240) ${(item.count / item.totalCount) * 100}%, rgb(240, 240, 240) 100%)`,
-                }"
-            >
-                {{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}
-            </div>
-        </template>
-
-        <template #item.code="{ item }">
-            <a
-                :href="url(item.code)"
-                target="_blank"
-                class="font-regular d-flex align-center"
-            >
-                {{ item.code }}
-                <v-icon
-                    size="x-small"
-                    class="ml-1"
-                >mdi-open-in-new</v-icon>
-            </a>
-        </template>
-
-        <template
-            v-if="showDownloadItem"
-            #item.action="{ item }"
+        <v-data-table
+            v-model:expanded="expanded"
+            v-model:sort-by="sortBy"
+            :items="filteredItems"
+            :headers="headers"
+            :items-per-page="5"
+            :loading="false"
+            item-value="code"
+            density="compact"
+            :show-expand="data.ncbiTree !== undefined"
+            @update:expanded="singleExpand"
+            mobile-breakpoint="md"
         >
-            <v-tooltip text="Download CSV summary of the filtered functional annotation">
-                <template #activator="{ props }">
-                    <v-btn
-                        v-if="$vuetify.display.mobile"
-                        v-bind="props"
-                        color="primary"
-                        density="compact"
-                        variant="tonal"
-                        prepend-icon="mdi-download"
-                        text="CSV"
-                        class="w-100"
-                        style="height: 32px;"
-                        @click="downloadItem(item)"
-                    />
-                    <v-btn
-                        v-else
-                        v-bind="props"
-                        color="primary"
-                        density="compact"
-                        variant="text"
-                        icon="mdi-download"
-                        @click="downloadItem(item)"
-                    />
-                </template>
-            </v-tooltip>
-        </template>
-
-        <template #expanded-row="{ columns, item }">
-            <tr>
-                <td :colspan="columns.length">
-                    <v-card
-                        height="300"
-                        variant="flat"
-                    >
-                        <treeview
-                            v-if="trees.has(item.code)"
-                            :ncbi-root="trees.get(item.code)!"
-                            :link-stroke-color="linkStrokeColor"
-                            :node-stroke-color="highlightColorFunc"
-                            :node-fill-color="highlightColorFunc"
+            <template #header.action>
+                <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV">
+                    <template #activator="{ props }">
+                        <v-btn
+                            v-bind="props"
+                            color="primary"
+                            density="compact"
+                            variant="text"
+                            icon="mdi-download"
+                            @click="downloadTable"
                         />
-                    </v-card>
-                </td>
-            </tr>
-        </template>
-    </v-data-table>
+                    </template>
+                </v-tooltip>
+                <div v-else>
+                    Download
+                </div>
+            </template>
+
+            <template #item.count="{ item }">
+                <div
+                    :style="{
+                        padding: '8px 12px',
+                        background: `linear-gradient(90deg, rgb(221, 221, 221) 0%, rgb(221, 221, 221) ${(item.count / item.totalCount) * 100}%, rgb(240, 240, 240) ${(item.count / item.totalCount) * 100}%, rgb(240, 240, 240) 100%)`,
+                    }"
+                >
+                    {{ showPercentage ? displayPercentage(item.count / item.totalCount) : item.count }}
+                </div>
+            </template>
+
+            <template #item.code="{ item }">
+                <a
+                    :href="url(item.code)"
+                    target="_blank"
+                    class="font-regular d-flex align-center"
+                >
+                    {{ item.code }}
+                    <v-icon
+                        size="x-small"
+                        class="ml-1"
+                    >mdi-open-in-new</v-icon>
+                </a>
+            </template>
+
+            <template #item.confidence="{ item }">
+                <div
+                    :style="{
+                        padding: '8px 12px',
+                        background: `linear-gradient(90deg, rgba(25, 118, 210, 0.35) 0%, rgba(25, 118, 210, 0.35) ${(item.confidence ?? 0) * 100}%, rgb(240, 240, 240) ${(item.confidence ?? 0) * 100}%, rgb(240, 240, 240) 100%)`,
+                    }"
+                >
+                    {{ displayPercentage(item.confidence ?? 0) }}
+                </div>
+            </template>
+
+            <template
+                v-if="showDownloadItem"
+                #item.action="{ item }"
+            >
+                <v-tooltip text="Download CSV summary of the filtered functional annotation">
+                    <template #activator="{ props }">
+                        <v-btn
+                            v-if="$vuetify.display.mobile"
+                            v-bind="props"
+                            color="primary"
+                            density="compact"
+                            variant="tonal"
+                            prepend-icon="mdi-download"
+                            text="CSV"
+                            class="w-100"
+                            style="height: 32px;"
+                            @click="downloadItem(item)"
+                        />
+                        <v-btn
+                            v-else
+                            v-bind="props"
+                            color="primary"
+                            density="compact"
+                            variant="text"
+                            icon="mdi-download"
+                            @click="downloadItem(item)"
+                        />
+                    </template>
+                </v-tooltip>
+            </template>
+
+            <template #expanded-row="{ columns, item }">
+                <tr>
+                    <td :colspan="columns.length">
+                        <v-card
+                            height="300"
+                            variant="flat"
+                        >
+                            <treeview
+                                v-if="trees.has(item.code)"
+                                :ncbi-root="trees.get(item.code)!"
+                                :link-stroke-color="linkStrokeColor"
+                                :node-stroke-color="highlightColorFunc"
+                                :node-fill-color="highlightColorFunc"
+                            />
+                        </v-card>
+                    </td>
+                </tr>
+            </template>
+        </v-data-table>
+    </div>
 </template>
 
 <script setup lang="ts">
-import {Ref, ref, toRaw, watch} from "vue";
+import {computed, Ref, ref, toRaw, watch} from "vue";
 import usePercentage from "@/composables/usePercentage";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
@@ -133,6 +160,11 @@ const emits = defineEmits<{
 
 const expanded = ref<string[]>([]);
 const trees = new Map<string, NcbiTreeNode>();
+const probabilityThreshold = ref(0);
+
+const filteredItems = computed(() => {
+    return items.filter(item => (item.confidence ?? 0) >= probabilityThreshold.value);
+});
 
 const calculateHighlightedNcbiTree = async (code: string) => {
     const highlightedTreeRoot = await processHighlightedTree(
@@ -189,7 +221,13 @@ const headers: DataTableHeader[] = [
         title: "Name",
         align: "start",
         key: "name",
-        width: "47%"
+        width: "35%"
+    },
+    {
+        title: "Probability",
+        align: "start",
+        key: "confidence",
+        width: "12%"
     },
     {
         title: "",
@@ -207,6 +245,7 @@ export interface EcResultsTableItem {
     name: string;
     count: number;
     totalCount: number;
+    confidence?: number;
 }
 
 const url = (code: string) => {
@@ -226,5 +265,10 @@ a {
 
 a:hover {
     text-decoration: none;
+}
+
+.threshold-slider {
+    max-width: 280px;
+    min-width: 180px;
 }
 </style>

@@ -74,52 +74,6 @@
                 />
             </v-col>
         </v-row>
-
-        <h2 class="py-2">
-            GO Functional Analysis
-        </h2>
-
-        <v-row v-if="analysis && analysis.goFunctionalAnalysisStore">
-            <v-col cols="12">
-                <functional-terms-analysis-results
-                    :store="biologicalProcessAnalysisStore"
-                    title="GO Biological Process Functional Analysis"
-                    rank="GO BP"
-                    filename="unipept_go_biological_process_functional_analysis"
-                    term-header="GO term"
-                    name-header="GO name"
-                    :resolver="resolveName"
-                />
-            </v-col>
-        </v-row>
-
-        <v-row v-if="analysis && analysis.goFunctionalAnalysisStore">
-            <v-col cols="12">
-                <functional-terms-analysis-results
-                    :store="cellularComponentAnalysisStore"
-                    title="GO Cellular Component Functional Analysis"
-                    rank="GO CC"
-                    filename="unipept_go_cellular_component_functional_analysis"
-                    term-header="GO term"
-                    name-header="GO name"
-                    :resolver="resolveName"
-                />
-            </v-col>
-        </v-row>
-
-        <v-row v-if="analysis && analysis.goFunctionalAnalysisStore">
-            <v-col cols="12">
-                <functional-terms-analysis-results
-                    :store="molecularFunctionAnalysisStore"
-                    title="GO Molecular Function Functional Analysis"
-                    rank="GO MF"
-                    filename="unipept_go_molecular_function_functional_analysis"
-                    term-header="GO term"
-                    name-header="GO name"
-                    :resolver="resolveName"
-                />
-            </v-col>
-        </v-row>
     </div>
 
     <div v-else>
@@ -137,7 +91,6 @@ import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
-import FunctionalTermsAnalysisResults from "@/components/results/functional/FunctionalTermsAnalysisResults.vue";
 
 const { getGoDefinition } = useOntologyStore();
 
@@ -154,11 +107,20 @@ const emits = defineEmits<{
     (e: 'downloadTable', items: GoResultsTableItem[]): void;
 }>();
 
-const biologicalProcessItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.BiologicalProcess));
-const cellularComponentItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.CellularComponent));
-const molecularFunctionItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
+const biologicalProcessItems = computed(() => getItems(
+    data.goTable,
+    analysis?.goFunctionalAnalysisStore?.biologicalProcessTermsToConfidence
+).filter(x => x.namespace == GoNamespace.BiologicalProcess));
+const cellularComponentItems = computed(() => getItems(
+    data.goTable,
+    analysis?.goFunctionalAnalysisStore?.cellularComponentTermsToConfidence
+).filter(x => x.namespace == GoNamespace.CellularComponent));
+const molecularFunctionItems = computed(() => getItems(
+    data.goTable,
+    analysis?.goFunctionalAnalysisStore?.molecularFunctionTermsToConfidence
+).filter(x => x.namespace == GoNamespace.MolecularFunction));
 
-const getItems = (items: CountTable<string>) => {
+const getItems = (items: CountTable<string>, termsToConfidence?: Map<string, number>) => {
     return Array.from(items.counts.entries())
         .map(([key, value]) => ({
             code: key,
@@ -166,6 +128,7 @@ const getItems = (items: CountTable<string>) => {
             namespace: getGoDefinition(key)?.namespace ?? "Unknown",
             count: value,
             totalCount: data.goTrust.totalItems,
+            confidence: termsToConfidence?.get(key) ?? 0,
         }));
 }
 
@@ -176,38 +139,6 @@ const downloadItem = (item: GoResultsTableItem) => {
 const downloadTable = (items: GoResultsTableItem[]) => {
     emits('downloadTable', items);
 }
-
-const biologicalProcessAnalysisStore = computed(() => ({
-    status: analysis?.goFunctionalAnalysisStore?.biologicalProcessStatus,
-    termsToConfidence: analysis?.goFunctionalAnalysisStore?.biologicalProcessTermsToConfidence,
-    analysisStarted: analysis?.goFunctionalAnalysisStore?.biologicalProcessAnalysisStarted,
-    analysisInitializationFinished: analysis?.goFunctionalAnalysisStore?.biologicalProcessAnalysisInitializationFinished,
-    currentProgress: analysis?.goFunctionalAnalysisStore?.biologicalProcessCurrentProgress,
-    etaSeconds: analysis?.goFunctionalAnalysisStore?.biologicalProcessEtaSeconds,
-    analysisError: analysis?.goFunctionalAnalysisStore?.biologicalProcessAnalysisError
-}));
-
-const cellularComponentAnalysisStore = computed(() => ({
-    status: analysis?.goFunctionalAnalysisStore?.cellularComponentStatus,
-    termsToConfidence: analysis?.goFunctionalAnalysisStore?.cellularComponentTermsToConfidence,
-    analysisStarted: analysis?.goFunctionalAnalysisStore?.cellularComponentAnalysisStarted,
-    analysisInitializationFinished: analysis?.goFunctionalAnalysisStore?.cellularComponentAnalysisInitializationFinished,
-    currentProgress: analysis?.goFunctionalAnalysisStore?.cellularComponentCurrentProgress,
-    etaSeconds: analysis?.goFunctionalAnalysisStore?.cellularComponentEtaSeconds,
-    analysisError: analysis?.goFunctionalAnalysisStore?.cellularComponentAnalysisError
-}));
-
-const molecularFunctionAnalysisStore = computed(() => ({
-    status: analysis?.goFunctionalAnalysisStore?.molecularFunctionStatus,
-    termsToConfidence: analysis?.goFunctionalAnalysisStore?.molecularFunctionTermsToConfidence,
-    analysisStarted: analysis?.goFunctionalAnalysisStore?.molecularFunctionAnalysisStarted,
-    analysisInitializationFinished: analysis?.goFunctionalAnalysisStore?.molecularFunctionAnalysisInitializationFinished,
-    currentProgress: analysis?.goFunctionalAnalysisStore?.molecularFunctionCurrentProgress,
-    etaSeconds: analysis?.goFunctionalAnalysisStore?.molecularFunctionEtaSeconds,
-    analysisError: analysis?.goFunctionalAnalysisStore?.molecularFunctionAnalysisError
-}));
-
-const resolveName = (term: string) => getGoDefinition(term)?.name || "";
 </script>
 
 <style scoped>

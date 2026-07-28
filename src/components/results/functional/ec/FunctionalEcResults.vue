@@ -8,7 +8,6 @@ import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue"
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
-import ECFunctionalAnalysisResults from "@/components/results/functional/ec/ECFunctionalAnalysisResults.vue";
 
 const { getEcDefinition } = useOntologyStore();
 const { root, process } = useEcTreeProcessor();
@@ -33,6 +32,7 @@ const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([ke
         namespace: getEcDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.ecTrust!.totalItems,
+        confidence: analysis?.ecFunctionalAnalysisStore?.ecTermsToConfidence?.get(key) ?? 0,
     }
 }));
 
@@ -88,13 +88,6 @@ onMounted(() => {
             </v-col>
         </v-row>
 
-        <v-row v-if="analysis && analysis.ecFunctionalAnalysisStore">
-            <v-col cols="12">
-                <ECFunctionalAnalysisResults
-                    :store="analysis.ecFunctionalAnalysisStore"
-                />
-            </v-col>
-        </v-row>
     </div>
     <div v-else>
         <filter-progress text="The EC numbers are currently being filtered." />
