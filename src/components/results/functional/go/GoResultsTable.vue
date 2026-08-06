@@ -41,6 +41,10 @@
             </div>
         </template>
 
+        <template #item.probability="{ item }">
+            <presence-probability-cell :probability="item.probability" />
+        </template>
+
         <template #item.code="{ item }">
             <a
                 :href="url(item.code)"
@@ -114,6 +118,7 @@ import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useH
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import usePercentage from "@/composables/usePercentage";
 import GoTableData from "@/components/results/functional/go/GoTableData";
+import PresenceProbabilityCell from "@/components/results/functional/PresenceProbabilityCell.vue";
 import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 
 const { displayPercentage } = usePercentage();
@@ -178,19 +183,25 @@ const headers: DataTableHeader[] = [
         title: "Peptides",
         align: "start",
         key: "count",
-        width: "20%"
+        width: "15%"
     },
     {
         title: "GO-term",
         align: "start",
         key: "code",
-        width: "30%"
+        width: "18%"
     },
     {
         title: "Name",
         align: "start",
         key: "name",
-        width: "47%"
+        width: "34%"
+    },
+    {
+        title: "Presence probability",
+        align: "start",
+        key: "probability",
+        width: "30%"
     },
     {
         title: "",
@@ -208,6 +219,7 @@ export interface GoResultsTableItem {
     name: string;
     count: number;
     totalCount: number;
+    probability?: number;
 }
 
 const url = (code: string) => {

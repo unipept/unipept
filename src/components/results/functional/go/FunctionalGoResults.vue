@@ -118,6 +118,7 @@ const getItems = (items: CountTable<string>) => {
             namespace: getGoDefinition(key)?.namespace ?? "Unknown",
             count: value,
             totalCount: data.goTrust.totalItems,
+            probability: data.goCodesToConfidence?.get(key),
         }));
 }
 

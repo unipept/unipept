@@ -9,15 +9,25 @@ import useInterproProcessor from "@/composables/processing/functional/useInterpr
 import useOntologyStore from "@/store/OntologyStore";
 import useTaxonomicProcessor from "@/composables/processing/taxonomic/useTaxonomicProcessor";
 import useNcbiTreeProcessor from "@/composables/processing/taxonomic/useNcbiTreeProcessor";
-import usePeptonizerStore, {PeptonizerStoreImport} from "@/store/PeptonizerAnalysisStore";
+import usePeptonizerStore, {PeptonizerStatus, PeptonizerStoreImport} from "@/store/PeptonizerAnalysisStore";
+import useFunctionalPeptonizerStore, {FunctionalPeptonizerStore, FunctionalPeptonizerStoreImport} from "@/store/FunctionalPeptonizerAnalysisStore";
 import usePathwayPilotStore, {PathwayPilotStoreImport} from "@/store/PathwayPilotStore";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
+import CountTable from "@/logic/processors/CountTable";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
+import buildPeptideTermsMap from "@/logic/processors/peptonizer/buildPeptideTermsMap";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
+
+interface FunctionalPeptonizerConfig {
+    key: string;
+    store: FunctionalPeptonizerStore;
+    termExtractor: (data: PeptideData) => string[];
+}
 
 // Static queue for processing analyses sequentially
 class AnalysisQueue {
@@ -84,6 +94,35 @@ const useSingleAnalysisStore = (
     const peptonizerStore = usePeptonizerStore(_id);
     const pathwayPilotStore = usePathwayPilotStore(_id);
 
+    const ecPeptonizerStore = useFunctionalPeptonizerStore(`${_id}_ec`);
+    const goBiologicalProcessPeptonizerStore = useFunctionalPeptonizerStore(`${_id}_go_biological_process`);
+    const goCellularComponentPeptonizerStore = useFunctionalPeptonizerStore(`${_id}_go_cellular_component`);
+    const goMolecularFunctionPeptonizerStore = useFunctionalPeptonizerStore(`${_id}_go_molecular_function`);
+    const iprPeptonizerStore = useFunctionalPeptonizerStore(`${_id}_ipr`);
+
+    // One presence-probability run per functional-annotation category. GO runs separately per namespace
+    // (Biological Process / Cellular Component / Molecular Function), since each namespace forms its own
+    // independent graphical model.
+    const functionalPeptonizerConfigs: FunctionalPeptonizerConfig[] = [
+        { key: "ec", store: ecPeptonizerStore, termExtractor: (data) => Object.keys(data.ec) },
+        {
+            key: "goBiologicalProcess",
+            store: goBiologicalProcessPeptonizerStore,
+            termExtractor: (data) => Object.keys(data.go).filter((code) => ontologyStore.getGoDefinition(code)?.namespace === GoNamespace.BiologicalProcess)
+        },
+        {
+            key: "goCellularComponent",
+            store: goCellularComponentPeptonizerStore,
+            termExtractor: (data) => Object.keys(data.go).filter((code) => ontologyStore.getGoDefinition(code)?.namespace === GoNamespace.CellularComponent)
+        },
+        {
+            key: "goMolecularFunction",
+            store: goMolecularFunctionPeptonizerStore,
+            termExtractor: (data) => Object.keys(data.go).filter((code) => ontologyStore.getGoDefinition(code)?.namespace === GoNamespace.MolecularFunction)
+        },
+        { key: "ipr", store: iprPeptonizerStore, termExtractor: (data) => Object.keys(data.ipr) },
+    ];
+
     // ===============================================================
     // ======================== REFERENCES ===========================
     // ===============================================================
@@ -145,6 +184,21 @@ const useSingleAnalysisStore = (
     // ========================== METHODS ============================
     // ===============================================================
 
+    // Fire-and-forget: none of these (potentially slow) presence-probability computations should block the
+    // caller. `onlyIfPending` limits triggering to categories that haven't been computed yet, used right
+    // after a fresh analysis so a project re-import (which already restored persisted results via
+    // setImportedData) isn't immediately overwritten.
+    const runFunctionalPeptonizers = (table: CountTable<string>, onlyIfPending: boolean) => {
+        for (const { store, termExtractor } of functionalPeptonizerConfigs) {
+            if (onlyIfPending && store.status !== PeptonizerStatus.Pending) {
+                continue;
+            }
+
+            const peptideTerms = buildPeptideTermsMap(table, peptideToData.value!, termExtractor);
+            store.runFunctionalPeptonizer(peptideTerms, table, config.value.equate, intensities.value);
+        }
+    }
+
     const analyse = async (fetch: boolean = true) => {
         // Set status to running immediately to provide feedback to the user
         status.value = AnalysisStatus.Pending;
@@ -177,6 +231,10 @@ const useSingleAnalysisStore = (
                 await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
                 await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.counts.keys()));
 
+                // GO namespace filtering (see functionalPeptonizerConfigs) needs the GO ontology populated,
+                // so this can only run after updateGoOntology above.
+                runFunctionalPeptonizers(peptidesTable.value!, true);
+
                 processNcbiTree(lcaTable.value!);
             });
             
@@ -200,6 +258,9 @@ const useSingleAnalysisStore = (
         await processEc(table!, peptideToData.value!, functionalFilter.value!);
         await processGo(table!, peptideToData.value!, functionalFilter.value!);
         await processInterpro(table!, peptideToData.value!, functionalFilter.value!);
+
+        // The peptide-term composition may have changed, so any previous probabilities are stale.
+        runFunctionalPeptonizers(table!, false);
 
         filteringStatus.value = AnalysisStatus.Finished;
     }
@@ -241,6 +302,9 @@ const useSingleAnalysisStore = (
         await processGo(filteredPeptidesTable.value!, peptideToData.value!, functionalFilter.value!);
         await processInterpro(filteredPeptidesTable.value!, peptideToData.value!, functionalFilter.value!);
 
+        // The peptide-term composition may have changed, so any previous probabilities are stale.
+        runFunctionalPeptonizers(filteredPeptidesTable.value!, false);
+
         filteringStatus.value = AnalysisStatus.Finished;
     }
 
@@ -278,6 +342,9 @@ const useSingleAnalysisStore = (
             peptideToDataTransferable,
 
             peptonizer: peptonizerStore.exportStore(),
+            functionalPeptonizers: Object.fromEntries(
+                functionalPeptonizerConfigs.map(({ key, store }) => [key, store.exportStore()])
+            ),
             pathwayPilot: pathwayPilotStore.exportStore()
         }
     }
@@ -301,6 +368,15 @@ const useSingleAnalysisStore = (
 
         if (storeImport.peptonizer) {
             peptonizerStore.setImportedData(storeImport.peptonizer);
+        }
+
+        if (storeImport.functionalPeptonizers) {
+            for (const { key, store } of functionalPeptonizerConfigs) {
+                const imported = storeImport.functionalPeptonizers[key];
+                if (imported) {
+                    store.setImportedData(imported);
+                }
+            }
         }
 
         if (storeImport.pathwayPilot) {
@@ -346,6 +422,11 @@ const useSingleAnalysisStore = (
         ontologyStore,
 
         peptonizerStore,
+        ecPeptonizerStore,
+        goBiologicalProcessPeptonizerStore,
+        goCellularComponentPeptonizerStore,
+        goMolecularFunctionPeptonizerStore,
+        iprPeptonizerStore,
         pathwayPilotStore,
 
         analyse,
@@ -372,6 +453,9 @@ export interface SingleAnalysisStoreImport {
     databaseVersion: string;
     peptideToDataTransferable: TransferableState | undefined;
     peptonizer: PeptonizerStoreImport | undefined;
+    // Keyed by the FunctionalPeptonizerConfig.key values: "ec", "goBiologicalProcess",
+    // "goCellularComponent", "goMolecularFunction", "ipr".
+    functionalPeptonizers: Record<string, FunctionalPeptonizerStoreImport | undefined> | undefined;
     pathwayPilot: PathwayPilotStoreImport | undefined;
 }
 

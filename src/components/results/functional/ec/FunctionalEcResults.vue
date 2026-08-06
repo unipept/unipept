@@ -71,6 +71,7 @@ const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([ke
         namespace: getEcDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.ecTrust!.totalItems,
+        probability: data.ecCodesToConfidence?.get(key),
     }
 }));
 

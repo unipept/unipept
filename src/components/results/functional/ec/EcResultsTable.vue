@@ -41,6 +41,10 @@
             </div>
         </template>
 
+        <template #item.probability="{ item }">
+            <presence-probability-cell :probability="item.probability" />
+        </template>
+
         <template #item.code="{ item }">
             <a
                 :href="url(item.code)"
@@ -114,6 +118,7 @@ import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
+import PresenceProbabilityCell from "@/components/results/functional/PresenceProbabilityCell.vue";
 import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 
 const { displayPercentage } = usePercentage();
@@ -177,19 +182,25 @@ const headers: DataTableHeader[] = [
         title: "Peptides",
         align: "start",
         key: "count",
-        width: "20%"
+        width: "15%"
     },
     {
         title: "EC-number",
         align: "start",
         key: "code",
-        width: "30%"
+        width: "18%"
     },
     {
         title: "Name",
         align: "start",
         key: "name",
-        width: "47%"
+        width: "35%"
+    },
+    {
+        title: "Presence probability",
+        align: "start",
+        key: "probability",
+        width: "30%"
     },
     {
         title: "",
@@ -207,6 +218,7 @@ export interface EcResultsTableItem {
     name: string;
     count: number;
     totalCount: number;
+    probability?: number;
 }
 
 const url = (code: string) => {

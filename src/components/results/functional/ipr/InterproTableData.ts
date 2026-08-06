@@ -10,6 +10,10 @@ export default interface InterproTableData {
     iprTrust: FunctionalTrust;
     iprToPeptides: Map<string, string[]>;
 
+    // Presence probabilities computed by the InterPro-Peptonizer; undefined while computation is
+    // pending/running/failed
+    iprCodesToConfidence?: Map<string, number>;
+
     // Only required when the rows of the Interpro table should be expandable
     ncbiTree?: NcbiTreeNode | undefined;
     lcaToPeptides?: Map<number, string[]> | undefined;

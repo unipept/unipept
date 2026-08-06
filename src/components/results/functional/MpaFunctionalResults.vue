@@ -192,6 +192,14 @@ const goData = computed(() => ({
     goTrust: analysis.goTrust!,
     ncbiTree: analysis.ncbiTree,
     goToPeptides: analysis.goToPeptides!,
+    // GO terms are inferred as three independent presence-probability runs (one per namespace); a GO code
+    // belongs to exactly one namespace, so merging the three result maps is safe and lets the table look up
+    // a probability by code alone, the same way it does for EC/InterPro.
+    goCodesToConfidence: new Map<string, number>([
+        ...(analysis.goBiologicalProcessPeptonizerStore.termsToConfidence ?? []),
+        ...(analysis.goCellularComponentPeptonizerStore.termsToConfidence ?? []),
+        ...(analysis.goMolecularFunctionPeptonizerStore.termsToConfidence ?? []),
+    ]),
     lcaToPeptides: analysis.lcaToPeptides
 }));
 
@@ -200,6 +208,7 @@ const ecData = computed(() => ({
     ecTrust: analysis.ecTrust!,
     ncbiTree: analysis.ncbiTree,
     ecToPeptides: analysis.ecToPeptides!,
+    ecCodesToConfidence: analysis.ecPeptonizerStore.termsToConfidence,
     lcaToPeptides: analysis.lcaToPeptides
 }));
 
@@ -208,6 +217,7 @@ const iprData = computed(() => ({
     iprTrust: analysis.iprTrust!,
     ncbiTree: analysis.ncbiTree,
     iprToPeptides: analysis.iprToPeptides!,
+    iprCodesToConfidence: analysis.iprPeptonizerStore.termsToConfidence,
     lcaToPeptides: analysis.lcaToPeptides
 }));
 
@@ -235,12 +245,13 @@ const downloadGoItem = (item: GoResultsTableItem) => {
 }
 
 const downloadGoTable = (items: GoResultsTableItem[]) => {
-    const header = ["peptides", "go term", "name"];
+    const header = ["peptides", "go term", "name", "presence probability"];
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.probability !== undefined ? item.probability.toString() : ""
         ];
     }));
     download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_go_table.csv`);
@@ -266,12 +277,13 @@ const downloadEcItem = (item: EcResultsTableItem) => {
 }
 
 const downloadEcTable = (items: EcResultsTableItem[]) => {
-    const header = ["peptides", "ec number", "name"]
+    const header = ["peptides", "ec number", "name", "presence probability"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.probability !== undefined ? item.probability.toString() : ""
         ];
     }));
 
@@ -298,12 +310,13 @@ const downloadInterproItem = (item: IprResultsTableItem) => {
 }
 
 const downloadInterproTable = (items: IprResultsTableItem[]) => {
-    const header = ["peptides", "interpro entry", "name"]
+    const header = ["peptides", "interpro entry", "name", "presence probability"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.probability !== undefined ? item.probability.toString() : ""
         ];
     }));
 

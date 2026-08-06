@@ -10,6 +10,10 @@ export default interface GoTableData {
     goTrust: FunctionalTrust;
     goToPeptides: Map<string, string[]>;
 
+    // Presence probabilities computed by the GO-Peptonizer (one independent run per namespace, merged here);
+    // undefined while computation is pending/running/failed
+    goCodesToConfidence?: Map<string, number>;
+
     // Only required when the rows of the GO table should be expandable
     ncbiTree?: NcbiTreeNode | undefined;
     lcaToPeptides?: Map<number, string[]> | undefined;
