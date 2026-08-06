@@ -147,13 +147,24 @@ const usePeptonizerStore = (sampleId: string) => defineStore(`peptonizerStore_${
 
             taxaIdsToConfidence.value = new Map<number, number>(Array.from(peptonizerData.entries()).map(([k, v]) => [Number.parseInt(k), v]));
 
-            // Convert the labels from taxon IDs to taxon names
-            const {updateNcbiOntology, getNcbiDefinition} = useOntologyStore();
-            await updateNcbiOntology(Array.from(taxaIdsToConfidence.value.keys()), false);
-
-            taxaNamesToConfidence.value = new Map(Array.from(taxaIdsToConfidence.value.entries()).map(([k, v]) => [getNcbiDefinition(k)!.name, v]));
+            // Make the finished view available immediately, even if ontology lookup is still pending.
+            taxaNamesToConfidence.value = new Map(
+                Array.from(taxaIdsToConfidence.value.entries()).map(([k, v]) => [k.toString(), v])
+            );
 
             status.value = PeptonizerStatus.Finished;
+
+            // Convert the labels from taxon IDs to taxon names when ontology data is available.
+            try {
+                const {updateNcbiOntology, getNcbiDefinition} = useOntologyStore();
+                await updateNcbiOntology(Array.from(taxaIdsToConfidence.value.keys()), false);
+
+                taxaNamesToConfidence.value = new Map(
+                    Array.from(taxaIdsToConfidence.value.entries()).map(([k, v]) => [getNcbiDefinition(k)?.name ?? k.toString(), v])
+                );
+            } catch (ontologyError) {
+                console.warn("Unable to enrich Peptonizer taxon names from ontology", ontologyError);
+            }
         } catch (error) {
             status.value = PeptonizerStatus.Failed;
             peptonizerError.value = (error as any).toString();

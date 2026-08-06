@@ -1,3 +1,5 @@
+import NetworkUtils from "@/logic/communicators/NetworkUtils";
+
 const base = "https://api.unipept.ugent.be/api/v2/";
 const privateBase = "https://api.unipept.ugent.be/private_api/"
 
@@ -150,6 +152,15 @@ export default class UnipeptCommunicator {
         }
 
         return await fetch(this.prepareURL(base, "taxa2tree.json", params)).then(r => r.json());
+    }
+
+    public async taxa2rank(taxa: number[][], rank: string): Promise<number[][]> {
+        const response = await NetworkUtils.postJSON(
+            this.prepareURL(base, "taxa2rank.json", new URLSearchParams()),
+            JSON.stringify({ taxa, rank })
+        );
+
+        return response.mapped_taxa;
     }
 
     public async taxonomy(input: string[], extra = false, names = false): Promise<string[]> {
