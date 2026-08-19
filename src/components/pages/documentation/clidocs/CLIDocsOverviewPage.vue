@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            Unipept <initialism>CLI</initialism> documentation <small>v4.3.0</small>
+            Unipept <initialism>CLI</initialism> documentation <small>v4.2.2</small>
         </h1>
         <h3 class="font-weight-light">
             The Unipept command line interface (<initialism>CLI</initialism>) offers an easy way to integrate Unipept metaproteomics functionality into your data
@@ -143,8 +143,8 @@
                 <br>peptide,cutoff_used,taxon_id,taxon_name,taxon_rank
                 <br>AALTER,1,1,root,no rank
                 <br>
-                <br><sentinel>$</sentinel> npx unipept-cli@4.3.0 --version
-                <br>4.3.0 (UniProt 2026.02)
+                <br><sentinel>$</sentinel> npx unipept-cli@4.2.2 --version
+                <br>4.2.2 (UniProt 2026.02)
             </boxed>
 
             <p>
@@ -165,7 +165,7 @@
                 title="npx and older versions"
             >
                 <p>
-                    <inline-code>npx unipept-cli</inline-code> works from version 4.3.0 onwards. For earlier versions, name the command explicitly with
+                    <inline-code>npx unipept-cli</inline-code> works from version 4.2.2 onwards. For earlier versions, name the command explicitly with
                     <inline-code>npx -p unipept-cli@4.2.1 unipept</inline-code>.
                 </p>
             </static-alert>
