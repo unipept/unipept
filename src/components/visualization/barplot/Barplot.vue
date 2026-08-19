@@ -117,7 +117,6 @@ onMounted(() => {
 watch([
     () => props.bars,
     () => props.settings.width,
-    () => props.settings.height,
     () => props.settings.showBarLabel,
     () => barLabelWidth.value
 ], () => {

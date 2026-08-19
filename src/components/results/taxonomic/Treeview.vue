@@ -46,10 +46,7 @@ const visualizationObject = ref<UnipeptTreeview | undefined>(undefined);
 
 const downloadImageModalOpen = ref(false);
 
-// @ts-ignore We're accessing the private property element of UnipeptTreeview here, but this is the only way
-// we get access to a properly initialized SVG... We might have to consider adding a getter for this element
-// in a future version of the Unipept Visualizations library.
-const svg = computed(() => visualizationObject.value?.element.querySelector(":scope > svg"))
+const svg = computed(() => visualizationObject.value?.element.querySelector<SVGSVGElement>(":scope > svg"))
 
 const { isFullscreen, toggle } = useFullscreen(controls);
 const { width, height } = useElementSize(controls);
