@@ -213,23 +213,26 @@
             large-title
         >
             <p>
-                The Unipept command line tools require no additional configuration and can be used immediately after installation. By default, the public Unipept
-                server will be used for all commands. If you have a local Unipept server running, and wish to use it with the command line tools, simply run the
-                <inline-code>unipept config host http://local.server</inline-code> command, where you substitute <inline-code>http://local.server</inline-code> with the address of your local
-                Unipept server:
+                The Unipept command line tools require no configuration and can be used immediately after installation. By default, the public Unipept
+                server is used for all commands.
+            </p>
+
+            <p>
+                If you have a local Unipept server running and wish to use it, pass its address to the <inline-code>--host</inline-code> option. The option
+                belongs to the subcommand rather than to <inline-code>unipept</inline-code> itself, so it goes after the subcommand name:
             </p>
 
             <boxed>
-                <sentinel>$</sentinel> unipept config host http://local.server
-                <br>host was set to http://local.server
+                <sentinel>$</sentinel> unipept pept2lca --host http://local.server AALTER
             </boxed>
 
             <static-alert
                 class="mt-5"
-                title="Default settings"
+                title="Setting a default server"
             >
                 <p>
-                    If you changed the host settings and wish to return to the default host, simply run <inline-code>unipept config host http://api.unipept.ugent.be</inline-code>.
+                    Earlier versions of the <initialism>CLI</initialism> had a <inline-code>unipept config</inline-code> subcommand for storing a default
+                    host. It no longer exists, so the host has to be given per command.
                 </p>
             </static-alert>
         </header-body-card>

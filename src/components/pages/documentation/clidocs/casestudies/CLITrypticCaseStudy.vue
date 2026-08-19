@@ -191,19 +191,14 @@ Commands:
                 >
                     configured
                 </r-link>. By default, the public Unipept server (api.unipept.ugent.be) is used, but this can be changed by passing the <initialism>URL</initialism>
-                of the server as an argument to the option <inline-code>--host</inline-code>. To avoid that a custom server needs to be specified with each use of the
-                <inline-code>unipept</inline-code> command, a custom server can be set as default using the <inline-code>unipept config</inline-code> subcommand. A server set with the
-                <inline-code>--host</inline-code> option always overrides the default server.
+                of the server as an argument to the option <inline-code>--host</inline-code>. The <inline-code>--host</inline-code> option belongs to the subcommand rather than to
+                <inline-code>unipept</inline-code> itself, so it goes after the subcommand name.
             </p>
 
             <boxed>
-                <sentinel>$</sentinel> unipept <b>--host 'api.unipept.ugent.be'</b> pept2lca ENFVYIAK
-                <br>peptide,taxon_id,taxon_name,taxon_rank
-                <br>ENFVYIAK,35493,Streptophyta,phylum
-                <br><sentinel>$</sentinel> unipept <b>config host 'api.unipept.ugent.be'</b>
-                <br><sentinel>$</sentinel> unipept pept2lca ENFVYIAK
-                <br>peptide,taxon_id,taxon_name,taxon_rank
-                <br>ENFVYIAK,35493,Streptophyta,phylum
+                <sentinel>$</sentinel> unipept pept2lca <b>--host 'https://api.unipept.ugent.be'</b> ENFVYIAK
+                <br>peptide,cutoff_used,taxon_id,taxon_name,taxon_rank
+                <br>ENFVYIAK,,1,root,no rank
             </boxed>
         </header-body-card>
 

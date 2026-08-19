@@ -110,6 +110,7 @@
 
             <p>
                 By default, output is written to <i>standard output</i>. The <inline-code>--output</inline-code> option writes it to a file instead.
+                An existing file is overwritten.
             </p>
 
             <h4>Example</h4>

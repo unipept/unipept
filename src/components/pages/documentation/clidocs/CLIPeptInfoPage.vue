@@ -234,7 +234,7 @@
 
             <p>
                 By default, the unipept commands write their output to <i>standard output</i>. Using the optional <inline-code>--output</inline-code> option allows you to
-                specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
+                specify a file to write the output to. If the file already exists, it is overwritten; if it doesn't, a new file will be created.
             </p>
 
             <h4>Example</h4>

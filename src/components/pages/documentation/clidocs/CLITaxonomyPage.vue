@@ -201,7 +201,7 @@
 
             <p>
                 All Unipept <initialism>CLI</initialism> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <inline-code>--input</inline-code>
-                option allows you to specify an input file. The file should contain a single peptide per line. The option may be given more than
+                option allows you to specify an input file. The file should contain a single NCBI Taxonomy Identifier per line. The option may be given more than
                 once, in which case the files are read one after the other as a single stream.
             </p>
 
@@ -220,7 +220,7 @@
 
             <p>
                 By default, the unipept commands write their output to <i>standard output</i>. Using the optional <inline-code>--output</inline-code> option allows you to
-                specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
+                specify a file to write the output to. If the file already exists, it is overwritten; if it doesn't, a new file will be created.
             </p>
 
             <h4>Example</h4>
@@ -300,7 +300,7 @@
 
             <h4>Example</h4>
             <boxed>
-                <sentinel>$</sentinel> unipept taxonomy <b>--host</b> http://localhost:3000 AALTER
+                <sentinel>$</sentinel> unipept taxonomy <b>--host</b> http://localhost:3000 817 329854
             </boxed>
 
             <h2>--quiet / -q <span class="text-caption grey--text text--darken-2">Suppress service messages</span></h2>
@@ -312,7 +312,7 @@
 
             <h4>Example</h4>
             <boxed>
-                <sentinel>$</sentinel> unipept taxonomy <b>--quiet</b> -i peptides.txt
+                <sentinel>$</sentinel> unipept taxonomy <b>--quiet</b> -i taxonids.txt
             </boxed>
 
             <h2>--log <span class="text-caption grey--text text--darken-2">Write messages to a log file</span></h2>
@@ -324,7 +324,7 @@
 
             <h4>Example</h4>
             <boxed>
-                <sentinel>$</sentinel> unipept taxonomy <b>--log</b> unipept.log -i peptides.txt
+                <sentinel>$</sentinel> unipept taxonomy <b>--log</b> unipept.log -i taxonids.txt
             </boxed>
 
             <h2>--help / -h <span class="text-body-small text-grey-darken-2">Display help</span></h2>
