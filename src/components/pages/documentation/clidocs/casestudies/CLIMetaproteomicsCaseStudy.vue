@@ -58,23 +58,22 @@
                 >
                     installed locally
                 </r-link>.
-                Since the commands of the <initialism>CLI</initialism> are implemented in Ruby, the <r-link to="https://www.ruby-lang.org/en/downloads/">
-                    Ruby environment
-                </r-link> must be installed first (at least version 2.3).
-                The Unipept <initialism>CLI</initialism> can then be installed using the <inline-code>gem</inline-code> command, which is the RubyGems package manager for the Ruby programming language.
+                Since the Unipept <initialism>CLI</initialism> is distributed as an npm package, <r-link to="https://nodejs.org/en/download/package-manager">
+                    Node.js
+                </r-link> must be installed first (at least version 22).
+                The Unipept <initialism>CLI</initialism> can then be installed using the <inline-code>npm</inline-code> command, which is the package manager that ships with Node.js.
             </p>
 
             <boxed>
-                <sentinel>$</sentinel> gem install unipept
-                <br>Successfully installed unipept-2.2.1
-                <br>1 gem installed
-                <br>Installing ri documentation for unipept-2.2.1...
-                <br>Installing RDoc documentation for unipept-2.2.1...
+                <sentinel>$</sentinel> npm install -g unipept-cli
+                <br>added 3 packages in 986ms
             </boxed>
 
             <p>
-                By default, the <inline-code>gem</inline-code> command installs the Unipept <initialism>CLI</initialism> for all users on the computer system.
-                To make a personal installation or in case you don't have the necessary permissions for the appropriate directories to make a system-wide installation, you can use the option <inline-code>--user-install</inline-code> of the <inline-code>gem</inline-code> command.
+                The <inline-code>-g</inline-code> flag installs the Unipept <initialism>CLI</initialism> for all users on the computer system.
+                If you do not have the necessary permissions for a system wide installation, npm can be pointed at a directory you own instead, as described on the <r-link to="https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally">
+                    npm website
+                </r-link>.
             </p>
 
             <p>
@@ -90,45 +89,40 @@
             <boxed>
                 <pre>
 <sentinel>$</sentinel> unipept --help
-NAME
-unipept - Command line interface to Unipept web services.
+Usage: unipept [options] [command]
 
-USAGE
-unipept subcommand [options]
-
-DESCRIPTION
 The unipept subcommands are command line wrappers around the Unipept web
 services.
 
-Subcommands that start with pept expect a list of tryptic peptides as
-input. Subcommands that start with tax expect a list of NCBI Taxonomy
-Identifiers as input. Input is passed
+Subcommands that start with pept expect a list of tryptic peptides as input.
+Subcommands that start with tax expect a list of NCBI Taxonomy Identifiers as
+input. Input is passed
 
 - as separate command line arguments
 - in a text file that is passed as an argument to the -i option
 - to standard input
 
-The command will give priority to the first way the input is passed, in
-the order as listed above. Text files and standard input should have one
-tryptic peptide or one NCBI Taxonomy Identifier per line.
+The command will give priority to the first way the input is passed, in the
+order as listed above. Text files and standard input should have one tryptic
+peptide or one NCBI Taxonomy Identifier per line.
 
-COMMANDS
-config        Set configuration options.
-help          show help
-pept2lca      Fetch taxonomic lowest common ancestor of UniProt entries that match tryptic peptides.
-pept2prot     Fetch UniProt entries that match tryptic peptides.
-pept2taxa     Fetch taxa of UniProt entries that match tryptic peptides.
-taxa2lca      Compute taxonomic lowest common ancestor for given list of taxa.
-taxonomy      Fetch taxonomic information from Unipept Taxonomy.
+Options:
+  -V, --version                          output the version number
+  -h, --help                             display help for command
 
-OPTIONS
--f --format=&lt;value>         define the output format (available: json, csv, xml) (default: csv)
--h --help                   show help for this command
---host=&lt;value>              specify the server running the Unipept webservice
--i --input=&lt;value>          read input from file
--o --output=&lt;value>         write output to file
--q --quiet                  disable service messages
--v --version                displays the version
+Commands:
+  pept2ec [options] [peptides...]        Fetch EC numbers of UniProt entries that match tryptic peptides.
+  pept2funct [options] [peptides...]     Fetch EC numbers, GO terms and InterPro codes of UniProt entries that match tryptic peptides.
+  pept2go [options] [peptides...]        Fetch GO terms of UniProt entries that match tryptic peptides.
+  pept2interpro [options] [peptides...]  Fetch InterPro entries of UniProt entries that match tryptic peptides.
+  pept2lca [options] [peptides...]       Fetch taxonomic lowest common ancestor of UniProt entries that match tryptic peptides.
+  pept2prot [options] [peptides...]      Fetch UniProt entries that match tryptic peptides.
+  pept2taxa [options] [peptides...]      Fetch taxa of UniProt entries that match tryptic peptides.
+  peptinfo [options] [peptides...]       Fetch functional information and the taxonomic lowest common ancestor of UniProt entries that match tryptic peptides.
+  protinfo [options] [proteins...]       Fetch functional and taxonomic information of UniProt ids
+  taxa2lca [options] [taxonids...]       Compute taxonomic lowest common ancestor for given list of taxa.
+  taxonomy [options] [peptides...]       Fetch taxonomic information from Unipept Taxonomy.
+  help [command]                         display help for command
 </pre>
             </boxed>
 

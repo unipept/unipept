@@ -217,7 +217,8 @@
 
             <p>
                 All Unipept <initialism>CLI</initialism> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <inline-code>--input</inline-code>
-                option allows you to specify an input file. The file should contain a single peptide per line.
+                option allows you to specify an input file. The file should contain a single peptide per line. The option may be given more than
+                once, in which case the files are read one after the other as a single stream.
             </p>
 
             <h4>Example</h4>
@@ -301,6 +302,42 @@
                 <sentinel>$</sentinel> unipept pept2ec <b>--all</b> --select peptide,ec_number,*name AALTER
                 <br>ec_number,ec_name,peptide
                 <br>2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15,"RING-type E3 ubiquitin transferase Histidine kinase Long-chain-fatty-acid--CoA ligase Lysine--tRNA ligase UDP-N-acetylmuramoyl-L-alanyl-D-glutamate--2,6-diaminopimelate ligase (d)CMP kinase Asparagine--tRNA ligase Endoribonucleases producing 5'-phosphomonoesters Glycine C-acetyltransferase Ribokinase",AALTER
+            </boxed>
+
+            <h2>--host <span class="text-caption grey--text text--darken-2">Use a different server</span></h2>
+
+            <p>
+                By default, requests go to the Unipept server at <inline-code>https://api.unipept.ugent.be</inline-code>. The <inline-code>--host</inline-code>
+                option sends them to another server running the Unipept web service, such as a local instance.
+            </p>
+
+            <h4>Example</h4>
+            <boxed>
+                <sentinel>$</sentinel> unipept pept2ec <b>--host</b> http://localhost:3000 AALTER
+            </boxed>
+
+            <h2>--quiet / -q <span class="text-caption grey--text text--darken-2">Suppress service messages</span></h2>
+
+            <p>
+                Suppresses the messages that are normally written to <i>standard error</i>, such as retry notices and failed request reports.
+                Failed requests are still recorded in the log file.
+            </p>
+
+            <h4>Example</h4>
+            <boxed>
+                <sentinel>$</sentinel> unipept pept2ec <b>--quiet</b> -i peptides.txt
+            </boxed>
+
+            <h2>--log <span class="text-caption grey--text text--darken-2">Write messages to a log file</span></h2>
+
+            <p>
+                Writes the messages that normally go to <i>standard error</i> to the given file instead. Without this option, failed requests are
+                recorded in a dated file in the <inline-code>.unipept</inline-code> directory of your home directory.
+            </p>
+
+            <h4>Example</h4>
+            <boxed>
+                <sentinel>$</sentinel> unipept pept2ec <b>--log</b> unipept.log -i peptides.txt
             </boxed>
 
             <h2>--help / -h <span class="text-body-small text-grey-darken-2">Display help</span></h2>
