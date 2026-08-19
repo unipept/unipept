@@ -121,7 +121,7 @@
 
             <boxed>
                 <sentinel>$</sentinel> unipept --version
-                <br>4.2.0 (UniProt 2026.02)
+                <br>4.2.2 (UniProt 2026.02)
             </boxed>
 
             <p>
