@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            Unipept <initialism>CLI</initialism> documentation <small>v4.2.1</small>
+            Unipept <initialism>CLI</initialism> documentation <small>v4.3.0</small>
         </h1>
         <h3 class="font-weight-light">
             The Unipept command line interface (<initialism>CLI</initialism>) offers an easy way to integrate Unipept metaproteomics functionality into your data
@@ -127,6 +127,48 @@
             <p>
                 More information about the installed command can be found on these pages, or by running the <inline-code>unipept -h</inline-code> command.
             </p>
+
+            <h2 class="mt-5">
+                Running without installing
+            </h2>
+
+            <p>
+                The <initialism>CLI</initialism> can also be run straight through <inline-code>npx</inline-code>, which ships with Node.js. This is handy
+                for trying a command out, and for pinning an exact version so that an analysis can be reproduced without asking anyone to install
+                anything.
+            </p>
+
+            <boxed>
+                <sentinel>$</sentinel> npx unipept-cli pept2lca AALTER
+                <br>peptide,cutoff_used,taxon_id,taxon_name,taxon_rank
+                <br>AALTER,1,1,root,no rank
+                <br>
+                <br><sentinel>$</sentinel> npx unipept-cli@4.3.0 --version
+                <br>4.3.0 (UniProt 2026.02)
+            </boxed>
+
+            <p>
+                <inline-code>npx unipept-cli</inline-code> runs the <inline-code>unipept</inline-code> command. The other three commands are separate
+                binaries in the same package, so they need <inline-code>-p</inline-code> to say which package to take them from.
+            </p>
+
+            <boxed>
+                <sentinel>$</sentinel> echo "AALTERSVKAAPKR" | npx -p unipept-cli prot2pept
+                <br>AALTER
+                <br>SVK
+                <br>AAPK
+                <br>R
+            </boxed>
+
+            <static-alert
+                class="mt-5"
+                title="npx and older versions"
+            >
+                <p>
+                    <inline-code>npx unipept-cli</inline-code> works from version 4.3.0 onwards. For earlier versions, name the command explicitly with
+                    <inline-code>npx -p unipept-cli@4.2.1 unipept</inline-code>.
+                </p>
+            </static-alert>
 
             <static-alert
                 class="mt-5"
