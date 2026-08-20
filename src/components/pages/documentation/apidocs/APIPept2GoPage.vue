@@ -123,8 +123,9 @@
                     </li>
                     <li>
                         <inline-code>total_protein_count</inline-code>: the amount of proteins matched with the given peptide that carry
-                        at least one functional annotation. Note that this is lower than the total amount of matched proteins
-                        when some of the matches are unannotated.
+                        at least one functional annotation. This counts any annotation, so a protein carrying only an
+                        <initialism>EC</initialism>-number or an InterPro entry, and no <initialism>GO</initialism>-term, is included here too.
+                        Proteins matched with the peptide but carrying no functional annotation at all are not counted.
                     </li>
                     <li>
                         <inline-code>go</inline-code>: A list of <initialism>JSON</initialism> objects that each represent a <initialism>GO</initialism>-term associated with the current peptide.
