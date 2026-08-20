@@ -63,7 +63,7 @@
             </h3>
             <p>
                 <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>. When not set explicitly, the parameter
-                defaults to <inline-code>false</inline-code>. When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching tryptic
+                defaults to <inline-code>true</inline-code>. When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching tryptic
                 peptides to UniProt entries. This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the
                 <r-link
                     to="/tpa"
@@ -150,6 +150,11 @@
                 <li><inline-code>taxon_rank</inline-code>: the taxonomic rank of the organism associated with the matching record</li>
             </ul>
 
+            When the <inline-code>compact</inline-code> parameter is set to <inline-code>true</inline-code>, each object instead contains
+            <inline-code>peptide</inline-code>, <inline-code>cutoff_used</inline-code> and a single <inline-code>taxa</inline-code> field holding the list of
+            matched taxon identifiers. One object is returned per peptide rather than one per matched taxon, and the
+            <inline-code>extra</inline-code> and <inline-code>names</inline-code> parameters have no effect.
+
             When the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>, objects contain additional information about the lineages of the organism extracted from the <initialism>NCBI</initialism> taxonomy.
             The taxon id of each rank in the lineage is specified using the following information fields:
 
@@ -164,12 +169,10 @@
                 <li><inline-code>superclass_id</inline-code></li>
                 <li><inline-code>class_id</inline-code></li>
                 <li><inline-code>subclass_id</inline-code></li>
-                <li><inline-code>infraclass_id</inline-code></li>
                 <li><inline-code>superorder_id</inline-code></li>
                 <li><inline-code>order_id</inline-code></li>
                 <li><inline-code>suborder_id</inline-code></li>
                 <li><inline-code>infraorder_id</inline-code></li>
-                <li><inline-code>parvorder_id</inline-code></li>
                 <li><inline-code>superfamily_id</inline-code></li>
                 <li><inline-code>family_id</inline-code></li>
                 <li><inline-code>subfamily_id</inline-code></li>
@@ -181,6 +184,7 @@
                 <li><inline-code>species_subgroup_id</inline-code></li>
                 <li><inline-code>species_id</inline-code></li>
                 <li><inline-code>subspecies_id</inline-code></li>
+                <li><inline-code>strain_id</inline-code></li>
                 <li><inline-code>varietas_id</inline-code></li>
                 <li><inline-code>forma_id</inline-code></li>
             </ul>
@@ -198,12 +202,10 @@
                 <li><inline-code>superclass_name</inline-code></li>
                 <li><inline-code>class_name</inline-code></li>
                 <li><inline-code>subclass_name</inline-code></li>
-                <li><inline-code>infraclass_name</inline-code></li>
                 <li><inline-code>superorder_name</inline-code></li>
                 <li><inline-code>order_name</inline-code></li>
                 <li><inline-code>suborder_name</inline-code></li>
                 <li><inline-code>infraorder_name</inline-code></li>
-                <li><inline-code>parvorder_name</inline-code></li>
                 <li><inline-code>superfamily_name</inline-code></li>
                 <li><inline-code>family_name</inline-code></li>
                 <li><inline-code>subfamily_name</inline-code></li>
@@ -215,6 +217,7 @@
                 <li><inline-code>species_subgroup_name</inline-code></li>
                 <li><inline-code>species_name</inline-code></li>
                 <li><inline-code>subspecies_name</inline-code></li>
+                <li><inline-code>strain_name</inline-code></li>
                 <li><inline-code>varietas_name</inline-code></li>
                 <li><inline-code>forma_name</inline-code></li>
             </ul>
@@ -527,7 +530,7 @@ const response4 = ref({});
 const response5 = ref({});
 
 const input = ref("");
-const equate_il = ref(false);
+const equate_il = ref(true);
 const extra = ref(false);
 const names = ref(false);
 
