@@ -51,7 +51,7 @@
                 >
                     --input parameter
                 </r-link> to specify a file to use as input. If input is supplied using a file, a single
-                peptide per line is expected.
+                taxon per line is expected.
             </p>
 
             <h4>Example</h4>
@@ -68,7 +68,7 @@
             <h3>Standard input</h3>
             <p>
                 If the command is run without arguments and no file is specified, <inline-code>unipept taxonomy</inline-code> will read its input from <i>standard input</i>.
-                When <i>standard input</i> is used, a single peptide per line is expected.
+                When <i>standard input</i> is used, a single taxon per line is expected.
             </p>
 
             <h4>Example</h4>
@@ -171,7 +171,7 @@
                 >
                     prot2pept command
                 </r-link>). This format consists of a fasta header (a line starting with a >), followed by
-                one or more lines containing one peptide each. When this format is detected, the output will automatically include an extra information field
+                one or more lines containing one taxon each. When this format is detected, the output will automatically include an extra information field
                 containing the corresponding fasta header.
             </p>
 
