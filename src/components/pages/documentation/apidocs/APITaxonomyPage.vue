@@ -27,7 +27,7 @@
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more taxon identifiers.
             </p>
 
             <h3 class="font-weight-medium">
@@ -45,9 +45,9 @@
 
             <static-alert title="Input size">
                 <p>
-                    Unipept puts no restrictions on the number of peptides passed to the <inline-code>input[]</inline-code> parameter.
-                    Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <initialism>GET</initialism>-request, exceed the maximum <initialism>URL</initialism> length.
-                    When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
+                    Unipept puts no restrictions on the number of taxon identifiers passed to the <inline-code>input[]</inline-code> parameter.
+                    Keep in mind that searching for lots of taxon identifiers at once may cause the request to timeout or, in the case of a <initialism>GET</initialism>-request, exceed the maximum <initialism>URL</initialism> length.
+                    When performing bulk searches, we suggest splitting the input set over requests of 100 taxon identifiers each.
                 </p>
             </static-alert>
 
@@ -117,12 +117,10 @@
                 <li><inline-code>superclass</inline-code></li>
                 <li><inline-code>class</inline-code></li>
                 <li><inline-code>subclass</inline-code></li>
-                <li><inline-code>infraclass</inline-code></li>
                 <li><inline-code>superorder</inline-code></li>
                 <li><inline-code>order</inline-code></li>
                 <li><inline-code>suborder</inline-code></li>
                 <li><inline-code>infraorder</inline-code></li>
-                <li><inline-code>parvorder</inline-code></li>
                 <li><inline-code>superfamily</inline-code></li>
                 <li><inline-code>family</inline-code></li>
                 <li><inline-code>subfamily</inline-code></li>
@@ -134,6 +132,7 @@
                 <li><inline-code>species_subgroup</inline-code></li>
                 <li><inline-code>species</inline-code></li>
                 <li><inline-code>subspecies</inline-code></li>
+                <li><inline-code>strain</inline-code></li>
                 <li><inline-code>varietas</inline-code></li>
                 <li><inline-code>forma</inline-code></li>
             </ul>
@@ -169,12 +168,10 @@
                 <li><inline-code>superclass_id</inline-code></li>
                 <li><inline-code>class_id</inline-code></li>
                 <li><inline-code>subclass_id</inline-code></li>
-                <li><inline-code>infraclass_id</inline-code></li>
                 <li><inline-code>superorder_id</inline-code></li>
                 <li><inline-code>order_id</inline-code></li>
                 <li><inline-code>suborder_id</inline-code></li>
                 <li><inline-code>infraorder_id</inline-code></li>
-                <li><inline-code>parvorder_id</inline-code></li>
                 <li><inline-code>superfamily_id</inline-code></li>
                 <li><inline-code>family_id</inline-code></li>
                 <li><inline-code>subfamily_id</inline-code></li>
@@ -186,6 +183,7 @@
                 <li><inline-code>species_subgroup_id</inline-code></li>
                 <li><inline-code>species_id</inline-code></li>
                 <li><inline-code>subspecies_id</inline-code></li>
+                <li><inline-code>strain_id</inline-code></li>
                 <li><inline-code>varietas_id</inline-code></li>
                 <li><inline-code>forma_id</inline-code></li>
             </ul>
@@ -204,12 +202,10 @@
                 <li><inline-code>superclass_name</inline-code></li>
                 <li><inline-code>class_name</inline-code></li>
                 <li><inline-code>subclass_name</inline-code></li>
-                <li><inline-code>infraclass_name</inline-code></li>
                 <li><inline-code>superorder_name</inline-code></li>
                 <li><inline-code>order_name</inline-code></li>
                 <li><inline-code>suborder_name</inline-code></li>
                 <li><inline-code>infraorder_name</inline-code></li>
-                <li><inline-code>parvorder_name</inline-code></li>
                 <li><inline-code>superfamily_name</inline-code></li>
                 <li><inline-code>family_name</inline-code></li>
                 <li><inline-code>subfamily_name</inline-code></li>
@@ -221,8 +217,18 @@
                 <li><inline-code>species_subgroup_name</inline-code></li>
                 <li><inline-code>species_name</inline-code></li>
                 <li><inline-code>subspecies_name</inline-code></li>
+                <li><inline-code>strain_name</inline-code></li>
                 <li><inline-code>varietas_name</inline-code></li>
                 <li><inline-code>forma_name</inline-code></li>
+            </ul>
+
+            When the <inline-code>descendants</inline-code> parameter is set to <inline-code>true</inline-code>, objects contain one additional field:
+
+            <ul class="my-3">
+                <li>
+                    <inline-code>descendants</inline-code>: a list of the <initialism>NCBI</initialism> taxon ids of all taxa below the requested taxon that sit
+                    at one of the ranks given by <inline-code>descendants_ranks</inline-code>.
+                </li>
             </ul>
         </header-body-card>
 
@@ -374,10 +380,10 @@
                 </r-link>).
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2lca -d 'input[]=817' -d 'input[]=329854'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxonomy -d 'input[]=817' -d 'input[]=329854'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v2/taxa2lca.json?input[]=817&input[]=329854
+                https://api.unipept.ugent.be/api/v2/taxonomy.json?input[]=817&input[]=329854
             </template>
         </example-card>
 

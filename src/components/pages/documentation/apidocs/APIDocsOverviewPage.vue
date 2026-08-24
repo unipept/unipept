@@ -11,7 +11,7 @@
             🔁 <b>As a result, the V1 and V2 endpoints of the Unipept API now produce identical taxonomic results, and can be used interchangeably. The rank "superkingdom" is no longer available, and the ranks "domain" and "realm" have been introduced.</b>
             <br>
             <br>
-            Support for V1 of the Unipept API has been dropped, and all requests to V1 will automatically be redirected to V2.
+            Support for V1 of the Unipept API has been dropped. The V1 endpoints remain reachable, but they are served by the V2 implementation and return exactly the same responses.
         </v-alert>
 
         <h1 class="font-weight-light">

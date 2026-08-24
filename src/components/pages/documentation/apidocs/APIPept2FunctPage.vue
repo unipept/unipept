@@ -60,7 +60,7 @@
                 equate_il
             </h3>
             <p>
-                <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>. When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>. When not set explicitly, the parameter defaults to <inline-code>true</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching peptides to UniProt entries.
                 This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
                     to="/tpa"
@@ -114,7 +114,9 @@
                 <ul class="my-3">
                     <li><inline-code>peptide</inline-code>: the peptide that was searched for.</li>
                     <li><inline-code>cutoff_used</inline-code>: <inline-code>true</inline-code> if the number of matched proteins exceeded the cutoff (default: 10,000 proteins) and the response was truncated; <inline-code>false</inline-code> otherwise.</li>
-                    <li><inline-code>total_protein_count</inline-code>: total amount of proteins matched with the given peptide.</li>
+                    <li><inline-code>total_protein_count</inline-code>: the amount of proteins matched with the given peptide that carry
+                        at least one functional annotation. A protein carrying just one of the three annotation types is included
+                        here too. Proteins matched with the peptide but carrying no functional annotation at all are not counted.</li>
                     <li>
                         <inline-code>ec</inline-code>:
                         A list of <initialism>JSON</initialism> objects that each represent an <initialism>EC</initialism>-number associated with the current peptide.
@@ -445,7 +447,7 @@ const response4 = ref({});
 const response5 = ref({});
 
 const input = ref("");
-const equate_il = ref(false);
+const equate_il = ref(true);
 const extra = ref(false);
 const domains = ref(false);
 

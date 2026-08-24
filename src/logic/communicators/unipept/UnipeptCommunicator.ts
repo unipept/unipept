@@ -2,7 +2,7 @@ const base = "https://api.unipept.ugent.be/api/v2/";
 const privateBase = "https://api.unipept.ugent.be/private_api/"
 
 export default class UnipeptCommunicator {
-    public async pept2prot(input: string[], equate_il = false, extra = false): Promise<string[]> {
+    public async pept2prot(input: string[], equate_il = true, extra = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString()
@@ -15,7 +15,7 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "pept2prot.json", params)).then(r => r.json());
     }
 
-    public async pept2taxa(input: string[], equate_il = false, extra = false, names = false): Promise<string[]> {
+    public async pept2taxa(input: string[], equate_il = true, extra = false, names = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString(),
@@ -29,7 +29,7 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "pept2taxa.json", params)).then(r => r.json());
     }
 
-    public async pept2lca(input: string[], equate_il = false, extra = false, names = false): Promise<string[]> {
+    public async pept2lca(input: string[], equate_il = true, extra = false, names = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString(),
@@ -43,7 +43,7 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "pept2lca.json", params)).then(r => r.json());
     }
 
-    public async pept2ec(input: string[], equate_il = false, extra = false): Promise<string[]> {
+    public async pept2ec(input: string[], equate_il = true, extra = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString()
@@ -56,7 +56,7 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "pept2ec.json", params)).then(r => r.json());
     }
 
-    public async pept2go(input: string[], equate_il = false, extra = false, domains = false): Promise<string[]> {
+    public async pept2go(input: string[], equate_il = true, extra = false, domains = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString(),
@@ -70,7 +70,7 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "pept2go.json", params)).then(r => r.json());
     }
 
-    public async pept2interpro(input: string[], equate_il = false, extra = false, domains = false): Promise<string[]> {
+    public async pept2interpro(input: string[], equate_il = true, extra = false, domains = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString(),
@@ -84,7 +84,7 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "pept2interpro.json", params)).then(r => r.json());
     }
 
-    public async pept2funct(input: string[], equate_il = false, extra = false, domains = false): Promise<string[]> {
+    public async pept2funct(input: string[], equate_il = true, extra = false, domains = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString(),
@@ -98,7 +98,7 @@ export default class UnipeptCommunicator {
         return await fetch(this.prepareURL(base, "pept2funct.json", params)).then(r => r.json());
     }
 
-    public async peptinfo(input: string[], equate_il = false, extra = false, domains = false, names = false): Promise<string[]> {
+    public async peptinfo(input: string[], equate_il = true, extra = false, domains = false, names = false): Promise<string[]> {
         const params = new URLSearchParams({
             equate_il: equate_il.toString(),
             extra: extra.toString(),
@@ -150,6 +150,14 @@ export default class UnipeptCommunicator {
         }
 
         return await fetch(this.prepareURL(base, "taxa2tree.json", params)).then(r => r.json());
+    }
+
+    public async taxa2treeCounts(counts: Record<string, number>, link = false): Promise<string[]> {
+        return await fetch(base + "taxa2tree.json", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ counts, link })
+        }).then(r => r.json());
     }
 
     public async taxonomy(input: string[], extra = false, names = false): Promise<string[]> {

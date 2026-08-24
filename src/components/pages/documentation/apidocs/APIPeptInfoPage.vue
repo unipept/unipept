@@ -63,7 +63,7 @@
             </h3>
             <p>
                 <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
-                When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>true</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching peptides to UniProt entries.
                 This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
                     to="/tpa"
@@ -117,6 +117,18 @@
                     Do not use this parameter unless the extra information fields are needed.
                 </p>
             </static-alert>
+
+            <h3 class="font-weight-medium">
+                validate_taxa
+            </h3>
+            <p>
+                <inline-code>validate_taxa</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>true</inline-code>.
+                When the parameter is set to <inline-code>true</inline-code>, taxa that are no longer valid in the <initialism>NCBI</initialism> taxonomy, as well as
+                taxa that carry no meaningful classification (such as <i>uncultured bacterium</i> or <i>Bacteria incertae sedis</i>), are left out of the
+                calculation. Setting it to <inline-code>false</inline-code> takes all taxa into account, which usually results in a less specific
+                lowest common ancestor.
+            </p>
         </header-body-card>
 
         <!-- Response Card -->
@@ -204,12 +216,10 @@
                 <li><inline-code>superclass_id</inline-code></li>
                 <li><inline-code>class_id</inline-code></li>
                 <li><inline-code>subclass_id</inline-code></li>
-                <li><inline-code>infraclass_id</inline-code></li>
                 <li><inline-code>superorder_id</inline-code></li>
                 <li><inline-code>order_id</inline-code></li>
                 <li><inline-code>suborder_id</inline-code></li>
                 <li><inline-code>infraorder_id</inline-code></li>
-                <li><inline-code>parvorder_id</inline-code></li>
                 <li><inline-code>superfamily_id</inline-code></li>
                 <li><inline-code>family_id</inline-code></li>
                 <li><inline-code>subfamily_id</inline-code></li>
@@ -221,6 +231,7 @@
                 <li><inline-code>species_subgroup_id</inline-code></li>
                 <li><inline-code>species_id</inline-code></li>
                 <li><inline-code>subspecies_id</inline-code></li>
+                <li><inline-code>strain_id</inline-code></li>
                 <li><inline-code>varietas_id</inline-code></li>
                 <li><inline-code>forma_id</inline-code></li>
             </ul>
@@ -246,12 +257,10 @@
                 <li><inline-code>superclass_name</inline-code></li>
                 <li><inline-code>class_name</inline-code></li>
                 <li><inline-code>subclass_name</inline-code></li>
-                <li><inline-code>infraclass_name</inline-code></li>
                 <li><inline-code>superorder_name</inline-code></li>
                 <li><inline-code>order_name</inline-code></li>
                 <li><inline-code>suborder_name</inline-code></li>
                 <li><inline-code>infraorder_name</inline-code></li>
-                <li><inline-code>parvorder_name</inline-code></li>
                 <li><inline-code>superfamily_name</inline-code></li>
                 <li><inline-code>family_name</inline-code></li>
                 <li><inline-code>subfamily_name</inline-code></li>
@@ -263,6 +272,7 @@
                 <li><inline-code>species_subgroup_name</inline-code></li>
                 <li><inline-code>species_name</inline-code></li>
                 <li><inline-code>subspecies_name</inline-code></li>
+                <li><inline-code>strain_name</inline-code></li>
                 <li><inline-code>varietas_name</inline-code></li>
                 <li><inline-code>forma_name</inline-code></li>
             </ul>
@@ -375,6 +385,23 @@
                                 style="font-size: 85%;"
                             >
                                 Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>validate_taxa</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Ignore invalid and uninformative taxa when calculating the lowest common ancestor.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> (default) or <inline-code>false</inline-code>
                             </div>
                         </td>
                     </tr>
@@ -590,7 +617,7 @@ const response5 = ref({});
 const response6 = ref({});
 
 const input = ref("");
-const equate_il = ref(false);
+const equate_il = ref(true);
 const extra = ref(false);
 const domains = ref(false);
 const names = ref(false);
