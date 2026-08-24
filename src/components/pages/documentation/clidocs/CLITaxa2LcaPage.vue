@@ -50,7 +50,7 @@
                 >
                     --input parameter
                 </r-link> to specify a file to use as input. If input is supplied using a file, a single
-                peptide per line is expected.
+                taxon per line is expected.
             </p>
 
             <h4>Example</h4>
@@ -67,7 +67,7 @@
             <h3>Standard input</h3>
             <p>
                 If the command is run without arguments and no file is specified, <inline-code>unipept taxa2lca</inline-code> will read its input from <i>standard input</i>.
-                When <i>standard input</i> is used, a single peptide per line is expected.
+                When <i>standard input</i> is used, a single taxon per line is expected.
             </p>
 
             <h4>Example</h4>
