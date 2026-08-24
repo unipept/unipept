@@ -70,6 +70,16 @@ const startResizing = (event: MouseEvent) => {
     document.addEventListener('mouseup', onMouseUp);
 };
 
+let barplot: Barplot | undefined;
+
+/**
+ * The width handed to the barplot itself. When we render the bar labels, they sit beside the plot and eat into the
+ * width the container reports.
+ */
+const plotWidth = () => props.settings.showBarLabel
+    ? Math.max(0, props.settings.width - barLabelWidth.value - 12) // 12px for resizer and padding
+    : props.settings.width;
+
 const renderPlot = () => {
     const tooltipElements = document.getElementsByClassName("unipept-tooltip");
     for (let i = 0; i < tooltipElements.length; i++) {
@@ -98,16 +108,29 @@ const renderPlot = () => {
     if (props.settings.showBarLabel) {
         settings.showBarLabel = false;
         // We also need to adjust the width of the barplot itself because the container width now includes the labels
-        settings.width = Math.max(0, props.settings.width - barLabelWidth.value - 12); // 12px for resizer and padding
+        settings.width = plotWidth();
         settings.chart.padding.left = 0;
     }
 
     // Render barplot again
-    new Barplot(
+    barplot = new Barplot(
         barplotContainer.value,
         bars,
         settings
     );
+};
+
+/**
+ * A barplot copies the data and the settings it is given when it is constructed, so only a change that is purely a
+ * change of width can go through resize. Anything else has to build a new one.
+ */
+const resizePlot = () => {
+    if (!barplot || props.settings.width === 0) {
+        renderPlot();
+        return;
+    }
+
+    barplot.resize(plotWidth());
 };
 
 onMounted(() => {
@@ -116,12 +139,16 @@ onMounted(() => {
 
 watch([
     () => props.bars,
-    () => props.settings.width,
-    () => props.settings.height,
-    () => props.settings.showBarLabel,
-    () => barLabelWidth.value
+    () => props.settings.showBarLabel
 ], () => {
     renderPlot();
+});
+
+watch([
+    () => props.settings.width,
+    () => barLabelWidth.value
+], () => {
+    resizePlot();
 });
 </script>
 
