@@ -7,6 +7,7 @@
             :headers="headers"
             :items-per-page="10"
             :loading="false"
+            must-sort
             item-value="code"
             density="compact"
             :show-expand="data.ncbiTree !== undefined"
@@ -31,8 +32,8 @@
                 </div>
             </template>
 
-            <template #header.confidence="{ column }">
-                <div class="d-flex align-center">
+            <template #header.confidence="{ column, getSortIcon }">
+                <div class="v-data-table-header__content">
                     <span>{{ column.title }}</span>
                     <v-tooltip text="The probability that this InterPro entry is correctly assigned, as estimated by NORI's Bayesian inference model.">
                         <template #activator="{ props }">
@@ -45,6 +46,10 @@
                             </v-icon>
                         </template>
                     </v-tooltip>
+                    <v-icon
+                        class="v-data-table-header__sort-icon"
+                        :icon="getSortIcon(column)"
+                    />
                 </div>
             </template>
 
