@@ -61,6 +61,37 @@
                     </template>
                 </v-slider>
 
+                <p class="mt-6">
+                    Additionally, NORI estimates a probability for each annotation, indicating how likely it is to be correct.
+                    Annotations with a lower probability than this threshold are hidden from the results tables.
+                </p>
+
+                <v-slider
+                    v-model="probabilityThreshold"
+                    class="mt-8"
+                    thumb-color="primary"
+                    thumb-label="always"
+                    thumb-size="22"
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    color="primary"
+                >
+                    <template #prepend>
+                        <v-icon size="small">
+                            mdi-greater-than-or-equal
+                        </v-icon>
+                    </template>
+
+                    <template #thumb-label="{ modelValue }">
+                        {{ displayPercentage(modelValue, 0) }}
+                    </template>
+
+                    <template #append>
+                        probability
+                    </template>
+                </v-slider>
+
                 <v-btn
                     class="float-end mb-2"
                     color="primary"
@@ -76,31 +107,41 @@
 
 <script setup lang="ts">
 import {ref, watch} from 'vue';
+import usePercentage from "@/composables/usePercentage";
+
+const { displayPercentage } = usePercentage();
 
 const dialogOpen = defineModel({ default: false });
 
 const emit = defineEmits<{
-    confirm: [filterPercentage: number]
+    confirm: [filterPercentage: number, probabilityThreshold: number]
 }>();
 
 const props = defineProps<{
-    filterPercentage: number
+    filterPercentage: number;
+    probabilityThreshold: number;
 }>();
 
 const filterPercentage = ref(props.filterPercentage ?? 5);
+const probabilityThreshold = ref(props.probabilityThreshold ?? 0);
 
 const confirmChanges = () => {
-    emit('confirm', filterPercentage.value);
+    emit('confirm', filterPercentage.value, probabilityThreshold.value);
     undoChanges();
 };
 
 const undoChanges = () => {
-    filterPercentage.value
+    filterPercentage.value = props.filterPercentage;
+    probabilityThreshold.value = props.probabilityThreshold;
     dialogOpen.value = false;
 };
 
 watch(() => props.filterPercentage, (newValue) => {
     filterPercentage.value = newValue;
+});
+
+watch(() => props.probabilityThreshold, (newValue) => {
+    probabilityThreshold.value = newValue;
 });
 </script>
 

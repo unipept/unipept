@@ -12,12 +12,13 @@ import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTa
 const { getEcDefinition } = useOntologyStore();
 const { root, process } = useEcTreeProcessor();
 
-const { data, showDownloadItem = true, analysis = undefined } = defineProps<{
+const { data, showDownloadItem = true, analysis = undefined, probabilityThreshold = 0 } = defineProps<{
     data: EcTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
     analysis?: any;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
@@ -68,6 +69,7 @@ onMounted(() => {
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />

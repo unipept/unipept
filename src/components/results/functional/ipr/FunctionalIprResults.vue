@@ -26,6 +26,7 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -47,12 +48,13 @@ import InterproTableData from "@/components/results/functional/ipr/InterproTable
 
 const { getIprDefinition } = useOntologyStore();
 
-const { data, showDownloadItem = true, analysis = undefined } = defineProps<{
+const { data, showDownloadItem = true, analysis = undefined, probabilityThreshold = 0 } = defineProps<{
     data: InterproTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
     analysis?: any;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{

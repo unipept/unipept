@@ -16,6 +16,7 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -39,6 +40,7 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -62,6 +64,7 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -94,12 +97,13 @@ import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 const { getGoDefinition } = useOntologyStore();
 
-const { data, loading, showDownloadItem = true, analysis = undefined } = defineProps<{
+const { data, loading, showDownloadItem = true, analysis = undefined, probabilityThreshold = 0 } = defineProps<{
     data: GoTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
     analysis?: any;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{

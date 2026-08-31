@@ -1,19 +1,5 @@
 <template>
     <div>
-        <div class="d-flex align-center mb-2 ga-4">
-            <span class="text-body-2">Probability threshold</span>
-            <v-slider
-                v-model="probabilityThreshold"
-                class="threshold-slider"
-                min="0"
-                max="1"
-                step="0.01"
-                thumb-label
-                hide-details
-            />
-            <span class="text-body-2">{{ displayPercentage(probabilityThreshold) }}</span>
-        </div>
-
         <v-data-table
             v-model:expanded="expanded"
             v-model:sort-by="sortBy"
@@ -163,11 +149,12 @@ import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { data, items } = defineProps<{
+const { data, items, probabilityThreshold = 0 } = defineProps<{
     items: IprResultsTableItem[];
     data: InterproTableData;
     showPercentage: boolean;
     showDownloadItem: boolean;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
@@ -177,10 +164,9 @@ const emits = defineEmits<{
 
 const expanded = ref<string[]>([]);
 const trees = new Map<string, DataNodeLike>();
-const probabilityThreshold = ref(0);
 
 const filteredItems = computed(() => {
-    return items.filter(item => (item.confidence ?? 0) >= probabilityThreshold.value);
+    return items.filter(item => (item.confidence ?? 0) >= probabilityThreshold);
 });
 
 const calculateHighlightedNcbiTree = async (code: string) => {
@@ -289,10 +275,5 @@ a {
 
 a:hover {
     text-decoration: none;
-}
-
-.threshold-slider {
-    max-width: 280px;
-    min-width: 180px;
 }
 </style>
