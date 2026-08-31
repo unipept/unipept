@@ -52,11 +52,6 @@ export default class PeptonizerProcessor {
             peptideIntensities = createDefaultPeptideIntensities(peptideCountTable.counts.keys(), DEFAULT_PEPTIDE_INTENSITIES);
         }
 
-        // If the equate I / L option is enabled, we need to update the intensities as well
-        /*if (equateIl) {
-            peptideIntensities = new Map<string, number>(Array.from(peptideIntensities.entries()).map(([k, v]) => [k.replace(/I/g, "L"), v]))
-        }*/
-
         return await PeptonizerProcessor.runner.run(async () => {
             console.log(`Starting Peptonizer with up to ${DEFAULT_PEPTONIZER_WORKERS} workers...`);
 

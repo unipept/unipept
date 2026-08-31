@@ -45,6 +45,23 @@
                 </div>
             </template>
 
+            <template #header.confidence="{ column }">
+                <div class="d-flex align-center">
+                    <span>{{ column.title }}</span>
+                    <v-tooltip text="The probability that this InterPro entry is correctly assigned, as estimated by NORI's Bayesian inference model.">
+                        <template #activator="{ props }">
+                            <v-icon
+                                v-bind="props"
+                                size="x-small"
+                                class="ml-1"
+                            >
+                                mdi-information-outline
+                            </v-icon>
+                        </template>
+                    </v-tooltip>
+                </div>
+            </template>
+
             <template #item.count="{ item }">
                 <div
                     :style="{
@@ -212,6 +229,12 @@ const headers: DataTableHeader[] = [
         width: "15%"
     },
     {
+        title: "Probability",
+        align: "start",
+        key: "confidence",
+        width: "14%"
+    },
+    {
         title: "InterPro-entry",
         align: "start",
         key: "code",
@@ -228,12 +251,6 @@ const headers: DataTableHeader[] = [
         align: "start",
         key: "namespace",
         width: "16%"
-    },
-    {
-        title: "Probability",
-        align: "start",
-        key: "confidence",
-        width: "14%"
     },
     {
         title: "",

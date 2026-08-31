@@ -1,7 +1,7 @@
 <template>
     <v-dialog
         v-model="dialogOpen"
-        max-width="60%"
+        width="60%"
         @click:outside="undoChanges"
     >
         <v-unipept-card class="bg-mainBody">

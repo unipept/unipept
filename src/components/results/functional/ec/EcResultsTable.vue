@@ -45,6 +45,23 @@
                 </div>
             </template>
 
+            <template #header.confidence="{ column }">
+                <div class="d-flex align-center">
+                    <span>{{ column.title }}</span>
+                    <v-tooltip text="The probability that this EC number is correctly assigned, as estimated by NORI's Bayesian inference model.">
+                        <template #activator="{ props }">
+                            <v-icon
+                                v-bind="props"
+                                size="x-small"
+                                class="ml-1"
+                            >
+                                mdi-information-outline
+                            </v-icon>
+                        </template>
+                    </v-tooltip>
+                </div>
+            </template>
+
             <template #item.count="{ item }">
                 <div
                     :style="{
@@ -212,6 +229,12 @@ const headers: DataTableHeader[] = [
         width: "20%"
     },
     {
+        title: "Probability",
+        align: "start",
+        key: "confidence",
+        width: "12%"
+    },
+    {
         title: "EC-number",
         align: "start",
         key: "code",
@@ -222,12 +245,6 @@ const headers: DataTableHeader[] = [
         align: "start",
         key: "name",
         width: "35%"
-    },
-    {
-        title: "Probability",
-        align: "start",
-        key: "confidence",
-        width: "12%"
     },
     {
         title: "",
