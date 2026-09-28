@@ -156,7 +156,7 @@ export default class UnipeptCommunicator {
 
     public async taxa2rank(taxa: number[][], rank: string): Promise<number[][]> {
         const response = await NetworkUtils.postJSON(
-            this.prepareURL(base, "taxa2rank.json", new URLSearchParams()),
+            this.prepareURL(privateBase, "taxa2rank.json", new URLSearchParams()),
             JSON.stringify({ taxa, rank })
         );
 
