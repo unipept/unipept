@@ -5,6 +5,20 @@ export default class NetworkUtils {
     }
 
     /**
+     * Fetches a URL and returns its body as plain text. Throws if the response is not OK.
+     *
+     * @param url The url to fetch.
+     * @return A promise containing the response body as a string.
+     */
+    public static async getText(url: string): Promise<string> {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Request failed: ${response.status} ${response.statusText} (${url})`);
+        }
+        return response.text();
+    }
+
+    /**
      * Posts data to a URL as JSON and returns a promise containing the parsed (JSON) response.
      *
      * @param url The url to which we want to send the request.

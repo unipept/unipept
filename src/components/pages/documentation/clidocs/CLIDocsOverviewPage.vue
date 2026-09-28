@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            Unipept <initialism>CLI</initialism> documentation <small>v2.2.1</small>
+            Unipept <initialism>CLI</initialism> documentation <small>v4.2.2</small>
         </h1>
         <h3 class="font-weight-light">
             The Unipept command line interface (<initialism>CLI</initialism>) offers an easy way to integrate Unipept metaproteomics functionality into your data
@@ -81,80 +81,104 @@
             large-title
         >
             <p>
-                To use the Unipept command line tools, Ruby needs to be installed on your system. We recommend using Ruby 2.6, but all versions since Ruby 2.3
-                are supported. To check if you have the correct Ruby version installed, open a terminal and run <inline-code>ruby --version</inline-code>.
+                To use the Unipept command line tools, Node.js 22 or higher needs to be installed on your system. To check which version you
+                have, open a terminal and run <inline-code>node --version</inline-code>.
             </p>
 
             <boxed>
-                <sentinel>$</sentinel> ruby --version
-                <br>ruby 2.6.0p0 (2018-12-25 revision 66547) [x86_64-darwin18]
+                <sentinel>$</sentinel> node --version
+                <br>v22.3.0
             </boxed>
 
             <static-alert
                 class="mt-5"
-                title="Installing Ruby"
+                title="Installing Node.js"
             >
                 <p>
-                    If the <inline-code>ruby --version</inline-code> command returns command not found, Ruby is not yet installed on your system. More information on installing
-                    Ruby can be found at <r-link to="https://www.ruby-lang.org/en/installation/">
-                        https://www.ruby-lang.org/en/installation/
+                    If the <inline-code>node --version</inline-code> command returns command not found, Node.js is not yet installed on your system. More information on
+                    installing Node.js can be found at <r-link to="https://nodejs.org/en/download/package-manager">
+                        https://nodejs.org/en/download/package-manager
                     </r-link>.
                 </p>
             </static-alert>
 
             <p>
-                The Unipept CLI is available as a <r-link to="https://rubygems.org/gems/unipept">
-                    gem
+                The Unipept CLI is available as an <r-link to="https://www.npmjs.com/package/unipept-cli">
+                    npm package
                 </r-link>. This means it can easily be installed with the
-                <inline-code>gem install unipept</inline-code> command:
+                <inline-code>npm install</inline-code> command:
             </p>
 
             <boxed>
-                <sentinel>$</sentinel> gem install unipept
-                <br>Fetching: unipept-2.2.1.gem (100%)
-                <br>Successfully installed unipept-2.2.1
-                <br>Parsing documentation for unipept-2.2.1
-                <br>Installing ri documentation for unipept-2.2.1
-                <br>Done installing documentation for unipept after 0 seconds
-                <br>1 gem installed
+                <sentinel>$</sentinel> npm install -g unipept-cli
+                <br>added 3 packages in 986ms
             </boxed>
 
             <p>
                 After successful installation, the unipept command should be available. To check if unipept was installed correctly, run <inline-code>unipept --version</inline-code>.
-                This should print the version number:
+                This prints the version of the CLI, followed by the UniProt release that the Unipept database was built from:
             </p>
 
             <boxed>
                 <sentinel>$</sentinel> unipept --version
-                <br>2.2.1
+                <br>4.2.2 (UniProt 2026.02)
             </boxed>
 
             <p>
                 More information about the installed command can be found on these pages, or by running the <inline-code>unipept -h</inline-code> command.
             </p>
 
+            <h2 class="mt-5">
+                Running without installing
+            </h2>
+
+            <p>
+                The <initialism>CLI</initialism> can also be run straight through <inline-code>npx</inline-code>, which ships with Node.js. This is handy
+                for trying a command out, and for pinning an exact version so that an analysis can be reproduced without asking anyone to install
+                anything.
+            </p>
+
+            <boxed>
+                <sentinel>$</sentinel> npx unipept-cli pept2lca AALTER
+                <br>peptide,cutoff_used,taxon_id,taxon_name,taxon_rank
+                <br>AALTER,1,1,root,no rank
+                <br>
+                <br><sentinel>$</sentinel> npx unipept-cli@4.2.2 --version
+                <br>4.2.2 (UniProt 2026.02)
+            </boxed>
+
+            <p>
+                <inline-code>npx unipept-cli</inline-code> runs the <inline-code>unipept</inline-code> command. The other three commands are separate
+                binaries in the same package, so they need <inline-code>-p</inline-code> to say which package to take them from.
+            </p>
+
+            <boxed>
+                <sentinel>$</sentinel> echo "AALTERSVKAAPKR" | npx -p unipept-cli prot2pept
+                <br>AALTER
+                <br>SVK
+                <br>AAPK
+                <br>R
+            </boxed>
+
             <static-alert
                 class="mt-5"
-                title="Permission problems"
+                title="npx and older versions"
             >
                 <p>
-                    When trying to install a gem, you might run into permission problems if you don't have write access to the default installation directory.
-                    This can be fixed by doing a user install, which installs the gem in your home directory. Simply run <inline-code>gem install unipept --user-install</inline-code>
-                    instead of the normal installation command. More information can be found on the <r-link to="https://guides.rubygems.org/faqs/#user-install">
-                        RubyGems website
-                    </r-link>.
+                    <inline-code>npx unipept-cli</inline-code> works from version 4.2.2 onwards. For earlier versions, name the command explicitly with
+                    <inline-code>npx -p unipept-cli@4.2.1 unipept</inline-code>.
                 </p>
             </static-alert>
 
             <static-alert
                 class="mt-5"
-                title="Windows support"
+                title="Permission problems"
             >
                 <p>
-                    Unipept <initialism>CLI</initialism> should work on Unix, Mac, and Windows. However, because of one of our underlying dependencies (curl),
-                    some windows users experience issues during installation. In case of such issues, we recommend using the Unix Subsystem of Windows 10 instead.
-                    More information can be found on the <r-link to="https://docs.microsoft.com/en-us/windows/wsl/about">
-                        Microsoft website
+                    A global install writes to a directory that your user may not have write access to, which shows up as an <inline-code>EACCES</inline-code> error.
+                    Rather than installing with <inline-code>sudo</inline-code>, it is better to point npm at a directory you own. More information can be found on the
+                    <r-link to="https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally">
+                        npm website
                     </r-link>.
                 </p>
             </static-alert>
@@ -167,7 +191,7 @@
             large-title
         >
             <p>
-                To update the Unipept command line tools to the latest version, simply run <inline-code>gem update unipept</inline-code>. The changes between releases are listed
+                To update the Unipept command line tools to the latest version, simply run <inline-code>npm update -g unipept-cli</inline-code>. The changes between releases are listed
                 in the <r-link
                     to="/news"
                     router
@@ -177,16 +201,8 @@
             </p>
 
             <boxed>
-                <sentinel>$</sentinel> gem update unipept
-                <br>Updating installed gems
-                <br>Updating unipept
-                <br>Fetching: unipept-2.2.1.gem (100%)
-                <br>Successfully installed unipept-2.2.1
-                <br>Parsing documentation for unipept-2.2.1
-                <br>Installing ri documentation for unipept-2.2.1
-                <br>Installing darkfish documentation for unipept-2.2.1
-                <br>Done installing documentation for unipept after 0 seconds
-                <br>Gems updated: unipept
+                <sentinel>$</sentinel> npm update -g unipept-cli
+                <br>changed 1 package in 1s
             </boxed>
         </header-body-card>
 
@@ -197,23 +213,26 @@
             large-title
         >
             <p>
-                The Unipept command line tools require no additional configuration and can be used immediately after installation. By default, the public Unipept
-                server will be used for all commands. If you have a local Unipept server running, and wish to use it with the command line tools, simply run the
-                <inline-code>unipept config host http://local.server</inline-code> command, where you substitute <inline-code>http://local.server</inline-code> with the address of your local
-                Unipept server:
+                The Unipept command line tools require no configuration and can be used immediately after installation. By default, the public Unipept
+                server is used for all commands.
+            </p>
+
+            <p>
+                If you have a local Unipept server running and wish to use it, pass its address to the <inline-code>--host</inline-code> option. The option
+                belongs to the subcommand rather than to <inline-code>unipept</inline-code> itself, so it goes after the subcommand name:
             </p>
 
             <boxed>
-                <sentinel>$</sentinel> unipept config host http://local.server
-                <br>host was set to http://local.server
+                <sentinel>$</sentinel> unipept pept2lca --host http://local.server AALTER
             </boxed>
 
             <static-alert
                 class="mt-5"
-                title="Default settings"
+                title="Setting a default server"
             >
                 <p>
-                    If you changed the host settings and wish to return to the default host, simply run <inline-code>unipept config host http://api.unipept.ugent.be</inline-code>.
+                    Earlier versions of the <initialism>CLI</initialism> had a <inline-code>unipept config</inline-code> subcommand for storing a default
+                    host. It no longer exists, so the host has to be given per command.
                 </p>
             </static-alert>
         </header-body-card>
@@ -289,14 +308,14 @@ const functions = [
         link: "/clidocs/peptinfo"
     },
     {
+        resource: "unipept protinfo",
+        description: "Returns functional and taxonomic information for a given UniProt accession number.",
+        link: "/clidocs/protinfo"
+    },
+    {
         resource: "unipept taxa2lca",
         description: "Returns the taxonomic lowest common ancestor for a given list of taxon identifiers.",
         link: "/clidocs/taxa2lca"
-    },
-    {
-        resource: "unipept taxa2tree",
-        description: "Returns the taxonomic tree for a given list of taxon identifiers.",
-        link: "/clidocs/taxa2tree"
     },
     {
         resource: "unipept taxonomy",

@@ -2,6 +2,7 @@ import {defineStore} from "pinia";
 import useProjectAnalysisStore from "@/store/ProjectAnalysisStore";
 import localforage from "localforage";
 import {SampleData} from "@/composables/communication/unipept/useSampleData";
+import {ReprocessedFile} from "@/composables/communication/reprocessed/useReprocessedProjects";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore, {UNIPROT_ID} from "@/store/CustomFilterStore";
 import useProjectExport from "@/composables/useProjectExport";
@@ -16,6 +17,14 @@ interface StoreValue {
     project: Blob;
     upgradeError?: string | null;
 }
+
+// Default analysis configuration shared by the preset (demo / reprocessed) project loaders.
+const DEMO_ANALYSIS_CONFIG: AnalysisConfig = {
+    equate: true,
+    filter: true,
+    useCrap: false,
+    database: UNIPROT_ID
+};
 
 const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
     const store = localforage.createInstance({
@@ -104,17 +113,28 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         project.setDemoMode(true);
         const groupId = project.addGroup(sample.environment);
         for (const dataset of sample.datasets) {
-            project.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), {
-                equate: true,
-                filter: true,
-                useCrap: false,
-                database: UNIPROT_ID
-            });
+            project.getGroup(groupId)?.addAnalysis(dataset.name, dataset.data.join('\n'), DEMO_ANALYSIS_CONFIG);
         }
         
         // Track demo project loading
         const analyticsCommunicator = new AnalyticsCommunicator();
         analyticsCommunicator.logLoadDemoProject();
+    }
+
+    const loadProjectFromReprocessed = async (accession: string, files: ReprocessedFile[]) => {
+        appState.clear();
+        project.clear();
+
+        project.setName(accession);
+        project.setDemoMode(true);
+        const groupId = project.addGroup(accession);
+        for (const file of files) {
+            project.getGroup(groupId)?.addAnalysis(file.name, file.rawPeptides, DEMO_ANALYSIS_CONFIG, file.intensities);
+        }
+
+        // Track reprocessed project loading
+        const analyticsCommunicator = new AnalyticsCommunicator();
+        analyticsCommunicator.logLoadReprocessedProject();
     }
 
     const loadProjectFromPeptides = async (rawPeptides: string, config: AnalysisConfig) => {
@@ -162,6 +182,7 @@ const useUnipeptAnalysisStore = defineStore('PersistedAnalysisStore', () => {
         loadProjectFromStorage,
         loadProjectFromFile,
         loadProjectFromSample,
+        loadProjectFromReprocessed,
         loadProjectFromPeptides,
         deleteProject
     }
