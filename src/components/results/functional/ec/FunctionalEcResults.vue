@@ -33,7 +33,7 @@ const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([ke
         namespace: getEcDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.ecTrust!.totalItems,
-        confidence: analysis?.ecFunctionalAnalysisStore?.ecTermsToConfidence?.get(key) ?? 0,
+        confidence: analysis?.ecFunctionalAnalysisStore?.ecTermsToConfidence?.get(key),
     }
 }));
 

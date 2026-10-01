@@ -20,10 +20,12 @@ const mergeUniqueTerms = (existing: string[], incoming: string[]) => {
     return Array.from(new Set([...existing, ...incoming]));
 };
 
+// NORI only computes a score for this number of annotations, the other annotations do not get a score
+export const MAX_SCORED_ANNOTATIONS = 1000;
+
 export type FunctionalAnalysisResult = Map<string, number>;
 
 export interface FunctionalAnalysisOptions {
-    analysisLabel?: string;
     termFilter?: (term: string) => boolean;
 }
 
@@ -44,7 +46,7 @@ export default class FunctionalAnalysisProcessor {
         peptideIntensities?: Map<string, number>,
         options: FunctionalAnalysisOptions = {}
     ): Promise<FunctionalAnalysisResult | undefined> {
-        const {analysisLabel = "Functional Analysis", termFilter} = options;
+        const {termFilter} = options;
 
         const normalizedCounts = new Map<string, number>();
         for (const [peptide, count] of peptideCountTable.counts.entries()) {
@@ -109,8 +111,6 @@ export default class FunctionalAnalysisProcessor {
         }
 
         return await FunctionalAnalysisProcessor.runner.run(async () => {
-            console.log(`Starting ${analysisLabel} with up to ${DEFAULT_PEPTONIZER_WORKERS} workers...`);
-
             const rawResult = await (this.peptonizer as any).functionalAnalysis(
                 peptidesFunctionsWithIds,
                 normalizedIntensities,
@@ -118,7 +118,7 @@ export default class FunctionalAnalysisProcessor {
                 DEFAULT_PEPTONIZER_ALPHAS,
                 DEFAULT_PEPTONIZER_BETAS,
                 DEFAULT_PEPTONIZER_PRIORS,
-                1000,
+                MAX_SCORED_ANNOTATIONS,
                 listener,
                 DEFAULT_PEPTONIZER_WORKERS
             );

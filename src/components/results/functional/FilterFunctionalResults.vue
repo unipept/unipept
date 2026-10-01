@@ -62,8 +62,9 @@
                 </v-slider>
 
                 <p class="mt-6">
-                    Additionally, NORI estimates a probability for each annotation, indicating how likely it is to be correct.
-                    Annotations with a lower probability than this threshold are hidden from the results tables.
+                    Additionally, NORI computes a score for each annotation that indicates how strongly the evidence supports it.
+                    Annotations with a lower score than this threshold are hidden from the results tables.
+                    If the threshold is higher than 0, annotations without a score are also hidden.
                 </p>
 
                 <v-slider
@@ -84,11 +85,11 @@
                     </template>
 
                     <template #thumb-label="{ modelValue }">
-                        {{ displayPercentage(modelValue, 0) }}
+                        {{ modelValue.toFixed(2) }}
                     </template>
 
                     <template #append>
-                        probability
+                        NORI score
                     </template>
                 </v-slider>
 
@@ -107,9 +108,6 @@
 
 <script setup lang="ts">
 import {ref, watch} from 'vue';
-import usePercentage from "@/composables/usePercentage";
-
-const { displayPercentage } = usePercentage();
 
 const dialogOpen = defineModel({ default: false });
 

@@ -71,7 +71,7 @@ const items = computed(() => Array.from(data.iprTable!.counts.entries()).map(([k
         namespace: getIprDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.iprTrust!.totalItems,
-        confidence: analysis?.interproFunctionalAnalysisStore?.iprTermsToConfidence?.get(key) ?? 0,
+        confidence: analysis?.interproFunctionalAnalysisStore?.iprTermsToConfidence?.get(key),
     }
 }));
 

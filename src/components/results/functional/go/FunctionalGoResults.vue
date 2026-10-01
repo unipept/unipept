@@ -132,7 +132,7 @@ const getItems = (items: CountTable<string>, termsToConfidence?: Map<string, num
             namespace: getGoDefinition(key)?.namespace ?? "Unknown",
             count: value,
             totalCount: data.goTrust.totalItems,
-            confidence: termsToConfidence?.get(key) ?? 0,
+            confidence: termsToConfidence?.get(key),
         }));
 }
 

@@ -47,18 +47,15 @@ const createGoDomainState = (): GoDomainState => {
     };
 };
 
-const DOMAIN_CONFIG: Record<GoDomainKey, { namespace: GoNamespace; label: string; }> = {
+const DOMAIN_CONFIG: Record<GoDomainKey, { namespace: GoNamespace; }> = {
     biologicalProcess: {
-        namespace: GoNamespace.BiologicalProcess,
-        label: "GO Biological Process Functional Analysis"
+        namespace: GoNamespace.BiologicalProcess
     },
     cellularComponent: {
-        namespace: GoNamespace.CellularComponent,
-        label: "GO Cellular Component Functional Analysis"
+        namespace: GoNamespace.CellularComponent
     },
     molecularFunction: {
-        namespace: GoNamespace.MolecularFunction,
-        label: "GO Molecular Function Functional Analysis"
+        namespace: GoNamespace.MolecularFunction
     }
 };
 
@@ -97,7 +94,7 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
 
         try {
             processors[domain] = new FunctionalAnalysisProcessor();
-            const {namespace, label} = DOMAIN_CONFIG[domain];
+            const {namespace} = DOMAIN_CONFIG[domain];
             const analysisData = await processors[domain]!.runFunctionalAnalysis(
                 peptidesFunctions,
                 peptideCountTable,
@@ -105,7 +102,6 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
                 equateIl,
                 peptideIntensities,
                 {
-                    analysisLabel: label,
                     termFilter: term => ontologyStore.getGoDefinition(term)?.namespace === namespace
                 }
             );

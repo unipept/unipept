@@ -43,8 +43,7 @@ const useInterproFunctionalAnalysisStore = (sampleId: string) => defineStore(`in
                 peptideCountTable,
                 listener,
                 equateIl,
-                peptideIntensities,
-                { analysisLabel: "InterPro Functional Analysis" }
+                peptideIntensities
             );
 
             if (!analysisData) {

@@ -35,7 +35,7 @@
             <template #header.confidence="{ column, getSortIcon }">
                 <div class="v-data-table-header__content">
                     <span>{{ column.title }}</span>
-                    <v-tooltip text="The probability that this InterPro entry is correctly assigned, as estimated by NORI's Bayesian inference model.">
+                    <v-tooltip :text="`Score from NORI: a higher score means this InterPro entry is more likely correct. — means not scored (only the top ${maxScoredAnnotations} annotations get a score).`">
                         <template #activator="{ props }">
                             <v-icon
                                 v-bind="props"
@@ -80,13 +80,28 @@
 
             <template #item.confidence="{ item }">
                 <div
+                    v-if="item.confidence !== undefined"
                     :style="{
                         padding: '8px 12px',
-                        background: `linear-gradient(90deg, rgba(25, 118, 210, 0.35) 0%, rgba(25, 118, 210, 0.35) ${(item.confidence ?? 0) * 100}%, rgb(240, 240, 240) ${(item.confidence ?? 0) * 100}%, rgb(240, 240, 240) 100%)`,
+                        background: `linear-gradient(90deg, rgba(25, 118, 210, 0.35) 0%, rgba(25, 118, 210, 0.35) ${item.confidence * 100}%, rgb(240, 240, 240) ${item.confidence * 100}%, rgb(240, 240, 240) 100%)`,
                     }"
                 >
-                    {{ displayPercentage(item.confidence ?? 0) }}
+                    {{ item.confidence.toFixed(2) }}
                 </div>
+                <v-tooltip
+                    v-else
+                    text="Not scored by NORI"
+                >
+                    <template #activator="{ props }">
+                        <span
+                            v-bind="props"
+                            class="text-disabled"
+                            style="padding: 8px 12px;"
+                        >
+                            &mdash;
+                        </span>
+                    </template>
+                </v-tooltip>
             </template>
 
             <template
@@ -145,6 +160,7 @@
 <script setup lang="ts">
 import {computed, ref, watch, toRaw, Ref} from "vue";
 import usePercentage from "@/composables/usePercentage";
+import {MAX_SCORED_ANNOTATIONS as maxScoredAnnotations} from "@/logic/processors/functional/FunctionalAnalysisProcessor";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
@@ -220,9 +236,11 @@ const headers: DataTableHeader[] = [
         width: "15%"
     },
     {
-        title: "Probability",
+        title: "NORI score",
         align: "start",
         key: "confidence",
+        // Annotations without a score are sorted below all scored annotations
+        sort: (a?: number, b?: number) => (a ?? -1) - (b ?? -1),
         width: "14%"
     },
     {

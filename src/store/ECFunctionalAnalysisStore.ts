@@ -47,8 +47,7 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
                 peptideCountTable,
                 listener,
                 equateIl,
-                peptideIntensities,
-                { analysisLabel: "EC Functional Analysis" }
+                peptideIntensities
             );
 
             // No data is returned if execution has been cancelled by the user

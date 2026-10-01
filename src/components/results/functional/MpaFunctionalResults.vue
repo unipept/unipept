@@ -244,13 +244,13 @@ const downloadGoItem = (item: GoResultsTableItem) => {
 }
 
 const downloadGoTable = (items: GoResultsTableItem[]) => {
-    const header = ["peptides", "go term", "name", "probability"];
+    const header = ["peptides", "go term", "name", "nori score"];
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
             item.name,
-            (item.confidence ?? 0).toString()
+            item.confidence?.toString() ?? ""
         ];
     }));
     download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_go_table.csv`);
@@ -276,13 +276,13 @@ const downloadEcItem = (item: EcResultsTableItem) => {
 }
 
 const downloadEcTable = (items: EcResultsTableItem[]) => {
-    const header = ["peptides", "ec number", "name", "probability"]
+    const header = ["peptides", "ec number", "name", "nori score"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
             item.name,
-            (item.confidence ?? 0).toString()
+            item.confidence?.toString() ?? ""
         ];
     }));
 
@@ -309,13 +309,13 @@ const downloadInterproItem = (item: IprResultsTableItem) => {
 }
 
 const downloadInterproTable = (items: IprResultsTableItem[]) => {
-    const header = ["peptides", "interpro entry", "name", "probability"]
+    const header = ["peptides", "interpro entry", "name", "nori score"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
             item.name,
-            (item.confidence ?? 0).toString()
+            item.confidence?.toString() ?? ""
         ];
     }));
 
