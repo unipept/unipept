@@ -74,6 +74,11 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
 
     const processors: Partial<Record<GoDomainKey, FunctionalAnalysisProcessor>> = {};
 
+    // Used to stop a GO run (that analyses the domains one after the other) when it is cancelled
+    let currentRunId = 0;
+    // True during the whole GO run, also between the analyses of two domains
+    const runInProgress = ref(false);
+
     const runDomainAnalysis = async (
         domain: GoDomainKey,
         peptideCountTable: CountTable<string>,
@@ -126,9 +131,17 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
     ) => {
-        await runDomainAnalysis("biologicalProcess", peptideCountTable, peptidesFunctions, equateIl, peptideIntensities);
-        await runDomainAnalysis("cellularComponent", peptideCountTable, peptidesFunctions, equateIl, peptideIntensities);
-        await runDomainAnalysis("molecularFunction", peptideCountTable, peptidesFunctions, equateIl, peptideIntensities);
+        const runId = ++currentRunId;
+        runInProgress.value = true;
+        const domains: GoDomainKey[] = ["biologicalProcess", "cellularComponent", "molecularFunction"];
+        for (const domain of domains) {
+            // Stop if this run has been cancelled
+            if (runId !== currentRunId) {
+                return;
+            }
+            await runDomainAnalysis(domain, peptideCountTable, peptidesFunctions, equateIl, peptideIntensities);
+        }
+        runInProgress.value = false;
 
         const allTerms = [
             ...(biologicalProcess.termsToConfidence.value?.keys() || []),
@@ -142,6 +155,8 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
     };
 
     const cancelGOFunctionalAnalysis = () => {
+        currentRunId++;
+        runInProgress.value = false;
         const domains: GoDomainKey[] = ["biologicalProcess", "cellularComponent", "molecularFunction"];
         for (const domain of domains) {
             processors[domain]?.cancelFunctionalAnalysis();
@@ -156,7 +171,7 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
             molecularFunction.status.value
         ];
 
-        if (statuses.some(s => s === FunctionalAnalysisStatus.Running)) {
+        if (runInProgress.value || statuses.some(s => s === FunctionalAnalysisStatus.Running)) {
             return FunctionalAnalysisStatus.Running;
         }
         if (statuses.some(s => s === FunctionalAnalysisStatus.Failed)) {

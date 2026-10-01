@@ -17,6 +17,7 @@
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -41,6 +42,7 @@
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -65,6 +67,7 @@
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -85,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import GoResultsTable from "./GoResultsTable.vue";
 import {computed} from "vue";
 import QuickGoCard from "@/components/results/functional/go/QuickGoCard.vue";
@@ -110,6 +114,8 @@ const emits = defineEmits<{
     (e: 'downloadItem', item: GoResultsTableItem): void;
     (e: 'downloadTable', items: GoResultsTableItem[]): void;
 }>();
+
+const scoresLoading = computed(() => analysis?.goFunctionalAnalysisStore?.status === FunctionalAnalysisStatus.Running);
 
 const biologicalProcessItems = computed(() => getItems(
     data.goTable,

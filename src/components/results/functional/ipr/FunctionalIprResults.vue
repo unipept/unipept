@@ -27,6 +27,7 @@
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -40,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import IprResultsTable, {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
 import {computed, ref} from "vue";
 import useOntologyStore from "@/store/OntologyStore";
@@ -61,6 +63,8 @@ const emits = defineEmits<{
     (e: 'downloadItem', item: IprResultsTableItem): void;
     (e: 'downloadTable', items: IprResultsTableItem[]): void;
 }>();
+
+const scoresLoading = computed(() => analysis?.interproFunctionalAnalysisStore?.status === FunctionalAnalysisStatus.Running);
 
 const selectedNamespace = ref<string>("all");
 

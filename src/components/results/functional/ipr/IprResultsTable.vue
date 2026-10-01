@@ -33,11 +33,25 @@
             </template>
 
             <template #header.confidence="{ column, getSortIcon }">
-                <div class="v-data-table-header__content">
+                <div
+                    class="v-data-table-header__content"
+                    style="white-space: nowrap;"
+                >
                     <span>{{ column.title }}</span>
-                    <v-tooltip :text="`Score from NORI: a higher score means this InterPro entry is more likely correct. — means not scored (only the top ${maxScoredAnnotations} annotations get a score).`">
+                    <!-- While the scores are computed, the spinner takes the place of the info icon so the header keeps its width -->
+                    <v-tooltip :text="scoresLoading ? 'Computing NORI scores...' : `Score from NORI: a higher score means this InterPro entry is more likely correct. — means not scored (only the top ${maxScoredAnnotations} annotations get a score).`">
                         <template #activator="{ props }">
+                            <v-progress-circular
+                                v-if="scoresLoading"
+                                v-bind="props"
+                                indeterminate
+                                size="12"
+                                width="2"
+                                color="primary"
+                                class="ml-1"
+                            />
                             <v-icon
+                                v-else
                                 v-bind="props"
                                 size="x-small"
                                 class="ml-1"
@@ -80,7 +94,13 @@
 
             <template #item.confidence="{ item }">
                 <div
-                    v-if="item.confidence !== undefined"
+                    v-if="scoresLoading"
+                    style="padding: 8px 12px;"
+                >
+                    <div class="score-placeholder" />
+                </div>
+                <div
+                    v-else-if="item.confidence !== undefined"
                     :style="{
                         padding: '8px 12px',
                         background: `linear-gradient(90deg, rgba(25, 118, 210, 0.35) 0%, rgba(25, 118, 210, 0.35) ${item.confidence * 100}%, rgb(240, 240, 240) ${item.confidence * 100}%, rgb(240, 240, 240) 100%)`,
@@ -170,12 +190,13 @@ import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { data, items, probabilityThreshold = 0 } = defineProps<{
+const { data, items, probabilityThreshold = 0, scoresLoading = false } = defineProps<{
     items: IprResultsTableItem[];
     data: InterproTableData;
     showPercentage: boolean;
     showDownloadItem: boolean;
     probabilityThreshold?: number;
+    scoresLoading?: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -187,6 +208,11 @@ const expanded = ref<string[]>([]);
 const trees = new Map<string, DataNodeLike>();
 
 const filteredItems = computed(() => {
+    // Do not hide annotations based on their score while the scores are still being computed
+    if (scoresLoading) {
+        return items;
+    }
+
     return items.filter(item => (item.confidence ?? 0) >= probabilityThreshold);
 });
 
@@ -241,7 +267,8 @@ const headers: DataTableHeader[] = [
         key: "confidence",
         // Annotations without a score are sorted below all scored annotations
         sort: (a?: number, b?: number) => (a ?? -1) - (b ?? -1),
-        width: "14%"
+        width: "14%",
+        minWidth: "140px"
     },
     {
         title: "InterPro-entry",
@@ -291,6 +318,13 @@ const linkStrokeColor = ({ target: d }: any) => highlightColorFunc(d.data);
 </script>
 
 <style scoped>
+.score-placeholder {
+    width: 48px;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(var(--v-theme-on-surface), 0.08);
+}
+
 a {
     color: #2196f3;
     text-decoration: none;

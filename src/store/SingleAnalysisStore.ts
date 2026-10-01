@@ -14,6 +14,7 @@ import usePathwayPilotStore, {PathwayPilotStoreImport} from "@/store/PathwayPilo
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
+import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import useECFunctionalAnalysisStore, {ECFunctionalAnalysisStoreImport} from "@/store/ECFunctionalAnalysisStore";
 import useGOFunctionalAnalysisStore, {GOFunctionalAnalysisStoreImport} from "@/store/GOFunctionalAnalysisStore";
 import useInterproFunctionalAnalysisStore, {
@@ -153,9 +154,55 @@ const useSingleAnalysisStore = (
     // ========================== METHODS ============================
     // ===============================================================
 
+    const cancelFunctionalAnalyses = () => {
+        if (ecFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running) {
+            ecFunctionalAnalysisStore.cancelECFunctionalAnalysis();
+        }
+        if (goFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running) {
+            goFunctionalAnalysisStore.cancelGOFunctionalAnalysis();
+        }
+        if (interproFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running) {
+            interproFunctionalAnalysisStore.cancelInterproFunctionalAnalysis();
+        }
+    }
+
+    // The NORI scores are computed in the background, so the other results can be shown while they are computed.
+    // The three analyses are started together, the FunctionalAnalysisProcessor runs them one after the other.
+    const runFunctionalAnalyses = () => {
+        if (ecPeptidesFunctions.value && ecPeptidesFunctions.value.size > 0) {
+            ecFunctionalAnalysisStore.runECFunctionalAnalysis(
+                peptidesTable.value!,
+                ecPeptidesFunctions.value,
+                config.value.equate,
+                intensities.value
+            );
+        }
+
+        if (goPeptidesFunctions.value && goPeptidesFunctions.value.size > 0) {
+            goFunctionalAnalysisStore.runGOFunctionalAnalysis(
+                peptidesTable.value!,
+                goPeptidesFunctions.value,
+                config.value.equate,
+                intensities.value
+            );
+        }
+
+        if (iprPeptidesFunctions.value && iprPeptidesFunctions.value.size > 0) {
+            interproFunctionalAnalysisStore.runInterproFunctionalAnalysis(
+                peptidesTable.value!,
+                iprPeptidesFunctions.value,
+                config.value.equate,
+                intensities.value
+            );
+        }
+    }
+
     const analyse = async (fetch: boolean = true) => {
         // Set status to running immediately to provide feedback to the user
         status.value = AnalysisStatus.Pending;
+
+        // Scores of a previous analysis are no longer valid
+        cancelFunctionalAnalyses();
 
         try {
             // Use the AnalysisQueue to ensure only one analysis runs at a time
@@ -184,39 +231,14 @@ const useSingleAnalysisStore = (
                 await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
                 await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
 
-                if (ecPeptidesFunctions.value && ecPeptidesFunctions.value.size > 0) {
-                    await ecFunctionalAnalysisStore.runECFunctionalAnalysis(
-                        peptidesTable.value!,
-                        ecPeptidesFunctions.value,
-                        config.value.equate,
-                        intensities.value
-                    );
-                }
-
-                if (goPeptidesFunctions.value && goPeptidesFunctions.value.size > 0) {
-                    await goFunctionalAnalysisStore.runGOFunctionalAnalysis(
-                        peptidesTable.value!,
-                        goPeptidesFunctions.value,
-                        config.value.equate,
-                        intensities.value
-                    );
-                }
-
-                if (iprPeptidesFunctions.value && iprPeptidesFunctions.value.size > 0) {
-                    await interproFunctionalAnalysisStore.runInterproFunctionalAnalysis(
-                        peptidesTable.value!,
-                        iprPeptidesFunctions.value,
-                        config.value.equate,
-                        intensities.value
-                    );
-                }
-
                 await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.counts.keys()));
 
                 processNcbiTree(lcaTable.value!);
             });
             
             status.value = AnalysisStatus.Finished;
+
+            runFunctionalAnalyses();
         } catch (error) {
             status.value = AnalysisStatus.Failed;
             if (error) {

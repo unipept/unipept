@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import EcResultsTable from "@/components/results/functional/ec/EcResultsTable.vue";
 import {computed, onMounted, ref, watch} from "vue";
 import useOntologyStore from "@/store/OntologyStore";
@@ -25,6 +26,8 @@ const emits = defineEmits<{
     (e: 'downloadItem', item: EcResultsTableItem): void;
     (e: 'downloadTable', item: EcResultsTableItem[]): void;
 }>();
+
+const scoresLoading = computed(() => analysis?.ecFunctionalAnalysisStore?.status === FunctionalAnalysisStatus.Running);
 
 const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([key, value]) => {
     return {
@@ -70,6 +73,7 @@ onMounted(() => {
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
