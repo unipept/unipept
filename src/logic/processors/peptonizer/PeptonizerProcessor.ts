@@ -26,8 +26,8 @@ export const DEFAULT_TAXA_IN_GRAPH = 25;
 
 // These are the parameters over which the Peptonizer will run a grid search and look for the optimal result
 export const DEFAULT_PEPTONIZER_ALPHAS: number[] = [0.8, 0.9, 0.99];
-export const DEFAULT_PEPTONIZER_BETAS: number[] = [0.6, 0.7, 0.8, 0.9];
-export const DEFAULT_PEPTONIZER_PRIORS: number[] = [0.3, 0.5];
+export const DEFAULT_PEPTONIZER_BETAS: number[] = [0.05, 0.1, 0.2];
+export const DEFAULT_PEPTONIZER_PRIORS: number[] = [0.1, 0.3];
 
 export default class PeptonizerProcessor {
     // Only one instance of the Peptonizer should be running at the same time in the application.
@@ -62,6 +62,7 @@ export default class PeptonizerProcessor {
                 DEFAULT_PEPTONIZER_ALPHAS,
                 DEFAULT_PEPTONIZER_BETAS,
                 DEFAULT_PEPTONIZER_PRIORS,
+                rank,
                 DEFAULT_TAXA_IN_GRAPH,
                 listener,
                 DEFAULT_PEPTONIZER_WORKERS
