@@ -14,6 +14,10 @@ import usePathwayPilotStore, {PathwayPilotStoreImport} from "@/store/PathwayPilo
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
+import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
+import useECFunctionalAnalysisStore from "@/store/ECFunctionalAnalysisStore";
+import useGOFunctionalAnalysisStore from "@/store/GOFunctionalAnalysisStore";
+import useInterproFunctionalAnalysisStore from "@/store/InterproFunctionalAnalysisStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
@@ -83,6 +87,9 @@ const useSingleAnalysisStore = (
     const customFilterStore = useCustomFilterStore();
     const peptonizerStore = usePeptonizerStore(_id);
     const pathwayPilotStore = usePathwayPilotStore(_id);
+    const ecFunctionalAnalysisStore = useECFunctionalAnalysisStore(_id);
+    const goFunctionalAnalysisStore = useGOFunctionalAnalysisStore(_id);
+    const interproFunctionalAnalysisStore = useInterproFunctionalAnalysisStore(_id);
 
     // ===============================================================
     // ======================== REFERENCES ===========================
@@ -111,9 +118,9 @@ const useSingleAnalysisStore = (
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
     const { countTable: filteredPeptidesTable, process: processFilteredPeptides } = usePeptideProcessor();
     const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
-    const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
-    const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
-    const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
+    const { countTable: ecTable, trust: ecTrust, ecToPeptides, peptidesFunctions: ecPeptidesFunctions, process: processEc } = useEcProcessor();
+    const { countTable: goTable, trust: goTrust, goToPeptides, peptidesFunctions: goPeptidesFunctions, process: processGo } = useGoProcessor();
+    const { countTable: iprTable, trust: iprTrust, iprToPeptides, peptidesFunctions: iprPeptidesFunctions, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
     const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
 
@@ -145,9 +152,55 @@ const useSingleAnalysisStore = (
     // ========================== METHODS ============================
     // ===============================================================
 
+    const cancelFunctionalAnalyses = () => {
+        if (ecFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running) {
+            ecFunctionalAnalysisStore.cancelECFunctionalAnalysis();
+        }
+        if (goFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running) {
+            goFunctionalAnalysisStore.cancelGOFunctionalAnalysis();
+        }
+        if (interproFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running) {
+            interproFunctionalAnalysisStore.cancelInterproFunctionalAnalysis();
+        }
+    }
+
+    // The NORI scores are computed in the background, so the other results can be shown while they are computed.
+    // The three analyses are started together, the FunctionalAnalysisProcessor runs them one after the other.
+    const runFunctionalAnalyses = () => {
+        if (ecPeptidesFunctions.value && ecPeptidesFunctions.value.size > 0) {
+            ecFunctionalAnalysisStore.runECFunctionalAnalysis(
+                peptidesTable.value!,
+                ecPeptidesFunctions.value,
+                config.value.equate,
+                intensities.value
+            );
+        }
+
+        if (goPeptidesFunctions.value && goPeptidesFunctions.value.size > 0) {
+            goFunctionalAnalysisStore.runGOFunctionalAnalysis(
+                peptidesTable.value!,
+                goPeptidesFunctions.value,
+                config.value.equate,
+                intensities.value
+            );
+        }
+
+        if (iprPeptidesFunctions.value && iprPeptidesFunctions.value.size > 0) {
+            interproFunctionalAnalysisStore.runInterproFunctionalAnalysis(
+                peptidesTable.value!,
+                iprPeptidesFunctions.value,
+                config.value.equate,
+                intensities.value
+            );
+        }
+    }
+
     const analyse = async (fetch: boolean = true) => {
         // Set status to running immediately to provide feedback to the user
         status.value = AnalysisStatus.Pending;
+
+        // Scores of a previous analysis are no longer valid
+        cancelFunctionalAnalyses();
 
         try {
             // Use the AnalysisQueue to ensure only one analysis runs at a time
@@ -175,12 +228,15 @@ const useSingleAnalysisStore = (
                 await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
                 await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
                 await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
+
                 await ontologyStore.updateNcbiOntology(Array.from(lcaTable.value!.counts.keys()));
 
                 processNcbiTree(lcaTable.value!);
             });
             
             status.value = AnalysisStatus.Finished;
+
+            runFunctionalAnalyses();
         } catch (error) {
             status.value = AnalysisStatus.Failed;
             if (error) {
@@ -331,6 +387,7 @@ const useSingleAnalysisStore = (
         ecTable,
         ecTrust,
         ecToPeptides,
+        peptidesFunctions: ecPeptidesFunctions,
         goTable,
         goTrust,
         goToPeptides,
@@ -347,6 +404,9 @@ const useSingleAnalysisStore = (
 
         peptonizerStore,
         pathwayPilotStore,
+        ecFunctionalAnalysisStore,
+        goFunctionalAnalysisStore,
+        interproFunctionalAnalysisStore,
 
         analyse,
         updateName,

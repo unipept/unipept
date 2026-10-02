@@ -9,6 +9,7 @@ export default function useGoProcessor() {
     const countTable = shallowRef<CountTable<string>>();
     const trust = shallowRef<FunctionalTrust>();
     const goToPeptides = shallowRef<Map<string, string[]>>();
+    const peptidesFunctions = shallowRef<Map<string, string[]>>();
 
     const { process: processFunctional } = useFunctionalProcessor();
 
@@ -25,7 +26,8 @@ export default function useGoProcessor() {
             peptideDataTransferable: peptideDataTransferable,
             percentage,
             termPrefix: "go",
-            proteinCountProperty: "go"
+            proteinCountProperty: "go",
+            extractFunctionsMap: true
         });
 
         const countTableMap = ShareableMap.fromTransferableState<string, number>(processed.sortedCountsTransferable);
@@ -36,12 +38,14 @@ export default function useGoProcessor() {
             totalItems: peptideCounts.totalCount
         }
         goToPeptides.value = markRaw(processed.itemToPeptides);
+        peptidesFunctions.value = markRaw(processed.peptidesFunctions || new Map());
     }
 
     return {
         countTable,
         trust,
         goToPeptides,
+        peptidesFunctions,
 
         process
     }

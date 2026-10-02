@@ -26,6 +26,8 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -39,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import IprResultsTable, {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
 import {computed, ref} from "vue";
 import useOntologyStore from "@/store/OntologyStore";
@@ -47,17 +50,21 @@ import InterproTableData from "@/components/results/functional/ipr/InterproTable
 
 const { getIprDefinition } = useOntologyStore();
 
-const { data, showDownloadItem = true } = defineProps<{
+const { data, showDownloadItem = true, analysis = undefined, probabilityThreshold = 0 } = defineProps<{
     data: InterproTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
+    analysis?: any;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: IprResultsTableItem): void;
     (e: 'downloadTable', items: IprResultsTableItem[]): void;
 }>();
+
+const scoresLoading = computed(() => analysis?.interproFunctionalAnalysisStore?.status === FunctionalAnalysisStatus.Running);
 
 const selectedNamespace = ref<string>("all");
 
@@ -68,6 +75,7 @@ const items = computed(() => Array.from(data.iprTable!.counts.entries()).map(([k
         namespace: getIprDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.iprTrust!.totalItems,
+        confidence: analysis?.interproFunctionalAnalysisStore?.iprTermsToConfidence?.get(key),
     }
 }));
 

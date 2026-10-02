@@ -9,6 +9,7 @@ export default function useInterproProcessor() {
     const countTable = shallowRef<CountTable<string>>();
     const trust = shallowRef<FunctionalTrust>();
     const iprToPeptides = shallowRef<Map<string, string[]>>();
+    const peptidesFunctions = shallowRef<Map<string, string[]>>();
 
     const { process: processFunctional } = useFunctionalProcessor();
 
@@ -25,7 +26,8 @@ export default function useInterproProcessor() {
             peptideDataTransferable: peptideDataTransferable,
             percentage,
             termPrefix: "ipr",
-            proteinCountProperty: "ipr"
+            proteinCountProperty: "ipr",
+            extractFunctionsMap: true
         });
 
         const countTableMap = ShareableMap.fromTransferableState<string, number>(processed.sortedCountsTransferable);
@@ -36,12 +38,14 @@ export default function useInterproProcessor() {
             totalItems: peptideCounts.totalCount
         }
         iprToPeptides.value = markRaw(processed.itemToPeptides);
+        peptidesFunctions.value = markRaw(processed.peptidesFunctions || new Map());
     }
 
     return {
         countTable,
         trust,
         iprToPeptides,
+        peptidesFunctions,
 
         process
     }

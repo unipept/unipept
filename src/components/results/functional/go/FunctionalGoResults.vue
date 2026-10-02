@@ -16,6 +16,8 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -39,6 +41,8 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -62,6 +66,8 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
                 />
@@ -82,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import GoResultsTable from "./GoResultsTable.vue";
 import {computed} from "vue";
 import QuickGoCard from "@/components/results/functional/go/QuickGoCard.vue";
@@ -94,11 +101,13 @@ import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 const { getGoDefinition } = useOntologyStore();
 
-const { data, loading, showDownloadItem = true } = defineProps<{
+const { data, loading, showDownloadItem = true, analysis = undefined, probabilityThreshold = 0 } = defineProps<{
     data: GoTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
+    analysis?: any;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
@@ -106,11 +115,22 @@ const emits = defineEmits<{
     (e: 'downloadTable', items: GoResultsTableItem[]): void;
 }>();
 
-const biologicalProcessItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.BiologicalProcess));
-const cellularComponentItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.CellularComponent));
-const molecularFunctionItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
+const scoresLoading = computed(() => analysis?.goFunctionalAnalysisStore?.status === FunctionalAnalysisStatus.Running);
 
-const getItems = (items: CountTable<string>) => {
+const biologicalProcessItems = computed(() => getItems(
+    data.goTable,
+    analysis?.goFunctionalAnalysisStore?.biologicalProcessTermsToConfidence
+).filter(x => x.namespace == GoNamespace.BiologicalProcess));
+const cellularComponentItems = computed(() => getItems(
+    data.goTable,
+    analysis?.goFunctionalAnalysisStore?.cellularComponentTermsToConfidence
+).filter(x => x.namespace == GoNamespace.CellularComponent));
+const molecularFunctionItems = computed(() => getItems(
+    data.goTable,
+    analysis?.goFunctionalAnalysisStore?.molecularFunctionTermsToConfidence
+).filter(x => x.namespace == GoNamespace.MolecularFunction));
+
+const getItems = (items: CountTable<string>, termsToConfidence?: Map<string, number>) => {
     return Array.from(items.counts.entries())
         .map(([key, value]) => ({
             code: key,
@@ -118,6 +138,7 @@ const getItems = (items: CountTable<string>) => {
             namespace: getGoDefinition(key)?.namespace ?? "Unknown",
             count: value,
             totalCount: data.goTrust.totalItems,
+            confidence: termsToConfidence?.get(key),
         }));
 }
 

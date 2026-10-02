@@ -1,44 +1,5 @@
-<template>
-    <div v-if="!loading">
-        <v-row>
-            <v-col>
-                <slot name="trust" />
-            </v-col>
-        </v-row>
-
-        <v-row>
-            <v-col cols="12">
-                <ec-results-table
-                    :items="items"
-                    :data="data"
-                    :show-percentage="showPercentage"
-                    :show-download-item="showDownloadItem"
-                    @download-item="downloadItem"
-                    @download-table="downloadTable"
-                />
-            </v-col>
-        </v-row>
-        <v-row>
-            <v-col cols="12">
-                <v-card
-                    class="pa-0 ma-0"
-                    height="400"
-                    variant="flat"
-                >
-                    <treeview
-                        v-if="root"
-                        :ncbi-root="root"
-                    />
-                </v-card>
-            </v-col>
-        </v-row>
-    </div>
-    <div v-else>
-        <filter-progress text="The EC numbers are currently being filtered." />
-    </div>
-</template>
-
 <script setup lang="ts">
+import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import EcResultsTable from "@/components/results/functional/ec/EcResultsTable.vue";
 import {computed, onMounted, ref, watch} from "vue";
 import useOntologyStore from "@/store/OntologyStore";
@@ -52,17 +13,21 @@ import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTa
 const { getEcDefinition } = useOntologyStore();
 const { root, process } = useEcTreeProcessor();
 
-const { data, showDownloadItem = true } = defineProps<{
+const { data, showDownloadItem = true, analysis = undefined, probabilityThreshold = 0 } = defineProps<{
     data: EcTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
+    analysis?: any;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: EcResultsTableItem): void;
     (e: 'downloadTable', item: EcResultsTableItem[]): void;
 }>();
+
+const scoresLoading = computed(() => analysis?.ecFunctionalAnalysisStore?.status === FunctionalAnalysisStatus.Running);
 
 const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([key, value]) => {
     return {
@@ -71,6 +36,7 @@ const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([ke
         namespace: getEcDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.ecTrust!.totalItems,
+        confidence: analysis?.ecFunctionalAnalysisStore?.ecTermsToConfidence?.get(key),
     }
 }));
 
@@ -90,6 +56,49 @@ onMounted(() => {
     process(data.ecTable!);
 });
 </script>
+
+<template>
+    <div v-if="!loading">
+        <v-row>
+            <v-col>
+                <slot name="trust" />
+            </v-col>
+        </v-row>
+
+        <v-row>
+            <v-col cols="12">
+                <ec-results-table
+                    :items="items"
+                    :data="data"
+                    :show-percentage="showPercentage"
+                    :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
+                    @download-item="downloadItem"
+                    @download-table="downloadTable"
+                />
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col cols="12">
+                <v-card
+                    class="pa-0 ma-0"
+                    height="400"
+                    variant="flat"
+                >
+                    <treeview
+                        v-if="root"
+                        :ncbi-root="root"
+                    />
+                </v-card>
+            </v-col>
+        </v-row>
+
+    </div>
+    <div v-else>
+        <filter-progress text="The EC numbers are currently being filtered." />
+    </div>
+</template>
 
 <style scoped>
 

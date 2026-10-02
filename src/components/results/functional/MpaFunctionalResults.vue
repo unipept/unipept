@@ -80,6 +80,7 @@
             <filter-functional-results
                 v-model="filterModalOpen"
                 :filter-percentage="analysis.functionalFilter"
+                :probability-threshold="probabilityThreshold"
                 @confirm="updateFilter"
             />
         </v-tabs>
@@ -89,8 +90,10 @@
                 <v-card-text>
                     <functional-go-results
                         :data="goData"
+                        :analysis="analysis"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
+                        :probability-threshold="probabilityThreshold"
                         @download-item="downloadGoItem"
                         @download-table="downloadGoTable"
                     >
@@ -109,8 +112,10 @@
                 <v-card-text>
                     <functional-ec-results
                         :data="ecData"
+                        :analysis="analysis"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
+                        :probability-threshold="probabilityThreshold"
                         @download-item="downloadEcItem"
                         @download-table="downloadEcTable"
                     >
@@ -130,8 +135,10 @@
                 <v-card-text>
                     <functional-ipr-results
                         :data="iprData"
+                        :analysis="analysis"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
+                        :probability-threshold="probabilityThreshold"
                         @download-item="downloadInterproItem"
                         @download-table="downloadInterproTable"
                     >
@@ -186,6 +193,7 @@ const currentTab = ref(0);
 const sortPeptidePercentage = ref(false);
 const sortingPeptidesDialogOpen = ref(false);
 const filterModalOpen = ref<boolean>(false);
+const probabilityThreshold = ref<number>(0);
 
 const goData = computed(() => ({
     goTable: analysis.goTable!,
@@ -211,8 +219,9 @@ const iprData = computed(() => ({
     lcaToPeptides: analysis.lcaToPeptides
 }));
 
-const updateFilter = (value: number) => {
-    analysis.updateFunctionalFilter(value);
+const updateFilter = (filterPercentage: number, newProbabilityThreshold: number) => {
+    analysis.updateFunctionalFilter(filterPercentage);
+    probabilityThreshold.value = newProbabilityThreshold;
 }
 
 const downloadGoItem = (item: GoResultsTableItem) => {
@@ -235,12 +244,13 @@ const downloadGoItem = (item: GoResultsTableItem) => {
 }
 
 const downloadGoTable = (items: GoResultsTableItem[]) => {
-    const header = ["peptides", "go term", "name"];
+    const header = ["peptides", "go term", "name", "nori score"];
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.confidence?.toString() ?? ""
         ];
     }));
     download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_go_table.csv`);
@@ -266,12 +276,13 @@ const downloadEcItem = (item: EcResultsTableItem) => {
 }
 
 const downloadEcTable = (items: EcResultsTableItem[]) => {
-    const header = ["peptides", "ec number", "name"]
+    const header = ["peptides", "ec number", "name", "nori score"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.confidence?.toString() ?? ""
         ];
     }));
 
@@ -298,12 +309,13 @@ const downloadInterproItem = (item: IprResultsTableItem) => {
 }
 
 const downloadInterproTable = (items: IprResultsTableItem[]) => {
-    const header = ["peptides", "interpro entry", "name"]
+    const header = ["peptides", "interpro entry", "name", "nori score"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.confidence?.toString() ?? ""
         ];
     }));
 

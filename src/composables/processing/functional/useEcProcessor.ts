@@ -1,7 +1,7 @@
 import useFunctionalProcessor from "@/composables/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import {markRaw, ref, shallowRef} from "vue";
+import {markRaw, shallowRef} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
 import CountTable from "@/logic/processors/CountTable";
 
@@ -9,6 +9,7 @@ export default function useEcProcessor() {
     const countTable = shallowRef<CountTable<string>>();
     const trust = shallowRef<FunctionalTrust>();
     const ecToPeptides = shallowRef<Map<string, string[]>>();
+    const peptidesFunctions = shallowRef<Map<string, string[]>>(); // For EC functional analysis
 
     const { process: processFunctional } = useFunctionalProcessor();
 
@@ -25,7 +26,8 @@ export default function useEcProcessor() {
             peptideDataTransferable: peptideDataTransferable,
             percentage,
             termPrefix: "ec",
-            proteinCountProperty: "ec"
+            proteinCountProperty: "ec",
+            extractFunctionsMap: true // Extract EC functions for functional analysis
         });
 
         const countTableMap = ShareableMap.fromTransferableState<string, number>(processed.sortedCountsTransferable);
@@ -36,12 +38,14 @@ export default function useEcProcessor() {
             totalItems: peptideCounts.totalCount
         }
         ecToPeptides.value = markRaw(processed.itemToPeptides);
+        peptidesFunctions.value = markRaw(processed.peptidesFunctions || new Map());
     }
 
     return {
         countTable,
         trust,
         ecToPeptides,
+        peptidesFunctions,
 
         process
     }
