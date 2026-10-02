@@ -15,11 +15,9 @@ import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
-import useECFunctionalAnalysisStore, {ECFunctionalAnalysisStoreImport} from "@/store/ECFunctionalAnalysisStore";
-import useGOFunctionalAnalysisStore, {GOFunctionalAnalysisStoreImport} from "@/store/GOFunctionalAnalysisStore";
-import useInterproFunctionalAnalysisStore, {
-    InterproFunctionalAnalysisStoreImport
-} from "@/store/InterproFunctionalAnalysisStore";
+import useECFunctionalAnalysisStore from "@/store/ECFunctionalAnalysisStore";
+import useGOFunctionalAnalysisStore from "@/store/GOFunctionalAnalysisStore";
+import useInterproFunctionalAnalysisStore from "@/store/InterproFunctionalAnalysisStore";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
@@ -336,10 +334,7 @@ const useSingleAnalysisStore = (
             peptideToDataTransferable,
 
             peptonizer: peptonizerStore.exportStore(),
-            pathwayPilot: pathwayPilotStore.exportStore(),
-            ecFunctionalAnalysis: ecFunctionalAnalysisStore.exportStore(),
-            goFunctionalAnalysis: goFunctionalAnalysisStore.exportStore(),
-            interproFunctionalAnalysis: interproFunctionalAnalysisStore.exportStore()
+            pathwayPilot: pathwayPilotStore.exportStore()
         }
     }
 
@@ -366,18 +361,6 @@ const useSingleAnalysisStore = (
 
         if (storeImport.pathwayPilot) {
             pathwayPilotStore.setImportedData(storeImport.pathwayPilot);
-        }
-
-        if (storeImport.ecFunctionalAnalysis) {
-            ecFunctionalAnalysisStore.setImportedData(storeImport.ecFunctionalAnalysis);
-        }
-
-        if (storeImport.goFunctionalAnalysis) {
-            goFunctionalAnalysisStore.setImportedData(storeImport.goFunctionalAnalysis);
-        }
-
-        if (storeImport.interproFunctionalAnalysis) {
-            interproFunctionalAnalysisStore.setImportedData(storeImport.interproFunctionalAnalysis);
         }
     }
 
@@ -450,9 +433,6 @@ export interface SingleAnalysisStoreImport {
     peptideToDataTransferable: TransferableState | undefined;
     peptonizer: PeptonizerStoreImport | undefined;
     pathwayPilot: PathwayPilotStoreImport | undefined;
-    ecFunctionalAnalysis?: ECFunctionalAnalysisStoreImport | undefined;
-    goFunctionalAnalysis?: GOFunctionalAnalysisStoreImport | undefined;
-    interproFunctionalAnalysis?: InterproFunctionalAnalysisStoreImport | undefined;
 }
 
 export const useSingleAnalysisStoreImport = (storeImport: SingleAnalysisStoreImport) => {

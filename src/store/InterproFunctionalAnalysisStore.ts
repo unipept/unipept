@@ -1,4 +1,4 @@
-import {ref, toRaw} from "vue";
+import {ref} from "vue";
 import {defineStore} from "pinia";
 import CountTable from "@/logic/processors/CountTable";
 import FunctionalAnalysisProcessor from "@/logic/processors/functional/FunctionalAnalysisProcessor";
@@ -71,22 +71,6 @@ const useInterproFunctionalAnalysisStore = (sampleId: string) => defineStore(`in
         status.value = FunctionalAnalysisStatus.Pending;
     }
 
-    const exportStore = (): InterproFunctionalAnalysisStoreImport | undefined => {
-        if (iprTermsToConfidence.value) {
-            return {
-                iprTermsToConfidence: Array.from(toRaw(iprTermsToConfidence.value).entries()),
-                status: status.value
-            };
-        }
-
-        return undefined;
-    }
-
-    const setImportedData = (storeImport: InterproFunctionalAnalysisStoreImport) => {
-        iprTermsToConfidence.value = new Map<string, number>(storeImport.iprTermsToConfidence);
-        status.value = FunctionalAnalysisStatus.Finished;
-    }
-
     return {
         iprTermsToConfidence,
 
@@ -99,16 +83,9 @@ const useInterproFunctionalAnalysisStore = (sampleId: string) => defineStore(`in
         analysisError,
 
         runInterproFunctionalAnalysis,
-        cancelInterproFunctionalAnalysis,
-        exportStore,
-        setImportedData
+        cancelInterproFunctionalAnalysis
     }
 })();
-
-export type InterproFunctionalAnalysisStoreImport = {
-    iprTermsToConfidence: [string, number][];
-    status: FunctionalAnalysisStatus;
-}
 
 export type InterproFunctionalAnalysisStore = ReturnType<typeof useInterproFunctionalAnalysisStore>;
 

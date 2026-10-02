@@ -184,31 +184,6 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
         return FunctionalAnalysisStatus.Pending;
     });
 
-    const exportStore = (): GOFunctionalAnalysisStoreImport | undefined => {
-        if (
-            biologicalProcess.termsToConfidence.value ||
-            cellularComponent.termsToConfidence.value ||
-            molecularFunction.termsToConfidence.value
-        ) {
-            return {
-                biologicalProcessTermsToConfidence: Array.from((biologicalProcess.termsToConfidence.value || new Map()).entries()),
-                cellularComponentTermsToConfidence: Array.from((cellularComponent.termsToConfidence.value || new Map()).entries()),
-                molecularFunctionTermsToConfidence: Array.from((molecularFunction.termsToConfidence.value || new Map()).entries())
-            };
-        }
-
-        return undefined;
-    };
-
-    const setImportedData = (storeImport: GOFunctionalAnalysisStoreImport) => {
-        biologicalProcess.termsToConfidence.value = new Map<string, number>(storeImport.biologicalProcessTermsToConfidence || []);
-        cellularComponent.termsToConfidence.value = new Map<string, number>(storeImport.cellularComponentTermsToConfidence || []);
-        molecularFunction.termsToConfidence.value = new Map<string, number>(storeImport.molecularFunctionTermsToConfidence || []);
-
-        biologicalProcess.status.value = FunctionalAnalysisStatus.Finished;
-        cellularComponent.status.value = FunctionalAnalysisStatus.Finished;
-        molecularFunction.status.value = FunctionalAnalysisStatus.Finished;
-    };
 
     return {
         status,
@@ -241,17 +216,9 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
         molecularFunctionAnalysisError: molecularFunction.analysisError,
 
         runGOFunctionalAnalysis,
-        cancelGOFunctionalAnalysis,
-        exportStore,
-        setImportedData
+        cancelGOFunctionalAnalysis
     }
 })();
-
-export type GOFunctionalAnalysisStoreImport = {
-    biologicalProcessTermsToConfidence: [string, number][];
-    cellularComponentTermsToConfidence: [string, number][];
-    molecularFunctionTermsToConfidence: [string, number][];
-}
 
 export type GOFunctionalAnalysisStore = ReturnType<typeof useGOFunctionalAnalysisStore>;
 

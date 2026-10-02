@@ -1,4 +1,4 @@
-import {ref, toRaw} from "vue";
+import {ref} from "vue";
 import {defineStore} from "pinia";
 import CountTable from "@/logic/processors/CountTable";
 import FunctionalAnalysisProcessor from "@/logic/processors/functional/FunctionalAnalysisProcessor";
@@ -77,22 +77,6 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
         status.value = FunctionalAnalysisStatus.Pending;
     }
 
-    const exportStore = (): ECFunctionalAnalysisStoreImport | undefined => {
-        if (ecTermsToConfidence.value) {
-            return {
-                ecTermsToConfidence: Array.from(toRaw(ecTermsToConfidence.value).entries()),
-                status: status.value
-            }
-        }
-
-        return undefined;
-    }
-
-    const setImportedData = (storeImport: ECFunctionalAnalysisStoreImport) => {
-        ecTermsToConfidence.value = new Map<string, number>(storeImport.ecTermsToConfidence);
-        status.value = FunctionalAnalysisStatus.Finished;
-    }
-
     return {
         ecTermsToConfidence,
 
@@ -105,16 +89,9 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
         analysisError,
 
         runECFunctionalAnalysis,
-        cancelECFunctionalAnalysis,
-        exportStore,
-        setImportedData
+        cancelECFunctionalAnalysis
     }
 })();
-
-export type ECFunctionalAnalysisStoreImport = {
-    ecTermsToConfidence: [string, number][];
-    status: FunctionalAnalysisStatus;
-}
 
 export type ECFunctionalAnalysisStore = ReturnType<typeof useECFunctionalAnalysisStore>;
 

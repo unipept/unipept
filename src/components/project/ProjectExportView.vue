@@ -113,7 +113,6 @@ import {computed, ref} from "vue";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
-import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import useProjectExport from "@/composables/useProjectExport";
 import useAppStateStore from "@/store/AppStateStore";
 import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
@@ -182,10 +181,7 @@ const finishedAnalyses = computed(() => {
 const peptonizerJobs = computed(() => {
     return project.groups.reduce((total, group) => {
         return total + group.analyses.filter(analysis =>
-            analysis.peptonizerStore.status === PeptonizerStatus.Running ||
-            analysis.ecFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running ||
-            analysis.goFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running ||
-            analysis.interproFunctionalAnalysisStore.status === FunctionalAnalysisStatus.Running
+            analysis.peptonizerStore.status === PeptonizerStatus.Running
         ).length;
     }, 0);
 });
