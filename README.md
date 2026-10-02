@@ -48,6 +48,42 @@ This repository only contains the code for the web application of Unipept. To ru
 We have detailed guides on how to set up all of these components on our Wiki:
 [https://github.com/unipept/unipept/wiki](https://github.com/unipept/unipept/wiki)
 
+## Adding custom icons
+
+The application uses a small custom icon font (`unipept-icons`) for icons not available in Material Design Icons. The SVG sources live in `custom-icons/` and the font is generated automatically by [fantasticon](https://github.com/tancredi/fantasticon) when you run `yarn dev` or `yarn build`. You can also regenerate it manually:
+
+```bash
+yarn generate-icons
+```
+
+### Adding a new icon
+
+1. Export your icon as an SVG (24x24 px viewBox, filled paths — no strokes) and place it in `custom-icons/`.
+
+2. Regenerate the font:
+   ```bash
+   yarn generate-icons
+   ```
+
+3. Check the assigned codepoint in the generated `src/styles/unipept-icons.css` and add it to `.fantasticonrc.json` to lock it in permanently:
+   ```json
+   "codepoints": {
+     "your-new-icon": 59395
+   }
+   ```
+
+4. To make the icon available as a Vuetify alias, add an entry to `src/plugins/unipept-icons.ts`:
+   ```typescript
+   const unipeptIconsAliases = {
+       yourNewIcon: 'unipept-your-new-icon'
+   }
+   ```
+
+5. Use it in a component:
+   ```vue
+   <VIcon icon="unipept:your-new-icon" />
+   ```
+
 ## Who made this app?
 
 Unipept is a research project of the computational biology group at Ghent University. If you use this application, please cite:

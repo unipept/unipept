@@ -51,7 +51,7 @@
                 >
                     --input parameter
                 </r-link> to specify a file to use as input. If input is supplied using a file, a single
-                peptide per line is expected.
+                taxon per line is expected.
             </p>
 
             <h4>Example</h4>
@@ -68,7 +68,7 @@
             <h3>Standard input</h3>
             <p>
                 If the command is run without arguments and no file is specified, <inline-code>unipept taxonomy</inline-code> will read its input from <i>standard input</i>.
-                When <i>standard input</i> is used, a single peptide per line is expected.
+                When <i>standard input</i> is used, a single taxon per line is expected.
             </p>
 
             <h4>Example</h4>
@@ -171,7 +171,7 @@
                 >
                     prot2pept command
                 </r-link>). This format consists of a fasta header (a line starting with a >), followed by
-                one or more lines containing one peptide each. When this format is detected, the output will automatically include an extra information field
+                one or more lines containing one taxon each. When this format is detected, the output will automatically include an extra information field
                 containing the corresponding fasta header.
             </p>
 
@@ -201,7 +201,8 @@
 
             <p>
                 All Unipept <initialism>CLI</initialism> commands can process input from 3 sources: command line arguments, a file, or <i>standard input</i>. The optional <inline-code>--input</inline-code>
-                option allows you to specify an input file. The file should contain a single peptide per line.
+                option allows you to specify an input file. The file should contain a single NCBI Taxonomy Identifier per line. The option may be given more than
+                once, in which case the files are read one after the other as a single stream.
             </p>
 
             <h4>Example</h4>
@@ -219,7 +220,7 @@
 
             <p>
                 By default, the unipept commands write their output to <i>standard output</i>. Using the optional <inline-code>--output</inline-code> option allows you to
-                specify a file to write the output to. If the file already exists, the output will be appended; if it doesn't, a new file will be created.
+                specify a file to write the output to. If the file already exists, it is overwritten; if it doesn't, a new file will be created.
             </p>
 
             <h4>Example</h4>
@@ -288,6 +289,42 @@
                 <br>taxon_id,order_id,order_name
                 <br>817,171549,Bacteroidales
                 <br>329854,171549,Bacteroidales
+            </boxed>
+
+            <h2>--host <span class="text-caption grey--text text--darken-2">Use a different server</span></h2>
+
+            <p>
+                By default, requests go to the Unipept server at <inline-code>https://api.unipept.ugent.be</inline-code>. The <inline-code>--host</inline-code>
+                option sends them to another server running the Unipept web service, such as a local instance.
+            </p>
+
+            <h4>Example</h4>
+            <boxed>
+                <sentinel>$</sentinel> unipept taxonomy <b>--host</b> http://localhost:3000 817 329854
+            </boxed>
+
+            <h2>--quiet / -q <span class="text-caption grey--text text--darken-2">Suppress service messages</span></h2>
+
+            <p>
+                Suppresses the messages that are normally written to <i>standard error</i>, such as retry notices and failed request reports.
+                Failed requests are still recorded in the log file.
+            </p>
+
+            <h4>Example</h4>
+            <boxed>
+                <sentinel>$</sentinel> unipept taxonomy <b>--quiet</b> -i taxonids.txt
+            </boxed>
+
+            <h2>--log <span class="text-caption grey--text text--darken-2">Write messages to a log file</span></h2>
+
+            <p>
+                Writes the messages that normally go to <i>standard error</i> to the given file instead. Without this option, failed requests are
+                recorded in a dated file in the <inline-code>.unipept</inline-code> directory of your home directory.
+            </p>
+
+            <h4>Example</h4>
+            <boxed>
+                <sentinel>$</sentinel> unipept taxonomy <b>--log</b> unipept.log -i taxonids.txt
             </boxed>
 
             <h2>--help / -h <span class="text-body-small text-grey-darken-2">Display help</span></h2>

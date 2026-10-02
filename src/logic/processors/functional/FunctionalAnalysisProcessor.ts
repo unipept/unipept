@@ -111,7 +111,7 @@ export default class FunctionalAnalysisProcessor {
         }
 
         return await FunctionalAnalysisProcessor.runner.run(async () => {
-            const rawResult = await (this.peptonizer as any).functionalAnalysis(
+            const rawResult = await this.peptonizer.peptonize(
                 peptidesFunctionsWithIds,
                 normalizedIntensities,
                 normalizedCounts,
@@ -128,10 +128,10 @@ export default class FunctionalAnalysisProcessor {
             }
 
             const resultMap = new Map<string, number>();
-            for (const [key, value] of (rawResult as any).entries()) {
+            for (const [key, value] of rawResult.entries()) {
                 const term = idToTerm.get(Number(key));
                 if (term) {
-                    resultMap.set(term, value as number);
+                    resultMap.set(term, value);
                 }
             }
 

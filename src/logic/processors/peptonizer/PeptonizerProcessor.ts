@@ -1,6 +1,7 @@
 import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
 import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
+import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
 import useBrowserCheck from "@/composables/useBrowserCheck";
 import ExclusiveProcessorRunner from "@/logic/processors/peptonizer/ExclusiveProcessorRunner";
 import {
@@ -28,15 +29,18 @@ export const DEFAULT_TAXA_IN_GRAPH = 25;
 export const DEFAULT_PEPTONIZER_ALPHAS: number[] = [0.8, 0.9, 0.99];
 export const DEFAULT_PEPTONIZER_BETAS: number[] = [0.05, 0.1, 0.2];
 export const DEFAULT_PEPTONIZER_PRIORS: number[] = [0.1, 0.3];
+const TAXA2RANK_BATCH_SIZE = 10000;
 
 export default class PeptonizerProcessor {
     // Only one instance of the Peptonizer should be running at the same time in the application.
     private static runner = new ExclusiveProcessorRunner<PeptonizerResult>();
 
     private peptonizer: Peptonizer;
+    private unipeptCommunicator: UnipeptCommunicator;
 
     constructor() {
         this.peptonizer = new Peptonizer();
+        this.unipeptCommunicator = new UnipeptCommunicator();
     }
 
     public async runPeptonizer(
@@ -53,16 +57,32 @@ export default class PeptonizerProcessor {
         }
 
         return await PeptonizerProcessor.runner.run(async () => {
+            const peptideEntries = Array.from(peptidesTaxa.entries());
+            const mappedTaxa: number[][] = [];
+
+            for (let index = 0; index < peptideEntries.length; index += TAXA2RANK_BATCH_SIZE) {
+                const batch = peptideEntries.slice(index, index + TAXA2RANK_BATCH_SIZE);
+                const batchMappedTaxa = await this.unipeptCommunicator.taxa2rank(
+                    batch.map(([, taxa]) => taxa),
+                    rank
+                );
+
+                mappedTaxa.push(...batchMappedTaxa);
+            }
+
+            const mappedPeptidesTaxa = new Map<string, number[]>(
+                peptideEntries.map(([peptide], index) => [peptide, mappedTaxa[index] ?? []])
+            );
+
             console.log(`Starting Peptonizer with up to ${DEFAULT_PEPTONIZER_WORKERS} workers...`);
 
             return await this.peptonizer.peptonize(
-                peptidesTaxa,
+                mappedPeptidesTaxa,
                 peptideIntensities,
                 new Map<string, number>(Array.from(peptideCountTable.counts.entries())),
                 DEFAULT_PEPTONIZER_ALPHAS,
                 DEFAULT_PEPTONIZER_BETAS,
                 DEFAULT_PEPTONIZER_PRIORS,
-                rank,
                 DEFAULT_TAXA_IN_GRAPH,
                 listener,
                 DEFAULT_PEPTONIZER_WORKERS

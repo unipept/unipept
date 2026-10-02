@@ -25,8 +25,9 @@ test('Metaproteomics Analysis / Comparative Analysis works', async ({page}) => {
 
     const speciesTable = page.locator('.v-data-table', {hasText: 'Avg. relative abundance'});
     const rows = speciesTable.locator('tbody tr');
-    await expect(rows.first()).toBeVisible();
-    expect(await rows.count()).toBeGreaterThanOrEqual(5);
+    await expect(async () => {
+        expect(await rows.count()).toBeGreaterThanOrEqual(5);
+    }).toPass({ timeout: 30000 });
 
     const barplotRoot = page.locator('.v-window-item--active .d-flex.flex-row');
     const barplotSvg = barplotRoot.locator('svg');

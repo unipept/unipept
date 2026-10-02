@@ -33,6 +33,10 @@ export default class AnalyticsCommunicator {
         this.logEvent('load_demo_project');
     }
 
+    public logLoadReprocessedProject() {
+        this.logEvent('load_reprocessed_project');
+    }
+
     public logQuickAnalysis() {
         this.logEvent('quick_analysis');
     }

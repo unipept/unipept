@@ -63,6 +63,38 @@ export default defineConfig({
             "Cross-Origin-Embedder-Policy": "require-corp"
         }
     },
+    preview: {
+        headers: {
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "Cross-Origin-Embedder-Policy": "require-corp"
+        }
+    },
+    build: {
+        chunkSizeWarningLimit: 1000,
+        rolldownOptions: {
+            // Suppress INVALID_ANNOTATION warnings from @vueuse/core — the library places
+            // /* #__PURE__ */ comments in positions that Rolldown does not support; this is
+            // a known upstream issue and does not affect runtime behaviour.
+            onwarn(warning, warn) {
+                if (warning.code === 'INVALID_ANNOTATION') return;
+                warn(warning);
+            },
+            output: {
+                // Keep Vue runtime and vueuse in the same vendor chunk to avoid a
+                // Rolldown cross-chunk init ordering bug where init_runtime_dom_esm_bundler
+                // is called in a lazy chunk before it is defined.
+                manualChunks: (id: string) => {
+                    if (
+                        id.includes('/node_modules/vue/') ||
+                        id.includes('/node_modules/@vue/') ||
+                        id.includes('/node_modules/@vueuse/')
+                    ) {
+                        return 'vendor-vue';
+                    }
+                }
+            }
+        }
+    },
     optimizeDeps: {
         exclude: ["vuetify"],
         include: [
