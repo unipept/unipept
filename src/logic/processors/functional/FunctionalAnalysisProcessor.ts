@@ -32,11 +32,12 @@ export interface FunctionalAnalysisOptions {
 export default class FunctionalAnalysisProcessor {
     private static runner = new ExclusiveProcessorRunner<FunctionalAnalysisResult>();
 
-    private peptonizer: Peptonizer;
-
-    constructor() {
-        this.peptonizer = new Peptonizer();
-    }
+    // Only created when the run starts, because Peptonizer.cancel() throws before peptonize() is called
+    private peptonizer: Peptonizer | undefined;
+    private cancelled = false;
+    // After Peptonizer.cancel(), peptonize() never settles, so a run must also end when this promise resolves
+    private resolveCancelled!: (value: undefined) => void;
+    private readonly cancelledPromise = new Promise<undefined>(resolve => this.resolveCancelled = resolve);
 
     public async runFunctionalAnalysis(
         peptidesFunctions: Map<string, string[]>,
@@ -110,8 +111,14 @@ export default class FunctionalAnalysisProcessor {
             peptidesFunctionsWithIds.set(peptide, numericIds);
         }
 
-        return await FunctionalAnalysisProcessor.runner.run(async () => {
-            const rawResult = await this.peptonizer.peptonize(
+        // Race against the cancel, so that a run that is cancelled while it waits in the queue returns immediately
+        return await Promise.race([this.cancelledPromise, FunctionalAnalysisProcessor.runner.run(async () => {
+            if (this.cancelled) {
+                return undefined;
+            }
+
+            this.peptonizer = new Peptonizer();
+            const rawResult = await Promise.race([this.cancelledPromise, this.peptonizer.peptonize(
                 peptidesFunctionsWithIds,
                 normalizedIntensities,
                 normalizedCounts,
@@ -121,7 +128,7 @@ export default class FunctionalAnalysisProcessor {
                 MAX_SCORED_ANNOTATIONS,
                 listener,
                 DEFAULT_PEPTONIZER_WORKERS
-            );
+            )]);
 
             if (!rawResult) {
                 return undefined;
@@ -136,12 +143,12 @@ export default class FunctionalAnalysisProcessor {
             }
 
             return resultMap;
-        });
+        })]);
     }
 
     public cancelFunctionalAnalysis() {
-        if (this.peptonizer) {
-            this.peptonizer.cancel();
-        }
+        this.cancelled = true;
+        this.resolveCancelled(undefined);
+        this.peptonizer?.cancel();
     }
 }

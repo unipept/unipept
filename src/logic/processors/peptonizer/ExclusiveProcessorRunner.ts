@@ -3,7 +3,8 @@ export default class ExclusiveProcessorRunner<T> {
 
     public async run(task: () => Promise<T | undefined>): Promise<T | undefined> {
         while (this.inProgress) {
-            await this.inProgress;
+            // An error of the previous task is reported to its own caller, not to the tasks that wait for it
+            await this.inProgress.catch(() => undefined);
         }
 
         this.inProgress = task();

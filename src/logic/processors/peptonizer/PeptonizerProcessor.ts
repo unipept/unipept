@@ -32,7 +32,7 @@ export const DEFAULT_PEPTONIZER_PRIORS: number[] = [0.1, 0.3];
 const TAXA2RANK_BATCH_SIZE = 10000;
 
 export default class PeptonizerProcessor {
-    // Only one instance of the Peptonizer should be running at the same time in the application.
+    // One taxonomic run at a time; FA runs have their own queue, so at most one of each runs together.
     private static runner = new ExclusiveProcessorRunner<PeptonizerResult>();
 
     private peptonizer: Peptonizer;
