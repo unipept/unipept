@@ -2,7 +2,6 @@ import {ref} from "vue";
 import {defineStore} from "pinia";
 import CountTable from "@/logic/processors/CountTable";
 import FunctionalAnalysisProcessor from "@/logic/processors/functional/FunctionalAnalysisProcessor";
-import useOntologyStore from "@/store/OntologyStore";
 import usePeptonizerAnalysisProgress from "@/store/usePeptonizerAnalysisProgress";
 import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 
@@ -52,9 +51,6 @@ const useInterproFunctionalAnalysisStore = (sampleId: string) => defineStore(`in
             }
 
             iprTermsToConfidence.value = analysisData;
-
-            const {updateIprOntology} = useOntologyStore();
-            await updateIprOntology(Array.from(iprTermsToConfidence.value.keys()));
 
             status.value = FunctionalAnalysisStatus.Finished;
         } catch (error) {

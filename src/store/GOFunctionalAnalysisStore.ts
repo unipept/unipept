@@ -142,16 +142,6 @@ const useGOFunctionalAnalysisStore = (sampleId: string) => defineStore(`goFuncti
             await runDomainAnalysis(domain, peptideCountTable, peptidesFunctions, equateIl, peptideIntensities);
         }
         runInProgress.value = false;
-
-        const allTerms = [
-            ...(biologicalProcess.termsToConfidence.value?.keys() || []),
-            ...(cellularComponent.termsToConfidence.value?.keys() || []),
-            ...(molecularFunction.termsToConfidence.value?.keys() || [])
-        ];
-
-        if (allTerms.length > 0) {
-            await ontologyStore.updateGoOntology(Array.from(new Set(allTerms)));
-        }
     };
 
     const cancelGOFunctionalAnalysis = () => {

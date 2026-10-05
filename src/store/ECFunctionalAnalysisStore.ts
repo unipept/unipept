@@ -2,7 +2,6 @@ import {ref} from "vue";
 import {defineStore} from "pinia";
 import CountTable from "@/logic/processors/CountTable";
 import FunctionalAnalysisProcessor from "@/logic/processors/functional/FunctionalAnalysisProcessor";
-import useOntologyStore from "@/store/OntologyStore";
 import usePeptonizerAnalysisProgress from "@/store/usePeptonizerAnalysisProgress";
 import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 
@@ -57,10 +56,6 @@ const useECFunctionalAnalysisStore = (sampleId: string) => defineStore(`ecFuncti
             }
 
             ecTermsToConfidence.value = ecAnalysisData;
-
-            // Update ontology with EC terms
-            const {updateEcOntology} = useOntologyStore();
-            await updateEcOntology(Array.from(ecTermsToConfidence.value.keys()));
 
             status.value = FunctionalAnalysisStatus.Finished;
         } catch (error) {
