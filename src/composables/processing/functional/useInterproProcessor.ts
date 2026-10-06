@@ -26,8 +26,7 @@ export default function useInterproProcessor() {
             peptideDataTransferable: peptideDataTransferable,
             percentage,
             termPrefix: "ipr",
-            proteinCountProperty: "ipr",
-            extractFunctionsMap: true
+            proteinCountProperty: "ipr"
         });
 
         const countTableMap = ShareableMap.fromTransferableState<string, number>(processed.sortedCountsTransferable);
@@ -38,7 +37,7 @@ export default function useInterproProcessor() {
             totalItems: peptideCounts.totalCount
         }
         iprToPeptides.value = markRaw(processed.itemToPeptides);
-        peptidesFunctions.value = markRaw(processed.peptidesFunctions || new Map());
+        peptidesFunctions.value = markRaw(processed.peptidesFunctions);
     }
 
     return {

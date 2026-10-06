@@ -88,7 +88,6 @@
 </template>
 
 <script setup lang="ts">
-import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
 import GoResultsTable from "./GoResultsTable.vue";
 import {computed} from "vue";
 import QuickGoCard from "@/components/results/functional/go/QuickGoCard.vue";
@@ -101,12 +100,13 @@ import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 const { getGoDefinition } = useOntologyStore();
 
-const { data, loading, showDownloadItem = true, analysis = undefined, probabilityThreshold = 0 } = defineProps<{
+const { data, loading, showDownloadItem = true, scores } = defineProps<{
     data: GoTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
-    analysis?: any;
+    scores?: Map<string, number>;
+    scoresLoading?: boolean;
     probabilityThreshold?: number;
 }>();
 
@@ -115,22 +115,11 @@ const emits = defineEmits<{
     (e: 'downloadTable', items: GoResultsTableItem[]): void;
 }>();
 
-const scoresLoading = computed(() => analysis?.goFunctionalAnalysisStore?.status === FunctionalAnalysisStatus.Running);
+const biologicalProcessItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.BiologicalProcess));
+const cellularComponentItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.CellularComponent));
+const molecularFunctionItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.MolecularFunction));
 
-const biologicalProcessItems = computed(() => getItems(
-    data.goTable,
-    analysis?.goFunctionalAnalysisStore?.biologicalProcessTermsToConfidence
-).filter(x => x.namespace == GoNamespace.BiologicalProcess));
-const cellularComponentItems = computed(() => getItems(
-    data.goTable,
-    analysis?.goFunctionalAnalysisStore?.cellularComponentTermsToConfidence
-).filter(x => x.namespace == GoNamespace.CellularComponent));
-const molecularFunctionItems = computed(() => getItems(
-    data.goTable,
-    analysis?.goFunctionalAnalysisStore?.molecularFunctionTermsToConfidence
-).filter(x => x.namespace == GoNamespace.MolecularFunction));
-
-const getItems = (items: CountTable<string>, termsToConfidence?: Map<string, number>) => {
+const getItems = (items: CountTable<string>) => {
     return Array.from(items.counts.entries())
         .map(([key, value]) => ({
             code: key,
@@ -138,7 +127,7 @@ const getItems = (items: CountTable<string>, termsToConfidence?: Map<string, num
             namespace: getGoDefinition(key)?.namespace ?? "Unknown",
             count: value,
             totalCount: data.goTrust.totalItems,
-            confidence: termsToConfidence?.get(key),
+            confidence: scores?.get(key),
         }));
 }
 

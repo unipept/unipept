@@ -26,8 +26,7 @@ export default function useGoProcessor() {
             peptideDataTransferable: peptideDataTransferable,
             percentage,
             termPrefix: "go",
-            proteinCountProperty: "go",
-            extractFunctionsMap: true
+            proteinCountProperty: "go"
         });
 
         const countTableMap = ShareableMap.fromTransferableState<string, number>(processed.sortedCountsTransferable);
@@ -38,7 +37,7 @@ export default function useGoProcessor() {
             totalItems: peptideCounts.totalCount
         }
         goToPeptides.value = markRaw(processed.itemToPeptides);
-        peptidesFunctions.value = markRaw(processed.peptidesFunctions || new Map());
+        peptidesFunctions.value = markRaw(processed.peptidesFunctions);
     }
 
     return {

@@ -17,8 +17,7 @@ const process = async ({
     peptideDataTransferable,
     percentage,
     termPrefix,
-    proteinCountProperty,
-    extractFunctionsMap = false
+    proteinCountProperty
 }: FunctionalProcessorData ) => {
     const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
     const peptideCounts = ShareableMap.fromTransferableState<string, number>(countsMapTransferable);
@@ -55,11 +54,9 @@ const process = async ({
             itemToPeptides.get(term)!.push(peptide);
         }
 
-        if (extractFunctionsMap) {
-            const termsForPeptide = Object.keys(terms);
-            if (termsForPeptide.length > 0) {
-                peptidesFunctions.set(peptide, termsForPeptide);
-            }
+        const termsForPeptide = Object.keys(terms);
+        if (termsForPeptide.length > 0) {
+            peptidesFunctions.set(peptide, termsForPeptide);
         }
 
         // If there is at least one protein that belongs to this peptide annotated with an annotation of the
@@ -81,6 +78,6 @@ const process = async ({
         sortedCountsTransferable: countsPerCode.toTransferableState(),
         itemToPeptides,
         annotatedCount,
-        peptidesFunctions: extractFunctionsMap ? peptidesFunctions : undefined
+        peptidesFunctions
     };
 };

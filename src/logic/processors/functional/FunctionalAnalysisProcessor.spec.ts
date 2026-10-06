@@ -2,7 +2,6 @@ import {describe, expect, it, vi} from "vitest";
 import {ShareableMap} from "shared-memory-datastructures";
 import CountTable from "@/logic/processors/CountTable";
 import FunctionalAnalysisProcessor from "@/logic/processors/functional/FunctionalAnalysisProcessor";
-import {PeptonizerProgressListener} from "peptonizer";
 
 // Like the real Peptonizer: peptonize() only settles when the test resolves it, and never after a cancel
 const resolvers = vi.hoisted(() => [] as ((result: Map<string, number>) => void)[]);
@@ -26,7 +25,6 @@ const run = (processor: FunctionalAnalysisProcessor) => {
     return processor.runFunctionalAnalysis(
         new Map([["AAAAAK", ["EC:1.1.1.1"]]]),
         new CountTable(counts),
-        {} as PeptonizerProgressListener,
         false
     );
 };

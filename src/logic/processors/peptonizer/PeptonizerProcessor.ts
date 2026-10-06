@@ -4,12 +4,10 @@ import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
 import useBrowserCheck from "@/composables/useBrowserCheck";
 import ExclusiveProcessorRunner from "@/logic/processors/peptonizer/ExclusiveProcessorRunner";
-import {
-    createDefaultPeptideIntensities,
-    DEFAULT_PEPTIDE_INTENSITIES
-} from "@/logic/processors/peptonizer/PeptonizerShared";
 
 const { isSafari, isFirefox, isChromium } = useBrowserCheck();
+
+export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
 
 export const DEFAULT_PEPTONIZER_WORKERS = (() => {
     if (isSafari()) {
@@ -53,7 +51,7 @@ export default class PeptonizerProcessor {
     ): Promise<PeptonizerResult | undefined> {
         // If no intensities are provided, we set them to the default value
         if (!peptideIntensities) {
-            peptideIntensities = createDefaultPeptideIntensities(peptideCountTable.counts.keys(), DEFAULT_PEPTIDE_INTENSITIES);
+            peptideIntensities = new Map<string, number>(Array.from(peptideCountTable.counts.keys()).map((peptide: string) => [peptide, DEFAULT_PEPTIDE_INTENSITIES]));
         }
 
         return await PeptonizerProcessor.runner.run(async () => {

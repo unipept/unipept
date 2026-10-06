@@ -1,16 +1,13 @@
-import {Peptonizer, PeptonizerProgressListener} from "peptonizer";
+import {Peptonizer} from "peptonizer";
 import CountTable from "@/logic/processors/CountTable";
 import {
+    DEFAULT_PEPTIDE_INTENSITIES,
     DEFAULT_PEPTONIZER_ALPHAS,
     DEFAULT_PEPTONIZER_BETAS,
     DEFAULT_PEPTONIZER_PRIORS,
     DEFAULT_PEPTONIZER_WORKERS
 } from "@/logic/processors/peptonizer/PeptonizerProcessor";
 import ExclusiveProcessorRunner from "@/logic/processors/peptonizer/ExclusiveProcessorRunner";
-import {
-    createDefaultPeptideIntensities,
-    DEFAULT_PEPTIDE_INTENSITIES
-} from "@/logic/processors/peptonizer/PeptonizerShared";
 
 const canonicalizePeptide = (peptide: string, equateIl: boolean): string => {
     return equateIl ? peptide.replace(/I/g, "L") : peptide;
@@ -23,14 +20,8 @@ const mergeUniqueTerms = (existing: string[], incoming: string[]) => {
 // NORI only computes a score for this number of annotations, the other annotations do not get a score
 export const MAX_SCORED_ANNOTATIONS = 1000;
 
-export type FunctionalAnalysisResult = Map<string, number>;
-
-export interface FunctionalAnalysisOptions {
-    termFilter?: (term: string) => boolean;
-}
-
 export default class FunctionalAnalysisProcessor {
-    private static runner = new ExclusiveProcessorRunner<FunctionalAnalysisResult>();
+    private static runner = new ExclusiveProcessorRunner<Map<string, number>>();
 
     // Only created when the run starts, because Peptonizer.cancel() throws before peptonize() is called
     private peptonizer: Peptonizer | undefined;
@@ -42,34 +33,27 @@ export default class FunctionalAnalysisProcessor {
     public async runFunctionalAnalysis(
         peptidesFunctions: Map<string, string[]>,
         peptideCountTable: CountTable<string>,
-        listener: PeptonizerProgressListener,
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
-        options: FunctionalAnalysisOptions = {}
-    ): Promise<FunctionalAnalysisResult | undefined> {
-        const {termFilter} = options;
-
+        termFilter?: (term: string) => boolean
+    ): Promise<Map<string, number> | undefined> {
         const normalizedCounts = new Map<string, number>();
         for (const [peptide, count] of peptideCountTable.counts.entries()) {
             const normalizedPeptide = canonicalizePeptide(peptide, equateIl);
             normalizedCounts.set(normalizedPeptide, (normalizedCounts.get(normalizedPeptide) || 0) + count);
         }
 
-        let normalizedIntensities = new Map<string, number>();
-        if (!peptideIntensities) {
-            normalizedIntensities = createDefaultPeptideIntensities(normalizedCounts.keys(), DEFAULT_PEPTIDE_INTENSITIES);
-        } else {
-            for (const [peptide, intensity] of peptideIntensities.entries()) {
-                const normalizedPeptide = canonicalizePeptide(peptide, equateIl);
-                if (!normalizedIntensities.has(normalizedPeptide)) {
-                    normalizedIntensities.set(normalizedPeptide, intensity);
-                }
+        const normalizedIntensities = new Map<string, number>();
+        for (const [peptide, intensity] of peptideIntensities ?? []) {
+            const normalizedPeptide = canonicalizePeptide(peptide, equateIl);
+            if (!normalizedIntensities.has(normalizedPeptide)) {
+                normalizedIntensities.set(normalizedPeptide, intensity);
             }
+        }
 
-            for (const peptide of normalizedCounts.keys()) {
-                if (!normalizedIntensities.has(peptide)) {
-                    normalizedIntensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
-                }
+        for (const peptide of normalizedCounts.keys()) {
+            if (!normalizedIntensities.has(peptide)) {
+                normalizedIntensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
             }
         }
 
@@ -104,11 +88,7 @@ export default class FunctionalAnalysisProcessor {
         const peptidesFunctionsWithIds = new Map<string, number[]>();
         for (const peptide of normalizedCounts.keys()) {
             const terms = normalizedFunctions.get(peptide) || [];
-            const numericIds = terms
-                .map(term => termToId.get(term)!)
-                .filter((id): id is number => id !== undefined);
-
-            peptidesFunctionsWithIds.set(peptide, numericIds);
+            peptidesFunctionsWithIds.set(peptide, terms.map(term => termToId.get(term)!));
         }
 
         // Race against the cancel, so that a run that is cancelled while it waits in the queue returns immediately
@@ -126,7 +106,7 @@ export default class FunctionalAnalysisProcessor {
                 DEFAULT_PEPTONIZER_BETAS,
                 DEFAULT_PEPTONIZER_PRIORS,
                 MAX_SCORED_ANNOTATIONS,
-                listener,
+                undefined,
                 DEFAULT_PEPTONIZER_WORKERS
             )]);
 

@@ -90,7 +90,8 @@
                 <v-card-text>
                     <functional-go-results
                         :data="goData"
-                        :analysis="analysis"
+                        :scores="analysis.goScores"
+                        :scores-loading="analysis.goScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         :probability-threshold="probabilityThreshold"
@@ -112,7 +113,8 @@
                 <v-card-text>
                     <functional-ec-results
                         :data="ecData"
-                        :analysis="analysis"
+                        :scores="analysis.ecScores"
+                        :scores-loading="analysis.ecScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         :probability-threshold="probabilityThreshold"
@@ -135,7 +137,8 @@
                 <v-card-text>
                     <functional-ipr-results
                         :data="iprData"
-                        :analysis="analysis"
+                        :scores="analysis.iprScores"
+                        :scores-loading="analysis.iprScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         :probability-threshold="probabilityThreshold"

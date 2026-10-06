@@ -1,62 +1,3 @@
-<script setup lang="ts">
-import {FunctionalAnalysisStatus} from "@/store/FunctionalAnalysisStatus";
-import EcResultsTable from "@/components/results/functional/ec/EcResultsTable.vue";
-import {computed, onMounted, ref, watch} from "vue";
-import useOntologyStore from "@/store/OntologyStore";
-import FilterProgress from "@/components/results/functional/FilterProgress.vue";
-import useEcTreeProcessor from "@/composables/processing/functional/useEcTreeProcessor";
-import Treeview from "@/components/results/taxonomic/Treeview.vue";
-import EcTableData from "@/components/results/functional/ec/EcTableData";
-import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue"
-import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
-
-const { getEcDefinition } = useOntologyStore();
-const { root, process } = useEcTreeProcessor();
-
-const { data, showDownloadItem = true, analysis = undefined, probabilityThreshold = 0 } = defineProps<{
-    data: EcTableData;
-    loading: boolean;
-    showPercentage: boolean;
-    showDownloadItem?: boolean;
-    analysis?: any;
-    probabilityThreshold?: number;
-}>();
-
-const emits = defineEmits<{
-    (e: 'downloadItem', item: EcResultsTableItem): void;
-    (e: 'downloadTable', item: EcResultsTableItem[]): void;
-}>();
-
-const scoresLoading = computed(() => analysis?.ecFunctionalAnalysisStore?.status === FunctionalAnalysisStatus.Running);
-
-const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([key, value]) => {
-    return {
-        code: key,
-        name: getEcDefinition(key)?.name ?? "Unknown",
-        namespace: getEcDefinition(key)?.namespace ?? "Unknown",
-        count: value,
-        totalCount: data.ecTrust!.totalItems,
-        confidence: analysis?.ecFunctionalAnalysisStore?.ecTermsToConfidence?.get(key),
-    }
-}));
-
-const downloadItem = (item: GoResultsTableItem) => {
-    emits('downloadItem', item);
-}
-
-const downloadTable = (items: EcResultsTableItem[]) => {
-    emits('downloadTable', items);
-}
-
-watch(() => data, () => {
-    process(data.ecTable!);
-});
-
-onMounted(() => {
-    process(data.ecTable!);
-});
-</script>
-
 <template>
     <div v-if="!loading">
         <v-row>
@@ -93,12 +34,68 @@ onMounted(() => {
                 </v-card>
             </v-col>
         </v-row>
-
     </div>
     <div v-else>
         <filter-progress text="The EC numbers are currently being filtered." />
     </div>
 </template>
+
+<script setup lang="ts">
+import EcResultsTable from "@/components/results/functional/ec/EcResultsTable.vue";
+import {computed, onMounted, ref, watch} from "vue";
+import useOntologyStore from "@/store/OntologyStore";
+import FilterProgress from "@/components/results/functional/FilterProgress.vue";
+import useEcTreeProcessor from "@/composables/processing/functional/useEcTreeProcessor";
+import Treeview from "@/components/results/taxonomic/Treeview.vue";
+import EcTableData from "@/components/results/functional/ec/EcTableData";
+import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue"
+import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
+
+const { getEcDefinition } = useOntologyStore();
+const { root, process } = useEcTreeProcessor();
+
+const { data, showDownloadItem = true, scores } = defineProps<{
+    data: EcTableData;
+    loading: boolean;
+    showPercentage: boolean;
+    showDownloadItem?: boolean;
+    scores?: Map<string, number>;
+    scoresLoading?: boolean;
+    probabilityThreshold?: number;
+}>();
+
+const emits = defineEmits<{
+    (e: 'downloadItem', item: EcResultsTableItem): void;
+    (e: 'downloadTable', item: EcResultsTableItem[]): void;
+}>();
+
+const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([key, value]) => {
+    return {
+        code: key,
+        name: getEcDefinition(key)?.name ?? "Unknown",
+        namespace: getEcDefinition(key)?.namespace ?? "Unknown",
+        count: value,
+        totalCount: data.ecTrust!.totalItems,
+        confidence: scores?.get(key),
+    }
+}));
+
+const downloadItem = (item: GoResultsTableItem) => {
+    emits('downloadItem', item);
+}
+
+const downloadTable = (items: EcResultsTableItem[]) => {
+    emits('downloadTable', items);
+}
+
+watch(() => data, () => {
+    process(data.ecTable!);
+});
+
+onMounted(() => {
+    process(data.ecTable!);
+});
+</script>
 
 <style scoped>
 
