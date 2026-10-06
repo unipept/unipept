@@ -9,7 +9,7 @@
         v-else-if="score !== undefined"
         :style="{
             padding: '8px 12px',
-            background: `linear-gradient(90deg, rgba(25, 118, 210, 0.35) 0%, rgba(25, 118, 210, 0.35) ${score * 100}%, rgb(240, 240, 240) ${score * 100}%, rgb(240, 240, 240) 100%)`,
+            background: `linear-gradient(90deg, rgba(var(--v-theme-primary), 0.35) 0%, rgba(var(--v-theme-primary), 0.35) ${score * 100}%, rgb(240, 240, 240) ${score * 100}%, rgb(240, 240, 240) 100%)`,
         }"
     >
         {{ score.toFixed(2) }}
