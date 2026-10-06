@@ -207,7 +207,7 @@ const headers: DataTableHeader[] = [
         title: "NORI score",
         align: "start",
         key: "confidence",
-        // Annotations without a score are sorted below all scored annotations
+        // Annotations without a score count as lower than every score
         sort: (a?: number, b?: number) => (a ?? -1) - (b ?? -1),
         width: "12%",
         minWidth: "140px"
