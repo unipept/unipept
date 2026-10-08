@@ -105,6 +105,9 @@ const useSingleAnalysisStore = (
     const functionalFilter = ref<number>(5);
     const functionalProbabilityThreshold = ref<number>(0);
 
+    // Set when the analysis is removed, so that no new NORI runs are started for it
+    let disposed = false;
+
     // ===============================================================
     // ======================== PROCESSORS ===========================
     // ===============================================================
@@ -193,6 +196,10 @@ const useSingleAnalysisStore = (
             
             status.value = AnalysisStatus.Finished;
 
+            if (disposed) {
+                return;
+            }
+
             // The NORI scores are computed in the background, so the other results are shown while they are computed
             processEcScores(ecPeptidesFunctions.value!, peptidesTable.value!, config.value.equate, intensities.value);
             processGoScores(goPeptidesFunctions.value!, peptidesTable.value!, config.value.equate, intensities.value,
@@ -220,6 +227,14 @@ const useSingleAnalysisStore = (
         await processInterpro(table!, peptideToData.value!, functionalFilter.value!);
 
         filteringStatus.value = AnalysisStatus.Finished;
+    }
+
+    // Stops the NORI runs of this analysis, so that they do not block the NORI queue after it has been removed
+    const dispose = () => {
+        disposed = true;
+        cancelEcScores();
+        cancelGoScores();
+        cancelIprScores();
     }
 
     const updateTaxonomicFilter = async (newFilter: number) => {
@@ -380,6 +395,7 @@ const useSingleAnalysisStore = (
         updateConfig,
         updateFunctionalFilter,
         updateTaxonomicFilter,
+        dispose,
         exportStore,
         importStore,
         setImportedData

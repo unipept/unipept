@@ -66,6 +66,7 @@ const useProjectAnalysisStore = defineStore('_groupsampleStore', () => {
     };
 
     const removeGroup = (id: string): void => {
+        _groups.value.get(id)?.clear();
         _groups.value.delete(id);
     }
 
