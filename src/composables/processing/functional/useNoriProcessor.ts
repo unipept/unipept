@@ -14,6 +14,7 @@ export default function useNoriProcessor() {
     const cancel = () => {
         processors.forEach(processor => processor.cancelFunctionalAnalysis());
         processors = [];
+        scores.value = undefined;
         loading.value = false;
     };
 
@@ -26,7 +27,6 @@ export default function useNoriProcessor() {
         termFilters: TermFilter[] = [undefined]
     ) => {
         cancel();
-        scores.value = undefined;
         if (peptidesFunctions.size === 0) {
             return;
         }
