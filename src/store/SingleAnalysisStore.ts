@@ -103,6 +103,7 @@ const useSingleAnalysisStore = (
 
     const taxonomicFilter = ref<number>(1);
     const functionalFilter = ref<number>(5);
+    const functionalProbabilityThreshold = ref<number>(0);
 
     // ===============================================================
     // ======================== PROCESSORS ===========================
@@ -207,10 +208,11 @@ const useSingleAnalysisStore = (
         }
     }
 
-    const updateFunctionalFilter = async (newFilter: number) => {
+    const updateFunctionalFilter = async (newFilter: number, newProbabilityThreshold: number) => {
         filteringStatus.value = AnalysisStatus.Running;
 
         functionalFilter.value = newFilter;
+        functionalProbabilityThreshold.value = newProbabilityThreshold;
 
         const table = filteredPeptidesTable.value || peptidesTable.value;
         await processEc(table!, peptideToData.value!, functionalFilter.value!);
@@ -288,6 +290,7 @@ const useSingleAnalysisStore = (
             intensities: intensitiesString,
             taxonomicFilter: taxonomicFilter.value,
             functionalFilter: functionalFilter.value,
+            functionalProbabilityThreshold: functionalProbabilityThreshold.value,
             lastAnalysed: lastAnalysed.value,
             databaseVersion: databaseVersion.value,
 
@@ -308,6 +311,7 @@ const useSingleAnalysisStore = (
 
         taxonomicFilter.value = storeImport.taxonomicFilter;
         functionalFilter.value = storeImport.functionalFilter;
+        functionalProbabilityThreshold.value = storeImport.functionalProbabilityThreshold ?? 0;
         lastAnalysed.value = storeImport.lastAnalysed ? new Date(storeImport.lastAnalysed) : undefined;
         databaseVersion.value = storeImport.databaseVersion;
 
@@ -334,6 +338,7 @@ const useSingleAnalysisStore = (
         taxonomicFilter,
         filteredOrganism,
         functionalFilter,
+        functionalProbabilityThreshold,
         status,
         filteringStatus,
         databaseVersion,
@@ -390,6 +395,8 @@ export interface SingleAnalysisStoreImport {
     intensities: string | undefined;
     taxonomicFilter: number;
     functionalFilter: number;
+    // Missing in projects saved before NORI functional analysis was added
+    functionalProbabilityThreshold?: number;
     lastAnalysed: Date | undefined;
     databaseVersion: string;
     peptideToDataTransferable: TransferableState | undefined;

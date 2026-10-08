@@ -80,7 +80,7 @@
             <filter-functional-results
                 v-model="filterModalOpen"
                 :filter-percentage="analysis.functionalFilter"
-                :probability-threshold="probabilityThreshold"
+                :probability-threshold="analysis.functionalProbabilityThreshold"
                 @confirm="updateFilter"
             />
         </v-tabs>
@@ -94,7 +94,7 @@
                         :scores-loading="analysis.goScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        :probability-threshold="probabilityThreshold"
+                        :probability-threshold="analysis.functionalProbabilityThreshold"
                         @download-item="downloadGoItem"
                         @download-table="downloadGoTable"
                     >
@@ -117,7 +117,7 @@
                         :scores-loading="analysis.ecScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        :probability-threshold="probabilityThreshold"
+                        :probability-threshold="analysis.functionalProbabilityThreshold"
                         @download-item="downloadEcItem"
                         @download-table="downloadEcTable"
                     >
@@ -141,7 +141,7 @@
                         :scores-loading="analysis.iprScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        :probability-threshold="probabilityThreshold"
+                        :probability-threshold="analysis.functionalProbabilityThreshold"
                         @download-item="downloadInterproItem"
                         @download-table="downloadInterproTable"
                     >
@@ -196,7 +196,6 @@ const currentTab = ref(0);
 const sortPeptidePercentage = ref(false);
 const sortingPeptidesDialogOpen = ref(false);
 const filterModalOpen = ref<boolean>(false);
-const probabilityThreshold = ref<number>(0);
 
 const goData = computed(() => ({
     goTable: analysis.goTable!,
@@ -222,9 +221,8 @@ const iprData = computed(() => ({
     lcaToPeptides: analysis.lcaToPeptides
 }));
 
-const updateFilter = (filterPercentage: number, newProbabilityThreshold: number) => {
-    analysis.updateFunctionalFilter(filterPercentage);
-    probabilityThreshold.value = newProbabilityThreshold;
+const updateFilter = (filterPercentage: number, probabilityThreshold: number) => {
+    analysis.updateFunctionalFilter(filterPercentage, probabilityThreshold);
 }
 
 const downloadGoItem = (item: GoResultsTableItem) => {
