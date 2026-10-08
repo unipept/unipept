@@ -189,7 +189,7 @@ const downloadItem = (item: GoResultsTableItem) => {
 }
 
 const downloadTable = () => {
-    emits('downloadTable', items);
+    emits('downloadTable', filteredItems.value);
 }
 
 watch(() => data, () => {

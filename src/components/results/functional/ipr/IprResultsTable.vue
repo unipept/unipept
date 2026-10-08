@@ -188,7 +188,7 @@ const downloadItem = (item: IprResultsTableItem) => {
 }
 
 const downloadTable = () => {
-    emits("downloadTable", items);
+    emits("downloadTable", filteredItems.value);
 }
 
 watch(() => data, () => {
