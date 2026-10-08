@@ -8,13 +8,18 @@ type TermFilter = ((term: string) => boolean) | undefined;
 export default function useNoriProcessor() {
     const scores = shallowRef<Map<string, number>>();
     const loading = ref(false);
+    // Message of the error of the last run, undefined if the last run did not fail
+    const error = ref<string>();
 
     let processors: FunctionalAnalysisProcessor[] = [];
+    // Starts the last run again with the same input
+    let rerun: (() => Promise<void>) | undefined;
 
     const cancel = () => {
         processors.forEach(processor => processor.cancelFunctionalAnalysis());
         processors = [];
         scores.value = undefined;
+        error.value = undefined;
         loading.value = false;
     };
 
@@ -26,6 +31,7 @@ export default function useNoriProcessor() {
         peptideIntensities?: Map<string, number>,
         termFilters: TermFilter[] = [undefined]
     ) => {
+        rerun = () => process(peptidesFunctions, peptideCountTable, equateIl, peptideIntensities, termFilters);
         cancel();
         if (peptidesFunctions.size === 0) {
             return;
@@ -49,8 +55,11 @@ export default function useNoriProcessor() {
                 runScores.forEach((score, term) => result.set(term, score));
             }
             scores.value = result;
-        } catch (error) {
-            console.error(error);
+        } catch (e) {
+            console.error(e);
+            if (processors === current) {
+                error.value = e instanceof Error ? e.message : String(e);
+            }
         } finally {
             if (processors === current) {
                 loading.value = false;
@@ -58,11 +67,17 @@ export default function useNoriProcessor() {
         }
     };
 
+    const retry = async () => {
+        await rerun?.();
+    };
+
     return {
         scores,
         loading,
+        error,
 
         process,
+        retry,
         cancel
     };
 }
