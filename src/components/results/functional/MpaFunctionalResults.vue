@@ -88,13 +88,18 @@
         <v-tabs-window v-model="currentTab">
             <v-tabs-window-item>
                 <v-card-text>
+                    <nori-error-alert
+                        v-if="analysis.goScoresError"
+                        :error="analysis.goScoresError"
+                        @retry="analysis.retryGoScores()"
+                    />
                     <functional-go-results
                         :data="goData"
                         :scores="analysis.goScores"
                         :scores-loading="analysis.goScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        :probability-threshold="analysis.functionalProbabilityThreshold"
+                        :probability-threshold="analysis.goScoresError ? 0 : analysis.functionalProbabilityThreshold"
                         @download-item="downloadGoItem"
                         @download-table="downloadGoTable"
                     >
@@ -111,13 +116,18 @@
 
             <v-tabs-window-item>
                 <v-card-text>
+                    <nori-error-alert
+                        v-if="analysis.ecScoresError"
+                        :error="analysis.ecScoresError"
+                        @retry="analysis.retryEcScores()"
+                    />
                     <functional-ec-results
                         :data="ecData"
                         :scores="analysis.ecScores"
                         :scores-loading="analysis.ecScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        :probability-threshold="analysis.functionalProbabilityThreshold"
+                        :probability-threshold="analysis.ecScoresError ? 0 : analysis.functionalProbabilityThreshold"
                         @download-item="downloadEcItem"
                         @download-table="downloadEcTable"
                     >
@@ -135,13 +145,18 @@
 
             <v-tabs-window-item>
                 <v-card-text>
+                    <nori-error-alert
+                        v-if="analysis.iprScoresError"
+                        :error="analysis.iprScoresError"
+                        @retry="analysis.retryIprScores()"
+                    />
                     <functional-ipr-results
                         :data="iprData"
                         :scores="analysis.iprScores"
                         :scores-loading="analysis.iprScoresLoading"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
-                        :probability-threshold="analysis.functionalProbabilityThreshold"
+                        :probability-threshold="analysis.iprScoresError ? 0 : analysis.functionalProbabilityThreshold"
                         @download-item="downloadInterproItem"
                         @download-table="downloadInterproTable"
                     >
@@ -182,6 +197,7 @@ import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/OntologyStore";
 import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue";
 import {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
+import NoriErrorAlert from "@/components/results/functional/NoriErrorAlert.vue";
 import SamplePathwayPilot from "@/components/results/functional/pathway/SamplePathwayPilot.vue";
 
 const { analysis } = defineProps<{
