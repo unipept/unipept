@@ -28,8 +28,10 @@
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
                     :scores-loading="scoresLoading"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
         </v-row>
@@ -56,12 +58,14 @@ const { data, showDownloadItem = true, scores } = defineProps<{
     showDownloadItem?: boolean;
     scores?: Map<string, number>;
     scoresLoading?: boolean;
+    scoresOutdated?: boolean;
     probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: IprResultsTableItem): void;
     (e: 'downloadTable', items: IprResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const selectedNamespace = ref<string>("all");

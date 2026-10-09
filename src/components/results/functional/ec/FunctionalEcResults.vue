@@ -15,8 +15,10 @@
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
                     :scores-loading="scoresLoading"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
         </v-row>
@@ -61,12 +63,14 @@ const { data, showDownloadItem = true, scores } = defineProps<{
     showDownloadItem?: boolean;
     scores?: Map<string, number>;
     scoresLoading?: boolean;
+    scoresOutdated?: boolean;
     probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: EcResultsTableItem): void;
     (e: 'downloadTable', item: EcResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([key, value]) => {

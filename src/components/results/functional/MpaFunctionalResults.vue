@@ -97,10 +97,12 @@
                         :data="goData"
                         :scores="analysis.goScores"
                         :scores-loading="analysis.goScoresLoading"
+                        :scores-outdated="analysis.scoresOutdated"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         :probability-threshold="analysis.goScoresError ? 0 : analysis.functionalProbabilityThreshold"
                         @download-item="downloadGoItem"
+                        @rerun-scores="analysis.rerunScores()"
                         @download-table="downloadGoTable"
                     >
                         <template #trust>
@@ -125,10 +127,12 @@
                         :data="ecData"
                         :scores="analysis.ecScores"
                         :scores-loading="analysis.ecScoresLoading"
+                        :scores-outdated="analysis.scoresOutdated"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         :probability-threshold="analysis.ecScoresError ? 0 : analysis.functionalProbabilityThreshold"
                         @download-item="downloadEcItem"
+                        @rerun-scores="analysis.rerunScores()"
                         @download-table="downloadEcTable"
                     >
                         <template #trust>
@@ -154,10 +158,12 @@
                         :data="iprData"
                         :scores="analysis.iprScores"
                         :scores-loading="analysis.iprScoresLoading"
+                        :scores-outdated="analysis.scoresOutdated"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
                         :probability-threshold="analysis.iprScoresError ? 0 : analysis.functionalProbabilityThreshold"
                         @download-item="downloadInterproItem"
+                        @rerun-scores="analysis.rerunScores()"
                         @download-table="downloadInterproTable"
                     >
                         <template #trust>

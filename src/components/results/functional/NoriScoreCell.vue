@@ -7,9 +7,10 @@
     </div>
     <div
         v-else-if="score !== undefined"
+        :class="{ 'text-disabled': outdated }"
         :style="{
             padding: '8px 12px',
-            background: `linear-gradient(90deg, rgba(var(--v-theme-primary), 0.35) 0%, rgba(var(--v-theme-primary), 0.35) ${score * 100}%, rgb(240, 240, 240) ${score * 100}%, rgb(240, 240, 240) 100%)`,
+            background: `linear-gradient(90deg, ${barColor} 0%, ${barColor} ${score * 100}%, rgb(240, 240, 240) ${score * 100}%, rgb(240, 240, 240) 100%)`,
         }"
     >
         {{ score.toFixed(2) }}
@@ -31,10 +32,16 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import {computed} from "vue";
+
+const { outdated = false } = defineProps<{
     score?: number;
     loading: boolean;
+    // Outdated scores are shown in grey, because they were computed for a different taxonomic filter
+    outdated?: boolean;
 }>();
+
+const barColor = computed(() => outdated ? "rgba(var(--v-theme-on-surface), 0.12)" : "rgba(var(--v-theme-primary), 0.35)");
 </script>
 
 <style scoped>

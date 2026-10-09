@@ -18,8 +18,10 @@
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
                     :scores-loading="scoresLoading"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
             <v-col cols="12" lg="3">
@@ -43,8 +45,10 @@
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
                     :scores-loading="scoresLoading"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
             <v-col cols="12" lg="3">
@@ -68,8 +72,10 @@
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
                     :scores-loading="scoresLoading"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
             <v-col cols="12" lg="3">
@@ -107,12 +113,14 @@ const { data, loading, showDownloadItem = true, scores } = defineProps<{
     showDownloadItem?: boolean;
     scores?: Map<string, number>;
     scoresLoading?: boolean;
+    scoresOutdated?: boolean;
     probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: GoResultsTableItem): void;
     (e: 'downloadTable', items: GoResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const biologicalProcessItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.BiologicalProcess));

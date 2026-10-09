@@ -15,6 +15,7 @@ import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
 import useNoriProcessor from "@/composables/processing/functional/useNoriProcessor";
+import CountTable from "@/logic/processors/CountTable";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
@@ -107,6 +108,8 @@ const useSingleAnalysisStore = (
 
     // Set when the analysis is removed, so that no new NORI runs are started for it
     let disposed = false;
+    // Taxonomic filter for which the current NORI scores are computed, undefined if there are no scores
+    const scoredTaxonomicFilter = ref<number>();
 
     // ===============================================================
     // ======================== PROCESSORS ===========================
@@ -136,6 +139,8 @@ const useSingleAnalysisStore = (
 
     const filteredOrganism = computed(() => ncbiTreeNodes.value.get(taxonomicFilter.value));
 
+    const scoresOutdated = computed(() => scoredTaxonomicFilter.value !== taxonomicFilter.value);
+
     const lastAnalysedString = computed(() => {
         if (!lastAnalysed.value) return "";
 
@@ -159,9 +164,7 @@ const useSingleAnalysisStore = (
         status.value = AnalysisStatus.Pending;
 
         // Scores of a previous analysis are no longer valid
-        cancelEcScores();
-        cancelGoScores();
-        cancelIprScores();
+        cancelScores();
 
         try {
             // Use the AnalysisQueue to ensure only one analysis runs at a time
@@ -200,11 +203,8 @@ const useSingleAnalysisStore = (
                 return;
             }
 
-            // The NORI scores are computed in the background, so the other results are shown while they are computed
-            processEcScores(ecPeptidesFunctions.value!, peptidesTable.value!, config.value.equate, intensities.value);
-            processGoScores(goPeptidesFunctions.value!, peptidesTable.value!, config.value.equate, intensities.value,
-                Object.values(GoNamespace).map(namespace => (term: string) => ontologyStore.getGoDefinition(term)?.namespace === namespace));
-            processIprScores(iprPeptidesFunctions.value!, peptidesTable.value!, config.value.equate, intensities.value);
+            // The results of the full sample belong to the root of the taxonomy (id 1)
+            processScores(peptidesTable.value!, 1);
         } catch (error) {
             status.value = AnalysisStatus.Failed;
             if (error) {
@@ -232,9 +232,28 @@ const useSingleAnalysisStore = (
     // Stops the NORI runs of this analysis, so that they do not block the NORI queue after it has been removed
     const dispose = () => {
         disposed = true;
+        cancelScores();
+    }
+
+    // The NORI scores are computed in the background, so the other results are shown while they are computed
+    const processScores = (table: CountTable<string>, filter: number) => {
+        scoredTaxonomicFilter.value = filter;
+        processEcScores(ecPeptidesFunctions.value!, table, config.value.equate, intensities.value);
+        processGoScores(goPeptidesFunctions.value!, table, config.value.equate, intensities.value,
+            Object.values(GoNamespace).map(namespace => (term: string) => ontologyStore.getGoDefinition(term)?.namespace === namespace));
+        processIprScores(iprPeptidesFunctions.value!, table, config.value.equate, intensities.value);
+    }
+
+    const cancelScores = () => {
+        scoredTaxonomicFilter.value = undefined;
         cancelEcScores();
         cancelGoScores();
         cancelIprScores();
+    }
+
+    // Computes the NORI scores for the peptides of the current taxonomic filter
+    const rerunScores = () => {
+        processScores(filteredPeptidesTable.value || peptidesTable.value!, taxonomicFilter.value);
     }
 
     const updateTaxonomicFilter = async (newFilter: number) => {
@@ -265,6 +284,12 @@ const useSingleAnalysisStore = (
         }
 
         taxonomicFilter.value = newFilter;
+        // Runs for another filter are stopped. Finished scores are kept and marked as outdated until the user reruns NORI.
+        if (scoresOutdated.value) {
+            if (ecScoresLoading.value) cancelEcScores();
+            if (goScoresLoading.value) cancelGoScores();
+            if (iprScoresLoading.value) cancelIprScores();
+        }
 
         const filteredPeptides = await getOwnAndChildrenSequences(taxonomicFilter.value!);
 
@@ -382,6 +407,7 @@ const useSingleAnalysisStore = (
         iprScores,
         iprScoresLoading,
         iprScoresError,
+        scoresOutdated,
         lcaTable,
         lcaToPeptides,
         peptideToLca,
@@ -402,6 +428,7 @@ const useSingleAnalysisStore = (
         retryEcScores,
         retryGoScores,
         retryIprScores,
+        rerunScores,
         exportStore,
         importStore,
         setImportedData

@@ -36,6 +36,8 @@
                 :column="column"
                 :get-sort-icon="getSortIcon"
                 :loading="scoresLoading"
+                :outdated="scoresOutdated"
+                @rerun="emits('rerunScores')"
                 annotation="InterPro entry"
             />
         </template>
@@ -69,6 +71,7 @@
             <nori-score-cell
                 :score="item.confidence"
                 :loading="scoresLoading"
+                :outdated="scoresOutdated"
             />
         </template>
 
@@ -138,18 +141,20 @@ import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { data, items, probabilityThreshold = 0, scoresLoading = false } = defineProps<{
+const { data, items, probabilityThreshold = 0, scoresLoading = false, scoresOutdated = false } = defineProps<{
     items: IprResultsTableItem[];
     data: InterproTableData;
     showPercentage: boolean;
     showDownloadItem: boolean;
     probabilityThreshold?: number;
     scoresLoading?: boolean;
+    scoresOutdated?: boolean;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: IprResultsTableItem): void;
     (e: 'downloadTable', items: IprResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const expanded = ref<string[]>([]);
