@@ -45,7 +45,6 @@ Update all dependencies in `package.json` to their latest stable versions, follo
 
 - **7-day cooldown**: Only upgrade to versions published at least 7 days ago. Use `npx --yes npm-check-updates --cooldown 7` to identify eligible upgrades. This is a security measure: it ensures the community has had time to detect compromised packages before we adopt them.
 - **Stable releases only**: Skip any update where the newest available version is a pre-release (alpha/beta/rc). Exception: if a dependency is currently pinned to a pre-release and a newer stable version exists, upgrade to the stable version.
-- **Skip local references**: Do not modify the `peptonizer` dependency — it is a local file reference (`file:./peptonizer-v0.0.31.tgz`).
 
 ## Steps
 
