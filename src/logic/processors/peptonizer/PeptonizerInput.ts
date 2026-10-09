@@ -4,7 +4,7 @@ export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
 // merged into one peptide, because they match the same proteins.
 
 export const canonicalizePeptide = (peptide: string, equateIl: boolean): string => {
-    return equateIl ? peptide.replace(/I/g, "L") : peptide;
+    return equateIl ? peptide.toUpperCase().replace(/I/g, "L") : peptide;
 };
 
 // Sums the counts of the peptides that are merged
