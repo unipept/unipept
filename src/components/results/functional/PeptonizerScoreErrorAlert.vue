@@ -7,7 +7,7 @@
     >
         <div class="d-flex align-center justify-space-between">
             <div>
-                <div>The NORI scores could not be computed. All annotations are shown without a score.</div>
+                <div>The Peptonizer scores could not be computed. All annotations are shown without a score.</div>
                 <div class="text-caption">Error: {{ error }}</div>
             </div>
             <v-btn

@@ -32,7 +32,7 @@
         </template>
 
         <template #header.confidence="{ column, getSortIcon }">
-            <nori-score-header
+            <peptonizer-score-header
                 :column="column"
                 :get-sort-icon="getSortIcon"
                 :loading="scoresLoading"
@@ -68,7 +68,7 @@
         </template>
 
         <template #item.confidence="{ item }">
-            <nori-score-cell
+            <peptonizer-score-cell
                 :score="item.confidence"
                 :loading="scoresLoading"
                 :outdated="scoresOutdated"
@@ -134,8 +134,8 @@ import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
-import NoriScoreHeader from "@/components/results/functional/NoriScoreHeader.vue";
-import NoriScoreCell from "@/components/results/functional/NoriScoreCell.vue";
+import PeptonizerScoreHeader from "@/components/results/functional/PeptonizerScoreHeader.vue";
+import PeptonizerScoreCell from "@/components/results/functional/PeptonizerScoreCell.vue";
 import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 
 const { displayPercentage } = usePercentage();
@@ -209,7 +209,7 @@ const headers: DataTableHeader[] = [
         width: "20%"
     },
     {
-        title: "NORI score",
+        title: "Peptonizer score",
         align: "start",
         key: "confidence",
         // Annotations without a score count as lower than every score

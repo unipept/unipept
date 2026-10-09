@@ -62,7 +62,7 @@
                 </v-slider>
 
                 <p class="mt-6">
-                    Additionally, NORI computes a score for each annotation that indicates how strongly the evidence supports it.
+                    Additionally, the Peptonizer computes a score for each annotation that indicates how strongly the evidence supports it.
                     Annotations with a lower score than this threshold are hidden from the results tables.
                     If the threshold is higher than 0, annotations without a score are also hidden.
                 </p>
@@ -89,7 +89,7 @@
                     </template>
 
                     <template #append>
-                        NORI score
+                        Peptonizer score
                     </template>
                 </v-slider>
 

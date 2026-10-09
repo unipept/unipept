@@ -17,7 +17,7 @@
     </div>
     <v-tooltip
         v-else
-        text="Not scored by NORI"
+        text="Not scored by the Peptonizer"
     >
         <template #activator="{ props }">
             <span

@@ -4,8 +4,8 @@ import FunctionalAnalysisProcessor from "@/logic/processors/functional/Functiona
 
 type TermFilter = ((term: string) => boolean) | undefined;
 
-// Computes the NORI score of each annotation of one type (EC, GO or InterPro) in the background
-export default function useNoriProcessor() {
+// Computes the Peptonizer score of each annotation of one type (EC, GO or InterPro) in the background
+export default function usePeptonizerScoreProcessor() {
     const scores = shallowRef<Map<string, number>>();
     const loading = ref(false);
     // Message of the error of the last run, undefined if the last run did not fail
@@ -23,7 +23,7 @@ export default function useNoriProcessor() {
         loading.value = false;
     };
 
-    // Every term filter gets its own NORI run (GO has one run per namespace). The scores of all runs are combined.
+    // Every term filter gets its own Peptonizer run (GO has one run per namespace). The scores of all runs are combined.
     const process = async (
         peptidesFunctions: Map<string, string[]>,
         peptideCountTable: CountTable<string>,

@@ -69,11 +69,11 @@ const emit = defineEmits<{
 
 const tooltip = computed(() => {
     if (loading) {
-        return "Computing NORI scores...";
+        return "Computing Peptonizer scores...";
     }
     if (outdated) {
-        return "These NORI scores were computed for a different taxonomic filter. Click to compute them for the peptides of the current filter.";
+        return "These Peptonizer scores were computed for a different taxonomic filter. Click to compute them for the peptides of the current filter.";
     }
-    return `Score from NORI: a higher score means this ${annotation} is more likely correct. — means not scored (only the top ${MAX_SCORED_ANNOTATIONS} annotations get a score).`;
+    return `Score from the Peptonizer: a higher score means this ${annotation} is more likely correct. — means not scored (only the top ${MAX_SCORED_ANNOTATIONS} annotations get a score).`;
 });
 </script>

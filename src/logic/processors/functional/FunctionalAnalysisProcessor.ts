@@ -17,7 +17,7 @@ const mergeUniqueTerms = (existing: string[], incoming: string[]) => {
     return Array.from(new Set([...existing, ...incoming]));
 };
 
-// NORI only computes a score for this number of annotations, the other annotations do not get a score
+// The Peptonizer only computes a score for this number of annotations, the other annotations do not get a score
 export const MAX_SCORED_ANNOTATIONS = 1000;
 
 export default class FunctionalAnalysisProcessor {

@@ -14,7 +14,7 @@ import usePathwayPilotStore, {PathwayPilotStoreImport} from "@/store/PathwayPilo
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
-import useNoriProcessor from "@/composables/processing/functional/useNoriProcessor";
+import usePeptonizerScoreProcessor from "@/composables/processing/functional/usePeptonizerScoreProcessor";
 import CountTable from "@/logic/processors/CountTable";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
@@ -106,9 +106,9 @@ const useSingleAnalysisStore = (
     const functionalFilter = ref<number>(5);
     const functionalProbabilityThreshold = ref<number>(0);
 
-    // Set when the analysis is removed, so that no new NORI runs are started for it
+    // Set when the analysis is removed, so that no new Peptonizer runs for functional scores are started for it
     let disposed = false;
-    // Taxonomic filter for which the current NORI scores are computed, undefined if there are no scores
+    // Taxonomic filter for which the current Peptonizer scores are computed, undefined if there are no scores
     const scoredTaxonomicFilter = ref<number>();
 
     // ===============================================================
@@ -125,9 +125,9 @@ const useSingleAnalysisStore = (
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, peptidesFunctions: iprPeptidesFunctions, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
     const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
-    const { scores: ecScores, loading: ecScoresLoading, error: ecScoresError, process: processEcScores, retry: retryEcScores, cancel: cancelEcScores } = useNoriProcessor();
-    const { scores: goScores, loading: goScoresLoading, error: goScoresError, process: processGoScores, retry: retryGoScores, cancel: cancelGoScores } = useNoriProcessor();
-    const { scores: iprScores, loading: iprScoresLoading, error: iprScoresError, process: processIprScores, retry: retryIprScores, cancel: cancelIprScores } = useNoriProcessor();
+    const { scores: ecScores, loading: ecScoresLoading, error: ecScoresError, process: processEcScores, retry: retryEcScores, cancel: cancelEcScores } = usePeptonizerScoreProcessor();
+    const { scores: goScores, loading: goScoresLoading, error: goScoresError, process: processGoScores, retry: retryGoScores, cancel: cancelGoScores } = usePeptonizerScoreProcessor();
+    const { scores: iprScores, loading: iprScoresLoading, error: iprScoresError, process: processIprScores, retry: retryIprScores, cancel: cancelIprScores } = usePeptonizerScoreProcessor();
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -229,13 +229,13 @@ const useSingleAnalysisStore = (
         filteringStatus.value = AnalysisStatus.Finished;
     }
 
-    // Stops the NORI runs of this analysis, so that they do not block the NORI queue after it has been removed
+    // Stops the Peptonizer runs for the functional scores of this analysis, so that they do not block the queue after it has been removed
     const dispose = () => {
         disposed = true;
         cancelScores();
     }
 
-    // The NORI scores are computed in the background, so the other results are shown while they are computed
+    // The Peptonizer scores are computed in the background, so the other results are shown while they are computed
     const processScores = (table: CountTable<string>, filter: number) => {
         scoredTaxonomicFilter.value = filter;
         processEcScores(ecPeptidesFunctions.value!, table, config.value.equate, intensities.value);
@@ -251,7 +251,7 @@ const useSingleAnalysisStore = (
         cancelIprScores();
     }
 
-    // Computes the NORI scores for the peptides of the current taxonomic filter
+    // Computes the Peptonizer scores for the peptides of the current taxonomic filter
     const rerunScores = () => {
         processScores(filteredPeptidesTable.value || peptidesTable.value!, taxonomicFilter.value);
     }
@@ -284,7 +284,7 @@ const useSingleAnalysisStore = (
         }
 
         taxonomicFilter.value = newFilter;
-        // Runs for another filter are stopped. Finished scores are kept and marked as outdated until the user reruns NORI.
+        // Runs for another filter are stopped. Finished scores are kept and marked as outdated until the user reruns the Peptonizer.
         if (scoresOutdated.value) {
             if (ecScoresLoading.value) cancelEcScores();
             if (goScoresLoading.value) cancelGoScores();
@@ -444,7 +444,7 @@ export interface SingleAnalysisStoreImport {
     intensities: string | undefined;
     taxonomicFilter: number;
     functionalFilter: number;
-    // Missing in projects saved before NORI functional analysis was added
+    // Missing in projects saved before Peptonizer scores for functional annotations were added
     functionalProbabilityThreshold?: number;
     lastAnalysed: Date | undefined;
     databaseVersion: string;

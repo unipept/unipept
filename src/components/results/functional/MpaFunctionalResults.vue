@@ -88,7 +88,7 @@
         <v-tabs-window v-model="currentTab">
             <v-tabs-window-item>
                 <v-card-text>
-                    <nori-error-alert
+                    <peptonizer-score-error-alert
                         v-if="analysis.goScoresError"
                         :error="analysis.goScoresError"
                         @retry="analysis.retryGoScores()"
@@ -118,7 +118,7 @@
 
             <v-tabs-window-item>
                 <v-card-text>
-                    <nori-error-alert
+                    <peptonizer-score-error-alert
                         v-if="analysis.ecScoresError"
                         :error="analysis.ecScoresError"
                         @retry="analysis.retryEcScores()"
@@ -149,7 +149,7 @@
 
             <v-tabs-window-item>
                 <v-card-text>
-                    <nori-error-alert
+                    <peptonizer-score-error-alert
                         v-if="analysis.iprScoresError"
                         :error="analysis.iprScoresError"
                         @retry="analysis.retryIprScores()"
@@ -203,7 +203,7 @@ import useCsvDownload from "@/composables/useCsvDownload";
 import useOntologyStore from "@/store/OntologyStore";
 import {EcResultsTableItem} from "@/components/results/functional/ec/EcResultsTable.vue";
 import {IprResultsTableItem} from "@/components/results/functional/ipr/IprResultsTable.vue";
-import NoriErrorAlert from "@/components/results/functional/NoriErrorAlert.vue";
+import PeptonizerScoreErrorAlert from "@/components/results/functional/PeptonizerScoreErrorAlert.vue";
 import SamplePathwayPilot from "@/components/results/functional/pathway/SamplePathwayPilot.vue";
 
 const { analysis } = defineProps<{
@@ -267,7 +267,7 @@ const downloadGoItem = (item: GoResultsTableItem) => {
 }
 
 const downloadGoTable = (items: GoResultsTableItem[]) => {
-    const header = ["peptides", "go term", "name", "nori score"];
+    const header = ["peptides", "go term", "name", "peptonizer score"];
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
@@ -299,7 +299,7 @@ const downloadEcItem = (item: EcResultsTableItem) => {
 }
 
 const downloadEcTable = (items: EcResultsTableItem[]) => {
-    const header = ["peptides", "ec number", "name", "nori score"]
+    const header = ["peptides", "ec number", "name", "peptonizer score"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
@@ -332,7 +332,7 @@ const downloadInterproItem = (item: IprResultsTableItem) => {
 }
 
 const downloadInterproTable = (items: IprResultsTableItem[]) => {
-    const header = ["peptides", "interpro entry", "name", "nori score"]
+    const header = ["peptides", "interpro entry", "name", "peptonizer score"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
