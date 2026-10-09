@@ -4,10 +4,13 @@ import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
 import useBrowserCheck from "@/composables/useBrowserCheck";
 import ExclusiveProcessorRunner from "@/logic/processors/peptonizer/ExclusiveProcessorRunner";
+import {
+    mergePeptideAnnotations,
+    mergePeptideCounts,
+    mergePeptideIntensities
+} from "@/logic/processors/peptonizer/PeptonizerInput";
 
 const { isSafari, isFirefox, isChromium } = useBrowserCheck();
-
-export const DEFAULT_PEPTIDE_INTENSITIES = 0.7;
 
 export const DEFAULT_PEPTONIZER_WORKERS = (() => {
     if (isSafari()) {
@@ -49,13 +52,12 @@ export default class PeptonizerProcessor {
         equateIl: boolean,
         peptideIntensities?: Map<string, number>,
     ): Promise<PeptonizerResult | undefined> {
-        // If no intensities are provided, we set them to the default value
-        if (!peptideIntensities) {
-            peptideIntensities = new Map<string, number>(Array.from(peptideCountTable.counts.keys()).map((peptide: string) => [peptide, DEFAULT_PEPTIDE_INTENSITIES]));
-        }
+        const mergedCounts = mergePeptideCounts(peptideCountTable.counts.entries(), equateIl);
+        const mergedIntensities = mergePeptideIntensities(peptideIntensities?.entries(), mergedCounts.keys(), equateIl);
+        const mergedTaxa = mergePeptideAnnotations(peptidesTaxa.entries(), equateIl);
 
         return await PeptonizerProcessor.runner.run(async () => {
-            const peptideEntries = Array.from(peptidesTaxa.entries());
+            const peptideEntries = Array.from(mergedTaxa.entries());
             const mappedTaxa: number[][] = [];
 
             for (let index = 0; index < peptideEntries.length; index += TAXA2RANK_BATCH_SIZE) {
@@ -76,8 +78,8 @@ export default class PeptonizerProcessor {
 
             return await this.peptonizer.peptonize(
                 mappedPeptidesTaxa,
-                peptideIntensities,
-                new Map<string, number>(Array.from(peptideCountTable.counts.entries())),
+                mergedIntensities,
+                mergedCounts,
                 DEFAULT_PEPTONIZER_ALPHAS,
                 DEFAULT_PEPTONIZER_BETAS,
                 DEFAULT_PEPTONIZER_PRIORS,

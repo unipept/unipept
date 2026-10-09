@@ -1,21 +1,17 @@
 import {Peptonizer} from "peptonizer";
 import CountTable from "@/logic/processors/CountTable";
 import {
-    DEFAULT_PEPTIDE_INTENSITIES,
     DEFAULT_PEPTONIZER_ALPHAS,
     DEFAULT_PEPTONIZER_BETAS,
     DEFAULT_PEPTONIZER_PRIORS,
     DEFAULT_PEPTONIZER_WORKERS
 } from "@/logic/processors/peptonizer/PeptonizerProcessor";
 import ExclusiveProcessorRunner from "@/logic/processors/peptonizer/ExclusiveProcessorRunner";
-
-const canonicalizePeptide = (peptide: string, equateIl: boolean): string => {
-    return equateIl ? peptide.replace(/I/g, "L") : peptide;
-};
-
-const mergeUniqueTerms = (existing: string[], incoming: string[]) => {
-    return Array.from(new Set([...existing, ...incoming]));
-};
+import {
+    mergePeptideAnnotations,
+    mergePeptideCounts,
+    mergePeptideIntensities
+} from "@/logic/processors/peptonizer/PeptonizerInput";
 
 // The Peptonizer only computes a score for this number of annotations, the other annotations do not get a score
 export const MAX_SCORED_ANNOTATIONS = 1000;
@@ -37,39 +33,13 @@ export default class FunctionalAnalysisProcessor {
         peptideIntensities?: Map<string, number>,
         termFilter?: (term: string) => boolean
     ): Promise<Map<string, number> | undefined> {
-        const normalizedCounts = new Map<string, number>();
-        for (const [peptide, count] of peptideCountTable.counts.entries()) {
-            const normalizedPeptide = canonicalizePeptide(peptide, equateIl);
-            normalizedCounts.set(normalizedPeptide, (normalizedCounts.get(normalizedPeptide) || 0) + count);
-        }
+        const normalizedCounts = mergePeptideCounts(peptideCountTable.counts.entries(), equateIl);
+        const normalizedIntensities = mergePeptideIntensities(peptideIntensities?.entries(), normalizedCounts.keys(), equateIl);
 
-        const normalizedIntensities = new Map<string, number>();
-        for (const [peptide, intensity] of peptideIntensities ?? []) {
-            const normalizedPeptide = canonicalizePeptide(peptide, equateIl);
-            if (!normalizedIntensities.has(normalizedPeptide)) {
-                normalizedIntensities.set(normalizedPeptide, intensity);
-            }
-        }
-
-        for (const peptide of normalizedCounts.keys()) {
-            if (!normalizedIntensities.has(peptide)) {
-                normalizedIntensities.set(peptide, DEFAULT_PEPTIDE_INTENSITIES);
-            }
-        }
-
-        const normalizedFunctions = new Map<string, string[]>();
-        for (const [peptide, terms] of peptidesFunctions.entries()) {
-            const filteredTerms = termFilter ? terms.filter(termFilter) : terms;
-            if (filteredTerms.length === 0) {
-                continue;
-            }
-
-            const normalizedPeptide = canonicalizePeptide(peptide, equateIl);
-            normalizedFunctions.set(
-                normalizedPeptide,
-                mergeUniqueTerms(normalizedFunctions.get(normalizedPeptide) || [], filteredTerms)
-            );
-        }
+        const filteredFunctions = Array.from(peptidesFunctions.entries())
+            .map(([peptide, terms]): [string, string[]] => [peptide, termFilter ? terms.filter(termFilter) : terms])
+            .filter(([, terms]) => terms.length > 0);
+        const normalizedFunctions = mergePeptideAnnotations(filteredFunctions, equateIl);
 
         const termToId = new Map<string, number>();
         const idToTerm = new Map<number, string>();
