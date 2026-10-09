@@ -13,8 +13,13 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
+                    :scores-error="scoresError"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
         </v-row>
@@ -52,16 +57,22 @@ import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTa
 const { getEcDefinition } = useOntologyStore();
 const { root, process } = useEcTreeProcessor();
 
-const { data, showDownloadItem = true } = defineProps<{
+const { data, showDownloadItem = true, scores } = defineProps<{
     data: EcTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
+    scores?: Map<string, number>;
+    scoresLoading?: boolean;
+    scoresError?: string;
+    scoresOutdated?: boolean;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: EcResultsTableItem): void;
     (e: 'downloadTable', item: EcResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([key, value]) => {
@@ -71,6 +82,7 @@ const items = computed(() => Array.from(data.ecTable!.counts.entries()).map(([ke
         namespace: getEcDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.ecTrust!.totalItems,
+        confidence: scores?.get(key),
     }
 }));
 

@@ -26,8 +26,13 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
+                    :scores-error="scoresError"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
         </v-row>
@@ -47,16 +52,22 @@ import InterproTableData from "@/components/results/functional/ipr/InterproTable
 
 const { getIprDefinition } = useOntologyStore();
 
-const { data, showDownloadItem = true } = defineProps<{
+const { data, showDownloadItem = true, scores } = defineProps<{
     data: InterproTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
+    scores?: Map<string, number>;
+    scoresLoading?: boolean;
+    scoresError?: string;
+    scoresOutdated?: boolean;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: IprResultsTableItem): void;
     (e: 'downloadTable', items: IprResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const selectedNamespace = ref<string>("all");
@@ -68,6 +79,7 @@ const items = computed(() => Array.from(data.iprTable!.counts.entries()).map(([k
         namespace: getIprDefinition(key)?.namespace ?? "Unknown",
         count: value,
         totalCount: data.iprTrust!.totalItems,
+        confidence: scores?.get(key),
     }
 }));
 

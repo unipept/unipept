@@ -80,6 +80,7 @@
             <filter-functional-results
                 v-model="filterModalOpen"
                 :filter-percentage="analysis.functionalFilter"
+                :probability-threshold="analysis.functionalProbabilityThreshold"
                 @confirm="updateFilter"
             />
         </v-tabs>
@@ -89,9 +90,15 @@
                 <v-card-text>
                     <functional-go-results
                         :data="goData"
+                        :scores="analysis.goScores"
+                        :scores-loading="analysis.goScoresLoading"
+                        :scores-error="analysis.goScoresError"
+                        :scores-outdated="analysis.scoresOutdated"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
+                        :probability-threshold="analysis.functionalProbabilityThreshold"
                         @download-item="downloadGoItem"
+                        @rerun-scores="analysis.rerunScores()"
                         @download-table="downloadGoTable"
                     >
                         <template #trust>
@@ -109,9 +116,15 @@
                 <v-card-text>
                     <functional-ec-results
                         :data="ecData"
+                        :scores="analysis.ecScores"
+                        :scores-loading="analysis.ecScoresLoading"
+                        :scores-error="analysis.ecScoresError"
+                        :scores-outdated="analysis.scoresOutdated"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
+                        :probability-threshold="analysis.functionalProbabilityThreshold"
                         @download-item="downloadEcItem"
+                        @rerun-scores="analysis.rerunScores()"
                         @download-table="downloadEcTable"
                     >
                         <template #trust>
@@ -130,9 +143,15 @@
                 <v-card-text>
                     <functional-ipr-results
                         :data="iprData"
+                        :scores="analysis.iprScores"
+                        :scores-loading="analysis.iprScoresLoading"
+                        :scores-error="analysis.iprScoresError"
+                        :scores-outdated="analysis.scoresOutdated"
                         :loading="analysis.filteringStatus === AnalysisStatus.Running"
                         :show-percentage="sortPeptidePercentage"
+                        :probability-threshold="analysis.functionalProbabilityThreshold"
                         @download-item="downloadInterproItem"
+                        @rerun-scores="analysis.rerunScores()"
                         @download-table="downloadInterproTable"
                     >
                         <template #trust>
@@ -211,8 +230,8 @@ const iprData = computed(() => ({
     lcaToPeptides: analysis.lcaToPeptides
 }));
 
-const updateFilter = (value: number) => {
-    analysis.updateFunctionalFilter(value);
+const updateFilter = (filterPercentage: number, probabilityThreshold: number) => {
+    analysis.updateFunctionalFilter(filterPercentage, probabilityThreshold);
 }
 
 const downloadGoItem = (item: GoResultsTableItem) => {
@@ -235,12 +254,13 @@ const downloadGoItem = (item: GoResultsTableItem) => {
 }
 
 const downloadGoTable = (items: GoResultsTableItem[]) => {
-    const header = ["peptides", "go term", "name"];
+    const header = ["peptides", "go term", "name", "peptonizer score"];
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.confidence?.toString() ?? ""
         ];
     }));
     download(data, `unipept_${analysis.name.replaceAll(" ", "_")}_go_table.csv`);
@@ -266,12 +286,13 @@ const downloadEcItem = (item: EcResultsTableItem) => {
 }
 
 const downloadEcTable = (items: EcResultsTableItem[]) => {
-    const header = ["peptides", "ec number", "name"]
+    const header = ["peptides", "ec number", "name", "peptonizer score"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.confidence?.toString() ?? ""
         ];
     }));
 
@@ -298,12 +319,13 @@ const downloadInterproItem = (item: IprResultsTableItem) => {
 }
 
 const downloadInterproTable = (items: IprResultsTableItem[]) => {
-    const header = ["peptides", "interpro entry", "name"]
+    const header = ["peptides", "interpro entry", "name", "peptonizer score"]
     const data = [header].concat(items.map(item => {
         return [
             item.count.toString(),
             item.code,
-            item.name
+            item.name,
+            item.confidence?.toString() ?? ""
         ];
     }));
 

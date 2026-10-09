@@ -54,10 +54,12 @@ const useGroupAnalysisStore = (
     }
 
     const removeAnalysis = (id: string): void => {
+        _analyses.value.get(id)?.dispose();
         _analyses.value.delete(id);
     }
 
     const clear = (): void => {
+        _analyses.value.forEach(analysis => analysis.dispose());
         _analyses.value.clear();
     }
 

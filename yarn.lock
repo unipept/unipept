@@ -824,9 +824,9 @@
     "@types/d3-selection" "*"
 
 "@types/d3-zoom@*":
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/@types/d3-zoom/-/d3-zoom-3.0.8.tgz#dccb32d1c56b1e1c6e0f1180d994896f038bc40b"
-  integrity sha512-iqMC4/YlFCSlO8+2Ii1GGGliCAY4XdeG748w5vQUbevlbDu0zSjH/+jojorQVBK/se0j6DUFNPBGSqD3YWYnDw==
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@types/d3-zoom/-/d3-zoom-3.0.9.tgz#22beb547522f579cf39dbe04be9e0abce2bc7bdf"
+  integrity sha512-0sE1406XBYJGiqD3AusTl9ZqC//2mIXix51tbom25gDCA8ri4xnSZg28CaSE8Srl6FClqABUKfsn0qghgdepMA==
   dependencies:
     "@types/d3-interpolate" "*"
     "@types/d3-selection" "*"
@@ -3141,9 +3141,9 @@ pathe@^2.0.1, pathe@^2.0.3:
   resolved "https://registry.yarnpkg.com/pathe/-/pathe-2.0.3.tgz#3ecbec55421685b70a9da872b2cff3e1cbed1716"
   integrity sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==
 
-"peptonizer@file:./peptonizer-0.1.11.tgz":
-  version "0.1.11"
-  resolved "file:./peptonizer-0.1.11.tgz#e78fe57aac82f77d8a97baf6916577823769d011"
+"peptonizer@file:./peptonizer-0.1.27.tgz":
+  version "0.1.27"
+  resolved "file:./peptonizer-0.1.27.tgz#4515864d95b90c9f44941e2755498d7537cfde08"
   dependencies:
     "@types/async" "^3.2.24"
     async "^3.2.6"

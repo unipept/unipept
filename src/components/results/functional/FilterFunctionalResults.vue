@@ -1,7 +1,7 @@
 <template>
     <v-dialog
         v-model="dialogOpen"
-        max-width="60%"
+        width="60%"
         @click:outside="undoChanges"
     >
         <v-unipept-card class="bg-mainBody">
@@ -61,6 +61,38 @@
                     </template>
                 </v-slider>
 
+                <p class="mt-6">
+                    Additionally, the Peptonizer computes a score for each annotation that indicates how strongly the evidence supports it.
+                    Annotations with a lower score than this threshold are hidden from the results tables.
+                    If the threshold is higher than 0, annotations without a score are also hidden.
+                </p>
+
+                <v-slider
+                    v-model="probabilityThreshold"
+                    class="mt-8"
+                    thumb-color="primary"
+                    thumb-label="always"
+                    thumb-size="22"
+                    step="0.01"
+                    min="0"
+                    max="1"
+                    color="primary"
+                >
+                    <template #prepend>
+                        <v-icon size="small">
+                            mdi-greater-than-or-equal
+                        </v-icon>
+                    </template>
+
+                    <template #thumb-label="{ modelValue }">
+                        {{ modelValue.toFixed(2) }}
+                    </template>
+
+                    <template #append>
+                        Peptonizer score
+                    </template>
+                </v-slider>
+
                 <v-btn
                     class="float-end mb-2"
                     color="primary"
@@ -80,27 +112,34 @@ import {ref, watch} from 'vue';
 const dialogOpen = defineModel({ default: false });
 
 const emit = defineEmits<{
-    confirm: [filterPercentage: number]
+    confirm: [filterPercentage: number, probabilityThreshold: number]
 }>();
 
 const props = defineProps<{
-    filterPercentage: number
+    filterPercentage: number;
+    probabilityThreshold: number;
 }>();
 
 const filterPercentage = ref(props.filterPercentage ?? 5);
+const probabilityThreshold = ref(props.probabilityThreshold ?? 0);
 
 const confirmChanges = () => {
-    emit('confirm', filterPercentage.value);
+    emit('confirm', filterPercentage.value, probabilityThreshold.value);
     undoChanges();
 };
 
 const undoChanges = () => {
-    filterPercentage.value
+    filterPercentage.value = props.filterPercentage;
+    probabilityThreshold.value = props.probabilityThreshold;
     dialogOpen.value = false;
 };
 
 watch(() => props.filterPercentage, (newValue) => {
     filterPercentage.value = newValue;
+});
+
+watch(() => props.probabilityThreshold, (newValue) => {
+    probabilityThreshold.value = newValue;
 });
 </script>
 

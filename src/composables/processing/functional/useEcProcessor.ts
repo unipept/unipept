@@ -9,6 +9,7 @@ export default function useEcProcessor() {
     const countTable = shallowRef<CountTable<string>>();
     const trust = shallowRef<FunctionalTrust>();
     const ecToPeptides = shallowRef<Map<string, string[]>>();
+    const peptidesFunctions = shallowRef<Map<string, string[]>>();
 
     const { process: processFunctional } = useFunctionalProcessor();
 
@@ -36,12 +37,14 @@ export default function useEcProcessor() {
             totalItems: peptideCounts.totalCount
         }
         ecToPeptides.value = markRaw(processed.itemToPeptides);
+        peptidesFunctions.value = markRaw(processed.peptidesFunctions);
     }
 
     return {
         countTable,
         trust,
         ecToPeptides,
+        peptidesFunctions,
 
         process
     }

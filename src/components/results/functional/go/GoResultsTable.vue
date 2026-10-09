@@ -2,10 +2,11 @@
     <v-data-table
         v-model:expanded="expanded"
         v-model:sort-by="sortBy"
-        :items="items"
+        :items="filteredItems"
         :headers="headers"
         :items-per-page="5"
         :loading="false"
+        must-sort
         item-value="code"
         :show-expand="data.ncbiTree !== undefined"
         density="compact"
@@ -28,6 +29,18 @@
             <div v-else>
                 Download
             </div>
+        </template>
+
+        <template #header.confidence="{ column, getSortIcon }">
+            <peptonizer-score-header
+                :column="column"
+                :get-sort-icon="getSortIcon"
+                :loading="scoresLoading"
+                :error="scoresError"
+                :outdated="scoresOutdated"
+                @rerun="emits('rerunScores')"
+                annotation="GO term"
+            />
         </template>
 
         <template #item.count="{ item }">
@@ -53,6 +66,14 @@
                     class="ml-1"
                 >mdi-open-in-new</v-icon>
             </a>
+        </template>
+
+        <template #item.confidence="{ item }">
+            <peptonizer-score-cell
+                :score="item.confidence"
+                :loading="scoresLoading"
+                :outdated="scoresOutdated"
+            />
         </template>
 
         <template
@@ -108,31 +129,41 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, toRaw, Ref} from "vue";
+import {computed, ref, watch, toRaw, Ref} from "vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import usePercentage from "@/composables/usePercentage";
 import GoTableData from "@/components/results/functional/go/GoTableData";
+import PeptonizerScoreHeader from "@/components/results/functional/PeptonizerScoreHeader.vue";
+import PeptonizerScoreCell from "@/components/results/functional/PeptonizerScoreCell.vue";
 import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { data, items } = defineProps<{
+const { data, items, probabilityThreshold = 0, scoresLoading = false, scoresError, scoresOutdated = false } = defineProps<{
     items: GoResultsTableItem[];
     data: GoTableData;
     showPercentage: boolean;
     showDownloadItem: boolean;
+    probabilityThreshold?: number;
+    scoresLoading?: boolean;
+    scoresError?: string;
+    scoresOutdated?: boolean;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: GoResultsTableItem): void;
     (e: 'downloadTable', items: GoResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const expanded = ref<string[]>([]);
 const trees = new Map<string, NcbiTreeNode>();
+
+// Do not hide annotations based on their score while the scores are being computed or could not be computed
+const filteredItems = computed(() => scoresLoading || scoresError ? items : items.filter(item => (item.confidence ?? 0) >= probabilityThreshold));
 
 const calculateHighlightedNcbiTree = async (code: string) => {
 
@@ -165,7 +196,7 @@ const downloadItem = (item: GoResultsTableItem) => {
 }
 
 const downloadTable = () => {
-    emits('downloadTable', items);
+    emits('downloadTable', filteredItems.value);
 }
 
 watch(() => data, () => {
@@ -181,6 +212,15 @@ const headers: DataTableHeader[] = [
         width: "20%"
     },
     {
+        title: "Peptonizer score",
+        align: "start",
+        key: "confidence",
+        // Annotations without a score count as lower than every score
+        sort: (a?: number, b?: number) => (a ?? -1) - (b ?? -1),
+        width: "12%",
+        minWidth: "140px"
+    },
+    {
         title: "GO-term",
         align: "start",
         key: "code",
@@ -190,7 +230,7 @@ const headers: DataTableHeader[] = [
         title: "Name",
         align: "start",
         key: "name",
-        width: "47%"
+        width: "35%"
     },
     {
         title: "",
@@ -208,6 +248,7 @@ export interface GoResultsTableItem {
     name: string;
     count: number;
     totalCount: number;
+    confidence?: number;
 }
 
 const url = (code: string) => {
