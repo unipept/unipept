@@ -15,6 +15,7 @@
                     :show-download-item="showDownloadItem"
                     :probability-threshold="probabilityThreshold"
                     :scores-loading="scoresLoading"
+                    :scores-error="scoresError"
                     :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
@@ -63,6 +64,7 @@ const { data, showDownloadItem = true, scores } = defineProps<{
     showDownloadItem?: boolean;
     scores?: Map<string, number>;
     scoresLoading?: boolean;
+    scoresError?: string;
     scoresOutdated?: boolean;
     probabilityThreshold?: number;
 }>();

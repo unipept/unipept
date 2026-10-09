@@ -12,8 +12,6 @@ export default function usePeptonizerScoreProcessor() {
     const error = ref<string>();
 
     let processors: FunctionalAnalysisProcessor[] = [];
-    // Starts the last run again with the same input
-    let rerun: (() => Promise<void>) | undefined;
 
     const cancel = () => {
         processors.forEach(processor => processor.cancelFunctionalAnalysis());
@@ -31,7 +29,6 @@ export default function usePeptonizerScoreProcessor() {
         peptideIntensities?: Map<string, number>,
         termFilters: TermFilter[] = [undefined]
     ) => {
-        rerun = () => process(peptidesFunctions, peptideCountTable, equateIl, peptideIntensities, termFilters);
         cancel();
         if (peptidesFunctions.size === 0) {
             return;
@@ -67,17 +64,12 @@ export default function usePeptonizerScoreProcessor() {
         }
     };
 
-    const retry = async () => {
-        await rerun?.();
-    };
-
     return {
         scores,
         loading,
         error,
 
         process,
-        retry,
         cancel
     };
 }

@@ -125,9 +125,9 @@ const useSingleAnalysisStore = (
     const { countTable: iprTable, trust: iprTrust, iprToPeptides, peptidesFunctions: iprPeptidesFunctions, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
     const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
-    const { scores: ecScores, loading: ecScoresLoading, error: ecScoresError, process: processEcScores, retry: retryEcScores, cancel: cancelEcScores } = usePeptonizerScoreProcessor();
-    const { scores: goScores, loading: goScoresLoading, error: goScoresError, process: processGoScores, retry: retryGoScores, cancel: cancelGoScores } = usePeptonizerScoreProcessor();
-    const { scores: iprScores, loading: iprScoresLoading, error: iprScoresError, process: processIprScores, retry: retryIprScores, cancel: cancelIprScores } = usePeptonizerScoreProcessor();
+    const { scores: ecScores, loading: ecScoresLoading, error: ecScoresError, process: processEcScores, cancel: cancelEcScores } = usePeptonizerScoreProcessor();
+    const { scores: goScores, loading: goScoresLoading, error: goScoresError, process: processGoScores, cancel: cancelGoScores } = usePeptonizerScoreProcessor();
+    const { scores: iprScores, loading: iprScoresLoading, error: iprScoresError, process: processIprScores, cancel: cancelIprScores } = usePeptonizerScoreProcessor();
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -425,9 +425,6 @@ const useSingleAnalysisStore = (
         updateFunctionalFilter,
         updateTaxonomicFilter,
         dispose,
-        retryEcScores,
-        retryGoScores,
-        retryIprScores,
         rerunScores,
         exportStore,
         importStore,

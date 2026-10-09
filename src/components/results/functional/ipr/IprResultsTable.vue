@@ -36,6 +36,7 @@
                 :column="column"
                 :get-sort-icon="getSortIcon"
                 :loading="scoresLoading"
+                :error="scoresError"
                 :outdated="scoresOutdated"
                 @rerun="emits('rerunScores')"
                 annotation="InterPro entry"
@@ -141,13 +142,14 @@ import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { data, items, probabilityThreshold = 0, scoresLoading = false, scoresOutdated = false } = defineProps<{
+const { data, items, probabilityThreshold = 0, scoresLoading = false, scoresError, scoresOutdated = false } = defineProps<{
     items: IprResultsTableItem[];
     data: InterproTableData;
     showPercentage: boolean;
     showDownloadItem: boolean;
     probabilityThreshold?: number;
     scoresLoading?: boolean;
+    scoresError?: string;
     scoresOutdated?: boolean;
 }>();
 
@@ -160,8 +162,8 @@ const emits = defineEmits<{
 const expanded = ref<string[]>([]);
 const trees = new Map<string, DataNodeLike>();
 
-// Do not hide annotations based on their score while the scores are still being computed
-const filteredItems = computed(() => scoresLoading ? items : items.filter(item => (item.confidence ?? 0) >= probabilityThreshold));
+// Do not hide annotations based on their score while the scores are being computed or could not be computed
+const filteredItems = computed(() => scoresLoading || scoresError ? items : items.filter(item => (item.confidence ?? 0) >= probabilityThreshold));
 
 const calculateHighlightedNcbiTree = async (code: string) => {
     const highlightedTreeRoot = await processHighlightedTree(

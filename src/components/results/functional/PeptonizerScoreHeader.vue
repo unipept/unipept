@@ -5,7 +5,10 @@
     >
         <span>{{ column.title }}</span>
         <!-- While the scores are computed, the spinner takes the place of the info icon so the header keeps its width -->
-        <v-tooltip :text="tooltip">
+        <v-tooltip
+            v-if="loading || error || !outdated"
+            :text="tooltip"
+        >
             <template #activator="{ props }">
                 <v-progress-circular
                     v-if="loading"
@@ -16,8 +19,23 @@
                     color="primary"
                     class="ml-1"
                 />
+                <v-icon
+                    v-else
+                    v-bind="props"
+                    size="x-small"
+                    :color="error ? 'error' : undefined"
+                    class="ml-1"
+                >
+                    {{ error ? "mdi-alert-circle-outline" : "mdi-information-outline" }}
+                </v-icon>
+            </template>
+        </v-tooltip>
+        <v-tooltip
+            v-if="!loading && (error || outdated)"
+            :text="error ? 'Compute the Peptonizer scores again.' : 'These Peptonizer scores were computed for a different taxonomic filter. Click to compute them for the peptides of the current filter.'"
+        >
+            <template #activator="{ props }">
                 <v-btn
-                    v-else-if="outdated"
                     v-bind="props"
                     icon
                     size="24"
@@ -28,14 +46,6 @@
                 >
                     <v-icon size="16">mdi-refresh</v-icon>
                 </v-btn>
-                <v-icon
-                    v-else
-                    v-bind="props"
-                    size="x-small"
-                    class="ml-1"
-                >
-                    mdi-information-outline
-                </v-icon>
             </template>
         </v-tooltip>
         <v-icon
@@ -53,10 +63,12 @@ import type {VDataTable} from "vuetify/components";
 // The values that v-data-table gives to a header slot
 type HeaderSlotProps = Parameters<NonNullable<VDataTable["$slots"][`header.${string}`]>>[0];
 
-const { loading, outdated = false, annotation } = defineProps<{
+const { loading, error, outdated = false, annotation } = defineProps<{
     column: HeaderSlotProps["column"];
     getSortIcon: HeaderSlotProps["getSortIcon"];
     loading: boolean;
+    // Message of the error of the last Peptonizer run, if it failed
+    error?: string;
     // True if the scores do not belong to the current taxonomic filter
     outdated?: boolean;
     // Name of one annotation in the tooltip, for example "EC number"
@@ -71,8 +83,8 @@ const tooltip = computed(() => {
     if (loading) {
         return "Computing Peptonizer scores...";
     }
-    if (outdated) {
-        return "These Peptonizer scores were computed for a different taxonomic filter. Click to compute them for the peptides of the current filter.";
+    if (error) {
+        return `The Peptonizer scores could not be computed, so all annotations are shown without a score. Error: ${error}`;
     }
     return `Score from the Peptonizer: a higher score means this ${annotation} is more likely correct. — means not scored (only the top ${MAX_SCORED_ANNOTATIONS} annotations get a score).`;
 });
