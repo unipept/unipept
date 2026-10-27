@@ -8,7 +8,7 @@ if [ "$GITHUB_ACTIONS" = "true" ]; then
 fi
 
 # First step, create links to the files that are required by the UMGAP pipeline in the correct location.
-UMGAP_VERSION="2024-03-07"
+UMGAP_VERSION="2026-10-27"
 mkdir dist/system
 mkdir dist/system/umgap
 mkdir dist/system/umgap/${UMGAP_VERSION}
