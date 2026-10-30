@@ -52,7 +52,7 @@
     "vite-plugin-vuetify": "^2.1.3",
     "vitest": "^4.1.8",
     "vue-eslint-parser": "^10.4.1",
-    "vue-tsc": "^3.3.3"
+    "vue-tsc": "^3.3.13"
   },
   "resolutions": {
     "vite": "8.0.16"
