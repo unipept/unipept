@@ -50,7 +50,9 @@ We have detailed guides on how to set up all of these components on our Wiki:
 
 ## Releasing
 
-A release is a tag on `main`. Merge the release into `main` with the new version in `package.json`, then tag it:
+All work goes to `main` through pull requests. To try a branch before it is merged or released, run the "Deploy static content to Pages" workflow on that branch (Actions → Run workflow). It builds the app at <https://unipept.github.io/unipept/>, and each run replaces the previous one.
+
+A release is a tag on `main`. Merge a pull request that sets the new version in `package.json`, then tag it:
 
 ```bash
 git tag vX.Y.Z origin/main && git push origin vX.Y.Z
