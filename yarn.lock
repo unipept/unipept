@@ -3612,12 +3612,12 @@ undici-types@~8.9.0:
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-8.9.0.tgz#e240d97c8b5d85e5347ce73d25865c7906c1ec9f"
   integrity sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==
 
-unipept-visualizations@^2.2.5:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-2.2.5.tgz#e19de904dc7f237a42485b742b772bd99ef1ce4a"
-  integrity sha512-vM4ly90d6ld23qIU62Zqf4oPxccew/9R7Za20P3SFX6MfE4G4xfLafoTGarXnghg/gbvIjBRl6Iea2EA1HtG8w==
+unipept-visualizations@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/unipept-visualizations/-/unipept-visualizations-3.0.0.tgz#879ad5ce5938bdcc4dc6f39fef84e57b4fe23ec1"
+  integrity sha512-qbue67xGio+fkDrowQDM8K68N4k0VB4dzQnoytsBtXTu14yaWRbHlGUQISLiu5FmKOMB2GSGjB2ouWBdzsusNA==
   dependencies:
-    d3 "^7.9.0"
+    "@types/d3" "^7.4.3"
 
 unique-filename@^4.0.0:
   version "4.0.0"
