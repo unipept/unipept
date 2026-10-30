@@ -7,6 +7,9 @@ updates:
       time: "13:00"
       timezone: Europe/Brussels
     open-pull-requests-limit: 99
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
 
   - package-ecosystem: github-actions
     directory: "/"
@@ -15,6 +18,9 @@ updates:
       time: "13:00"
       timezone: Europe/Brussels
     open-pull-requests-limit: 99
+    groups:
+      actions:
+        patterns: ["*"]
 
   - package-ecosystem: docker
     directory: "/"
