@@ -122,7 +122,7 @@ const headers: DataTableHeader[] = [
 ];
 
 // Commonly reused logic and values extracted from composable
-const selectedItems = defineModel<ReferenceProteome[]>({default: []});
+const selectedItems = defineModel<ReferenceProteome[]>({default: () => []});
 
 const {
     uploadFile: uploadProteomeFile,

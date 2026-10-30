@@ -185,7 +185,7 @@ const rankColors: string[] = [
 ];
 
 // Commonly reused logic and values extracted from composable
-const selectedItems = defineModel<NcbiTaxon[]>({default: []});
+const selectedItems = defineModel<NcbiTaxon[]>({default: () => []});
 
 const {
     uploadFile: uploadTaxonFile,
