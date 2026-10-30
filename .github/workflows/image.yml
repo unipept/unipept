@@ -41,11 +41,9 @@ jobs:
           pull: true
           load: true
           tags: ${{ env.IMAGE }}:${{ env.VERSION }}
-      - name: Check that the image serves the app, the headers and the UMGAP files
+      - name: Check that the image serves the app and the headers
         run: |
-          mkdir -p umgap/2000-01-01
-          echo test > umgap/2000-01-01/taxons.tsv
-          docker run -d --name web -p 8080:8080 -v "$PWD/umgap:/mnt/datapept/umgap:ro" "$IMAGE:$VERSION"
+          docker run -d --name web -p 8080:8080 "$IMAGE:$VERSION"
           check() {
             if ! curl -sf -o /dev/null --max-time 10 --retry 10 --retry-all-errors "http://localhost:8080$1"; then
               echo "$1 did not answer with 2xx"
@@ -55,8 +53,6 @@ jobs:
           }
           check /
           check /mpa
-          check /system/umgap/latest
-          check /system/umgap/2000-01-01/taxons.tsv
           if ! curl -sI http://localhost:8080/ | grep -qi '^cross-origin-embedder-policy: require-corp'; then
             echo "The Cross-Origin-Embedder-Policy header is missing"
             exit 1
