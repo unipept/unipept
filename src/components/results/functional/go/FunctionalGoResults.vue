@@ -16,8 +16,13 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
+                    :scores-error="scoresError"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
             <v-col cols="12" lg="3">
@@ -39,8 +44,13 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
+                    :scores-error="scoresError"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
             <v-col cols="12" lg="3">
@@ -62,8 +72,13 @@
                     :data="data"
                     :show-percentage="showPercentage"
                     :show-download-item="showDownloadItem"
+                    :probability-threshold="probabilityThreshold"
+                    :scores-loading="scoresLoading"
+                    :scores-error="scoresError"
+                    :scores-outdated="scoresOutdated"
                     @download-item="downloadItem"
                     @download-table="downloadTable"
+                    @rerun-scores="emits('rerunScores')"
                 />
             </v-col>
             <v-col cols="12" lg="3">
@@ -94,16 +109,22 @@ import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 
 const { getGoDefinition } = useOntologyStore();
 
-const { data, loading, showDownloadItem = true } = defineProps<{
+const { data, loading, showDownloadItem = true, scores } = defineProps<{
     data: GoTableData;
     loading: boolean;
     showPercentage: boolean;
     showDownloadItem?: boolean;
+    scores?: Map<string, number>;
+    scoresLoading?: boolean;
+    scoresError?: string;
+    scoresOutdated?: boolean;
+    probabilityThreshold?: number;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: GoResultsTableItem): void;
     (e: 'downloadTable', items: GoResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const biologicalProcessItems = computed(() => getItems(data.goTable).filter(x => x.namespace == GoNamespace.BiologicalProcess));
@@ -118,6 +139,7 @@ const getItems = (items: CountTable<string>) => {
             namespace: getGoDefinition(key)?.namespace ?? "Unknown",
             count: value,
             totalCount: data.goTrust.totalItems,
+            confidence: scores?.get(key),
         }));
 }
 

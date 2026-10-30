@@ -1,0 +1,12 @@
+.git
+node_modules
+dist
+playwright-report
+test-results
+.github
+.devcontainer
+tests
+wiki-resources
+*.md
+vite.log
+latest

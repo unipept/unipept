@@ -14,6 +14,7 @@ export interface FunctionalProcessorOutput {
     sortedCountsTransferable: TransferableState;
     itemToPeptides: Map<string, string[]>;
     annotatedCount: number;
+    peptidesFunctions: Map<string, string[]>;
 }
 
 export default function useFunctionalProcessor() {

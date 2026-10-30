@@ -1,0 +1,95 @@
+# Releases a tag vX.Y.Z or vX.Y.Z-<pre> on main. See README.md.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: Tag matches the package version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      minor: ${{ steps.version.outputs.minor }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: version
+        run: |
+          set -euo pipefail
+          tag=$GITHUB_REF_NAME
+          if ! git merge-base --is-ancestor "$tag" origin/main; then
+            echo "::error::$tag is not on main. Merge the release into main first, then tag."
+            exit 1
+          fi
+          if [[ ! $tag =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::$tag is not vX.Y.Z or vX.Y.Z-<pre>."
+            exit 1
+          fi
+          echo "version=${tag#v}" >> "$GITHUB_OUTPUT"
+          if [ -z "${BASH_REMATCH[4]}" ]; then
+            echo "minor=${BASH_REMATCH[1]}.${BASH_REMATCH[2]}" >> "$GITHUB_OUTPUT"
+          fi
+          declared=$(jq -r .version package.json)
+          if [ "v$declared" != "$tag" ]; then
+            echo "::error::$tag does not match the package.json version $declared."
+            exit 1
+          fi
+
+  test:
+    needs: guard
+    uses: ./.github/workflows/test.yml
+
+  lint:
+    needs: guard
+    uses: ./.github/workflows/lint.yml
+
+  type_check:
+    needs: guard
+    uses: ./.github/workflows/type_check.yml
+
+  image:
+    needs: [guard, test, lint, type_check]
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/image.yml
+    with:
+      ref: ${{ github.ref_name }}
+      version: ${{ needs.guard.outputs.version }}
+      minor: ${{ needs.guard.outputs.minor }}
+
+  release:
+    name: GitHub release
+    needs: [guard, image]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # Only the highest release is marked Latest. A release made by hand for this tag is kept.
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.guard.outputs.version }}
+          PRERELEASE: ${{ needs.guard.outputs.minor == '' }}
+        run: |
+          set -euo pipefail
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME exists already."
+            exit 0
+          fi
+          highest=$({ gh release list --repo "$GITHUB_REPOSITORY" --exclude-drafts --exclude-pre-releases \
+            --limit 100 --json tagName -q '.[].tagName' | sed 's/^v//'; echo "$VERSION"; } \
+            | { grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' || true; } | sort -V | tail -1)
+          latest=false
+          if [ "$PRERELEASE" = false ] && [ "$highest" = "$VERSION" ]; then latest=true; fi
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+            --verify-tag --generate-notes --prerelease="$PRERELEASE" --latest="$latest"

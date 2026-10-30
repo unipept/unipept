@@ -166,8 +166,8 @@ const navigation = [
         ]
     },
     {
-        name: "unipept taxa2lca",
-        link: "/clidocs/taxa2lca",
+        name: "unipept protinfo",
+        link: "/clidocs/protinfo",
         children: [
             { name: "Input", link: "#input" },
             { name: "Output", link: "#output" },
@@ -175,8 +175,8 @@ const navigation = [
         ]
     },
     {
-        name: "unipept taxa2tree",
-        link: "/clidocs/taxa2tree",
+        name: "unipept taxa2lca",
+        link: "/clidocs/taxa2lca",
         children: [
             { name: "Input", link: "#input" },
             { name: "Output", link: "#output" },
