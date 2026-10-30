@@ -32,17 +32,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.ref }}
-      - id: tags
-        run: |
-          {
-            echo "list<<EOF"
-            echo "$IMAGE:$VERSION"
-            if [ -n "$MINOR" ]; then
-              echo "$IMAGE:$MINOR"
-              echo "$IMAGE:${MINOR%%.*}"
-            fi
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
       - uses: docker/setup-buildx-action@v4
       - uses: docker/build-push-action@v7
         with:
@@ -50,10 +39,8 @@ jobs:
           platforms: linux/amd64
           labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
           pull: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
           load: true
-          tags: ${{ steps.tags.outputs.list }}
+          tags: ${{ env.IMAGE }}:${{ env.VERSION }}
       - name: Check that the image serves the app, the headers and the UMGAP files
         run: |
           mkdir -p umgap/2000-01-01
@@ -94,5 +81,6 @@ jobs:
           if [ -n "$MINOR" ] && [ "$(highest "$MINOR")" = "$VERSION" ]; then tags+=("$MINOR"); fi
           if [ -n "$MINOR" ] && [ "$(highest "${MINOR%%.*}")" = "$VERSION" ]; then tags+=("${MINOR%%.*}"); fi
           for tag in "${tags[@]}"; do
+            docker tag "$IMAGE:$VERSION" "$IMAGE:$tag"
             docker push "$IMAGE:$tag"
           done
