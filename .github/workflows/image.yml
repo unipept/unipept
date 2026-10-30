@@ -60,7 +60,7 @@ jobs:
           echo test > umgap/2000-01-01/taxons.tsv
           docker run -d --name web -p 8080:8080 -v "$PWD/umgap:/mnt/datapept/umgap:ro" "$IMAGE:$VERSION"
           check() {
-            if ! curl -sf -o /dev/null --max-time 10 --retry 10 --retry-connrefused "http://localhost:8080$1"; then
+            if ! curl -sf -o /dev/null --max-time 10 --retry 10 --retry-all-errors "http://localhost:8080$1"; then
               echo "$1 did not answer with 2xx"
               docker logs web
               exit 1
