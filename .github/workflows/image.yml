@@ -1,0 +1,82 @@
+# Builds and checks the web image, and pushes it when the release workflow calls it. See README.md.
+name: Image
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      minor:
+        type: string
+        default: ""
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/unipept/unipept
+      VERSION: ${{ inputs.version || 'test' }}
+      MINOR: ${{ inputs.minor }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: linux/amd64
+          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          pull: true
+          load: true
+          tags: ${{ env.IMAGE }}:${{ env.VERSION }}
+      - name: Check that the image serves the app and the headers
+        run: |
+          docker run -d --name web -p 8080:8080 "$IMAGE:$VERSION"
+          check() {
+            if ! curl -sf -o /dev/null --max-time 10 --retry 10 --retry-all-errors "http://localhost:8080$1"; then
+              echo "$1 did not answer with 2xx"
+              docker logs web
+              exit 1
+            fi
+          }
+          check /
+          check /mpa
+          if ! curl -sI http://localhost:8080/ | grep -qi '^cross-origin-embedder-policy: require-corp'; then
+            echo "The Cross-Origin-Embedder-Policy header is missing"
+            exit 1
+          fi
+      - if: inputs.version != ''
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # X.Y and X move only to the highest release in their line, so a backport cannot move them back.
+      - if: inputs.version != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          released=$({ gh release list --repo "$GITHUB_REPOSITORY" --exclude-drafts --exclude-pre-releases \
+            --limit 100 --json tagName -q '.[].tagName' | sed 's/^v//'; echo "$VERSION"; } \
+            | { grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' || true; })
+          highest() { awk -v p="$1." 'index($0, p) == 1' <<< "$released" | sort -V | tail -1; }
+          tags=("$VERSION")
+          if [ -n "$MINOR" ] && [ "$(highest "$MINOR")" = "$VERSION" ]; then tags+=("$MINOR"); fi
+          if [ -n "$MINOR" ] && [ "$(highest "${MINOR%%.*}")" = "$VERSION" ]; then tags+=("${MINOR%%.*}"); fi
+          for tag in "${tags[@]}"; do
+            docker tag "$IMAGE:$VERSION" "$IMAGE:$tag"
+            docker push "$IMAGE:$tag"
+          done

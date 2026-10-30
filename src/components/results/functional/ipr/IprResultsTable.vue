@@ -2,10 +2,11 @@
     <v-data-table
         v-model:expanded="expanded"
         v-model:sort-by="sortBy"
-        :items="items"
+        :items="filteredItems"
         :headers="headers"
         :items-per-page="10"
         :loading="false"
+        must-sort
         item-value="code"
         density="compact"
         :show-expand="data.ncbiTree !== undefined"
@@ -28,6 +29,18 @@
             <div v-else>
                 Download
             </div>
+        </template>
+
+        <template #header.confidence="{ column, getSortIcon }">
+            <peptonizer-score-header
+                :column="column"
+                :get-sort-icon="getSortIcon"
+                :loading="scoresLoading"
+                :error="scoresError"
+                :outdated="scoresOutdated"
+                @rerun="emits('rerunScores')"
+                annotation="InterPro entry"
+            />
         </template>
 
         <template #item.count="{ item }">
@@ -53,6 +66,14 @@
                     class="ml-1"
                 >mdi-open-in-new</v-icon>
             </a>
+        </template>
+
+        <template #item.confidence="{ item }">
+            <peptonizer-score-cell
+                :score="item.confidence"
+                :loading="scoresLoading"
+                :outdated="scoresOutdated"
+            />
         </template>
 
         <template
@@ -108,31 +129,41 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, toRaw, Ref} from "vue";
+import {computed, ref, watch, toRaw, Ref} from "vue";
 import usePercentage from "@/composables/usePercentage";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 import {DataNodeLike} from "unipept-visualizations";
+import PeptonizerScoreHeader from "@/components/results/functional/PeptonizerScoreHeader.vue";
+import PeptonizerScoreCell from "@/components/results/functional/PeptonizerScoreCell.vue";
 import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 
 const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
-const { data, items } = defineProps<{
+const { data, items, probabilityThreshold = 0, scoresLoading = false, scoresError, scoresOutdated = false } = defineProps<{
     items: IprResultsTableItem[];
     data: InterproTableData;
     showPercentage: boolean;
     showDownloadItem: boolean;
+    probabilityThreshold?: number;
+    scoresLoading?: boolean;
+    scoresError?: string;
+    scoresOutdated?: boolean;
 }>();
 
 const emits = defineEmits<{
     (e: 'downloadItem', item: IprResultsTableItem): void;
     (e: 'downloadTable', items: IprResultsTableItem[]): void;
+    (e: 'rerunScores'): void;
 }>();
 
 const expanded = ref<string[]>([]);
 const trees = new Map<string, DataNodeLike>();
+
+// Do not hide annotations based on their score while the scores are being computed or could not be computed
+const filteredItems = computed(() => scoresLoading || scoresError ? items : items.filter(item => (item.confidence ?? 0) >= probabilityThreshold));
 
 const calculateHighlightedNcbiTree = async (code: string) => {
     const highlightedTreeRoot = await processHighlightedTree(
@@ -164,7 +195,7 @@ const downloadItem = (item: IprResultsTableItem) => {
 }
 
 const downloadTable = () => {
-    emits("downloadTable", items);
+    emits("downloadTable", filteredItems.value);
 }
 
 watch(() => data, () => {
@@ -178,6 +209,15 @@ const headers: DataTableHeader[] = [
         align: "start",
         key: "count",
         width: "15%"
+    },
+    {
+        title: "Peptonizer score",
+        align: "start",
+        key: "confidence",
+        // Annotations without a score count as lower than every score
+        sort: (a?: number, b?: number) => (a ?? -1) - (b ?? -1),
+        width: "14%",
+        minWidth: "140px"
     },
     {
         title: "InterPro-entry",
@@ -195,7 +235,7 @@ const headers: DataTableHeader[] = [
         title: "Namespace",
         align: "start",
         key: "namespace",
-        width: "20%"
+        width: "16%"
     },
     {
         title: "",
@@ -214,6 +254,7 @@ export interface IprResultsTableItem {
     namespace: string;
     count: number;
     totalCount: number;
+    confidence?: number;
 }
 
 const url = (code: string) => {

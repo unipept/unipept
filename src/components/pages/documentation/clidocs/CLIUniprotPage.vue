@@ -94,6 +94,36 @@
                 <br>MFTNSIKNLIIYLMPLMVTLMLLSVSFVDAGKKPSGPNPGGNN
             </boxed>
 
+            <h2>--input / -i <span class="text-caption grey--text text--darken-2">Read input from a file</span></h2>
+
+            <p>
+                By default, input is read from <i>standard input</i>. The <inline-code>--input</inline-code> option reads it from a file instead.
+                The option may be given more than once, in which case the files are read one after the other as a single stream.
+            </p>
+
+            <h4>Example</h4>
+            <boxed>
+                <sentinel>$</sentinel> uniprot <b>--input</b> accessions1.txt <b>--input</b> accessions2.txt
+            </boxed>
+
+            <h2>--output / -o <span class="text-caption grey--text text--darken-2">Write output to a file</span></h2>
+
+            <p>
+                By default, output is written to <i>standard output</i>. The <inline-code>--output</inline-code> option writes it to a file instead.
+                An existing file is overwritten.
+            </p>
+
+            <h4>Example</h4>
+            <boxed>
+                <sentinel>$</sentinel> uniprot <b>--output</b> results.txt
+            </boxed>
+
+            <h2>--version / -V <span class="text-caption grey--text text--darken-2">Display the version</span></h2>
+
+            <p>
+                Prints the version of the Unipept <initialism>CLI</initialism> and exits.
+            </p>
+
             <h2>--help / -h <span class="text-body-small text-grey-darken-2">Display help</span></h2>
 
             <p>

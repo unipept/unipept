@@ -120,8 +120,8 @@ const routes = [
             { path: "pept2interpro", component: () => import("@/components/pages/documentation/clidocs/CLIPept2InterproPage.vue"), meta: clidocsMeta },
             { path: "pept2funct", component: () => import("@/components/pages/documentation/clidocs/CLIPept2FunctPage.vue"), meta: clidocsMeta },
             { path: "peptinfo", component: () => import("@/components/pages/documentation/clidocs/CLIPeptInfoPage.vue"), meta: clidocsMeta },
-            { path: "taxa2lca", component: () => import("@/components/pages/documentation/clidocs/CLIPept2TaxaPage.vue"), meta: clidocsMeta },
-            { path: "taxa2tree", component: () => import("@/components/pages/documentation/clidocs/CLITaxa2TreePage.vue"), meta: clidocsMeta },
+            { path: "protinfo", component: () => import("@/components/pages/documentation/clidocs/CLIProtinfoPage.vue"), meta: clidocsMeta },
+            { path: "taxa2lca", component: () => import("@/components/pages/documentation/clidocs/CLITaxa2LcaPage.vue"), meta: clidocsMeta },
             { path: "taxonomy", component: () => import("@/components/pages/documentation/clidocs/CLITaxonomyPage.vue"), meta: clidocsMeta }
         ],
         meta: clidocsMeta

@@ -14,6 +14,9 @@ import usePathwayPilotStore, {PathwayPilotStoreImport} from "@/store/PathwayPilo
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {AnalysisConfig} from "@/store/AnalysisConfig";
 import useCustomFilterStore from "@/store/CustomFilterStore";
+import usePeptonizerScoreProcessor from "@/composables/processing/functional/usePeptonizerScoreProcessor";
+import CountTable from "@/logic/processors/CountTable";
+import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
@@ -101,6 +104,12 @@ const useSingleAnalysisStore = (
 
     const taxonomicFilter = ref<number>(1);
     const functionalFilter = ref<number>(5);
+    const functionalProbabilityThreshold = ref<number>(0);
+
+    // Set when the analysis is removed, so that no new Peptonizer runs for functional scores are started for it
+    let disposed = false;
+    // Taxonomic filter for which the current Peptonizer scores are computed, undefined if there are no scores
+    const scoredTaxonomicFilter = ref<number>();
 
     // ===============================================================
     // ======================== PROCESSORS ===========================
@@ -111,11 +120,14 @@ const useSingleAnalysisStore = (
     const { countTable: peptidesTable, process: processPeptides } = usePeptideProcessor();
     const { countTable: filteredPeptidesTable, process: processFilteredPeptides } = usePeptideProcessor();
     const { trust: peptideTrust, process: processPeptideTrust } = usePeptideTrustProcessor();
-    const { countTable: ecTable, trust: ecTrust, ecToPeptides, process: processEc } = useEcProcessor();
-    const { countTable: goTable, trust: goTrust, goToPeptides, process: processGo } = useGoProcessor();
-    const { countTable: iprTable, trust: iprTrust, iprToPeptides, process: processInterpro } = useInterproProcessor();
+    const { countTable: ecTable, trust: ecTrust, ecToPeptides, peptidesFunctions: ecPeptidesFunctions, process: processEc } = useEcProcessor();
+    const { countTable: goTable, trust: goTrust, goToPeptides, peptidesFunctions: goPeptidesFunctions, process: processGo } = useGoProcessor();
+    const { countTable: iprTable, trust: iprTrust, iprToPeptides, peptidesFunctions: iprPeptidesFunctions, process: processInterpro } = useInterproProcessor();
     const { countTable: lcaTable, lcaToPeptides, peptideToLca, process: processLca } = useTaxonomicProcessor();
     const { root: ncbiTree, nodes: ncbiTreeNodes, process: processNcbiTree } = useNcbiTreeProcessor();
+    const { scores: ecScores, loading: ecScoresLoading, error: ecScoresError, process: processEcScores, cancel: cancelEcScores } = usePeptonizerScoreProcessor();
+    const { scores: goScores, loading: goScoresLoading, error: goScoresError, process: processGoScores, cancel: cancelGoScores } = usePeptonizerScoreProcessor();
+    const { scores: iprScores, loading: iprScoresLoading, error: iprScoresError, process: processIprScores, cancel: cancelIprScores } = usePeptonizerScoreProcessor();
 
     // ===============================================================
     // ========================= COMPUTED ============================
@@ -126,6 +138,8 @@ const useSingleAnalysisStore = (
     );
 
     const filteredOrganism = computed(() => ncbiTreeNodes.value.get(taxonomicFilter.value));
+
+    const scoresOutdated = computed(() => scoredTaxonomicFilter.value !== taxonomicFilter.value);
 
     const lastAnalysedString = computed(() => {
         if (!lastAnalysed.value) return "";
@@ -148,6 +162,9 @@ const useSingleAnalysisStore = (
     const analyse = async (fetch: boolean = true) => {
         // Set status to running immediately to provide feedback to the user
         status.value = AnalysisStatus.Pending;
+
+        // Scores of a previous analysis are no longer valid
+        cancelScores();
 
         try {
             // Use the AnalysisQueue to ensure only one analysis runs at a time
@@ -181,6 +198,13 @@ const useSingleAnalysisStore = (
             });
             
             status.value = AnalysisStatus.Finished;
+
+            if (disposed) {
+                return;
+            }
+
+            // The results of the full sample belong to the root of the taxonomy (id 1)
+            processScores(peptidesTable.value!, 1);
         } catch (error) {
             status.value = AnalysisStatus.Failed;
             if (error) {
@@ -191,10 +215,11 @@ const useSingleAnalysisStore = (
         }
     }
 
-    const updateFunctionalFilter = async (newFilter: number) => {
+    const updateFunctionalFilter = async (newFilter: number, newProbabilityThreshold: number) => {
         filteringStatus.value = AnalysisStatus.Running;
 
         functionalFilter.value = newFilter;
+        functionalProbabilityThreshold.value = newProbabilityThreshold;
 
         const table = filteredPeptidesTable.value || peptidesTable.value;
         await processEc(table!, peptideToData.value!, functionalFilter.value!);
@@ -202,6 +227,33 @@ const useSingleAnalysisStore = (
         await processInterpro(table!, peptideToData.value!, functionalFilter.value!);
 
         filteringStatus.value = AnalysisStatus.Finished;
+    }
+
+    // Stops the Peptonizer runs for the functional scores of this analysis, so that they do not block the queue after it has been removed
+    const dispose = () => {
+        disposed = true;
+        cancelScores();
+    }
+
+    // The Peptonizer scores are computed in the background, so the other results are shown while they are computed
+    const processScores = (table: CountTable<string>, filter: number) => {
+        scoredTaxonomicFilter.value = filter;
+        processEcScores(ecPeptidesFunctions.value!, table, config.value.equate, intensities.value);
+        processGoScores(goPeptidesFunctions.value!, table, config.value.equate, intensities.value,
+            Object.values(GoNamespace).map(namespace => (term: string) => ontologyStore.getGoDefinition(term)?.namespace === namespace));
+        processIprScores(iprPeptidesFunctions.value!, table, config.value.equate, intensities.value);
+    }
+
+    const cancelScores = () => {
+        scoredTaxonomicFilter.value = undefined;
+        cancelEcScores();
+        cancelGoScores();
+        cancelIprScores();
+    }
+
+    // Computes the Peptonizer scores for the peptides of the current taxonomic filter
+    const rerunScores = () => {
+        processScores(filteredPeptidesTable.value || peptidesTable.value!, taxonomicFilter.value);
     }
 
     const updateTaxonomicFilter = async (newFilter: number) => {
@@ -232,6 +284,12 @@ const useSingleAnalysisStore = (
         }
 
         taxonomicFilter.value = newFilter;
+        // Runs for another filter are stopped. Finished scores are kept and marked as outdated until the user reruns the Peptonizer.
+        if (scoresOutdated.value) {
+            if (ecScoresLoading.value) cancelEcScores();
+            if (goScoresLoading.value) cancelGoScores();
+            if (iprScoresLoading.value) cancelIprScores();
+        }
 
         const filteredPeptides = await getOwnAndChildrenSequences(taxonomicFilter.value!);
 
@@ -272,6 +330,7 @@ const useSingleAnalysisStore = (
             intensities: intensitiesString,
             taxonomicFilter: taxonomicFilter.value,
             functionalFilter: functionalFilter.value,
+            functionalProbabilityThreshold: functionalProbabilityThreshold.value,
             lastAnalysed: lastAnalysed.value,
             databaseVersion: databaseVersion.value,
 
@@ -292,6 +351,7 @@ const useSingleAnalysisStore = (
 
         taxonomicFilter.value = storeImport.taxonomicFilter;
         functionalFilter.value = storeImport.functionalFilter;
+        functionalProbabilityThreshold.value = storeImport.functionalProbabilityThreshold ?? 0;
         lastAnalysed.value = storeImport.lastAnalysed ? new Date(storeImport.lastAnalysed) : undefined;
         databaseVersion.value = storeImport.databaseVersion;
 
@@ -318,6 +378,7 @@ const useSingleAnalysisStore = (
         taxonomicFilter,
         filteredOrganism,
         functionalFilter,
+        functionalProbabilityThreshold,
         status,
         filteringStatus,
         databaseVersion,
@@ -337,6 +398,16 @@ const useSingleAnalysisStore = (
         iprTable,
         iprTrust,
         iprToPeptides,
+        ecScores,
+        ecScoresLoading,
+        ecScoresError,
+        goScores,
+        goScoresLoading,
+        goScoresError,
+        iprScores,
+        iprScoresLoading,
+        iprScoresError,
+        scoresOutdated,
         lcaTable,
         lcaToPeptides,
         peptideToLca,
@@ -353,6 +424,8 @@ const useSingleAnalysisStore = (
         updateConfig,
         updateFunctionalFilter,
         updateTaxonomicFilter,
+        dispose,
+        rerunScores,
         exportStore,
         importStore,
         setImportedData
@@ -368,6 +441,8 @@ export interface SingleAnalysisStoreImport {
     intensities: string | undefined;
     taxonomicFilter: number;
     functionalFilter: number;
+    // Missing in projects saved before Peptonizer scores for functional annotations were added
+    functionalProbabilityThreshold?: number;
     lastAnalysed: Date | undefined;
     databaseVersion: string;
     peptideToDataTransferable: TransferableState | undefined;

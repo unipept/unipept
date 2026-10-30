@@ -1,8 +1,7 @@
-import { defineConfig } from 'eslint-define-config';
+import { defineConfig } from 'eslint/config';
 import vuePlugin from 'eslint-plugin-vue';
 import vueParser from 'vue-eslint-parser';
-import typescriptPlugin from '@typescript-eslint/eslint-plugin';
-import typescriptParser from '@typescript-eslint/parser';
+import tseslint from 'typescript-eslint';
 
 export default defineConfig([
     {
@@ -11,7 +10,7 @@ export default defineConfig([
         languageOptions: {
             parser: vueParser, // Use vue-eslint-parser for Vue files
             parserOptions: {
-                parser: typescriptParser, // Use TypeScript parser for `<script>` blocks
+                parser: tseslint.parser, // Use TypeScript parser for `<script>` blocks
                 ecmaVersion: 2021,
                 sourceType: 'module',
                 extraFileExtensions: ['.vue'], // Support .vue files
@@ -19,7 +18,7 @@ export default defineConfig([
         },
         plugins: {
             vue: vuePlugin,
-            '@typescript-eslint': typescriptPlugin,
+            '@typescript-eslint': tseslint.plugin,
         },
         settings: {
             'import/resolver': {
