@@ -58,7 +58,7 @@ git tag vX.Y.Z origin/main && git push origin vX.Y.Z
 
 The `Release` workflow checks that the tag is on `main` and matches `package.json`, runs the tests, lint and type check, builds and checks the image `ghcr.io/unipept/unipept-web`, pushes it as `X.Y.Z`, `X.Y` and `X`, and creates the GitHub release. `X.Y` and `X` move only to the highest release. A tag `vX.Y.Z-<pre>` pushes only `X.Y.Z-<pre>` and creates a prerelease.
 
-The image serves the app with nginx on port 8080. It serves `/system/umgap/` from the UMGAP folder of the datapept share, which must be mounted read-only at `/mnt/datapept/umgap`. Every pull request builds and checks the image without pushing it.
+The image serves the app with nginx on port 8080. The UMGAP downloads under `/system/umgap/` are served by a separate container (see unipept/unipept-apps), so a release does not interrupt them. Every pull request builds and checks the image without pushing it.
 
 ## Adding custom icons
 
