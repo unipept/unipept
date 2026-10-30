@@ -41,6 +41,7 @@
     "@types/node": "^26.6.5",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vitest/coverage-v8": "^4.1.8",
+    "coi-serviceworker": "^0.1.7",
     "eslint": "^10.13.0",
     "eslint-plugin-vue": "^10.12.0",
     "sass": "^1.106.1",
