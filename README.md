@@ -48,6 +48,18 @@ This repository only contains the code for the web application of Unipept. To ru
 We have detailed guides on how to set up all of these components on our Wiki:
 [https://github.com/unipept/unipept/wiki](https://github.com/unipept/unipept/wiki)
 
+## Releasing
+
+A release is a tag on `main`. Merge the release into `main` with the new version in `package.json`, then tag it:
+
+```bash
+git tag vX.Y.Z origin/main && git push origin vX.Y.Z
+```
+
+The `Release` workflow checks that the tag is on `main` and matches `package.json`, runs the tests, lint and type check, builds and checks the image `ghcr.io/unipept/unipept-web`, pushes it as `X.Y.Z`, `X.Y` and `X`, and creates the GitHub release. `X.Y` and `X` move only to the highest release. A tag `vX.Y.Z-<pre>` pushes only `X.Y.Z-<pre>` and creates a prerelease.
+
+The image serves the app with nginx on port 8080. It serves `/system/umgap/` from the UMGAP folder of the datapept share, which must be mounted read-only at `/mnt/datapept/umgap`. Every pull request builds and checks the image without pushing it.
+
 ## Adding custom icons
 
 The application uses a small custom icon font (`unipept-icons`) for icons not available in Material Design Icons. The SVG sources live in `custom-icons/` and the font is generated automatically by [fantasticon](https://github.com/tancredi/fantasticon) when you run `yarn dev` or `yarn build`. You can also regenerate it manually:
