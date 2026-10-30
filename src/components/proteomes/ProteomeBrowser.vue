@@ -209,7 +209,7 @@ const headers: DataTableHeader[] = [
     }
 ];
 
-const selectedProteomes = defineModel<any[]>({ default: [] });
+const selectedProteomes = defineModel<any[]>({ default: () => [] });
 
 const proteome = ref("");
 const validProteome = ref(true)

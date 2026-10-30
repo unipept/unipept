@@ -1,6 +1,9 @@
 name: Type check
 
-on: [push]
+on:
+  push:
+    branches: ["**"]
+  workflow_call:
 
 jobs:
   type_check:
