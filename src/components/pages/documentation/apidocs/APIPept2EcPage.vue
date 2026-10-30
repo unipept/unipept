@@ -64,7 +64,7 @@
             </h3>
             <p>
                 <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
-                When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>true</inline-code>.
                 When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching peptides to UniProt entries.
                 This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
                     to="/tpa"
@@ -365,7 +365,7 @@ const response3 = ref({});
 const response4 = ref({});
 
 const input = ref("");
-const equate_il = ref(false);
+const equate_il = ref(true);
 const extra = ref(false);
 
 const tryItResponse = ref({});

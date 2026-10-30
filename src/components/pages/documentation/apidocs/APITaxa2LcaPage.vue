@@ -27,7 +27,7 @@
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
+                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more taxon identifiers.
             </p>
 
             <h3 class="font-weight-medium">
@@ -46,9 +46,9 @@
 
             <static-alert title="Input size">
                 <p>
-                    Unipept puts no restrictions on the number of peptides passed to the <inline-code>input[]</inline-code> parameter.
-                    Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <initialism>GET</initialism>-request, exceed the maximum <initialism>URL</initialism> length.
-                    When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
+                    Unipept puts no restrictions on the number of taxon identifiers passed to the <inline-code>input[]</inline-code> parameter.
+                    Keep in mind that searching for lots of taxon identifiers at once may cause the request to timeout or, in the case of a <initialism>GET</initialism>-request, exceed the maximum <initialism>URL</initialism> length.
+                    When performing bulk searches, we suggest splitting the input set over requests of 100 taxon identifiers each.
                 </p>
             </static-alert>
 
@@ -89,6 +89,18 @@
                     Do not use this parameter unless the extra information fields are needed.
                 </p>
             </static-alert>
+
+            <h3 class="font-weight-medium">
+                validate_taxa
+            </h3>
+            <p>
+                <inline-code>validate_taxa</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
+                When not set explicitly, the parameter defaults to <inline-code>true</inline-code>.
+                When the parameter is set to <inline-code>true</inline-code>, taxa that are no longer valid in the <initialism>NCBI</initialism> taxonomy, as well as
+                taxa that carry no meaningful classification (such as <i>uncultured bacterium</i> or <i>Bacteria incertae sedis</i>), are left out of the
+                calculation. Setting it to <inline-code>false</inline-code> takes all taxa into account, which usually results in a less specific
+                lowest common ancestor.
+            </p>
         </header-body-card>
 
         <!-- Response Card -->
@@ -121,12 +133,10 @@
                 <li><inline-code>superclass_id</inline-code></li>
                 <li><inline-code>class_id</inline-code></li>
                 <li><inline-code>subclass_id</inline-code></li>
-                <li><inline-code>infraclass_id</inline-code></li>
                 <li><inline-code>superorder_id</inline-code></li>
                 <li><inline-code>order_id</inline-code></li>
                 <li><inline-code>suborder_id</inline-code></li>
                 <li><inline-code>infraorder_id</inline-code></li>
-                <li><inline-code>parvorder_id</inline-code></li>
                 <li><inline-code>superfamily_id</inline-code></li>
                 <li><inline-code>family_id</inline-code></li>
                 <li><inline-code>subfamily_id</inline-code></li>
@@ -138,6 +148,7 @@
                 <li><inline-code>species_subgroup_id</inline-code></li>
                 <li><inline-code>species_id</inline-code></li>
                 <li><inline-code>subspecies_id</inline-code></li>
+                <li><inline-code>strain_id</inline-code></li>
                 <li><inline-code>varietas_id</inline-code></li>
                 <li><inline-code>forma_id</inline-code></li>
             </ul>
@@ -155,12 +166,10 @@
                 <li><inline-code>superclass_name</inline-code></li>
                 <li><inline-code>class_name</inline-code></li>
                 <li><inline-code>subclass_name</inline-code></li>
-                <li><inline-code>infraclass_name</inline-code></li>
                 <li><inline-code>superorder_name</inline-code></li>
                 <li><inline-code>order_name</inline-code></li>
                 <li><inline-code>suborder_name</inline-code></li>
                 <li><inline-code>infraorder_name</inline-code></li>
-                <li><inline-code>parvorder_name</inline-code></li>
                 <li><inline-code>superfamily_name</inline-code></li>
                 <li><inline-code>family_name</inline-code></li>
                 <li><inline-code>subfamily_name</inline-code></li>
@@ -172,6 +181,7 @@
                 <li><inline-code>species_subgroup_name</inline-code></li>
                 <li><inline-code>species_name</inline-code></li>
                 <li><inline-code>subspecies_name</inline-code></li>
+                <li><inline-code>strain_name</inline-code></li>
                 <li><inline-code>varietas_name</inline-code></li>
                 <li><inline-code>forma_name</inline-code></li>
             </ul>
@@ -247,6 +257,23 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <b>validate_taxa</b>
+                            <br>
+                            <i style="font-size: 85%;">optional</i>
+                        </td>
+                        <td class="py-3">
+                            Ignore invalid and uninformative taxa when calculating the lowest common ancestor.
+                            <br>
+                            <div
+                                class="mt-3"
+                                style="font-size: 85%;"
+                            >
+                                Value: Must be <inline-code>true</inline-code> (default) or <inline-code>false</inline-code>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </v-table>
         </header-body-card>
@@ -304,7 +331,7 @@
 
         <example-card
             class="mt-5"
-            title="Retrieve all UniProt entries containing a single peptide, while equating I and L"
+            title="Retrieve the taxonomic lowest common ancestor and its lineage names for a given list of taxon identifiers"
             :response="response3"
         >
             <template #description>
@@ -364,7 +391,7 @@
                         v-model="names"
                         color="primary"
                         inset
-                        label="equate_il"
+                        label="names"
                         density="compact"
                         hide-details
                     />

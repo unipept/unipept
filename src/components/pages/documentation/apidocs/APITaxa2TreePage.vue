@@ -26,14 +26,23 @@
                 >
                     Parameters
                 </r-link> can be included in the request body (<initialism>POST</initialism>) or in the query string (<initialism>GET</initialism>).
-                The only required parameter is <inline-code>input[]</inline-code>, which takes one or more peptides.
             </p>
+
+            <static-alert title="GET and POST take different parameters">
+                <p>
+                    Unlike the other methods, taxa2tree does not accept the same parameters for both request types.
+                    A <initialism>GET</initialism>-request takes <inline-code>input[]</inline-code>, a plain list of taxon identifiers.
+                    A <initialism>POST</initialism>-request takes <inline-code>counts</inline-code>, an object that maps taxon identifiers onto the number of
+                    times each of them occurs. Sending <inline-code>input[]</inline-code> in a <initialism>POST</initialism>-body is silently ignored and returns
+                    an empty tree.
+                </p>
+            </static-alert>
 
             <h3 class="font-weight-medium">
                 input
             </h3>
             <p>
-                <inline-code>input[]</inline-code> is a required parameter that takes at least one taxon identifier.
+                <inline-code>input[]</inline-code> is the required parameter of a <initialism>GET</initialism>-request and takes at least one taxon identifier.
                 Unipept will compute and return the taxonomic tree for the given taxa.
                 To pass multiple taxon identifiers, simply add multiple <inline-code>input[]</inline-code> parameters (see <r-link
                     to="#example"
@@ -41,13 +50,31 @@
                 >
                     example
                 </r-link>).
+                Each identifier counts once towards the tree; pass <inline-code>counts</inline-code> instead if you need to weigh them.
+            </p>
+
+            <h3 class="font-weight-medium">
+                counts
+            </h3>
+            <p>
+                <inline-code>counts</inline-code> is the required parameter of a <initialism>POST</initialism>-request and takes an object with taxon identifiers
+                as keys and the number of occurrences of each taxon as values. The counts end up in the <inline-code>count</inline-code> and
+                <inline-code>self_count</inline-code> fields of the resulting tree, which lets you build a tree that is weighted by, for example, the number of
+                peptides assigned to each taxon (see <r-link
+                    to="#example2"
+                    router
+                >
+                    example
+                </r-link>).
+                It can be sent either as <initialism>JSON</initialism> (with a <inline-code>Content-Type: application/json</inline-code> header) or as
+                form-encoded <inline-code>counts[<i>taxon_id</i>]</inline-code> parameters.
             </p>
 
             <static-alert title="Input size">
                 <p>
-                    Unipept puts no restrictions on the number of peptides passed to the <inline-code>input[]</inline-code> parameter.
-                    Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a <initialism>GET</initialism>-request, exceed the maximum <initialism>URL</initialism> length.
-                    When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
+                    Unipept puts no restrictions on the number of taxon identifiers passed to the <inline-code>input[]</inline-code> parameter.
+                    Keep in mind that searching for lots of taxon identifiers at once may cause the request to timeout or, in the case of a <initialism>GET</initialism>-request, exceed the maximum <initialism>URL</initialism> length.
+                    When performing bulk searches, we suggest splitting the input set over requests of 100 taxon identifiers each.
                 </p>
             </static-alert>
         </header-body-card>
@@ -142,12 +169,12 @@
                 <tbody>
                     <tr>
                         <td>
-                            <b>Input[]</b>
+                            <b>counts</b>
                             <br>
                             <i style="font-size: 85%;">required</i>
                         </td>
                         <td class="py-3">
-                            List of taxon identifiers and associated counts to calculate the taxonomic tree for. Should be a <initialism>JSON</initialism>-object
+                            Taxon identifiers and associated counts to calculate the taxonomic tree for. Should be a <initialism>JSON</initialism>-object
                             with taxon id's as keys and counts as values.
                             <br>
                             <div
@@ -184,7 +211,7 @@
                 </r-link>).
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2tree -d 'input[]=817' -d 'input[]=329854' -d 'input[]=1099853'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2tree -d 'counts[817]=1' -d 'counts[329854]=1' -d 'counts[1099853]=1'
             </template>
             <template #get>
                 https://api.unipept.ugent.be/api/v2/taxa2tree.json?input[]=817&input[]=329854&input[]=1099853
@@ -192,9 +219,10 @@
         </example-card>
 
         <example-card
+            id="example2"
             class="mt-5"
-            title="Retrieve the taxonomic tree and its lineage for a given list of taxon identifiers"
-            :response="response1"
+            title="Calculate the taxonomic tree for a given list of taxon identifiers and their counts"
+            :response="response2"
         >
             <template #description>
                 This example calculates and retrieves the taxonomic tree of <i>Bacteroides fragilis</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=817">
@@ -203,10 +231,10 @@
                     329854
                 </r-link>) and <i>Coprobacter fastidiosus</i> (taxon id <r-link to="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1099853">
                     1099853
-                </r-link>).
+                </r-link>), weighted by counts of respectively 3, 5 and 7.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/taxa2tree --data '{"counts": {"817": 3, "329854": 5, "1099853": 7}}'
+                curl -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' api.unipept.ugent.be/api/v2/taxa2tree --data '{"counts": {"817": 3, "329854": 5, "1099853": 7}}'
             </template>
             <template #get>
                 Can only be performed with a POST-request
@@ -277,7 +305,7 @@ const doRequest = async () => {
 
 onBeforeMount(async () => {
     response1.value = await unipeptCommunicator.taxa2tree(["817", "329854", "1099853"]);
-    response2.value = {"gist":"https://gist.github.com/1d3e41bf41c4ca5b97aa802c58484393"}
+    response2.value = await unipeptCommunicator.taxa2treeCounts({ "817": 3, "329854": 5, "1099853": 7 });
 })
 </script>
 

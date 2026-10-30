@@ -63,7 +63,7 @@
                 </h3>
                 <p>
                     <inline-code>equate_il</inline-code> is an optional parameter and can either be <inline-code>true</inline-code> or <inline-code>false</inline-code>.
-                    When not set explicitly, the parameter defaults to <inline-code>false</inline-code>.
+                    When not set explicitly, the parameter defaults to <inline-code>true</inline-code>.
                     When the parameter is set to <inline-code>true</inline-code>, isoleucine (I) and leucine (L) are equated when matching peptides to UniProt entries.
                     This setting is similar to checking the <i>Equate I and L</i> checkbox when performing a search with the <r-link
                         to="/tpa"
@@ -96,15 +96,6 @@
                 </static-alert>
 
                 <h3 class="font-weight-medium">
-                    cutoff
-                </h3>
-                <p>
-                    <inline-code>cutoff</inline-code> is an optional parameter and can only be a <inline-code>natural number (>0)</inline-code>.
-                    When not set explicitly, the parameter defaults to <inline-code>10000</inline-code>. When an input peptide matches more than
-                    <inline-code>cutoff</inline-code> UniProt entries, the response will be truncated.
-                </p>
-
-                <h3 class="font-weight-medium">
                     tryptic
                 </h3>
                 <p>
@@ -133,6 +124,7 @@
                     <li><inline-code>uniprot_id</inline-code>: the UniProt accession number of the matching record</li>
                     <li><inline-code>protein_name</inline-code>: the name of the protein of the matching record</li>
                     <li><inline-code>taxon_id</inline-code>: the NCBI taxon id of the organism associated with the matching record</li>
+                    <li><inline-code>protein</inline-code>: the amino acid sequence of the matching record</li>
                 </ul>
 
                 When the <inline-code>extra</inline-code> parameter is set to <inline-code>true</inline-code>, objects contain the following additional fields extracted from the
@@ -142,6 +134,7 @@
                     <li><inline-code>taxon_name</inline-code>: the name of the organism associated with the matching UniProt entry</li>
                     <li><inline-code>ec_references</inline-code>: a space separated list of associated <initialism>EC</initialism> numbers</li>
                     <li><inline-code>go_references</inline-code>: a space separated list of associated <initialism>GO</initialism> terms</li>
+                    <li><inline-code>interpro_references</inline-code>: a space separated list of associated InterPro entry codes</li>
                 </ul>
             </v-card-text>
         </header-body-card>
@@ -213,23 +206,6 @@
                                 style="font-size: 85%;"
                             >
                                 Value: Must be <inline-code>true</inline-code> or <inline-code>false</inline-code> (default)
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>cutoff</b>
-                            <br>
-                            <i style="font-size: 85%;">optional</i>
-                        </td>
-                        <td class="py-3">
-                            Sets a limit on the amount of matched proteins that are used for the response.
-                            <br>
-                            <div
-                                class="mt-3"
-                                style="font-size: 85%;"
-                            >
-                                Value: Must be a <inline-code>natural number (>0)</inline-code>
                             </div>
                         </td>
                     </tr>
@@ -410,7 +386,7 @@ const response3 = ref({});
 const response4 = ref({});
 
 const input = ref("");
-const equate_il = ref(false);
+const equate_il = ref(true);
 const extra = ref(false);
 
 const tryItResponse = ref({});

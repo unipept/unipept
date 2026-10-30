@@ -167,12 +167,10 @@
                 <li><inline-code>superclass_id</inline-code></li>
                 <li><inline-code>class_id</inline-code></li>
                 <li><inline-code>subclass_id</inline-code></li>
-                <li><inline-code>infraclass_id</inline-code></li>
                 <li><inline-code>superorder_id</inline-code></li>
                 <li><inline-code>order_id</inline-code></li>
                 <li><inline-code>suborder_id</inline-code></li>
                 <li><inline-code>infraorder_id</inline-code></li>
-                <li><inline-code>parvorder_id</inline-code></li>
                 <li><inline-code>superfamily_id</inline-code></li>
                 <li><inline-code>family_id</inline-code></li>
                 <li><inline-code>subfamily_id</inline-code></li>
@@ -184,6 +182,7 @@
                 <li><inline-code>species_subgroup_id</inline-code></li>
                 <li><inline-code>species_id</inline-code></li>
                 <li><inline-code>subspecies_id</inline-code></li>
+                <li><inline-code>strain_id</inline-code></li>
                 <li><inline-code>varietas_id</inline-code></li>
                 <li><inline-code>forma_id</inline-code></li>
             </ul>
@@ -209,12 +208,10 @@
                 <li><inline-code>superclass_name</inline-code></li>
                 <li><inline-code>class_name</inline-code></li>
                 <li><inline-code>subclass_name</inline-code></li>
-                <li><inline-code>infraclass_name</inline-code></li>
                 <li><inline-code>superorder_name</inline-code></li>
                 <li><inline-code>order_name</inline-code></li>
                 <li><inline-code>suborder_name</inline-code></li>
                 <li><inline-code>infraorder_name</inline-code></li>
-                <li><inline-code>parvorder_name</inline-code></li>
                 <li><inline-code>superfamily_name</inline-code></li>
                 <li><inline-code>family_name</inline-code></li>
                 <li><inline-code>subfamily_name</inline-code></li>
@@ -226,6 +223,7 @@
                 <li><inline-code>species_subgroup_name</inline-code></li>
                 <li><inline-code>species_name</inline-code></li>
                 <li><inline-code>subspecies_name</inline-code></li>
+                <li><inline-code>strain_name</inline-code></li>
                 <li><inline-code>varietas_name</inline-code></li>
                 <li><inline-code>forma_name</inline-code></li>
             </ul>
@@ -269,23 +267,6 @@
                                 style="font-size: 85%;"
                             >
                                 Value: string
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>equate_il</b>
-                            <br>
-                            <i style="font-size: 85%;">optional</i>
-                        </td>
-                        <td class="py-3">
-                            Equate isoleucine (I) and leucine (L).
-                            <br>
-                            <div
-                                class="mt-3"
-                                style="font-size: 85%;"
-                            >
-                                Value: Must be <inline-code>true</inline-code> (default) or <inline-code>false</inline-code>
                             </div>
                         </td>
                     </tr>
@@ -425,10 +406,10 @@
                 This example retrieves all functional <initialism>EC</initialism>-numbers, <initialism>GO</initialism>-terms, InterPro entries and the lowest common ancestor associated with the protein <i><initialism>A0JP26</initialism></i> including the names of all ranks in the lineage.
             </template>
             <template #post>
-                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/protinfo -d 'input[]=A0JP26' -d 'domains=true' -d 'names=true'
+                curl -X POST -H 'Accept: application/json' api.unipept.ugent.be/api/v2/protinfo -d 'input[]=A0JP26' -d 'extra=true' -d 'names=true'
             </template>
             <template #get>
-                https://api.unipept.ugent.be/api/v2/protinfo.json?input[]=A0JP26&domains=true&names=true
+                https://api.unipept.ugent.be/api/v2/protinfo.json?input[]=A0JP26&extra=true&names=true
             </template>
         </example-card>
 
@@ -521,7 +502,6 @@ const response5 = ref({});
 const response6 = ref({});
 
 const input = ref("");
-const equate_il = ref(false);
 const extra = ref(false);
 const domains = ref(false);
 const names = ref(false);
@@ -529,7 +509,7 @@ const names = ref(false);
 const tryItResponse = ref({});
 
 const doRequest = async () => {
-    tryItResponse.value = await unipeptCommunicator.peptinfo(input.value.split('\n'), equate_il.value, extra.value, domains.value);
+    tryItResponse.value = await unipeptCommunicator.protinfo(input.value.split('\n'), extra.value, domains.value, names.value);
 }
 
 onBeforeMount(async () => {
