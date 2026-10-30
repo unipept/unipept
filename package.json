@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "types:check": "vue-tsc --noEmit",
     "prebuild": "fantasticon",
-    "build": "vite build && ./post-build.sh",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint",
     "test": "vitest run",
