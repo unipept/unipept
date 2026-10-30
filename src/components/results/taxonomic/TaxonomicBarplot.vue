@@ -143,7 +143,6 @@
     barplotSettings.value.chart.padding.right = 30;
     barplotSettings.value.legend.padding.top = 40;
     barplotSettings.value.legend.padding.left = 20;
-    barplotSettings.value.height = 250 + 100 * props.analyses.length;
     barplotSettings.value.showBarLabel = props.analyses.length > 1;
     barplotSettings.value.barLabelWidth = 200;
     barplotSettings.value.displayMode = "relative";
@@ -228,17 +227,14 @@
                 items
             });
         }
-        barplotSettings.value.height = barplotSettings.value.barHeight * props.analyses.length + 100 + Math.ceil((taxonCount.value + 1) / 3) * 30;
         barData.value = createdBars;
     }
 
     onMounted(() => {
         const observer = new ResizeObserver(() => {
             containerWidth.value = barplotWrapper.value?.offsetWidth ?? 800;
-            // containerHeight.value = barplotWrapper.value?.offsetHeight ?? props.height;
 
             barplotSettings.value.width = containerWidth.value;
-            // barplotSettings.value.height = containerHeight.value;
         });
 
         if (barplotWrapper.value) {
