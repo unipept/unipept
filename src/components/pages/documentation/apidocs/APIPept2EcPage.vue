@@ -117,10 +117,7 @@
                     <inline-code>cutoff_used</inline-code>: <inline-code>true</inline-code> if the number of matched proteins exceeded the cutoff (default: 10,000 proteins) and the response was truncated; <inline-code>false</inline-code> otherwise.
                 </li>
                 <li>
-                    <inline-code>total_protein_count</inline-code>: the amount of proteins matched with the given peptide that carry
-                    at least one functional annotation. This counts any annotation, so a protein carrying only a
-                    <initialism>GO</initialism>-term or an InterPro entry, and no <initialism>EC</initialism>-number, is included here too.
-                    Proteins matched with the peptide but carrying no functional annotation at all are not counted.
+                    <inline-code>total_protein_count</inline-code>: total amount of proteins matched with the given peptide.
                 </li>
                 <li>
                     <inline-code>ec</inline-code>: A list of <initialism>JSON</initialism> objects that each represent an <initialism>EC</initialism>-number associated with the current peptide.
