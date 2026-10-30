@@ -25,7 +25,7 @@ jobs:
       contents: read
       packages: write
     env:
-      IMAGE: ghcr.io/unipept/unipept-web
+      IMAGE: ghcr.io/unipept/unipept
       VERSION: ${{ inputs.version || 'test' }}
       MINOR: ${{ inputs.minor }}
     steps:
