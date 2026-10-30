@@ -108,8 +108,8 @@ import Close from './icons/Close.vue';
 import Open from './icons/Open.vue';
 import TreeviewCheckBox from './TreeviewCheckBox.vue';
 
-const selectedItems = defineModel<TreeviewItem[]>("items", { default: [] });
-const selectedText = defineModel<TreeviewItem>("item", { default: undefined });
+const selectedItems = defineModel<TreeviewItem[]>("items", { default: () => [] });
+const selectedText = defineModel<TreeviewItem>("item");
 
 const {
     node,

@@ -126,8 +126,8 @@ const props = defineProps<{
     computeTaxonCount: (items: T[]) => Promise<number>;
 }>();
 
-const selectedItems = defineModel<T[]>("selectedItems", {default: []});
-const invalidItems = defineModel<string[]>("invalidItems", {default: []});
+const selectedItems = defineModel<T[]>("selectedItems", {default: () => []});
+const invalidItems = defineModel<string[]>("invalidItems", {default: () => []});
 
 const emit = defineEmits<{
     (e: 'uploadFile', file: File, callback: () => void): void,

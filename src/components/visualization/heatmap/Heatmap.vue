@@ -146,7 +146,7 @@ const highlightedCell: Ref<{ rowIdx: number, colIdx: number }> = ref({
     rowIdx: -1,
     colIdx: -1
 });
-const selectedCell = defineModel("selected-cell", { default: { rowIdx: -1, colIdx: -1 } });
+const selectedCell = defineModel<{ rowIdx: number; colIdx: number }>("selected-cell", { default: () => ({ rowIdx: -1, colIdx: -1 }) });
 
 const heatmapContainer = ref<HTMLElement>();
 
