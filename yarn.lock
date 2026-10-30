@@ -1529,6 +1529,11 @@ cli-color@^2.0.4:
     memoizee "^0.4.15"
     timers-ext "^0.1.7"
 
+coi-serviceworker@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/coi-serviceworker/-/coi-serviceworker-0.1.7.tgz#a105739386bf7101cdbaa32a167c576ca3376200"
+  integrity sha512-bjSUqEngCPOkErY2vbyWsaIGCNRODYzlNycaREVw5s12/C8SM+RnRUUeX6pZbTtov6C52ZLY/+tvHK+BDxuUuA==
+
 color-convert@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-2.0.1.tgz#72d3a68d598c9bdb3af2ad1e84f21d896abd4de3"

@@ -6,10 +6,34 @@ import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
 
 // Utilities
 import { defineConfig, configDefaults } from "vitest/config"
+import type { Plugin } from "vite"
+import { readFileSync } from "node:fs"
 import { fileURLToPath, URL } from "node:url"
 
-// If the app is being deployed by GitHub Actions, we need to set the base URL to /unipept.
-const baseURL = process.env.CI ? "/unipept" : "/";
+// The GitHub Pages build (PAGES=true in build_for_pages.yml) is served under /unipept/.
+const pages = process.env.PAGES === "true";
+const baseURL = pages ? "/unipept/" : "/";
+
+/**
+ * GitHub Pages cannot send the COOP and COEP headers that SharedArrayBuffer needs, so the Pages build loads
+ * coi-serviceworker, which adds them from a service worker. In the image, nginx sends them.
+ */
+function crossOriginIsolation(): Plugin {
+    return {
+        name: "coi-serviceworker",
+        apply: "build",
+        generateBundle() {
+            this.emitFile({
+                type: "asset",
+                fileName: "coi-serviceworker.js",
+                source: readFileSync(new URL("./node_modules/coi-serviceworker/coi-serviceworker.min.js", import.meta.url))
+            });
+        },
+        transformIndexHtml: () => [
+            { tag: "script", attrs: { src: `${baseURL}coi-serviceworker.js` }, injectTo: "head-prepend" }
+        ]
+    };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -33,6 +57,7 @@ export default defineConfig({
                 configFile: "./src/styles/settings.scss"
             }
         }),
+        pages && crossOriginIsolation(),
     ],
     define: {
         "process.env": {},
