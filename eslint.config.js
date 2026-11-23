@@ -53,7 +53,6 @@ export default defineConfig([
             'vue/multiline-html-element-content-newline': 'off',
             'vue/mustache-interpolation-spacing': 'off',
             'vue/no-mutating-props': 'off',
-            'vue/no-side-effects-in-computed-properties': 'off',
             'vue/no-spaces-around-equal-signs-in-attribute': 'off',
             'vue/no-template-shadow': 'off',
             'vue/no-unused-vars': 'off',
