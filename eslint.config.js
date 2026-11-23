@@ -61,7 +61,6 @@ export default defineConfig([
             'vue/singleline-html-element-content-newline': 'off',
             'vue/v-on-event-hyphenation': 'off',
             'vue/v-slot-style': 'off',
-            'vue/valid-v-on': 'off',
         },
     },
 ]);
