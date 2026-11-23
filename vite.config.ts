@@ -10,7 +10,7 @@ import type { Plugin } from "vite"
 import { readFileSync } from "node:fs"
 import { fileURLToPath, URL } from "node:url"
 
-// The GitHub Pages build (PAGES=true in build_for_pages.yml) is served under /unipept/.
+// The GitHub Pages build (PAGES=true in pages.yml) is served under /unipept/.
 const pages = process.env.PAGES === "true";
 const baseURL = pages ? "/unipept/" : "/";
 

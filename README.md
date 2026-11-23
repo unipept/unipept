@@ -52,7 +52,7 @@ We have detailed guides on how to set up all of these components on our Wiki:
 
 ## Releasing
 
-All work goes to `main` through pull requests. To try a branch before it is merged or released, run the "Deploy static content to Pages" workflow on that branch (Actions → Run workflow). It builds the app at <https://unipept.github.io/unipept/>, and each run replaces the previous one.
+All work goes to `main` through pull requests. To try a branch before it is merged or released, run the "Pages" workflow on that branch (Actions → Run workflow). It builds the app at <https://unipept.github.io/unipept/>, and each run replaces the previous one.
 
 A release is a tag on `main`. Merge a pull request that sets the new version in `package.json`, then tag it:
 
