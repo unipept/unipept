@@ -10,6 +10,10 @@ async function openProject(page: Page) {
     await expect(page.locator('body')).not.toContainText('An error occurred while analysing this sample');
 }
 
+function treeCheckbox(scope: Locator, label: string): Locator {
+    return scope.locator(`xpath=.//div[contains(@class,"text")][starts-with(normalize-space(), "${label} ")]/preceding-sibling::div[contains(@class,"icon")][1]`);
+}
+
 async function countOf(locator: Locator): Promise<number> {
     return Number((await locator.textContent())!.match(/\d+/)![0]);
 }
@@ -64,7 +68,7 @@ async function checkSelectionTable(page: Page, root: Locator) {
     // Filter on one EC number, then remove its chip
     await openFilters();
     await dialog.getByPlaceholder('Search EC numbers or names...').fill('6.3.4.3');
-    await dialog.locator('xpath=.//div[contains(@class,"text")][starts-with(normalize-space(), "6.3.4.3 ")]/preceding-sibling::div[contains(@class,"icon")][1]').click();
+    await treeCheckbox(dialog, '6.3.4.3').click();
     const ecChip = dialog.locator('.v-chip', {hasText: '6.3.4.3'});
     await expect(ecChip).toBeVisible();
     await expect(count).not.toHaveText(new RegExp(`^${all} `));
@@ -114,7 +118,7 @@ async function checkSelectionTable(page: Page, root: Locator) {
     await expect(dialog).toBeHidden();
 }
 
-async function checkVisualization(page: Page, selection: Locator, legend: string[]) {
+async function checkVisualization(page: Page, selection: Locator, legend: string[], checkSettings: (root: Locator) => Promise<void>) {
     await selection.getByText('map00010').click();
     const root = page.locator('.v-window-item--active', {has: page.getByRole('button', {name: 'Select a different pathway'})}).last();
     const controls = root.locator('.control-bar');
@@ -172,6 +176,9 @@ async function checkVisualization(page: Page, selection: Locator, legend: string
     await download.locator('button:has(.mdi-close)').click();
     await expect(download).toBeHidden();
 
+    await root.getByText('PathwayPilot settings').click();
+    await checkSettings(root);
+
     await root.getByRole('button', {name: 'Select a different pathway'}).click();
     await expect(selection.getByText('map01100')).toBeVisible();
 }
@@ -188,7 +195,35 @@ test('PathwayPilot / Single analysis: select, filter and visualize a pathway', a
     const root = page.locator('.v-window-item--active', {hasText: 'PathwayPilot maps your metaproteomics data'}).last();
 
     await checkSelectionTable(page, root);
-    await checkVisualization(page, root, ['Sample 7']);
+    await checkVisualization(page, root, ['Sample 7'], async (viz) => {
+        const legend = viz.locator('.legend-overlay');
+        const differential = viz.getByRole('checkbox', {name: 'Show differential'});
+        const gradient = legend.locator('.differential-gradient');
+        await expect(differential).toBeDisabled();
+
+        // One taxon replaces the sample in the legend
+        await treeCheckbox(viz, 'Bacillota').click();
+        await expect(viz.getByText('(1/6 selected)')).toBeVisible();
+        await expect(legend).toContainText('Bacillota');
+        await expect(legend).not.toContainText('Sample 7');
+        await expect(differential).toBeDisabled();
+
+        // Two taxa enable the differential view
+        await treeCheckbox(viz, 'Bacteroidota').click();
+        await expect(viz.getByText('(2/6 selected)')).toBeVisible();
+        await expect(legend).toContainText('Bacteroidota');
+        await expect(differential).toBeEnabled();
+        await differential.check();
+        await expect(gradient).toBeVisible();
+        await differential.uncheck();
+        await expect(gradient).toBeHidden();
+
+        // Removing both taxa restores the sample
+        await treeCheckbox(viz, 'Bacillota').click();
+        await treeCheckbox(viz, 'Bacteroidota').click();
+        await expect(legend).toContainText('Sample 7');
+        await expect(differential).toBeDisabled();
+    });
 });
 
 test('PathwayPilot / Comparative analysis: select, filter and visualize a pathway', async ({page}) => {
@@ -206,5 +241,28 @@ test('PathwayPilot / Comparative analysis: select, filter and visualize a pathwa
     await root.scrollIntoViewIfNeeded();
 
     await checkSelectionTable(page, root);
-    await checkVisualization(page, root, ['Sample 7', 'Sample 8']);
+    await checkVisualization(page, root, ['Sample 7', 'Sample 8'], async (viz) => {
+        const legend = viz.locator('.legend-overlay');
+        const differential = viz.getByRole('checkbox', {name: 'Show differential'});
+        const gradient = legend.locator('.differential-gradient');
+
+        // Two analyses enable the differential view
+        await expect(differential).toBeEnabled();
+        await differential.check();
+        await expect(gradient).toBeVisible();
+        await expect(legend).toContainText('Sample 7');
+        await expect(legend).toContainText('Sample 8');
+        await differential.uncheck();
+        await expect(gradient).toBeHidden();
+
+        // Grouping replaces the analyses in the legend
+        const grouping = viz.getByRole('checkbox', {name: 'Enable grouping'});
+        await grouping.check();
+        await expect(legend).toContainText('Human Gut');
+        await expect(legend).not.toContainText('Sample 8');
+        await expect(differential).toBeDisabled();
+        await grouping.uncheck();
+        await expect(legend).toContainText('Sample 8');
+        await expect(differential).toBeEnabled();
+    });
 });
