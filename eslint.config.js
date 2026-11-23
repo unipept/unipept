@@ -1,32 +1,23 @@
 import { defineConfig } from 'eslint/config';
-import vuePlugin from 'eslint-plugin-vue';
-import vueParser from 'vue-eslint-parser';
+import pluginVue from 'eslint-plugin-vue';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
     {
-        files: ['**/*.ts', '**/*.tsx', '**/*.vue'], // Include TypeScript and Vue files
-        ignores: ['node_modules', 'dist', 'build'], // Ignore common folders
+        ignores: ['dist/**', 'public/**', 'playwright-report/**', 'test-results/**'],
+    },
+    ...tseslint.configs.recommended,
+    ...pluginVue.configs['flat/recommended'],
+    {
+        files: ['**/*.vue'],
         languageOptions: {
-            parser: vueParser, // Use vue-eslint-parser for Vue files
             parserOptions: {
-                parser: tseslint.parser, // Use TypeScript parser for `<script>` blocks
-                ecmaVersion: 2021,
-                sourceType: 'module',
-                extraFileExtensions: ['.vue'], // Support .vue files
+                parser: tseslint.parser,
+                extraFileExtensions: ['.vue'],
             },
         },
-        plugins: {
-            vue: vuePlugin,
-            '@typescript-eslint': tseslint.plugin,
-        },
-        settings: {
-            'import/resolver': {
-                node: {
-                    extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
-                },
-            },
-        },
+    },
+    {
         rules: {
             // Vue rules
             'vue/require-default-prop': 'off',
@@ -45,9 +36,38 @@ export default defineConfig([
         },
     },
     {
-        files: ['**/*.js'], // Separate rules for JavaScript files
+        // Off until their findings are fixed, one PR per rule.
         rules: {
-            '@typescript-eslint/no-unused-vars': 'off', // Disable unused var check for JS
+            '@typescript-eslint/no-empty-object-type': 'off',
+            '@typescript-eslint/no-unused-vars': 'off',
+            '@typescript-eslint/triple-slash-reference': 'off',
+            'prefer-const': 'off',
+            'vue/attribute-hyphenation': 'off',
+            'vue/attributes-order': 'off',
+            'vue/first-attribute-linebreak': 'off',
+            'vue/html-closing-bracket-newline': 'off',
+            'vue/html-closing-bracket-spacing': 'off',
+            'vue/html-quotes': 'off',
+            'vue/html-self-closing': 'off',
+            'vue/max-attributes-per-line': 'off',
+            'vue/multiline-html-element-content-newline': 'off',
+            'vue/mustache-interpolation-spacing': 'off',
+            'vue/no-dupe-keys': 'off',
+            'vue/no-mutating-props': 'off',
+            'vue/no-ref-as-operand': 'off',
+            'vue/no-side-effects-in-computed-properties': 'off',
+            'vue/no-spaces-around-equal-signs-in-attribute': 'off',
+            'vue/no-template-shadow': 'off',
+            'vue/no-unused-vars': 'off',
+            'vue/no-use-v-if-with-v-for': 'off',
+            'vue/no-v-html': 'off',
+            'vue/require-prop-types': 'off',
+            'vue/require-v-for-key': 'off',
+            'vue/return-in-computed-property': 'off',
+            'vue/singleline-html-element-content-newline': 'off',
+            'vue/v-on-event-hyphenation': 'off',
+            'vue/v-slot-style': 'off',
+            'vue/valid-v-on': 'off',
         },
     },
 ]);
