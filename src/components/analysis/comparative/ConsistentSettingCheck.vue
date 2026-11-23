@@ -15,8 +15,14 @@
                 </template>
                 <div>
                     <span>The following configuration is reported for the <span class="font-weight-bold">&quot;{{ checkName }}&quot;</span> setting per sample:</span>
-                    <ul v-for="analysis of selectedAnalyses">
-                        <li class="text-body-medium">{{ analysis.name }} &rarr; {{ checkTest(analysis) }}</li>
+                    <ul>
+                        <li
+                            v-for="analysis of selectedAnalyses"
+                            :key="analysis.id"
+                            class="text-body-medium"
+                        >
+                            {{ analysis.name }} &rarr; {{ checkTest(analysis) }}
+                        </li>
                     </ul>
                 </div>
             </v-tooltip>

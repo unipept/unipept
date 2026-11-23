@@ -152,7 +152,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="[row_idx, row] of rows.entries()">
+                                <tr
+                                    v-for="[row_idx, row] of rows.entries()"
+                                    :key="row_idx"
+                                >
                                     <td class="bg-grey-lighten-4 first-column text-right font-weight-bold">
                                         {{ row_idx + 1 }}
                                     </td>

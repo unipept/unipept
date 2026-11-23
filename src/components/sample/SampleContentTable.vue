@@ -19,27 +19,29 @@
             </tr>
         </thead>
         <tbody>
-            <tr
-                v-for="([seq, intensity], i) of props.sample.intensities.entries()"
-                v-if="props.sample.intensities"
-                :key="`${seq}_${intensity}`"
-            >
-                <td class="bg-grey-lighten-4 text-right">
-                    {{ i + 1 }}
-                </td>
-                <td>{{ seq }}</td>
-                <td>{{ intensity }}</td>
-            </tr>
-            <tr
-                v-for="(seq, i) of props.sample.rawPeptides.split(/\r?\n/)"
-                v-else
-                :key="seq"
-            >
-                <td class="bg-grey-lighten-4 text-right">
-                    {{ i + 1 }}
-                </td>
-                <td>{{ seq }}</td>
-            </tr>
+            <template v-if="props.sample.intensities">
+                <tr
+                    v-for="([seq, intensity], i) of props.sample.intensities.entries()"
+                    :key="`${seq}_${intensity}`"
+                >
+                    <td class="bg-grey-lighten-4 text-right">
+                        {{ i + 1 }}
+                    </td>
+                    <td>{{ seq }}</td>
+                    <td>{{ intensity }}</td>
+                </tr>
+            </template>
+            <template v-else>
+                <tr
+                    v-for="(seq, i) of props.sample.rawPeptides.split(/\r?\n/)"
+                    :key="i"
+                >
+                    <td class="bg-grey-lighten-4 text-right">
+                        {{ i + 1 }}
+                    </td>
+                    <td>{{ seq }}</td>
+                </tr>
+            </template>
         </tbody>
     </v-table>
 </template>

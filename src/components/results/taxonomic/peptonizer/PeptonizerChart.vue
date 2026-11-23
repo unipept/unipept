@@ -22,10 +22,7 @@
             Peptonizer 2000 has used default values instead.
             This may impact the accuracy of your analysis results.
             For optimal performance, please provide scores from your search engine using the
-            <a
-                class="alert-link"
-                @click=""
-            >sample management dialog</a>.
+            sample management dialog.
         </v-alert>
         <v-alert
             v-else

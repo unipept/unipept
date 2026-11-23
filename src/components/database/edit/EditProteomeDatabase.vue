@@ -146,7 +146,7 @@ const updateDatabase = () => {
 }
 
 const initializeDialog = async () => {
-    if (dialogOpen && filter.value) {
+    if (dialogOpen.value && filter.value) {
         databaseName.value = filter.value.name!;
 
         const proteomeData = filter.value.data as string[];

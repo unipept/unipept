@@ -222,7 +222,7 @@ const deleteAllDialogOpen = ref(false);
 const projectToDelete = ref<string>("");
 
 const sortedProjects = computed(() => {
-    return props.projects.sort((a, b) => {
+    return props.projects.toSorted((a, b) => {
         return b.lastAccessed.getTime() - a.lastAccessed.getTime();
     });
 })
