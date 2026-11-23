@@ -294,6 +294,7 @@ const currentStepTitle = computed(() => {
     } else if (currentStep.value === 3) {
         return "Select input columns";
     }
+    return "";
 });
 
 const cancel = () => {
