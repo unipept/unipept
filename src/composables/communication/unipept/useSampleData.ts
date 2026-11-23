@@ -1,4 +1,5 @@
 import {ref} from "vue";
+import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
 
 export interface SampleData {
     id: number
@@ -15,7 +16,7 @@ export interface SampleDataset {
 }
 
 export default function useSampleData(
-    baseUrl = "https://api.unipept.ugent.be",
+    baseUrl = DEFAULT_API_BASE_URL,
 ) {
     const samples = ref<SampleData[]>([]);
 

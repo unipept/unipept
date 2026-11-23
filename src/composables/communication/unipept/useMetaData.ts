@@ -1,7 +1,8 @@
 import {ref} from "vue";
+import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
 
 export default function useMetaData(
-    baseUrl = "https://api.unipept.ugent.be",
+    baseUrl = DEFAULT_API_BASE_URL,
 ) {
     const databaseVersion = ref<string>("");
 

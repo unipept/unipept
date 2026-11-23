@@ -45,6 +45,8 @@ This repository only contains the code for the web application of Unipept. To ru
 *   The **Unipept Database**
 *   The **Unipept API**
 
+Point the app to your own API with `VITE_API_BASE_URL` in `.env.local`, for example `VITE_API_BASE_URL=https://api.example.org`.
+
 We have detailed guides on how to set up all of these components on our Wiki:
 [https://github.com/unipept/unipept/wiki](https://github.com/unipept/unipept/wiki)
 

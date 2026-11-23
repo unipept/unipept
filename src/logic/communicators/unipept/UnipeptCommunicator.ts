@@ -1,7 +1,8 @@
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
+import { DEFAULT_API_BASE_URL } from "@/logic/Constants";
 
-const base = "https://api.unipept.ugent.be/api/v2/";
-const privateBase = "https://api.unipept.ugent.be/private_api/"
+const base = `${DEFAULT_API_BASE_URL}/api/v2/`;
+const privateBase = `${DEFAULT_API_BASE_URL}/private_api/`;
 
 export default class UnipeptCommunicator {
     public async pept2prot(input: string[], equate_il = true, extra = false): Promise<string[]> {
