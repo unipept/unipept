@@ -56,7 +56,6 @@ export default defineConfig([
             'vue/no-spaces-around-equal-signs-in-attribute': 'off',
             'vue/no-template-shadow': 'off',
             'vue/no-unused-vars': 'off',
-            'vue/no-use-v-if-with-v-for': 'off',
             'vue/no-v-html': 'off',
             'vue/require-prop-types': 'off',
             'vue/singleline-html-element-content-newline': 'off',
