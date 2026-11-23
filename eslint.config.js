@@ -59,7 +59,6 @@ export default defineConfig([
             'vue/no-use-v-if-with-v-for': 'off',
             'vue/no-v-html': 'off',
             'vue/require-prop-types': 'off',
-            'vue/require-v-for-key': 'off',
             'vue/singleline-html-element-content-newline': 'off',
             'vue/v-on-event-hyphenation': 'off',
             'vue/v-slot-style': 'off',
