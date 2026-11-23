@@ -383,6 +383,13 @@ const applyHint = (query: string) => {
 onBeforeUnmount(() => {
     if (blurTimeout) clearTimeout(blurTimeout);
 });
+
+const router = useRouter();
+
+const openPeptideAnalysis = (peptide: string) => {
+    const { href } = router.resolve({ name: "spaResult", params: { sequence: peptide }, query: { equate: "true" } });
+    window.open(href, "_blank");
+};
 </script>
 
 <script lang="ts">
@@ -434,13 +441,6 @@ const headers: DataTableHeader[] = [
 ];
 
 export type { AnalysisSummaryTableItem } from "@/composables/useTableSortFilter";
-
-const router = useRouter();
-
-const openPeptideAnalysis = (peptide: string) => {
-    const { href } = router.resolve({ name: "spaResult", params: { sequence: peptide }, query: { equate: "true" } });
-    window.open(href, "_blank");
-};
 </script>
 
 <style scoped>
