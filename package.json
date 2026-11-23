@@ -2,10 +2,14 @@
   "name": "unipept",
   "version": "6.6.0",
   "type": "module",
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": ">=26"
+  },
   "scripts": {
     "predev": "fantasticon",
     "dev": "vite --host",
-    "types:check": "vue-tsc --noEmit",
+    "typecheck": "vue-tsc --noEmit",
     "prebuild": "fantasticon",
     "build": "vite build",
     "preview": "vite preview",
