@@ -39,6 +39,8 @@ jobs:
           platforms: linux/amd64
           labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
           pull: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           load: true
           tags: ${{ env.IMAGE }}:${{ env.VERSION }}
       - name: Check that the image serves the app and the headers
