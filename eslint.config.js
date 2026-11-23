@@ -54,7 +54,6 @@ export default defineConfig([
             'vue/mustache-interpolation-spacing': 'off',
             'vue/no-dupe-keys': 'off',
             'vue/no-mutating-props': 'off',
-            'vue/no-ref-as-operand': 'off',
             'vue/no-side-effects-in-computed-properties': 'off',
             'vue/no-spaces-around-equal-signs-in-attribute': 'off',
             'vue/no-template-shadow': 'off',

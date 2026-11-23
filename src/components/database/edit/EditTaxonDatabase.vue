@@ -146,7 +146,7 @@ const updateDatabase = () => {
 }
 
 const initializeDialog = async () => {
-    if (dialogOpen && filter.value) {
+    if (dialogOpen.value && filter.value) {
         databaseName.value = filter.value.name!;
 
         const taxonData = filter.value.data as number[];
