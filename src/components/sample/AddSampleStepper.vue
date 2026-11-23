@@ -96,7 +96,7 @@
                     <div v-if="sampleCreationType === 1">
                         <add-sample-card
                             :is-unique="isUnique"
-                            :sample="sample"
+                            v-model:sample="sample"
                             class="mb-4"
                         />
 
@@ -209,7 +209,7 @@
                     <div v-if="sampleCreationType === 2">
                         <column-file-import
                             v-model="validFileImport"
-                            :sample="sample"
+                            v-model:sample="sample"
                             :column-file="intensitiesFile!"
                             class="mb-4"
                         />
