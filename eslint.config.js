@@ -52,7 +52,6 @@ export default defineConfig([
             'vue/max-attributes-per-line': 'off',
             'vue/multiline-html-element-content-newline': 'off',
             'vue/mustache-interpolation-spacing': 'off',
-            'vue/no-dupe-keys': 'off',
             'vue/no-mutating-props': 'off',
             'vue/no-side-effects-in-computed-properties': 'off',
             'vue/no-spaces-around-equal-signs-in-attribute': 'off',

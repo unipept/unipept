@@ -121,7 +121,6 @@ const props = defineProps<{
     chipBackgroundColor: (item: T) => string;
     chipVariant: (item: T) => 'flat' | 'plain';
     itemDisplayName: (item: T) => string;
-    invalidItems: string[];
     computeProteinCount: (items: T[]) => Promise<number>;
     computeTaxonCount: (items: T[]) => Promise<number>;
 }>();
