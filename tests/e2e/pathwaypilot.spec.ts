@@ -1,6 +1,13 @@
+import {readFile} from 'node:fs/promises';
 import {test, expect, type Page, type Locator} from './fixtures';
 
+const CSV_HEADER = ['peptide', 'peptide_count', 'taxon_id', 'taxon_rank', 'taxon_name', 'pathways', 'pathway_names'];
+
 async function openProject(page: Page) {
+    // Without the File System Access API, the CSV export falls back to a regular download.
+    await page.addInitScript(() => {
+        delete (window as {showSaveFilePicker?: unknown}).showSaveFilePicker;
+    });
     await page.goto('/mpa');
     await page.setInputFiles('input[accept=".unipept"]', 'tests/e2e/resources/project_v6_3_4.unipept');
     await page.locator('.v-dialog', {hasText: 'Upload project'}).getByRole('button', {name: 'Upload project'}).click();
@@ -118,7 +125,7 @@ async function checkSelectionTable(page: Page, root: Locator) {
     await expect(dialog).toBeHidden();
 }
 
-async function checkVisualization(page: Page, selection: Locator, legend: string[], checkSettings: (root: Locator) => Promise<void>) {
+async function checkVisualization(page: Page, selection: Locator, legend: string[], csvHeader: string[], checkSettings: (root: Locator) => Promise<void>) {
     await selection.getByText('map00010').click();
     const root = page.locator('.v-window-item--active', {has: page.getByRole('button', {name: 'Select a different pathway'})}).last();
     const controls = root.locator('.control-bar');
@@ -176,6 +183,21 @@ async function checkVisualization(page: Page, selection: Locator, legend: string
     await download.locator('button:has(.mdi-close)').click();
     await expect(download).toBeHidden();
 
+    // CSV and TSV export
+    for (const {item, separator, filename} of [
+        {item: 'Comma separated (CSV)', separator: ',', filename: 'pathwaypilot_export.csv'},
+        {item: 'Tab separated (TSV)', separator: '\t', filename: 'pathwaypilot_export.tsv'},
+    ]) {
+        const downloadEvent = page.waitForEvent('download', {timeout: 60000});
+        await root.getByRole('button', {name: 'Export', exact: true}).click();
+        await page.locator('.v-overlay--active .v-list-item', {hasText: item}).click();
+        const file = await downloadEvent;
+        expect(file.suggestedFilename()).toBe(filename);
+        const lines = (await readFile(await file.path(), 'utf8')).split('\n');
+        expect(lines[0]).toBe(csvHeader.join(separator));
+        expect(lines.length).toBeGreaterThan(1);
+    }
+
     await root.getByText('PathwayPilot settings').click();
     await checkSettings(root);
 
@@ -195,7 +217,7 @@ test('PathwayPilot / Single analysis: select, filter and visualize a pathway', a
     const root = page.locator('.v-window-item--active', {hasText: 'PathwayPilot maps your metaproteomics data'}).last();
 
     await checkSelectionTable(page, root);
-    await checkVisualization(page, root, ['Sample 7'], async (viz) => {
+    await checkVisualization(page, root, ['Sample 7'], CSV_HEADER, async (viz) => {
         const legend = viz.locator('.legend-overlay');
         const differential = viz.getByRole('checkbox', {name: 'Show differential'});
         const gradient = legend.locator('.differential-gradient');
@@ -241,7 +263,7 @@ test('PathwayPilot / Comparative analysis: select, filter and visualize a pathwa
     await root.scrollIntoViewIfNeeded();
 
     await checkSelectionTable(page, root);
-    await checkVisualization(page, root, ['Sample 7', 'Sample 8'], async (viz) => {
+    await checkVisualization(page, root, ['Sample 7', 'Sample 8'], ['group', 'sample', ...CSV_HEADER], async (viz) => {
         const legend = viz.locator('.legend-overlay');
         const differential = viz.getByRole('checkbox', {name: 'Show differential'});
         const gradient = legend.locator('.differential-gradient');
