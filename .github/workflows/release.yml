@@ -45,20 +45,12 @@ jobs:
             exit 1
           fi
 
-  test:
+  ci:
     needs: guard
-    uses: ./.github/workflows/test.yml
-
-  lint:
-    needs: guard
-    uses: ./.github/workflows/lint.yml
-
-  type_check:
-    needs: guard
-    uses: ./.github/workflows/type_check.yml
+    uses: ./.github/workflows/ci.yml
 
   image:
-    needs: [guard, test, lint, type_check]
+    needs: [guard, ci]
     permissions:
       contents: read
       packages: write
