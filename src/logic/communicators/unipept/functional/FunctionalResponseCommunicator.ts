@@ -38,7 +38,7 @@ export default abstract class FunctionalResponseCommunicator<T extends Functiona
     private async doProcess(codes: string[]): Promise<FunctionalDefinition<T>[]> {
         const responses: FunctionalDefinition<T>[] = [];
 
-        const { databaseVersion, process: processMetadata } = useMetaData();
+        const { databaseVersion, process: processMetadata } = useMetaData(this.apiBaseUrl);
         await processMetadata();
         const uniprotVersion = databaseVersion.value;
 

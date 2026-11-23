@@ -315,6 +315,7 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from "vue";
+import { useRouter } from "vue-router";
 import { SingleAnalysisStore } from "@/store/SingleAnalysisStore";
 import { useTableSortFilter } from "@/composables/useTableSortFilter";
 
@@ -382,6 +383,13 @@ const applyHint = (query: string) => {
 onBeforeUnmount(() => {
     if (blurTimeout) clearTimeout(blurTimeout);
 });
+
+const router = useRouter();
+
+const openPeptideAnalysis = (peptide: string) => {
+    const { href } = router.resolve({ name: "spaResult", params: { sequence: peptide }, query: { equate: "true" } });
+    window.open(href, "_blank");
+};
 </script>
 
 <script lang="ts">
@@ -433,14 +441,6 @@ const headers: DataTableHeader[] = [
 ];
 
 export type { AnalysisSummaryTableItem } from "@/composables/useTableSortFilter";
-
-const openPeptideAnalysis = (peptide: string) => {
-    // TODO: change this. Hardcoded link to website for testing purposes
-    const a = document.createElement("a");
-    a.href = `https://unipept.ugent.be/spa/${peptide}?equate=${true}`;
-    a.target = "_blank";
-    a.click();
-};
 </script>
 
 <style scoped>

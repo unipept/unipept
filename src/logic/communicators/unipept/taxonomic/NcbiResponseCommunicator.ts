@@ -97,7 +97,7 @@ export default class NcbiResponseCommunicator {
     ): Promise<NcbiResponse[]> {
         const responses: NcbiResponse[] = [];
 
-        const { databaseVersion, process: processMetadata } = useMetaData();
+        const { databaseVersion, process: processMetadata } = useMetaData(this.apiBaseUrl);
         await processMetadata();
         const uniprotVersion = databaseVersion.value;
 
