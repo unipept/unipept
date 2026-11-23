@@ -1,4 +1,4 @@
-export const DEFAULT_API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://api.unipept.ugent.be";
+export const DEFAULT_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "https://api.unipept.ugent.be").replace(/\/+$/, "");
 export const DEFAULT_PATHWAY_PILOT_BASE_URL = "https://pathwaypilot.ugent.be/api";
 export const DEFAULT_REPROCESSED_PROJECTS_BASE_URL = "https://genesis.ugent.be/uvpublicdata/metaproteomics_results";
 export const DEFAULT_ONTOLOGY_BATCH_SIZE = 100;
