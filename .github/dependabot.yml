@@ -6,6 +6,9 @@ updates:
       interval: monthly
       time: "13:00"
       timezone: Europe/Brussels
+    labels: [deps]
+    commit-message:
+      prefix: deps
     open-pull-requests-limit: 99
     groups:
       npm-minor-patch:
@@ -17,6 +20,9 @@ updates:
       interval: monthly
       time: "13:00"
       timezone: Europe/Brussels
+    labels: [deps]
+    commit-message:
+      prefix: deps
     open-pull-requests-limit: 99
     groups:
       actions:
@@ -28,6 +34,9 @@ updates:
       interval: monthly
       time: "13:00"
       timezone: Europe/Brussels
+    labels: [deps]
+    commit-message:
+      prefix: deps
     ignore:
       - dependency-name: node
         update-types: ["version-update:semver-major"]
@@ -38,4 +47,7 @@ updates:
       interval: monthly
       time: "13:00"
       timezone: Europe/Brussels
+    labels: [deps]
+    commit-message:
+      prefix: deps
     open-pull-requests-limit: 99
