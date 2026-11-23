@@ -24,4 +24,4 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Run TypeScript
-        run: yarn run types:check
+        run: yarn run typecheck
