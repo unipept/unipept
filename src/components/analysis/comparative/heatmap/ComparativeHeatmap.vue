@@ -447,7 +447,7 @@ const computeFeatureItems: () => Map<FeatureId, FeatureData> = () => {
     }
 
     // Now that we have all information, we can compute the relative abundance values
-    for (const [taxonId, dataObj] of items.entries()) {
+    for (const dataObj of items.values()) {
         for (let analysisIdx = 0; analysisIdx < props.analyses.length; analysisIdx++) {
             if (totalPeptideCountPerSample[analysisIdx] === 0) {
                 dataObj.columnWiseAbundances[analysisIdx] = 0;
@@ -487,7 +487,7 @@ const rowData: ComputedRef<{ value: number, label: string }[][]> = computed(() =
 
         if (useFixedColorScale.value) {
             // We look for the global minimum and maximum and use that to generate the [0, 1]-values
-            for (const [taxonId, dataObj] of featureItems.value.entries()) {
+            for (const dataObj of featureItems.value.values()) {
                 minimum = Math.min(minimum, ...dataObj.peptideCount);
                 maximum = Math.max(maximum, ...dataObj.peptideCount);
             }
@@ -537,7 +537,7 @@ const rowData: ComputedRef<{ value: number, label: string }[][]> = computed(() =
         }
     }
 
-    return transformedRows.map(row => row.map((x, i) => ({ value: x, label: `${(x * 100).toFixed(2)}%` })));
+    return transformedRows.map(row => row.map((x) => ({ value: x, label: `${(x * 100).toFixed(2)}%` })));
 });
 
 /**
@@ -571,7 +571,7 @@ const selectedCellOrganismSummary: ComputedRef<{ organismName: string, label: st
 
     const output = [];
 
-    for (const [row, organismId] of selectedIds.value.entries()) {
+    for (const row of selectedIds.value.keys()) {
         output.push({
             organismName: rowNames.value[row],
             label: (rows.value[row].columnWiseAbundances[selectedCell.value.colIdx] * 100).toFixed(2) + "%",

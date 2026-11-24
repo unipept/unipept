@@ -191,7 +191,6 @@ const {
     uploadFile: uploadTaxonFile,
     invalidItems,
     selectItem,
-    clearSelection,
     itemSelected
 } = useDatabaseSummary<number, NcbiTaxon>(selectedItems);
 

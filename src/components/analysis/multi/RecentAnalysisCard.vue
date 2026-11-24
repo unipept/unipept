@@ -34,7 +34,7 @@
                     :items="visibleProjects"
                     :height="height - headerHeight - footerHeight"
                 >
-                    <template #default="{ item, index }">
+                    <template #default="{ item }">
                         <v-card
                             class="project-card mb-1 ps-2"
                             @click="openProject(item.name)"
@@ -190,7 +190,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, useTemplateRef, onMounted} from 'vue'
+import {ref, computed, useTemplateRef} from 'vue'
 import {useElementBounding} from "@vueuse/core";
 import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import UploadProjectButton from "@/components/analysis/multi/UploadProjectButton.vue";

@@ -89,14 +89,6 @@ const totalSearchedPeptides: ComputedRef<number> = computed(() => {
     return selectedAnalyses.value.reduce((acc: number, s: SingleAnalysisStore) => acc + s.peptideTrust!.searchedPeptides, 0);
 });
 
-const matchedPeptides: ComputedRef<number> = computed(() => {
-    if (!selectedAnalyses.value || selectedAnalyses.value.length === 0) {
-        return 0;
-    }
-
-    return selectedAnalyses.value.reduce((acc: number, s: SingleAnalysisStore) => acc + s.peptideTrust!.matchedPeptides, 0);
-});
-
 const averageMatchedPeptides: ComputedRef<number> = computed(() => {
     if (!selectedAnalyses.value || selectedAnalyses.value.length === 0) {
         return 0;

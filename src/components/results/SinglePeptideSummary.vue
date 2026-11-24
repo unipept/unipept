@@ -159,7 +159,6 @@ import {AnalysisStatus} from "@/store/AnalysisStatus";
 import useOntologyStore from "@/store/OntologyStore";
 import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import usePercentage from "@/composables/usePercentage";
-import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 
 export interface Props {
     assay: PeptideAnalysisStore
@@ -183,14 +182,6 @@ const peptideData = computed(() => props.assay.peptideToData?.get(props.assay.pe
 
 const faCounts = computed(() => peptideData.value?.faCounts);
 const cutoffUsed = computed(() => peptideData.value?.cutoffUsed ?? false);
-
-const taxonomyUrl = (taxon: NcbiTaxon | undefined): string => {
-    if (taxon === undefined || taxon.id === 1) {
-        return 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi';
-    }
-
-    return `https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=${taxon.id}`;
-};
 
 const goLinkClicked = () => {
     emits('goLinkClicked');

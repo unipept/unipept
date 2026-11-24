@@ -35,8 +35,6 @@ export default function useColumnFileParser() {
     const debounceMs: number = 300;
 
     const debouncedDisabledInputs: Ref<boolean> = refDebounced(disabledInputs, debounceMs);
-    const debouncedValidPeptides: Ref<boolean> = refDebounced(validPeptides, debounceMs);
-    const debouncedValidIntensities: Ref<boolean> = refDebounced(validIntensities, debounceMs);
 
     const { post } = useAsyncWebWorker<ColumnFileParserData, ColumnFileParserWorkerOutput>(
         () => new ColumnFileParserWebWorker()
