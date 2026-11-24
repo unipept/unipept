@@ -140,7 +140,7 @@ const cloneOriginalSamples = (originalSamples: SingleAnalysisStore[]): SampleTab
     }));
 };
 
-// @ts-ignore At this point, TypeScript has issues figuring out that the parameter is actually of the correct type
+// @ts-expect-error At this point, TypeScript has issues figuring out that the parameter is actually of the correct type
 const samples = ref<SampleTableItem[]>(cloneOriginalSamples(group.analyses));
 const groupName = ref<string>(group.name);
 const removeGroupDialogOpen = ref(false);
@@ -196,7 +196,7 @@ const confirmChanges = () => {
 };
 
 const undoChanges = () => {
-    // @ts-ignore At this point, TypeScript has issues figuring out that the parameter is actually of the correct type
+    // @ts-expect-error At this point, TypeScript has issues figuring out that the parameter is actually of the correct type
     samples.value = cloneOriginalSamples(group.analyses);
     groupName.value = group.name;
 };

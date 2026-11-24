@@ -31,13 +31,13 @@ const useGroupAnalysisStore = (
     // ===============================================================
 
     const getAnalysis = (id: string): SingleAnalysisStore | undefined => {
-        // @ts-ignore (unfortunately TypeScript is not able to correctly infer the type of the SingleAnalysisStore here)
+        // @ts-expect-error (unfortunately TypeScript is not able to correctly infer the type of the SingleAnalysisStore here)
         return _analyses.value.get(id);
     }
 
     const getFirstAnalysis = (): SingleAnalysisStore | undefined => {
         if (!empty.value) {
-            // @ts-ignore (unfortunately TypeScript is not able to correctly infer the type of the SingleAnalysisStore here)
+            // @ts-expect-error (unfortunately TypeScript is not able to correctly infer the type of the SingleAnalysisStore here)
             return analyses.value[0];
         }
         return undefined;
