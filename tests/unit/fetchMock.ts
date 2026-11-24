@@ -42,3 +42,8 @@ export function mockFetch(routes: MockRoute[]) {
     vi.stubGlobal("fetch", fetchStub);
     return { fetch: fetchStub, requests };
 }
+
+// Parses the JSON bodies of the recorded POST requests, in order.
+export function postBodies(requests: RecordedRequest[]): unknown[] {
+    return requests.filter(r => r.method === "POST").map(r => JSON.parse(r.body!));
+}
