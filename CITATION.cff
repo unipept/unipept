@@ -1,0 +1,67 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Unipept"
+abstract: "Web application for the biodiversity and functional analysis of metaproteomics data."
+type: software
+license: MIT
+repository-code: "https://github.com/unipept/unipept"
+url: "https://unipept.ugent.be"
+keywords:
+  - metaproteomics
+  - proteomics
+  - bioinformatics
+  - peptide
+  - taxonomy
+authors:
+  - family-names: "Vande Moortele"
+    given-names: "Tibo"
+    orcid: "https://orcid.org/0000-0002-7813-934X"
+  - family-names: "Van de Vyver"
+    given-names: "Simon"
+  - family-names: "Van Den Bossche"
+    given-names: "Tim"
+    orcid: "https://orcid.org/0000-0002-5916-2587"
+  - family-names: "Verschaffelt"
+    given-names: "Pieter"
+    orcid: "https://orcid.org/0000-0002-6675-1048"
+  - family-names: "Martens"
+    given-names: "Lennart"
+    orcid: "https://orcid.org/0000-0003-4277-658X"
+  - family-names: "Dawyndt"
+    given-names: "Peter"
+  - family-names: "Mesuere"
+    given-names: "Bart"
+    orcid: "https://orcid.org/0000-0003-0610-3441"
+preferred-citation:
+  type: article
+  title: "Unipept in 2024: Expanding Metaproteomics Analysis with Support for Missed Cleavages and Semitryptic and Nontryptic Peptides"
+  authors:
+    - family-names: "Vande Moortele"
+      given-names: "Tibo"
+      orcid: "https://orcid.org/0000-0002-7813-934X"
+    - family-names: "Devlaminck"
+      given-names: "Bram"
+      orcid: "https://orcid.org/0009-0009-7656-5458"
+    - family-names: "Van de Vyver"
+      given-names: "Simon"
+    - family-names: "Van Den Bossche"
+      given-names: "Tim"
+      orcid: "https://orcid.org/0000-0002-5916-2587"
+    - family-names: "Martens"
+      given-names: "Lennart"
+      orcid: "https://orcid.org/0000-0003-4277-658X"
+    - family-names: "Dawyndt"
+      given-names: "Peter"
+    - family-names: "Mesuere"
+      given-names: "Bart"
+      orcid: "https://orcid.org/0000-0003-0610-3441"
+    - family-names: "Verschaffelt"
+      given-names: "Pieter"
+      orcid: "https://orcid.org/0000-0002-6675-1048"
+  journal: "Journal of Proteome Research"
+  volume: 24
+  issue: 2
+  start: 949
+  end: 954
+  year: 2025
+  doi: "10.1021/acs.jproteome.4c00848"
