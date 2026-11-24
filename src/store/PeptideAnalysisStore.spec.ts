@@ -3,7 +3,7 @@ import { createPinia, setActivePinia } from "pinia";
 import usePeptideAnalysisStore from "./PeptideAnalysisStore";
 import { AnalysisStatus } from "./AnalysisStatus";
 import type { AnalysisConfig } from "./AnalysisConfig";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
+import { peptideData } from "../../tests/unit/peptideData";
 import { calls, failing, pept2filteredData, proteinsToReturn, resetFakes } from "../../tests/unit/analysisFakes";
 
 vi.mock("@/composables/communication/unipept/usePept2filtered", async () => ({ default: (await import("../../tests/unit/analysisFakes")).fakePept2filtered }));
@@ -15,15 +15,6 @@ vi.mock("@/composables/processing/taxonomic/useNcbiTreeProcessor", async () => (
 vi.mock("@/store/OntologyStore", async () => ({ default: (await import("../../tests/unit/analysisFakes")).fakeOntologyStore }));
 
 const config: AnalysisConfig = { equate: true, filter: false, useCrap: false, database: "UniProtKB" };
-
-const peptideData = (lca: number, lineage: (number | null)[]) => PeptideData.createFromPeptideDataResponse({
-    lca,
-    lineage: [...lineage, ...Array(27 - lineage.length).fill(null)],
-    fa: { counts: { all: 0, EC: 0, GO: 0, IPR: 0 }, data: {} },
-    taxa: [],
-    cutoff_used: false,
-    crap_filtered: false,
-});
 
 let storeCount = 0;
 const createStore = () => usePeptideAnalysisStore(`peptide-${storeCount++}`, "MDGTEYIIVK", config);
@@ -56,7 +47,7 @@ describe("PeptideAnalysisStore", () => {
     });
 
     it("loads the LCA, the lineage and the taxa of all proteins, and counts the proteins per taxon", async () => {
-        pept2filteredData.set("MDGTEYIIVK", peptideData(816, [2, null, 976, 816]));
+        pept2filteredData.set("MDGTEYIIVK", peptideData({ lca: 816, lineage: [2, null, 976, 816] }));
         proteinsToReturn.push({ id: "P1", taxonId: 817 }, { id: "P2", taxonId: 817 }, { id: "P3", taxonId: 818 });
         const store = createStore();
 
