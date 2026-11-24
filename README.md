@@ -1,24 +1,24 @@
 # Unipept
 
-The [Unipept web application](http://unipept.ugent.be) supports biodiversity and functional analysis of large and complex metaproteome samples and the analysis of peptidomes.
+The [Unipept web application](https://unipept.ugent.be) supports biodiversity and functional analysis of large and complex metaproteome samples and the analysis of peptidomes.
 
-The 6.0 release of Unipept brings support for non-tryptic peptides and the novel Peptonizer analysis pipeline to the tool.
+Unipept supports tryptic, semi-tryptic and non-tryptic peptides, and includes the Peptonizer analysis pipeline.
 
-An [API](https://unipept.ugent.be/apidocs) and [command line tool](http://github.com/unipept/unipept-cli) are available
+An [API](https://unipept.ugent.be/apidocs) and [command line tool](https://github.com/unipept/unipept-cli) are available
 for integration in other programs.
 
 ## Contributing
 
 Found a bug or have an idea for an awesome new feature?
-File an issue using the github [issue tracker](https://github.com/unipept/unipept/issues) or drop us a line at [unipept@ugent.be](mailto:unipept@ugent.be).
+File an issue using the GitHub [issue tracker](https://github.com/unipept/unipept/issues) or drop us a line at [unipept@ugent.be](mailto:unipept@ugent.be).
 
-If you're willing to get your hands dirty, you might of course also send us a pull request!
+If you're willing to get your hands dirty, you might of course also send us a pull request! [CONTRIBUTING.md](CONTRIBUTING.md) explains how.
 
 ## Installation
 
 This repository contains the source code for the Unipept web application.
 
-To run this application locally, you need to have **Node.js** and **Yarn** installed.
+To run this application locally, you need **Node.js** (the version in `.nvmrc`) and **Yarn 1** (the version in `packageManager` in `package.json`).
 
 1.  Clone the repository:
     ```bash
@@ -28,7 +28,7 @@ To run this application locally, you need to have **Node.js** and **Yarn** insta
 
 2.  Install dependencies:
     ```bash
-    yarn install
+    yarn install --frozen-lockfile
     ```
 
 3.  Start the development server:
@@ -104,10 +104,10 @@ yarn generate-icons
 
 Unipept is a research project of the computational biology group at Ghent University. If you use this application, please cite:
 
-- Vande Moortele et al. (2025) J. Proteome Res. [doi.org:10.1021/acs.jproteome.4c00848](https://doi.org/10.1021/acs.jproteome.4c00848)
-- Verschaffelt et al. (2023) J. Proteome Res. [doi:10.1021/acs.jproteome.3c00091](doi.org/10.1021/acs.jproteome.3c00091)
-- Verschaffelt et al. (2021) J. Proteome Res. [doi:10.1021/acs.jproteome.0c00855](doi.org/10.1021/acs.jproteome.0c00855)
-- Verschaffelt et al. (2020) Bioinformatics [doi:10.1093/bioinformatics/btaa553](doi.org/10.1093/bioinformatics/btaa553)
+- Vande Moortele et al. (2025) J. Proteome Res. [doi:10.1021/acs.jproteome.4c00848](https://doi.org/10.1021/acs.jproteome.4c00848)
+- Verschaffelt et al. (2023) J. Proteome Res. [doi:10.1021/acs.jproteome.3c00091](https://doi.org/10.1021/acs.jproteome.3c00091)
+- Verschaffelt et al. (2021) J. Proteome Res. [doi:10.1021/acs.jproteome.0c00855](https://doi.org/10.1021/acs.jproteome.0c00855)
+- Verschaffelt et al. (2020) Bioinformatics [doi:10.1093/bioinformatics/btaa553](https://doi.org/10.1093/bioinformatics/btaa553)
 - Gurdeep Singh et al. (2019) J. Proteome Res. [doi:10.1021/acs.jproteome.8b00716](https://doi.org/10.1021/acs.jproteome.8b00716)
 - Mesuere et al. (2018) J. Proteomics [doi:10.1016/j.jprot.2017.05.022](https://doi.org/10.1016/j.jprot.2017.05.022)
 - Mesuere et al. (2016) Proteomics [doi:10.1002/pmic.201600023](https://doi.org/10.1002/pmic.201600023)
