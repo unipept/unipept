@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, Ref, ref, watch} from 'vue';
+import {computed, onMounted, Ref, ref} from 'vue';
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
 import useQuickGo from "@/composables/communication/quick-go/useQuickGo";

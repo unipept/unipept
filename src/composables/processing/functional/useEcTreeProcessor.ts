@@ -57,7 +57,7 @@ export default function useEcTreeProcessor() {
 
     const sortAnnotations = (annotations: [string, number][]): [string, number][] => {
         return annotations
-            .sort(([s1, c1], [s2, c2]) =>
+            .sort(([s1], [s2]) =>
                 // Step 1: Split the EC number into 4 parts (1.2.2.31 -> [1, 2, 2, 31])
                 // Step 2: Convert every part to a 4 digit string ([1, 2, 2, 31] -> [0001, 0002, 0002, 0031])
                 // Step 3: Join the strings with a dot ([0001, 0002, 0002, 0031] -> 0001.0002.0002.0031)

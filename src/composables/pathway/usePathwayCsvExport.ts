@@ -27,7 +27,6 @@ export interface PathwayAnalysisInput {
 export interface PathwayCsvExportData {
     analyses: PathwayAnalysisInput[];
     header: string[];
-    delimiter: string;
 }
 
 const PATHWAY_CSV_HEADER = ['peptide', 'peptide_count', 'taxon_id', 'taxon_rank', 'taxon_name', 'pathways', 'pathway_names'];
@@ -86,7 +85,6 @@ export function usePathwayCsvExport() {
         const workerInput: PathwayCsvExportData = {
             analyses: [buildAnalysisInput(analysis, mappingStore, analysis.name, '')],
             header: PATHWAY_CSV_HEADER,
-            delimiter,
         };
 
         const rows = await post(workerInput);
@@ -113,7 +111,6 @@ export function usePathwayCsvExport() {
         const workerInput: PathwayCsvExportData = {
             analyses: inputs,
             header: COMPARATIVE_CSV_HEADER,
-            delimiter,
         };
 
         const rows = await post(workerInput);

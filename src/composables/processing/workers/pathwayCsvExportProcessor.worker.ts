@@ -9,7 +9,7 @@ self.onmessage = async (event) => {
     self.postMessage(await process(event.data));
 };
 
-const process = async ({ analyses, header, delimiter }: PathwayCsvExportData): Promise<string[][]> => {
+const process = async ({ analyses, header }: PathwayCsvExportData): Promise<string[][]> => {
     const rows: string[][] = [header];
 
     for (const analysis of analyses) {

@@ -93,8 +93,6 @@ const redraw = () => {
     visualizationObject.value = createHeatmap();
 };
 
-const download = () => {};
-
 const rotate = () => {
     rotated.value = !rotated.value;
     redraw();

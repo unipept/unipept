@@ -47,7 +47,7 @@ export default class UniprotCommunicator {
                 organism: p.taxonomy.scientificName + (p.taxonomy.commonName ? " (" + p.taxonomy.commonName + ")" : ""),
                 count: p.proteinCount
             };
-        } catch (e) {
+        } catch {
             return undefined;
         }
     }

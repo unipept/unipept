@@ -128,7 +128,6 @@ const {
     uploadFile: uploadProteomeFile,
     invalidItems,
     selectItem,
-    clearSelection,
     itemSelected
 } = useDatabaseSummary<string, ReferenceProteome>(selectedItems);
 

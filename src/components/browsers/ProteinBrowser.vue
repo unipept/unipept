@@ -135,7 +135,6 @@ const {
     uploadFile: uploadProteinFile,
     invalidItems,
     selectItem,
-    clearSelection,
     itemSelected
 } = useDatabaseSummary<string, Protein>(selectedItems);
 
@@ -188,7 +187,7 @@ const loadProteins = async (params: LoadItemsParams) => {
         params,
         updateProteinOntology,
         proteinOntology,
-        (start: number, end: number, filter?: string, sortByColumn?: string, sortDesc?: boolean) => proteinCommunicator.getProteinRange(start, end, filter),
+        (start: number, end: number, filter?: string) => proteinCommunicator.getProteinRange(start, end, filter),
         (filter) => proteinCommunicator.getProteinCount(filter)
     );
 }

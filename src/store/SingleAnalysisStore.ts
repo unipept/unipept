@@ -1,4 +1,4 @@
-import {computed, markRaw, ref, shallowRef, toRaw, watch} from "vue";
+import {computed, markRaw, ref, shallowRef} from "vue";
 import {defineStore} from "pinia";
 import usePept2filtered from "@/composables/communication/unipept/usePept2filtered";
 import usePeptideProcessor from "@/composables/processing/peptide/usePeptideProcessor";

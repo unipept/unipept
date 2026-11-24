@@ -188,7 +188,7 @@
         tooltipPosition.value = mousePosition;
     }
 
-    barplotSettings.value.mouseOut = (bars: Bar[], barIndex: number, itemIndex: number) => {
+    barplotSettings.value.mouseOut = () => {
         highlightedData.value = undefined;
 
         if (tooltipTimeout) {

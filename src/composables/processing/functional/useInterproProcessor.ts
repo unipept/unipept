@@ -1,7 +1,7 @@
 import useFunctionalProcessor from "@/composables/processing/functional/useFunctionalProcessor";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import {markRaw, ref, shallowRef} from "vue";
+import {markRaw, shallowRef} from "vue";
 import FunctionalTrust from "@/types/FunctionalTrust";
 import CountTable from "@/logic/processors/CountTable";
 

@@ -124,10 +124,6 @@ const hasControls = computed(() =>
     !!props.fullscreen
 );
 
-const emits = defineEmits<{
-    reset: () => void
-}>();
-
 // Will currently only work for svg images
 const downloadOpen = ref(false)
 

@@ -93,7 +93,6 @@ import TaxonomyResponseCommunicator from "@/logic/communicators/unipept/taxonomi
 import {DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE} from "@/logic/Constants";
 import ProteinResponseCommunicator from "@/logic/communicators/unipept/protein/ProteinResponseCommunicator";
 import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
-import {useNumberFormatter} from "@/composables/useNumberFormatter";
 import useProteinOntology from "@/composables/ontology/useProteinOntology";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import CreateCustomDatabase from "@/components/database/CreateCustomDatabase.vue";
@@ -105,7 +104,6 @@ import type { DataTableHeader } from "vuetify";
 const { ontology: proteinOntology, update: updateProteinOntology } = useProteinOntology();
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
 const customFilterStore = useCustomFilterStore();
-const { formatNumber } = useNumberFormatter();
 
 const taxonomyCommunicator = new TaxonomyResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);
 const proteinCommunicator = new ProteinResponseCommunicator(DEFAULT_API_BASE_URL, DEFAULT_ONTOLOGY_BATCH_SIZE);

@@ -71,7 +71,7 @@
 <script setup lang="ts">
 import * as d3 from 'd3';
 import {computed, ComputedRef, onMounted, Ref, ref, watch} from "vue";
-import {useDebounce, useDebounceFn} from "@vueuse/core";
+import {useDebounceFn} from "@vueuse/core";
 
 const {
     data,
@@ -227,7 +227,7 @@ const highlightCell = (cellOverlay: HTMLElement, rowIdx: number, colIdx: number)
     d3.selectAll("text[data-col-label='" + colIdx + "']").classed("ghost", false);
 }
 
-const stopHighlightingCell = (cellOverlay: HTMLElement, rowIdx: number, colIdx: number) => {
+const stopHighlightingCell = () => {
     d3.selectAll(".unipept-heatmap .cell").classed("ghost", false);
     d3.selectAll(".unipept-heatmap .row-label").classed("ghost", false);
     d3.selectAll(".unipept-heatmap .header-label").classed("ghost", false);
@@ -460,7 +460,7 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
         .attr("fill", "transparent") // Make it invisible
         .attr("pointer-events", "all") // Ensure it captures mouse events
         .attr("data-col-item", (d, i) => i)
-        .on("mouseover", (event: MouseEvent, d: any) => {
+        .on("mouseover", (event: MouseEvent) => {
             // Find the corresponding visible cell
             const overlay = event.target as HTMLElement;
             const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
@@ -469,19 +469,14 @@ const renderGrid = (svgElement: d3.Selection<SVGSVGElement, unknown, null, undef
             highlightCell(overlay, rowIdx, colIdx);
             showTooltip(event, rowIdx, colIdx);
         })
-        .on("mousemove", (event: MouseEvent, d: any) => {
+        .on("mousemove", (event: MouseEvent) => {
             moveTooltip(event);
         })
-        .on("mouseleave", (event: MouseEvent, d: any) => {
-            // Find the corresponding visible cell
-            const overlay = event.target as HTMLElement;
-            const colIdx = parseInt(overlay.getAttribute("data-col-item")!);
-            const rowIdx = parseInt(overlay.parentElement!.getAttribute("data-row-item")!);
-
-            stopHighlightingCell(overlay, rowIdx, colIdx);
+        .on("mouseleave", () => {
+            stopHighlightingCell();
             hideTooltip();
         })
-        .on("click", (event: MouseEvent, d: any) => {
+        .on("click", (event: MouseEvent) => {
             // Find the corresponding visible cell
             const overlay = event.target as HTMLElement;
             const colIdx = parseInt(overlay.getAttribute("data-col-item")!);

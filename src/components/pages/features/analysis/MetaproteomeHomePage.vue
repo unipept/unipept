@@ -180,7 +180,7 @@ const reprocessedAnalyze = async (accession: string) => {
         await loadProjectFromReprocessed(accession, files);
         await router.push({ name: "mpaSingle" });
         await startAnalysis();
-    } catch (e) {
+    } catch {
         upgradeError.value = "Failed to open this reprocessed project. Please check your internet connection and try again.";
         showUpgradeError.value = true;
     } finally {

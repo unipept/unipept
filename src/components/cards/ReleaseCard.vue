@@ -75,7 +75,7 @@
 import { GithubRelease } from '@/logic/communicators/github/GithubCommunicator';
 import {ReleaseParser, ReleaseParserResult} from '@/logic/parsers/github/ReleaseParser';
 import Rlink from '../highlights/ResourceLink.vue';
-import {onMounted, ref, Ref, watch} from "vue";
+import {onMounted, ref, Ref} from "vue";
 import DOMPurify from 'dompurify';
 
 export interface Props {

@@ -153,6 +153,7 @@
                 <v-tooltip location="top" :text="item.peptide">
                     <template #activator="{ props }">
                         <a
+                            v-bind="props"
                             class="cursor-pointer"
                             @click="openPeptideAnalysis(item.peptide)"
                             :style="$vuetify.display.mobile ? 'display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' : ''"
