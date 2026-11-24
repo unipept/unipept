@@ -1,6 +1,5 @@
 <template>
     <pathway-visualization-viewer
-        :viz="viz"
         :colored-areas="coloredAreas"
         :selected-pathway="props.selectedPathway"
         :legend-items="legendItems"
@@ -51,12 +50,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, provide } from 'vue';
 import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
 import { GroupAnalysisStore } from '@/store/GroupAnalysisStore';
 import { PathwayItem } from '@/store/PathwayPilotStore';
 import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
-import { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
+import { usePathwayVisualization, pathwayVisualizationKey } from '@/composables/pathway/usePathwayVisualization';
 import { usePathwayCsvExport } from '@/composables/pathway/usePathwayCsvExport';
 import { usePathwayColoring } from '@/composables/pathway/usePathwayColoring';
 import type { ColoringItem } from '@/composables/pathway/usePathwayColoring';
@@ -73,6 +72,7 @@ const emit = defineEmits<{
 }>();
 
 const viz = usePathwayVisualization();
+provide(pathwayVisualizationKey, viz);
 const { exportComparativeAnalysis } = usePathwayCsvExport();
 
 const useGroups = ref(false);

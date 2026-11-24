@@ -1,6 +1,5 @@
 <template>
     <pathway-selection-table
-        :filters="filters"
         :headers="headers"
         sort-key="totalCount"
         :loading="loading"
@@ -14,11 +13,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, provide } from 'vue';
 import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
 import { PathwayPilotStatus, PathwayItem } from '@/store/PathwayPilotStore';
 import { categoryColor } from '@/composables/pathway/usePathwayColors';
-import { usePathwayFilters } from '@/composables/pathway/usePathwayFilters';
+import { usePathwayFilters, pathwayFiltersKey } from '@/composables/pathway/usePathwayFilters';
 import { pathwayGroups } from '@/logic/PathwayGroups';
 import usePathwayPilotMappingStore from '@/store/PathwayPilotMappingStore';
 import PathwaySelectionTable from '@/components/pathway/PathwaySelectionTable.vue';
@@ -95,6 +94,7 @@ const filters = usePathwayFilters({
         return ecSet;
     },
 });
+provide(pathwayFiltersKey, filters);
 
 const categoryOptions = computed(() =>
     [...new Set(mergedPathwayItems.value.map(item => item.subCategory || item.category))]

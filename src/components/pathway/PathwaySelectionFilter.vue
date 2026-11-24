@@ -118,12 +118,13 @@
 </template>
 
 <script setup lang="ts">
-import type { usePathwayFilters } from '@/composables/pathway/usePathwayFilters';
+import { injectPathwayFilters } from '@/composables/pathway/usePathwayFilters';
 import EcTreeview from '@/components/treeview/EcTreeview.vue';
 
 defineProps<{
-    filters: ReturnType<typeof usePathwayFilters>;
     categoryOptions: { value: string; title: string; color: string }[];
     compoundOptions: { value: string; title: string }[];
 }>();
+
+const filters = injectPathwayFilters();
 </script>

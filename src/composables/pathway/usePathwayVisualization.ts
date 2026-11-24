@@ -1,4 +1,4 @@
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, inject, type InjectionKey } from 'vue';
 import usePathwayPilotMappingStore from '@/store/PathwayPilotMappingStore';
 import type PathwayImageOverlay from '@/components/pathway/PathwayImageOverlay.vue';
 
@@ -105,4 +105,17 @@ export function usePathwayVisualization() {
         onAreaClick,
         onCompoundClick,
     };
+}
+
+export type PathwayVisualization = ReturnType<typeof usePathwayVisualization>;
+
+// Provided by the component that creates the visualization state; read by PathwayVisualizationViewer.
+export const pathwayVisualizationKey: InjectionKey<PathwayVisualization> = Symbol('pathwayVisualization');
+
+export function injectPathwayVisualization(): PathwayVisualization {
+    const viz = inject(pathwayVisualizationKey);
+    if (!viz) {
+        throw new Error('injectPathwayVisualization() requires a parent component that provides pathwayVisualizationKey');
+    }
+    return viz;
 }

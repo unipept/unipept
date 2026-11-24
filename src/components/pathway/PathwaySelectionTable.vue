@@ -59,7 +59,6 @@
                         @click:clear="filters.search.value = ''"
                     />
                     <PathwaySelectionFilter
-                        :filters="filters"
                         :categoryOptions="categoryOptions"
                         :compoundOptions="compoundOptions"
                     />
@@ -94,11 +93,10 @@
 
 <script setup lang="ts">
 import { categoryColor } from '@/composables/pathway/usePathwayColors';
-import type { usePathwayFilters } from '@/composables/pathway/usePathwayFilters';
+import { injectPathwayFilters } from '@/composables/pathway/usePathwayFilters';
 import PathwaySelectionFilter from './PathwaySelectionFilter.vue';
 
 defineProps<{
-    filters: ReturnType<typeof usePathwayFilters>;
     headers: { title: string; key: string; sortable?: boolean; width?: string; align?: 'start' | 'end' | 'center' }[];
     sortKey: string;
     loading?: boolean;
@@ -108,6 +106,8 @@ defineProps<{
     compoundOptions: { value: string; title: string }[];
     rowProps?: (data: any) => Record<string, any>;
 }>();
+
+const filters = injectPathwayFilters();
 
 const emit = defineEmits<{
     select: [item: any];
