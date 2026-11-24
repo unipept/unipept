@@ -173,13 +173,13 @@ export class PeptideData_v6_3_5 {
     public static readonly TAXON_SIZE = 4;
 
     public get TAXA_START() {
-        let goStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_GO_INDEX_OFFSET);
+        const goStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_GO_INDEX_OFFSET);
         const goLength = this.dataView.getUint32(goStart);
 
-        let ecStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_EC_INDEX_OFFSET);
+        const ecStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_EC_INDEX_OFFSET);
         const ecLength = this.dataView.getUint32(ecStart);
 
-        let iprStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_IPR_INDEX_OFFSET);
+        const iprStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_IPR_INDEX_OFFSET);
         const iprLength = this.dataView.getUint32(iprStart);
 
         const faDataLength = 12 + goLength * 8 + iprLength * 8 + ecLength * 20;
