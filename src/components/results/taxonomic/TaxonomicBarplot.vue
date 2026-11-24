@@ -34,7 +34,7 @@
                                                 label="Taxa"
                                                 :min="1"
                                                 :max="20"
-                                                :hideInput="false"
+                                                :hide-input="false"
                                                 :inset="false"
                                                 variant="underlined"
                                                 density="comfortable"

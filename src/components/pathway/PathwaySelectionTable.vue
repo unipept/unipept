@@ -59,8 +59,8 @@
                         @click:clear="filters.search.value = ''"
                     />
                     <PathwaySelectionFilter
-                        :categoryOptions="categoryOptions"
-                        :compoundOptions="compoundOptions"
+                        :category-options="categoryOptions"
+                        :compound-options="compoundOptions"
                     />
                 </div>
             </template>
