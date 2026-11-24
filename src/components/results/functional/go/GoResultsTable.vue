@@ -14,7 +14,7 @@
         @update:expanded="singleExpand"
     >
         <template #header.action>
-            <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV" >
+            <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV">
                 <template #activator="{ props }">
                     <v-btn
                         v-bind="props"

@@ -209,7 +209,7 @@
                                 </heatmap>
                             </div>
                         </div>
-                        <v-divider vertical class="mb-2"/>
+                        <v-divider vertical class="mb-2" />
                         <div class="flex-grow-1 mr-8">
                             <v-empty-state
                                 v-if="selectedCell.rowIdx === -1"

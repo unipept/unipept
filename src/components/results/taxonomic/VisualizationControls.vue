@@ -25,7 +25,7 @@
                     </v-btn>
                 </template>
                 <v-list style="width: 350px; border-radius: 12px;">
-                    <slot name="settings"/>
+                    <slot name="settings" />
                 </v-list>
             </v-menu>
 
