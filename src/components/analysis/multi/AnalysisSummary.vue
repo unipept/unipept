@@ -151,7 +151,7 @@
                     </h2>
                 </v-col>
                 <v-col cols="12" lg="4" class="pb-0 mb-n3">
-                    <analysis-summary-export @prepareDownload="prepareDownload" @download="download" />
+                    <analysis-summary-export @prepare-download="prepareDownload" @download="download" />
                 </v-col>
                 <v-col cols="12" class="pt-0 mt-n2">
                     <analysis-summary-table :analysis="analysis" />

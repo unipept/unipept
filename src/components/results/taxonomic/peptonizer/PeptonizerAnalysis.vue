@@ -101,7 +101,7 @@
                             New analysis
                         </v-btn>
                         <v-spacer />
-                        <analysis-summary-export @prepareDownload="exportCsv" @download="downloadCsv" />
+                        <analysis-summary-export @prepare-download="exportCsv" @download="downloadCsv" />
                     </v-card-actions>
                 </template>
 
