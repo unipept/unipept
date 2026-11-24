@@ -1,0 +1,14 @@
+[
+  {
+    "id": "UP000005640",
+    "taxon_id": 9606,
+    "taxon_name": "Homo sapiens",
+    "protein_count": 263886
+  },
+  {
+    "id": "UP000000625",
+    "taxon_id": 83333,
+    "taxon_name": "Escherichia coli K-12",
+    "protein_count": 4403
+  }
+]

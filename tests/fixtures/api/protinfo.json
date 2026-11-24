@@ -1,0 +1,151 @@
+[
+  {
+    "protein": "P12345",
+    "name": "Aspartate aminotransferase, mitochondrial",
+    "taxon_id": 9986,
+    "taxon_name": "Oryctolagus cuniculus",
+    "taxon_rank": "species",
+    "ec": [
+      {
+        "ec_number": "2.6.1.1"
+      },
+      {
+        "ec_number": "2.6.1.7"
+      }
+    ],
+    "go": [
+      {
+        "go_term": "GO:0004069"
+      },
+      {
+        "go_term": "GO:0005739"
+      },
+      {
+        "go_term": "GO:0005759"
+      },
+      {
+        "go_term": "GO:0005886"
+      },
+      {
+        "go_term": "GO:0006103"
+      },
+      {
+        "go_term": "GO:0006457"
+      },
+      {
+        "go_term": "GO:0006531"
+      },
+      {
+        "go_term": "GO:0006533"
+      },
+      {
+        "go_term": "GO:0006536"
+      },
+      {
+        "go_term": "GO:0016212"
+      },
+      {
+        "go_term": "GO:0030170"
+      }
+    ],
+    "ipr": [
+      {
+        "code": "IPR000796"
+      },
+      {
+        "code": "IPR004838"
+      },
+      {
+        "code": "IPR004839"
+      },
+      {
+        "code": "IPR015421"
+      },
+      {
+        "code": "IPR015422"
+      },
+      {
+        "code": "IPR015424"
+      }
+    ]
+  },
+  {
+    "protein": "P00330",
+    "name": "Alcohol dehydrogenase 1",
+    "taxon_id": 559292,
+    "taxon_name": "Saccharomyces cerevisiae S288C",
+    "taxon_rank": "strain",
+    "ec": [
+      {
+        "ec_number": "1.1.1.1"
+      },
+      {
+        "ec_number": "1.1.1.54"
+      },
+      {
+        "ec_number": "1.1.1.78"
+      }
+    ],
+    "go": [
+      {
+        "go_term": "GO:0004022"
+      },
+      {
+        "go_term": "GO:0004552"
+      },
+      {
+        "go_term": "GO:0005737"
+      },
+      {
+        "go_term": "GO:0005886"
+      },
+      {
+        "go_term": "GO:0006552"
+      },
+      {
+        "go_term": "GO:0008270"
+      },
+      {
+        "go_term": "GO:0019170"
+      },
+      {
+        "go_term": "GO:0019655"
+      },
+      {
+        "go_term": "GO:0042802"
+      },
+      {
+        "go_term": "GO:0047655"
+      },
+      {
+        "go_term": "GO:0120542"
+      },
+      {
+        "go_term": "GO:1904408"
+      },
+      {
+        "go_term": "GO:1990362"
+      }
+    ],
+    "ipr": [
+      {
+        "code": "IPR002328"
+      },
+      {
+        "code": "IPR011032"
+      },
+      {
+        "code": "IPR013149"
+      },
+      {
+        "code": "IPR013154"
+      },
+      {
+        "code": "IPR020843"
+      },
+      {
+        "code": "IPR036291"
+      }
+    ]
+  }
+]
