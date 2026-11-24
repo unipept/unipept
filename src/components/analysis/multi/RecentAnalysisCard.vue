@@ -192,7 +192,7 @@
 <script setup lang="ts">
 import {ref, computed, useTemplateRef} from 'vue'
 import {useElementBounding} from "@vueuse/core";
-import {useNumberFormatter} from "@/composables/useNumberFormatter";
+import {formatNumber} from "@/logic/utils/Formatting";
 import UploadProjectButton from "@/components/analysis/multi/UploadProjectButton.vue";
 
 const props = defineProps<{
@@ -208,8 +208,6 @@ const emits = defineEmits<{
     (e: 'upload', projectName: string, file: File): void
     (e: 'delete', project: string): void
 }>();
-
-const { formatNumber } = useNumberFormatter();
 
 const header = useTemplateRef('header');
 const footer = useTemplateRef('footer');

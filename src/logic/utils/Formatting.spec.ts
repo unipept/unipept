@@ -1,21 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { useNumberFormatter } from "./useNumberFormatter";
-import usePercentage from "./usePercentage";
-import useStringUtils from "./useStringUtils";
-import useTimeFormatter from "./useTimeFormatter";
+import { convertDurationToString, displayPercentage, formatNumber } from "./Formatting";
 
-describe("useNumberFormatter", () => {
-    const { formatNumber } = useNumberFormatter();
-
+describe("formatNumber", () => {
     it("separates thousands with a thin space", () => {
         expect(formatNumber(1234567)).toBe("1\u2009234\u2009567");
         expect(formatNumber(999)).toBe("999");
     });
 });
 
-describe("usePercentage", () => {
-    const { displayPercentage } = usePercentage();
-
+describe("displayPercentage", () => {
     it("shows two decimals by default", () => {
         expect(displayPercentage(0.12345)).toBe("12.35%");
     });
@@ -26,18 +19,7 @@ describe("usePercentage", () => {
     });
 });
 
-describe("useStringUtils", () => {
-    const { numberToPercent } = useStringUtils();
-
-    it("shows no decimals by default", () => {
-        expect(numberToPercent(0.1)).toBe("10%");
-        expect(numberToPercent(0.1234, 1)).toBe("12.3%");
-    });
-});
-
-describe("useTimeFormatter", () => {
-    const { convertDurationToString } = useTimeFormatter();
-
+describe("convertDurationToString", () => {
     it("writes hours, minutes and seconds, and leaves out zero parts", () => {
         expect(convertDurationToString(3723)).toBe("1 hour and 2 minutes and 3 seconds");
         expect(convertDurationToString(7200)).toBe("2 hours");

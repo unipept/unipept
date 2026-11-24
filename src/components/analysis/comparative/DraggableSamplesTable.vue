@@ -65,12 +65,10 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable';
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
-import {useNumberFormatter} from "@/composables/useNumberFormatter";
+import {formatNumber} from "@/logic/utils/Formatting";
 import {computed, ComputedRef} from "vue";
 
 const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses", { required: true });
-
-const { formatNumber } = useNumberFormatter();
 
 const totalMatchedPeptides: ComputedRef<number> = computed(() => {
     if (!selectedAnalyses.value || selectedAnalyses.value.length === 0) {

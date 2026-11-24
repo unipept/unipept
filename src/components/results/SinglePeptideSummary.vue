@@ -158,7 +158,7 @@ import {computed} from "vue";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import useOntologyStore from "@/store/OntologyStore";
 import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
-import usePercentage from "@/composables/usePercentage";
+import {displayPercentage} from "@/logic/utils/Formatting";
 
 export interface Props {
     assay: PeptideAnalysisStore
@@ -172,7 +172,6 @@ const props = defineProps<Props>();
 const emits = defineEmits(['goLinkClicked', 'ecLinkClicked', 'interproLinkClicked']);
 
 const { getNcbiDefinition } = useOntologyStore();
-const { displayPercentage } = usePercentage();
 
 const lcaDefinition = computed(() => {
     return getNcbiDefinition(props.assay.lca)

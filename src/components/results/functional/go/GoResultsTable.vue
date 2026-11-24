@@ -133,13 +133,12 @@ import {computed, ref, watch, toRaw, Ref} from "vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
-import usePercentage from "@/composables/usePercentage";
+import {displayPercentage} from "@/logic/utils/Formatting";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 import PeptonizerScoreHeader from "@/components/results/functional/PeptonizerScoreHeader.vue";
 import PeptonizerScoreCell from "@/components/results/functional/PeptonizerScoreCell.vue";
 import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 
-const { displayPercentage } = usePercentage();
 const { process: processHighlightedTree } = useHighlightedTreeProcessor();
 
 const { data, items, probabilityThreshold = 0, scoresLoading = false, scoresError, scoresOutdated = false } = defineProps<{
