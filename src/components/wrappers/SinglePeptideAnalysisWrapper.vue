@@ -19,6 +19,24 @@
             @tab-update="currentTab = $event"
         />
     </v-container>
+    <v-container v-else-if="analysisStore.status === AnalysisStatus.Failed">
+        <v-alert
+            variant="tonal"
+            type="error"
+        >
+            <div>
+                An error occurred while analysing this peptide. Please try again.
+                You can contact us if the issue persists.
+            </div>
+            <div class="font-weight-bold">
+                Error details:
+            </div>
+            <pre>{{ analysisStore.analysisError }}</pre>
+            <v-btn variant="flat" class="float-right" @click="analysisStore.analyse()">
+                Reanalyse peptide
+            </v-btn>
+        </v-alert>
+    </v-container>
     <v-container v-else class="d-flex justify-center align-center">
         <v-progress-circular color="primary" indeterminate size="50" />
     </v-container>

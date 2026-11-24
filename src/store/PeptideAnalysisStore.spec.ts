@@ -67,13 +67,20 @@ describe("PeptideAnalysisStore", () => {
         expect(calls).toContain(`ncbiTree ${JSON.stringify([[817, 2], [818, 1]])}`);
     });
 
-    // There is no try/catch in analyse, so a failed step leaves the status at Running
-    it.fails("ends as Failed when a step fails", async () => {
+    it("ends as Failed with the error message when a step fails, and can run again", async () => {
         failing.add("proteins");
         const store = createStore();
 
-        await store.analyse().catch(() => undefined);
+        await store.analyse();
 
         expect(store.status).toBe(AnalysisStatus.Failed);
+        expect(store.analysisError).toBe("Error: proteins failed");
+        expect(calls).not.toContain("pept2filtered");
+
+        failing.clear();
+        await store.analyse();
+
+        expect(store.status).toBe(AnalysisStatus.Finished);
+        expect(store.analysisError).toBe("");
     });
 });
