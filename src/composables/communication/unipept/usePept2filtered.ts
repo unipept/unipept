@@ -4,7 +4,7 @@ import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import {Filter} from "@/store/CustomFilterStore";
-import Pept2filteredWebWorker from "./pept2filtered.worker.ts?worker&inline";
+import Pept2filteredWebWorker from "@/composables/workers/pept2filtered.worker.ts?worker&inline";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 
 export interface Pept2filteredData {

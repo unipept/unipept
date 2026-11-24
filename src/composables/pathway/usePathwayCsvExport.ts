@@ -6,7 +6,7 @@ import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
 import { GroupAnalysisStore } from '@/store/GroupAnalysisStore';
 import usePathwayPilotMappingStore from '@/store/PathwayPilotMappingStore';
 import { PathwayInfo } from '@/logic/communicators/PathwayPilotCommunicator';
-import PathwayCsvExportWorker from '@/composables/processing/workers/pathwayCsvExportProcessor.worker.ts?worker';
+import PathwayCsvExportWorker from '@/composables/workers/pathwayCsvExportProcessor.worker.ts?worker';
 
 export interface PathwayNcbiNode {
     name: string;

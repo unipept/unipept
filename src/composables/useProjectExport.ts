@@ -1,5 +1,5 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import ProjectWorkerWebWorker from "./workers/projectExportWorker.worker?worker&inline";
+import ProjectWorkerWebWorker from "@/composables/workers/projectExportWorker.worker?worker&inline";
 import {ProjectAnalysisStore, ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
 import {AppStateStore, AppStateStoreImport} from "@/store/AppStateStore";
 

@@ -1,7 +1,7 @@
 import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import {markRaw, shallowRef} from "vue";
-import PeptideProcessorWebWorker from "../workers/peptideProcessor.worker.ts?worker&inline";
+import PeptideProcessorWebWorker from "@/composables/workers/peptideProcessor.worker.ts?worker&inline";
 import {ShareableMap} from "shared-memory-datastructures";
 import type { PeptideProcessorData, PeptideProcessorWorkerOutput } from "@/logic/processors/peptide/PeptideCounts";
 

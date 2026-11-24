@@ -1,6 +1,6 @@
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import HighlightTreeProcessorWebWorker from "../workers/highlightedTreeProcessor.worker.ts?worker&inline";
+import HighlightTreeProcessorWebWorker from "@/composables/workers/highlightedTreeProcessor.worker.ts?worker&inline";
 import type { HighlightedTreeProcessorData } from "@/logic/processors/taxonomic/HighlightedTree";
 
 export default function useHighlightedTreeProcessor() {

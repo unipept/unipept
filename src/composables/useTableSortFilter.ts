@@ -3,7 +3,7 @@ import { markRaw } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { ShareableMap } from "shared-memory-datastructures";
 import type { SingleAnalysisStore } from "@/store/SingleAnalysisStore";
-import TableSortFilterWebWorker from "@/composables/processing/workers/tableSortFilter.worker.ts?worker&inline";
+import TableSortFilterWebWorker from "@/composables/workers/tableSortFilter.worker.ts?worker&inline";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import type { AnalysisSummaryTableItem, NcbiSubsetEntry, QuickFilters, TableSortFilterWorkerInput, TableSortFilterWorkerOutput } from "@/logic/processors/table/TableSortFilter";
 

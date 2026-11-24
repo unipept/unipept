@@ -1,6 +1,6 @@
 import { markRaw, shallowRef, toRaw } from "vue";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import PathwayProcessorWebWorker from "../workers/pathwayProcessor.worker.ts?worker";
+import PathwayProcessorWebWorker from "@/composables/workers/pathwayProcessor.worker.ts?worker";
 import CountTable from "@/logic/processors/CountTable";
 import type { EcInfo, PathwayInfo } from "@/logic/communicators/PathwayPilotCommunicator";
 import type { PathwayProcessorData, PathwayProcessorOutput } from "@/logic/processors/pathway/PathwayAggregation";

@@ -1,5 +1,5 @@
 import {ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
-import ProjectImportWorker from "./workers/projectImportWorker.worker?worker&inline";
+import ProjectImportWorker from "@/composables/workers/projectImportWorker.worker?worker&inline";
 import {AppStateStoreImport} from "@/store/AppStateStore";
 import {ref, type Ref} from "vue";
 

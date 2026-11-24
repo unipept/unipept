@@ -1,5 +1,5 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import FunctionalProcessorWebWorker from "../workers/functionalProcessor.worker.ts?worker";
+import FunctionalProcessorWebWorker from "@/composables/workers/functionalProcessor.worker.ts?worker";
 import type { FunctionalProcessorData, FunctionalProcessorOutput } from "@/logic/processors/functional/FunctionalAggregation";
 
 export default function useFunctionalProcessor() {

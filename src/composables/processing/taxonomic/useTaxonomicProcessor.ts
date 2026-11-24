@@ -2,7 +2,7 @@ import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import {markRaw, shallowRef} from "vue";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import TaxonomicProcessorWebWorker from "../workers/taxonomicProcessor.worker.ts?worker";
+import TaxonomicProcessorWebWorker from "@/composables/workers/taxonomicProcessor.worker.ts?worker";
 import {ShareableMap} from "shared-memory-datastructures";
 import type { TaxonomicProcessorData, TaxonomicProcessorWorkerOutput } from "@/logic/processors/taxonomic/TaxonAggregation";
 

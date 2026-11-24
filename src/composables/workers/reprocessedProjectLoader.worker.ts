@@ -1,5 +1,5 @@
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
-import type {ReprocessedFile, ReprocessedLoaderData} from "../useReprocessedProjects";
+import type {ReprocessedFile, ReprocessedLoaderData} from "@/composables/communication/reprocessed/useReprocessedProjects";
 
 self.onunhandledrejection = (event) => {
     throw event.reason;

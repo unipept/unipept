@@ -1,5 +1,5 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import ColumnFileParserWebWorker from "./workers/columnFileParser.worker?worker";
+import ColumnFileParserWebWorker from "@/composables/workers/columnFileParser.worker?worker";
 import {ref, Ref} from "vue";
 import { refDebounced } from '@vueuse/core'
 
