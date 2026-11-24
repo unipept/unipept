@@ -101,17 +101,18 @@ export default class NcbiResponseCommunicator {
         await processMetadata();
         const uniprotVersion = databaseVersion.value;
 
-        const alreadyProcessedCodes = new Set<number>();
-        for (const code of codes) {
-            const response = await NcbiResponseCommunicator.lruCache.get(`${uniprotVersion}__${this.apiBaseUrl}__ncbi__${code}`);
+        const cacheKey = (code: NcbiId) => `${uniprotVersion}__${this.apiBaseUrl}__ncbi__${code}`;
+        const cached = await NcbiResponseCommunicator.lruCache.getAll(codes.map(cacheKey));
 
+        const codesToProcess: NcbiId[] = [];
+        for (const code of codes) {
+            const response = cached.get(cacheKey(code));
             if (response) {
                 responses.push(response);
-                alreadyProcessedCodes.add(code);
+            } else {
+                codesToProcess.push(code);
             }
         }
-
-        const codesToProcess = codes.filter(code => !alreadyProcessedCodes.has(code));
 
         for (let i = 0; i < codesToProcess.length; i += this.batchSize) {
             const data = JSON.stringify({
@@ -123,13 +124,8 @@ export default class NcbiResponseCommunicator {
                 data
             );
 
-            for (const response of res) {
-                await NcbiResponseCommunicator.lruCache.set(`${uniprotVersion}__${this.apiBaseUrl}__ncbi__${response["id"]}`, response);
-            }
-
-            for (const r of res) {
-                responses.push(r);
-            }
+            await NcbiResponseCommunicator.lruCache.setAll(new Map(res.map((r: NcbiResponse) => [cacheKey(r.id), r])));
+            responses.push(...res);
         }
 
         return responses;
