@@ -1,23 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { ShareableMap } from "shared-memory-datastructures";
 import { parseQuery, sortFilterTable } from "./tableSortFilter";
 import type { QuickFilters, TableSortFilterWorkerInput } from "../../useTableSortFilter";
-import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
-
-const peptideData = (ec: number, go: number, ipr: number, cutoffUsed = false) => PeptideData.createFromPeptideDataResponse({
-    lca: 1,
-    lineage: Array(27).fill(null),
-    fa: { counts: { all: ec + go + ipr, EC: ec, GO: go, IPR: ipr }, data: {} },
-    taxa: [],
-    cutoff_used: cutoffUsed,
-    crap_filtered: false,
-});
+import { countsTransferable, peptideDataTransferable } from "../../../../tests/unit/peptideData";
 
 // AAAK: genus, EC only. CCCK: species, GO and InterPro. DDDK: superkingdom, no annotations, cRAP. EEEK: not found.
-const counts = new Map([["AAAK", 5], ["CCCK", 2], ["DDDK", 9], ["EEEK", 1]]);
-const data = new Map([["AAAK", peptideData(1, 0, 0)], ["CCCK", peptideData(0, 3, 1)], ["DDDK", peptideData(0, 0, 0, true)]]);
-const lca = new Map([["AAAK", 816], ["CCCK", 1680], ["DDDK", 2]]);
+const counts = { AAAK: 5, CCCK: 2, DDDK: 9, EEEK: 1 };
+const data = {
+    AAAK: { proteinCounts: { all: 1, EC: 1, GO: 0, IPR: 0 } },
+    CCCK: { proteinCounts: { all: 4, EC: 0, GO: 3, IPR: 1 } },
+    DDDK: { cutoffUsed: true },
+};
+const lca = { AAAK: 816, CCCK: 1680, DDDK: 2 };
 const ncbiSubset = {
     816: { name: "Bacteroides", rank: "genus" },
     1680: { name: "Bifidobacterium adolescentis", rank: "species" },
@@ -26,16 +19,10 @@ const ncbiSubset = {
 
 const noQuickFilters: QuickFilters = { speciesLevel: false, hasGo: false, hasEc: false, hasIpr: false, notFound: false };
 
-const shareable = <V>(map: Map<string, V>, serializer?: PeptideDataSerializer) => {
-    const result = new ShareableMap<string, V>(serializer ? { serializer: serializer as never } : undefined);
-    map.forEach((value, key) => result.set(key, value));
-    return result.toTransferableState();
-};
-
 const run = (options: Partial<TableSortFilterWorkerInput> = {}) => sortFilterTable({
-    peptideCountsTransferable: shareable(counts),
-    peptideToDataTransferable: shareable(data, new PeptideDataSerializer()),
-    peptideToLcaTransferable: shareable(lca),
+    peptideCountsTransferable: countsTransferable(counts),
+    peptideToDataTransferable: peptideDataTransferable(data),
+    peptideToLcaTransferable: countsTransferable(lca),
     ncbiSubset,
     crapFilteredPeptides: ["DDDK"],
     search: "",

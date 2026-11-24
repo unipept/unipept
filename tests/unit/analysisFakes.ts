@@ -18,6 +18,8 @@ let scoreProcessorCount = 0;
 export const pept2filteredData = new Map<string, PeptideData>();
 // Proteins that the fake protein processor returns
 export const proteinsToReturn: { id: string, taxonId: number }[] = [];
+// Ids of the fake analyses that were disposed
+export const disposedAnalyses: string[] = [];
 
 export function resetFakes() {
     calls.length = 0;
@@ -29,6 +31,7 @@ export function resetFakes() {
     scoreProcessorCount = 0;
     pept2filteredData.clear();
     proteinsToReturn.length = 0;
+    disposedAnalyses.length = 0;
 }
 
 // Returns a function that opens the gate: the step waits there until the function is called
@@ -199,4 +202,17 @@ export const fakeProteinProcessor = () => {
             proteins.value = [...proteinsToReturn];
         },
     };
+};
+
+// Replaces the module of SingleAnalysisStore, for stores that contain analyses
+const fakeAnalysis = (id: string, name: string) => ({
+    id,
+    name,
+    dispose: () => disposedAnalyses.push(id),
+    exportStore: () => ({ id, name }),
+});
+
+export const fakeSingleAnalysisStoreModule = {
+    default: fakeAnalysis,
+    useSingleAnalysisStoreImport: (storeImport: { id: string, name: string }) => fakeAnalysis(storeImport.id, storeImport.name),
 };

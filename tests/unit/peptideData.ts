@@ -8,16 +8,25 @@ export interface TestPeptide {
     proteinCounts?: { all: number, EC: number, GO: number, IPR: number };
     // Number of proteins per annotation code, for example { "EC:1.1.1.1": 3 }
     annotations?: Record<string, number>;
+    // The first ranks of the lineage; the other ranks are null
+    lineage?: (number | null)[];
+    cutoffUsed?: boolean;
 }
 
 // Builds the PeptideData that the API would return for one peptide
-export function peptideData({ lca = 1, proteinCounts = { all: 0, EC: 0, GO: 0, IPR: 0 }, annotations = {} }: TestPeptide = {}) {
+export function peptideData({
+    lca = 1,
+    proteinCounts = { all: 0, EC: 0, GO: 0, IPR: 0 },
+    annotations = {},
+    lineage = [],
+    cutoffUsed = false
+}: TestPeptide = {}) {
     return PeptideData.createFromPeptideDataResponse({
         lca,
-        lineage: Array(27).fill(null),
+        lineage: [...lineage, ...Array(27 - lineage.length).fill(null)],
         fa: { counts: proteinCounts, data: annotations },
         taxa: [],
-        cutoff_used: false,
+        cutoff_used: cutoffUsed,
         crap_filtered: false,
     });
 }
