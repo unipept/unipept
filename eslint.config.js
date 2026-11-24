@@ -44,7 +44,6 @@ export default defineConfig([
     {
         // Off until their findings are fixed, one PR per rule.
         rules: {
-            'vue/first-attribute-linebreak': 'off',
             'vue/html-closing-bracket-newline': 'off',
             'vue/html-closing-bracket-spacing': 'off',
             'vue/html-quotes': 'off',
