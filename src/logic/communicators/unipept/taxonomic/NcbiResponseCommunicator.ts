@@ -2,7 +2,6 @@ import NcbiResponse from "./NcbiResponse";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import {NcbiId} from "@/logic/ontology/taxonomic/Ncbi";
 import {createCacheIdb} from "lru-cache-idb";
-import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 
 export default class NcbiResponseCommunicator {

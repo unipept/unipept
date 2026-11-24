@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ComputedRef, ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import DataSourceSelectTable from "./DataSourceSelectTable.vue";
 import useOntologyStore from "@/store/OntologyStore";

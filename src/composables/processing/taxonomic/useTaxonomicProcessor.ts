@@ -1,6 +1,6 @@
 import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import {markRaw, ref, shallowRef} from "vue";
+import {markRaw, shallowRef} from "vue";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import TaxonomicProcessorWebWorker from "../workers/taxonomicProcessor.worker.ts?worker";
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";

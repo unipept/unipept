@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import EcResultsTable from "@/components/results/functional/ec/EcResultsTable.vue";
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, onMounted, watch} from "vue";
 import useOntologyStore from "@/store/OntologyStore";
 import FilterProgress from "@/components/results/functional/FilterProgress.vue";
 import useEcTreeProcessor from "@/composables/processing/functional/useEcTreeProcessor";

@@ -2,12 +2,11 @@ import {ref, Ref, toRaw} from "vue";
 import {defineStore} from "pinia";
 import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
-import {PeptonizerParameterSet, PeptonizerProgressListener, PeptonizerResult} from "peptonizer";
+import {PeptonizerParameterSet, PeptonizerProgressListener} from "peptonizer";
 import PeptonizerProcessor from "@/logic/processors/peptonizer/PeptonizerProcessor";
 import useOntologyStore from "@/store/OntologyStore";
 import {ShareableMap} from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import {Filter} from "@/store/CustomFilterStore";
 
 export enum PeptonizerStatus {
     Pending,

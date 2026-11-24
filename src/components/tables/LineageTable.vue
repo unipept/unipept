@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, ComputedRef, Ref } from 'vue';
+import { computed, ref, ComputedRef } from 'vue';
 import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import {NcbiRank, NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import useOntologyStore from "@/store/OntologyStore";

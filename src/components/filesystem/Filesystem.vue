@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import FilesystemGroup from "@/components/filesystem/FilesystemGroup.vue";
-import {onMounted, ref, toRaw, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";

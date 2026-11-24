@@ -1,7 +1,6 @@
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import {FunctionalNamespace, FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
 import { createCacheIdb } from "lru-cache-idb";
-import UniprotCommunicator from "@/logic/communicators/uniprot/UniprotCommunicator";
 import useMetaData from "@/composables/communication/unipept/useMetaData";
 
 export default abstract class FunctionalResponseCommunicator<T extends FunctionalNamespace> {

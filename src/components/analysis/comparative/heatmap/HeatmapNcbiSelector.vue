@@ -100,7 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch} from 'vue';
+import {ref, computed} from 'vue';
 import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
 import {FeatureData, FeatureId} from "@/components/analysis/comparative/heatmap/ComparativeHeatmap.vue";
 
