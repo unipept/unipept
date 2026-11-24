@@ -1,8 +1,6 @@
 <template>
-    <pre
-        class="fs"
-        v-html="jsonParser.parseAndHighlight(object)"
-    />
+    <!-- eslint-disable-next-line vue/no-v-html -- JsonParser escapes the JSON before it adds the highlight spans -->
+    <pre class="fs" v-html="jsonParser.parseAndHighlight(object)" />
 </template>
 
 <script setup lang="ts">

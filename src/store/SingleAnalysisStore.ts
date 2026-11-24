@@ -320,7 +320,7 @@ const useSingleAnalysisStore = (
                 intensitiesObject[key] = value;
             }
         }
-        let intensitiesString: string = JSON.stringify(intensitiesObject);
+        const intensitiesString: string = JSON.stringify(intensitiesObject);
 
         return {
             id: id.value,

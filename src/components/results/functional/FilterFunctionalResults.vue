@@ -109,7 +109,7 @@
 <script setup lang="ts">
 import {ref, watch} from 'vue';
 
-const dialogOpen = defineModel({ default: false });
+const dialogOpen = defineModel<boolean>({ default: false });
 
 const emit = defineEmits<{
     confirm: [filterPercentage: number, probabilityThreshold: number]
