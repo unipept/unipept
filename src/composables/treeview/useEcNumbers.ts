@@ -1,5 +1,5 @@
 import { computed, type MaybeRefOrGetter, toValue } from 'vue';
-import type { TreeviewItem } from '@/components/visualization/treeview/Treeview.vue';
+import type { TreeviewItem } from '@/logic/utils/TreeviewItem';
 import usePathwayPilotMappingStore from '@/store/PathwayPilotMappingStore';
 import {EcNamespace} from "@/logic/communicators/unipept/functional/EcResponse";
 

@@ -150,7 +150,7 @@ import useTreeFilter from "@/composables/useTreeFilter";
 import { useRouter } from "vue-router";
 import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
-import {FilteredTree} from "@/composables/useTreeFilter";
+import {FilteredTree} from "@/logic/utils/TreeFilter";
 
 const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
