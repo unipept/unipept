@@ -2,7 +2,7 @@ import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import {markRaw, shallowRef} from "vue";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
-import TaxonomicProcessorWebWorker from "@/composables/workers/taxonomicProcessor.worker.ts?worker";
+import TaxonAggregationWorker from "@/composables/workers/taxonAggregation.worker.ts?worker";
 import {ShareableMap} from "shared-memory-datastructures";
 import type { TaxonAggregationInput, TaxonAggregationOutput } from "@/logic/processors/taxonomic/TaxonAggregation";
 
@@ -12,7 +12,7 @@ export default function useTaxonomicProcessor() {
     const peptideToLca = shallowRef<Map<string, number>>();
 
     const { post } = useAsyncWebWorker<TaxonAggregationInput, TaxonAggregationOutput>(
-        () => new TaxonomicProcessorWebWorker()
+        () => new TaxonAggregationWorker()
     );
 
     const process = async (
