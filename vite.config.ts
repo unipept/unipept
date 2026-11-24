@@ -37,13 +37,6 @@ function crossOriginIsolation(): Plugin {
 export default defineConfig({
     envPrefix: ['VITE_', 'MAX_PEPTONIZER_'],
     base: baseURL,
-    css: {
-        preprocessorOptions: {
-            scss: {
-                api: "modern"
-            }
-        }
-    },
     plugins: [
         vue({
             template: { transformAssetUrls }
