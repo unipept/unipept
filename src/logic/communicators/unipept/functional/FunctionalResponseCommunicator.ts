@@ -1,7 +1,7 @@
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import {FunctionalNamespace, FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
 import { createCacheIdb } from "lru-cache-idb";
-import useMetaData from "@/composables/communication/unipept/useMetaData";
+import {fetchDatabaseVersion} from "@/logic/communicators/unipept/DatabaseVersion";
 
 export default abstract class FunctionalResponseCommunicator<T extends FunctionalNamespace> {
     private static inProgress: Promise<FunctionalDefinition<any>[]> | undefined;
@@ -37,9 +37,7 @@ export default abstract class FunctionalResponseCommunicator<T extends Functiona
     private async doProcess(codes: string[]): Promise<FunctionalDefinition<T>[]> {
         const responses: FunctionalDefinition<T>[] = [];
 
-        const { databaseVersion, process: processMetadata } = useMetaData(this.apiBaseUrl);
-        await processMetadata();
-        const uniprotVersion = databaseVersion.value;
+        const uniprotVersion = await fetchDatabaseVersion(this.apiBaseUrl);
 
         const cacheKey = (code: string) => `${uniprotVersion}__${this.apiBaseUrl}__${this.endpoint}__${code}`;
         const cached = await FunctionalResponseCommunicator.lruCache.getAll(codes.map(cacheKey));

@@ -2,7 +2,7 @@ import NcbiResponse from "./NcbiResponse";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import {NcbiId} from "@/logic/ontology/taxonomic/Ncbi";
 import {createCacheIdb} from "lru-cache-idb";
-import useMetaData from "@/composables/communication/unipept/useMetaData";
+import {fetchDatabaseVersion} from "@/logic/communicators/unipept/DatabaseVersion";
 
 export default class NcbiResponseCommunicator {
     public static readonly NCBI_ENDPOINT: string = "/private_api/taxa";
@@ -97,9 +97,7 @@ export default class NcbiResponseCommunicator {
     ): Promise<NcbiResponse[]> {
         const responses: NcbiResponse[] = [];
 
-        const { databaseVersion, process: processMetadata } = useMetaData(this.apiBaseUrl);
-        await processMetadata();
-        const uniprotVersion = databaseVersion.value;
+        const uniprotVersion = await fetchDatabaseVersion(this.apiBaseUrl);
 
         const cacheKey = (code: NcbiId) => `${uniprotVersion}__${this.apiBaseUrl}__ncbi__${code}`;
         const cached = await NcbiResponseCommunicator.lruCache.getAll(codes.map(cacheKey));
