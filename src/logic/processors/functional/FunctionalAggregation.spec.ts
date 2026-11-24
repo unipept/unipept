@@ -12,7 +12,7 @@ const input = (percentage: number) => ({
         DDDDD: { proteinCounts: { all: 1, EC: 0, GO: 1, IPR: 0 }, annotations: { "GO:0005737": 1 } },
     }),
     percentage,
-    termPrefix: "ec",
+    termPrefix: "ec" as const,
     proteinCountProperty: "ec" as const,
 });
 
