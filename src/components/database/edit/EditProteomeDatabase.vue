@@ -81,11 +81,10 @@ import ReferenceProteome from "@/logic/ontology/proteomes/ReferenceProteome";
 import ReferenceProteomeBrowser from "@/components/browsers/ReferenceProteomeBrowser.vue";
 import useProteomeOntology from "@/composables/ontology/useProteomeOntology";
 import EditDatabaseDialog from "@/components/database/edit/EditDatabaseDialog.vue";
-import useArrayCompare from "@/composables/useArrayCompare";
+import {compareNumberOrStringArrays} from "@/logic/utils/ArrayUtils";
 
 const { ontology: proteomeOntology, update: updateProteomeOntology } = useProteomeOntology();
 const customFilterStore = useCustomFilterStore();
-const { compareNumberOrStringArrays } = useArrayCompare();
 
 const dialogOpen = defineModel<boolean>();
 

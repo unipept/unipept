@@ -3,7 +3,6 @@ import { useNumberFormatter } from "./useNumberFormatter";
 import usePercentage from "./usePercentage";
 import useStringUtils from "./useStringUtils";
 import useTimeFormatter from "./useTimeFormatter";
-import useArrayCompare from "./useArrayCompare";
 
 describe("useNumberFormatter", () => {
     const { formatNumber } = useNumberFormatter();
@@ -51,25 +50,5 @@ describe("useTimeFormatter", () => {
 
     it("throws for a negative duration", () => {
         expect(() => convertDurationToString(-1)).toThrow("Duration cannot be negative.");
-    });
-});
-
-describe("useArrayCompare", () => {
-    const { compareNumberOrStringArrays } = useArrayCompare();
-
-    it("ignores the order of the values", () => {
-        expect(compareNumberOrStringArrays([3, 1, 2], [1, 2, 3])).toBe(true);
-        expect(compareNumberOrStringArrays(["b", "a"], ["a", "b"])).toBe(true);
-    });
-
-    it("returns false for different values or lengths", () => {
-        expect(compareNumberOrStringArrays([1, 2], [1, 3])).toBe(false);
-        expect(compareNumberOrStringArrays([1, 2], [1, 2, 2])).toBe(false);
-    });
-
-    it("does not change the given arrays", () => {
-        const a = [3, 1, 2];
-        compareNumberOrStringArrays(a, [1, 2, 3]);
-        expect(a).toEqual([3, 1, 2]);
     });
 });
