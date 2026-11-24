@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import useNormalization from "./useNormalization";
-
-const { normalizeAll, normalizeRows, normalizeColumns } = useNormalization();
+import { normalizeAll, normalizeRows, normalizeColumns } from "./Normalization";
 
 const data = [
     [0, 5, 10],
@@ -9,7 +7,7 @@ const data = [
     [4, 6, 8],
 ];
 
-describe("useNormalization", () => {
+describe("Normalization", () => {
     it("normalizeAll scales every value with the minimum and maximum of the whole matrix", () => {
         expect(normalizeAll(data)).toEqual([
             [0, 0.5, 1],
