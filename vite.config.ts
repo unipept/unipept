@@ -128,6 +128,12 @@ export default defineConfig({
         ]
     },
     test: {
-        exclude: [...configDefaults.exclude, 'tests/e2e/**']
+        exclude: [...configDefaults.exclude, 'tests/e2e/**'],
+        coverage: {
+            provider: 'v8',
+            include: ['src/**/*.{ts,vue}'],
+            exclude: ['src/**/*.spec.ts', 'src/**/*.d.ts'],
+            reporter: ['text-summary', 'json-summary', 'html'],
+        },
     }
 })
