@@ -1,32 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { disposedAnalyses, resetFakes } from "../../tests/unit/analysisFakes";
 import { createPinia, setActivePinia } from "pinia";
 import useGroupAnalysisStore, { useGroupAnalysisStoreImport } from "./GroupAnalysisStore";
 import type { AnalysisConfig } from "./AnalysisConfig";
 import { UNIPROT_ID } from "./CustomFilterStore";
 
-// The real SingleAnalysisStore starts web workers, so the group gets small fake analyses.
-const fakes = vi.hoisted(() => {
-    const disposed: string[] = [];
-    const make = (id: string, name: string) => ({
-        id,
-        name,
-        dispose: () => disposed.push(id),
-        exportStore: () => ({ id, name }),
-    });
-    return { disposed, make };
-});
-
-vi.mock("@/store/SingleAnalysisStore", () => ({
-    default: (id: string, name: string) => fakes.make(id, name),
-    useSingleAnalysisStoreImport: (storeImport: { id: string, name: string }) => fakes.make(storeImport.id, storeImport.name),
-}));
+// The real SingleAnalysisStore starts web workers, so the groups get small fake analyses
+vi.mock("@/store/SingleAnalysisStore", async () => (await import("../../tests/unit/analysisFakes")).fakeSingleAnalysisStoreModule);
 
 const config: AnalysisConfig = { equate: true, filter: true, useCrap: false, database: UNIPROT_ID };
 
 describe("GroupAnalysisStore", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
-        fakes.disposed.length = 0;
+        resetFakes();
     });
 
     it("starts empty", () => {
@@ -55,11 +42,11 @@ describe("GroupAnalysisStore", () => {
         const second = group.addAnalysis("Sample 2", "AALTER", config);
 
         group.removeAnalysis(first);
-        expect(fakes.disposed).toEqual([first]);
+        expect(disposedAnalyses).toEqual([first]);
         expect(group.getAnalysis(first)).toBeUndefined();
 
         group.clear();
-        expect(fakes.disposed).toEqual([first, second]);
+        expect(disposedAnalyses).toEqual([first, second]);
         expect(group.empty).toBe(true);
     });
 

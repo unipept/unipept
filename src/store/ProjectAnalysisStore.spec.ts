@@ -1,32 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { disposedAnalyses, resetFakes } from "../../tests/unit/analysisFakes";
 import { createPinia, setActivePinia } from "pinia";
 import useProjectAnalysisStore, { DEFAULT_NEW_GROUP_NAME, useProjectAnalysisStoreImport } from "./ProjectAnalysisStore";
 import useCustomFilterStore, { FilterType, UNIPROT_ID } from "./CustomFilterStore";
 import type { AnalysisConfig } from "./AnalysisConfig";
 
-// The real SingleAnalysisStore starts web workers, so the groups get small fake analyses.
-const fakes = vi.hoisted(() => {
-    const disposed: string[] = [];
-    const make = (id: string, name: string) => ({
-        id,
-        name,
-        dispose: () => disposed.push(id),
-        exportStore: () => ({ id, name }),
-    });
-    return { disposed, make };
-});
-
-vi.mock("@/store/SingleAnalysisStore", () => ({
-    default: (id: string, name: string) => fakes.make(id, name),
-    useSingleAnalysisStoreImport: (storeImport: { id: string, name: string }) => fakes.make(storeImport.id, storeImport.name),
-}));
+// The real SingleAnalysisStore starts web workers, so the groups get small fake analyses
+vi.mock("@/store/SingleAnalysisStore", async () => (await import("../../tests/unit/analysisFakes")).fakeSingleAnalysisStoreModule);
 
 const config: AnalysisConfig = { equate: true, filter: true, useCrap: false, database: UNIPROT_ID };
 
 describe("ProjectAnalysisStore", () => {
     beforeEach(() => {
         setActivePinia(createPinia());
-        fakes.disposed.length = 0;
+        resetFakes();
     });
 
     it("sets the name and the demo mode", () => {
@@ -68,7 +55,7 @@ describe("ProjectAnalysisStore", () => {
         project.removeAnalysis(group, analysisId);
 
         expect(project.getGroup(group).empty).toBe(true);
-        expect(fakes.disposed).toEqual([analysisId]);
+        expect(disposedAnalyses).toEqual([analysisId]);
     });
 
     it("disposes the analyses of a removed group", () => {
@@ -79,7 +66,7 @@ describe("ProjectAnalysisStore", () => {
         project.removeGroup(group);
 
         expect(project.groups).toEqual([]);
-        expect(fakes.disposed).toHaveLength(1);
+        expect(disposedAnalyses).toHaveLength(1);
     });
 
     it("finds the first group number that is not used yet", () => {
@@ -131,6 +118,6 @@ describe("ProjectAnalysisStore", () => {
         project.setImportedData({ groups: [{ id: "new", name: "New group", analyses: [] }], filters: [], version: "6.6.0" });
 
         expect(project.groups.map(g => g.name)).toEqual(["New group"]);
-        expect(fakes.disposed).toEqual([oldAnalysisId]);
+        expect(disposedAnalyses).toEqual([oldAnalysisId]);
     });
 });
