@@ -44,9 +44,6 @@ export default defineConfig([
     {
         // Off until their findings are fixed, one PR per rule.
         rules: {
-            '@typescript-eslint/no-empty-object-type': 'off',
-            '@typescript-eslint/triple-slash-reference': 'off',
-            'prefer-const': 'off',
             'vue/attribute-hyphenation': 'off',
             'vue/attributes-order': 'off',
             'vue/first-attribute-linebreak': 'off',
@@ -58,8 +55,6 @@ export default defineConfig([
             'vue/multiline-html-element-content-newline': 'off',
             'vue/mustache-interpolation-spacing': 'off',
             'vue/no-spaces-around-equal-signs-in-attribute': 'off',
-            'vue/no-v-html': 'off',
-            'vue/require-prop-types': 'off',
             'vue/singleline-html-element-content-newline': 'off',
             'vue/v-on-event-hyphenation': 'off',
             'vue/v-slot-style': 'off',
