@@ -107,7 +107,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { isSelectable } from '@/composables/pathway/usePathwayColors';
+import { isSelectable } from '@/logic/pathway/PathwayColors';
 import { useCalculateAreaTooltip } from './useCalculateAreaTooltip';
 
 const props = defineProps<{

@@ -56,12 +56,12 @@
 import { ref, watch, onMounted, computed, provide } from 'vue';
 import { PathwayPilotStore } from '@/store/PathwayPilotStore';
 import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
-import { PATHWAY_COLORS } from '@/composables/pathway/usePathwayColors';
+import { PATHWAY_COLORS } from '@/logic/pathway/PathwayColors';
 import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
 import { usePathwayVisualization, pathwayVisualizationKey } from '@/composables/pathway/usePathwayVisualization';
 import { usePathwayCsvExport } from '@/composables/pathway/usePathwayCsvExport';
 import { usePathwayColoring } from '@/composables/pathway/usePathwayColoring';
-import type { ColoringItem } from '@/composables/pathway/usePathwayColoring';
+import type { ColoringItem } from '@/logic/pathway/PathwayColoring';
 import NcbiTreeNode from '@/logic/ontology/taxonomic/NcbiTreeNode';
 import PathwayVisualizationViewer from '@/components/pathway/PathwayVisualizationViewer.vue';
 import TaxonTreeview from '@/components/treeview/TaxonTreeview.vue';
