@@ -18,10 +18,10 @@
                         'items-per-page-options': [10, 20, 50, 100, -1]
                     }"
                 >
-                    <template #body="{ items }">
+                    <template #body="{ items: pageItems }">
                         <tbody>
                             <tr
-                                v-for="item in items"
+                                v-for="item in pageItems"
                                 :key="item.definition.name"
                             >
                                 <td>

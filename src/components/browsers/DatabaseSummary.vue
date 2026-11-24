@@ -51,9 +51,9 @@
                             location="bottom"
                             open-delay="500"
                         >
-                            <template #activator="{ props }">
+                            <template #activator="{ props: activatorProps }">
                                 <file-upload-button
-                                    v-bind="props"
+                                    v-bind="activatorProps"
                                     class="mr-2"
                                     style="align-self: start;"
                                     color="primary"
@@ -70,9 +70,9 @@
                             location="bottom"
                             open-delay="500"
                         >
-                            <template #activator="{ props }">
+                            <template #activator="{ props: activatorProps }">
                                 <v-btn
-                                    v-bind="props"
+                                    v-bind="activatorProps"
                                     variant="outlined"
                                     style="align-self: start;"
                                     color="error"

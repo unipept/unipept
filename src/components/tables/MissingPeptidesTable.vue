@@ -12,12 +12,12 @@
 
             <template #item.action="{ item }">
                 <v-tooltip text="Open in new tab and BLAST peptide.">
-                    <template #activator="{ props }">
+                    <template #activator="{ props: activatorProps }">
                         <v-btn
                             icon="mdi-open-in-new"
                             size="small"
                             variant="plain"
-                            v-bind="props"
+                            v-bind="activatorProps"
                             @click="openItem(item.peptide)"
                         />
                     </template>

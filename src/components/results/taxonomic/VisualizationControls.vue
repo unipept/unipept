@@ -13,12 +13,12 @@
             </span>
 
             <v-menu v-if="settings" :close-on-content-click="false">
-                <template #activator="{ props }">
+                <template #activator="{ props: activatorProps }">
                     <v-btn
                         class="ma-1"
                         icon
                         size="x-small"
-                        v-bind="props"
+                        v-bind="activatorProps"
                         :elevation="0"
                     >
                         <v-icon size="x-small">mdi-cog-outline</v-icon>
