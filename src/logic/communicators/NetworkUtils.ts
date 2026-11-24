@@ -28,10 +28,10 @@ export default class NetworkUtils {
      * response is not OK.
      *
      * @param url The url to which we want to send the request.
-     * @param data The data to post in JSON format.
+     * @param data The JSON string to post, if any.
      * @return A promise containing the parsed response data.
      */
-    public static async postJSON(url: string, data: any): Promise<any> {
+    public static async postJSON(url: string, data?: string): Promise<any> {
         const response = await fetch(url, {
             method: "POST",
             headers: {

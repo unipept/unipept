@@ -210,7 +210,7 @@ onMounted(async () => {
     loadingSampleData.value = true;
     loadingAccessions.value = true;
     const [, accessions] = await Promise.all([
-        sampleDataStore.loadSampleData(),
+        sampleDataStore.loadSampleData().catch(() => undefined),
         loadReprocessedAccessions().catch(() => [])
     ]);
     loadingSampleData.value = false;
