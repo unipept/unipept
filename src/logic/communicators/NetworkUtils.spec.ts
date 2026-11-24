@@ -13,6 +13,13 @@ describe("NetworkUtils", () => {
         await expect(NetworkUtils.getJSON("https://example.org/data")).resolves.toEqual({ a: 1 });
     });
 
+    it("getJSON throws with the status and the URL when the response is not OK", async () => {
+        mockFetch([{ url: "https://example.org/data", response: { error: "x" }, status: 500, statusText: "Internal Server Error" }]);
+
+        await expect(NetworkUtils.getJSON("https://example.org/data"))
+            .rejects.toThrow(/Request failed: 500 Internal Server Error \(https:\/\/example\.org\/data\)/);
+    });
+
     it("getText returns the body as text", async () => {
         mockFetch([{ url: "https://example.org/text", response: "line 1\nline 2" }]);
 
@@ -38,6 +45,13 @@ describe("NetworkUtils", () => {
             "content-type": "application/json",
         });
         expect(JSON.parse(requests[0].body!)).toEqual({ x: [1, 2] });
+    });
+
+    it("postJSON throws with the status and the URL when the response is not OK", async () => {
+        mockFetch([{ method: "POST", url: "https://example.org/post", response: { error: "x" }, status: 500, statusText: "Internal Server Error" }]);
+
+        await expect(NetworkUtils.postJSON("https://example.org/post", "{}"))
+            .rejects.toThrow(/Request failed: 500 Internal Server Error \(https:\/\/example\.org\/post\)/);
     });
 
     it("openInBrowser opens the URL in a new window", () => {

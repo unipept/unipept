@@ -23,9 +23,9 @@ describe("TaxonomyResponseCommunicator", () => {
 
     it("rejects when the request fails, and the next call still works", async () => {
         const communicator = new TaxonomyResponseCommunicator(API, 100);
-        mockFetch([{ ...taxonomyRoute("Internal Server Error"), status: 500 }]);
+        mockFetch([{ ...taxonomyRoute({ error: "Internal Server Error" }), status: 500 }]);
 
-        await expect(communicator.getResponses([1680])).rejects.toThrow(SyntaxError);
+        await expect(communicator.getResponses([1680])).rejects.toThrow(/Request failed: 500/);
 
         mockFetch([taxonomyRoute()]);
         await expect(communicator.getResponses([1680])).resolves.toEqual(taxonomy);
@@ -34,7 +34,7 @@ describe("TaxonomyResponseCommunicator", () => {
     // A call that waits for the lock fails with the error of the running call and never sends its own request.
     it.fails("a call that waits for a failed call still sends its own request", async () => {
         const communicator = new TaxonomyResponseCommunicator(API, 100);
-        const { requests } = mockFetch([{ ...taxonomyRoute("Internal Server Error"), status: 500 }]);
+        const { requests } = mockFetch([{ ...taxonomyRoute({ error: "Internal Server Error" }), status: 500 }]);
 
         await Promise.allSettled([communicator.getResponses([1680]), communicator.getResponses([1678])]);
 

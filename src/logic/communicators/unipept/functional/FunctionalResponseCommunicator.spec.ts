@@ -115,9 +115,9 @@ describe("FunctionalResponseCommunicator", () => {
 
     it("rejects when the request fails, and the next call still works", async () => {
         const communicator = new EcResponseCommunicator(API, 100);
-        mockFetch([metadataRoute, { ...ecRoute("Internal Server Error"), status: 500 }]);
+        mockFetch([metadataRoute, { ...ecRoute({ error: "Internal Server Error" }), status: 500 }]);
 
-        await expect(communicator.getResponses(["EC:1.1.1.1"])).rejects.toThrow(SyntaxError);
+        await expect(communicator.getResponses(["EC:1.1.1.1"])).rejects.toThrow(/Request failed: 500/);
 
         mockFetch([metadataRoute, ecRoute([ecnumbers[0]])]);
         await expect(communicator.getResponses(["EC:1.1.1.1"])).resolves.toHaveLength(1);
@@ -126,7 +126,7 @@ describe("FunctionalResponseCommunicator", () => {
     // A call that waits for the lock fails with the error of the running call and never sends its own request.
     it.fails("a call that waits for a failed call still sends its own request", async () => {
         const communicator = new EcResponseCommunicator(API, 100);
-        const { requests } = mockFetch([metadataRoute, { ...ecRoute("Internal Server Error"), status: 500 }]);
+        const { requests } = mockFetch([metadataRoute, { ...ecRoute({ error: "Internal Server Error" }), status: 500 }]);
 
         await Promise.allSettled([
             communicator.getResponses(["EC:1.1.1.1"]),

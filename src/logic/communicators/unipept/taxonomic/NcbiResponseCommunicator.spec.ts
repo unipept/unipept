@@ -81,9 +81,9 @@ describe("NcbiResponseCommunicator", () => {
 
     it("getResponses rejects when the request fails, and the next call still works", async () => {
         const communicator = new NcbiResponseCommunicator(API, 100);
-        mockFetch([metadataRoute, { ...taxaRoute("Internal Server Error"), status: 500 }]);
+        mockFetch([metadataRoute, { ...taxaRoute({ error: "Internal Server Error" }), status: 500 }]);
 
-        await expect(communicator.getResponses([1678])).rejects.toThrow(SyntaxError);
+        await expect(communicator.getResponses([1678])).rejects.toThrow(/Request failed: 500/);
 
         mockFetch([metadataRoute, taxaRoute([taxa[0]])]);
         await expect(communicator.getResponses([1678])).resolves.toHaveLength(1);
@@ -130,7 +130,7 @@ describe("NcbiResponseCommunicator", () => {
     // A call that waits for the lock fails with the error of the running call and never sends its own request.
     it.fails("getResponses: a call that waits for a failed call still sends its own request", async () => {
         const communicator = new NcbiResponseCommunicator(API, 100);
-        const { requests } = mockFetch([metadataRoute, { ...taxaRoute("Internal Server Error"), status: 500 }]);
+        const { requests } = mockFetch([metadataRoute, { ...taxaRoute({ error: "Internal Server Error" }), status: 500 }]);
 
         await Promise.allSettled([communicator.getResponses([1678]), communicator.getResponses([816])]);
 

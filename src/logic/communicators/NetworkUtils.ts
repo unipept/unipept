@@ -1,6 +1,13 @@
 export default class NetworkUtils {
+    /**
+     * Fetches a URL and returns the parsed (JSON) body. Throws if the response is not OK.
+     *
+     * @param url The url to fetch.
+     * @return A promise containing the parsed response data.
+     */
     public static async getJSON(url: string): Promise<any> {
         const response = await fetch(url);
+        NetworkUtils.checkResponse(response, url);
         return response.json();
     }
 
@@ -12,14 +19,13 @@ export default class NetworkUtils {
      */
     public static async getText(url: string): Promise<string> {
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Request failed: ${response.status} ${response.statusText} (${url})`);
-        }
+        NetworkUtils.checkResponse(response, url);
         return response.text();
     }
 
     /**
-     * Posts data to a URL as JSON and returns a promise containing the parsed (JSON) response.
+     * Posts data to a URL as JSON and returns a promise containing the parsed (JSON) response. Throws if the
+     * response is not OK.
      *
      * @param url The url to which we want to send the request.
      * @param data The data to post in JSON format.
@@ -34,6 +40,7 @@ export default class NetworkUtils {
             },
             body: data
         });
+        NetworkUtils.checkResponse(response, url);
         return response.json();
     }
 
@@ -44,5 +51,11 @@ export default class NetworkUtils {
      */
     public static openInBrowser(url: string): void {
         window.open(url);
+    }
+
+    private static checkResponse(response: Response, url: string): void {
+        if (!response.ok) {
+            throw new Error(`Request failed: ${response.status} ${response.statusText} (${url})`);
+        }
     }
 }
