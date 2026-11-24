@@ -1,5 +1,5 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import CsvReaderWebWorker from "./workers/csvBufferReader.worker.ts?worker";
+import CsvReaderWebWorker from "@/composables/workers/csvBufferReader.worker.ts?worker";
 
 export interface CsvBufferReaderWorkerOutput {
     buffer: Uint8Array,

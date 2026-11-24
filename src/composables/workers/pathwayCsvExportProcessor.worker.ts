@@ -1,5 +1,5 @@
 import { ShareableMap } from "shared-memory-datastructures";
-import { PathwayCsvExportData } from "@/composables/pathway/usePathwayCsvExport";
+import type { PathwayCsvExportData } from "@/composables/pathway/usePathwayCsvExport";
 
 self.onunhandledrejection = (event) => {
     throw event.reason;

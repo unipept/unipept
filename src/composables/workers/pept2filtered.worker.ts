@@ -1,5 +1,5 @@
 import {ShareableMap} from "shared-memory-datastructures";
-import {Pept2filteredData} from "@/composables/communication/unipept/usePept2filtered";
+import type {Pept2filteredData} from "@/composables/communication/unipept/usePept2filtered";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import {Filter, FilterType} from "@/store/CustomFilterStore";

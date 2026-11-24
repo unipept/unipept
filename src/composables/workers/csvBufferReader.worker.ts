@@ -1,4 +1,4 @@
-import {CsvBufferReaderWorkerOutput} from "@/composables/useCsvBufferReader";
+import type {CsvBufferReaderWorkerOutput} from "@/composables/useCsvBufferReader";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler

@@ -1,26 +1,9 @@
 import { markRaw, shallowRef, toRaw } from "vue";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import PathwayProcessorWebWorker from "../workers/pathwayProcessor.worker.ts?worker";
-import { TransferableState } from "shared-memory-datastructures";
+import PathwayProcessorWebWorker from "@/composables/workers/pathwayProcessor.worker.ts?worker";
 import CountTable from "@/logic/processors/CountTable";
 import type { EcInfo, PathwayInfo } from "@/logic/communicators/PathwayPilotCommunicator";
-
-export interface PathwayProcessorData {
-    peptideCountsTransferable: TransferableState;
-    ecToPeptides: Map<string, string[]>;
-    ecMapping: Map<string, EcInfo>;
-    pathwayMapping: Map<string, PathwayInfo>;
-}
-
-export interface PathwayProcessorOutput {
-    ecs: Set<string>;
-    compounds: Set<string>;
-    pathways: Set<string>;
-    ecToPeptideCount: Map<string, number>;
-    pathwayToPeptideCounts: Map<string, number>;
-    ecToPathways: Map<string, Set<string>>;
-    compoundToPathways: Map<string, Set<string>>;
-}
+import type { PathwayProcessorData, PathwayProcessorOutput } from "@/logic/processors/pathway/PathwayAggregation";
 
 export default function usePathwayProcessor() {
     const ecs = shallowRef<Set<string>>(new Set());

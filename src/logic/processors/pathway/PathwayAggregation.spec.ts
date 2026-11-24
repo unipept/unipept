@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregatePathways } from "./pathwayProcessor";
+import { aggregatePathways } from "./PathwayAggregation";
 import { countsTransferable } from "../../../../tests/unit/peptideData";
 import type { EcInfo, PathwayInfo } from "@/logic/communicators/PathwayPilotCommunicator";
 

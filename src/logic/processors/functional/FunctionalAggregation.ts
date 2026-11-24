@@ -1,7 +1,21 @@
-import {ShareableMap} from "shared-memory-datastructures";
-import {FunctionalProcessorData} from "@/composables/processing/functional/useFunctionalProcessor";
+import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
+
+export interface FunctionalProcessorData {
+    countsMapTransferable: TransferableState;
+    peptideDataTransferable: TransferableState;
+    percentage: number;
+    termPrefix: string;
+    proteinCountProperty: "all" | "ec" | "go" | "ipr";
+}
+
+export interface FunctionalProcessorOutput {
+    sortedCountsTransferable: TransferableState;
+    itemToPeptides: Map<string, string[]>;
+    annotatedCount: number;
+    peptidesFunctions: Map<string, string[]>;
+}
 
 export const aggregateFunctions = async ({
     countsMapTransferable,
@@ -56,8 +70,6 @@ export const aggregateFunctions = async ({
             annotatedCount += peptideCount;
         }
     }
-
-
 
     // Counts per code is guaranteed to be sorted by count (note that JS Maps return values in the order they were
     // inserted!)

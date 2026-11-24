@@ -1,4 +1,4 @@
-import { countPeptides } from "./peptideProcessor";
+import { aggregateTaxa } from "@/logic/processors/taxonomic/TaxonAggregation";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler
@@ -6,5 +6,5 @@ self.onunhandledrejection = (event) => {
 };
 
 self.onmessage = async (event) => {
-    self.postMessage(await countPeptides(event.data));
+    self.postMessage(await aggregateTaxa(event.data));
 }

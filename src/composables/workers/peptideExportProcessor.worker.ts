@@ -1,4 +1,4 @@
-import {PeptideExportData} from "@/composables/usePeptideExport";
+import type {PeptideExportData} from "@/composables/usePeptideExport";
 import {ShareableMap} from "shared-memory-datastructures";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import usePercentage from "@/composables/usePercentage";

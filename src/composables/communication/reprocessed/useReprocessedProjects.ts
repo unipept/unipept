@@ -1,7 +1,7 @@
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import {DEFAULT_REPROCESSED_PROJECTS_BASE_URL} from "@/logic/Constants";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import ReprocessedProjectLoaderWorker from "./workers/reprocessedProjectLoader.worker.ts?worker";
+import ReprocessedProjectLoaderWorker from "@/composables/workers/reprocessedProjectLoader.worker.ts?worker";
 
 export interface ReprocessedFile {
     name: string;                      // e.g. "S061.tsv"

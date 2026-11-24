@@ -1,4 +1,4 @@
-import {ProjectExportData} from "@/composables/useProjectExport";
+import type {ProjectExportData} from "@/composables/useProjectExport";
 import JSZip from "jszip";
 
 self.onunhandledrejection = (event) => {

@@ -1,4 +1,4 @@
-import QuickGoWorker from "./quickGo.worker.ts?worker&inline";
+import QuickGoWorker from "@/composables/workers/quickGo.worker.ts?worker&inline";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 
 export default function useQuickGo() {

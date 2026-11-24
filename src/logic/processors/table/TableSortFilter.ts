@@ -1,7 +1,54 @@
-import { ShareableMap } from "shared-memory-datastructures";
-import type { AnalysisSummaryTableItem, TableSortFilterWorkerInput, TableSortFilterWorkerOutput } from "../../useTableSortFilter";
+import { ShareableMap, TransferableState } from "shared-memory-datastructures";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
+
+export interface AnalysisSummaryTableItem {
+    peptide:      string;
+    occurrence:   number;
+    lca:          string;
+    rank:         string;
+    found:        boolean;
+    faCounts:     { all: number; ec: number; go: number; ipr: number } | undefined;
+    cutoffUsed:   boolean;
+    crapFiltered: boolean;
+}
+
+export interface NcbiSubsetEntry {
+    name: string;
+    rank: string;
+}
+
+export interface QuickFilters {
+    speciesLevel: boolean;  // exact rank match — distinct from the rank: substring search
+    hasGo:        boolean;
+    hasEc:        boolean;
+    hasIpr:       boolean;
+    notFound:     boolean;  // peptide not matched by Unipept
+}
+
+export interface TableSortFilterWorkerInput {
+    /** TransferableState of peptidesTable.counts — zero-copy via SharedArrayBuffer */
+    peptideCountsTransferable:  TransferableState;
+    /** TransferableState of peptideToData — zero-copy via SharedArrayBuffer */
+    peptideToDataTransferable:  TransferableState;
+    /** TransferableState of a ShareableMap built once from the plain peptideToLca Map */
+    peptideToLcaTransferable:   TransferableState;
+    /** Tiny NCBI name/rank subset for unique LCA ids — structured-cloned (small) */
+    ncbiSubset:                 Record<number, NcbiSubsetEntry>;
+    /** Peptides excluded by the cRAP filter (only populated when useCrap is true) */
+    crapFilteredPeptides:       string[];
+    search:       string;
+    quickFilters: QuickFilters;
+    sortKey:      string;
+    sortOrder:    "asc" | "desc" | "";
+    page:         number;
+    itemsPerPage: number;
+}
+
+export interface TableSortFilterWorkerOutput {
+    rows:       AnalysisSummaryTableItem[];
+    totalCount: number;
+}
 
 // ─── Query parser ─────────────────────────────────────────────────────────────
 

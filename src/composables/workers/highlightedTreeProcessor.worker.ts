@@ -1,4 +1,4 @@
-import { aggregateFunctions } from "./functionalProcessor";
+import { highlightTree } from "@/logic/processors/taxonomic/HighlightedTree";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler
@@ -6,5 +6,5 @@ self.onunhandledrejection = (event) => {
 };
 
 self.onmessage = async (event) => {
-    self.postMessage(await aggregateFunctions(event.data));
-}
+    self.postMessage(await highlightTree(event.data));
+};

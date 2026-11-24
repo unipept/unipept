@@ -1,4 +1,8 @@
-import {HighlightedTreeProcessorData} from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
+export interface HighlightedTreeProcessorData {
+    tree: any;
+    peptides: string[];
+    taxaToPeptides: Map<number, string[]>;
+}
 
 export const highlightTree = async ({
     tree,
