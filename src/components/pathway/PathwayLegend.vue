@@ -6,14 +6,14 @@
                 <div
                     class="differential-gradient"
                     :style="{ background: `linear-gradient(to bottom, ${differentialColors[0]}, #ffffe0, ${differentialColors[1]})` }"
-                ></div>
+                />
                 <span class="text-subtitle-1 font-weight-medium" :style="{ color: differentialColors[1] }">{{ differentialLabels[1] }}</span>
             </div>
         </template>
         <template v-else>
             <div class="d-flex flex-column">
                 <div v-for="item in items" :key="item.label" class="d-flex align-center ga-2">
-                    <div class="legend-swatch" :style="{ background: item.color }"></div>
+                    <div class="legend-swatch" :style="{ background: item.color }" />
                     <span class="text-subtitle-1">{{ item.label }}</span>
                 </div>
             </div>

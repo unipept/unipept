@@ -8,7 +8,7 @@
             <template #visualization>
                 <div style="padding-top: 50px;">
                     <div class="mx-4 mb-6">
-                        <v-expansion-panels color="grey-lighten-4" v-model="settingsPanelOpen">
+                        <v-expansion-panels v-model="settingsPanelOpen" color="grey-lighten-4">
                             <v-expansion-panel value="settings">
                                 <v-expansion-panel-title>
                                     <v-icon class="mr-2">
@@ -18,7 +18,7 @@
                                 </v-expansion-panel-title>
                                 <v-expansion-panel-text>
                                     <v-alert icon="mdi-help-circle-outline" class="my-2" density="compact">
-                                        <v-alert-title @click="showAlertContent = !showAlertContent" style="cursor: pointer;">
+                                        <v-alert-title style="cursor: pointer;" @click="showAlertContent = !showAlertContent">
                                             <div class="d-flex" style="width: 100%;">
                                                 <div class="flex-grow-1" style="font-size: 16px;">Relative or absolute peptide counts?</div>
                                                 <v-icon v-if="showAlertContent" class="float-end">
@@ -92,7 +92,7 @@
                                             </div>
 
                                             <div class="d-flex justify-center mt-4">
-                                                <v-btn @click="showAlertContent = false" variant="text">
+                                                <v-btn variant="text" @click="showAlertContent = false">
                                                     <v-icon>mdi-chevron-up</v-icon>
                                                     <span>Hide</span>
                                                 </v-btn>
@@ -103,24 +103,24 @@
                                     <v-row class="mt-1">
                                         <v-col :cols="6">
                                             <v-select
+                                                v-model="selectedTaxonomicRank"
                                                 label="Rank"
                                                 density="comfortable"
                                                 variant="underlined"
                                                 :items="taxonomicRankOptions"
-                                                v-model="selectedTaxonomicRank"
                                                 persistent-hint
                                                 hint="Level of taxonomic classification to display"
                                             />
                                         </v-col>
                                         <v-col :cols="6">
                                             <v-select
+                                                v-model="selectedNormalizationType"
                                                 label="Use percentages"
                                                 density="comfortable"
                                                 variant="underlined"
                                                 :items="transformationTypes"
                                                 item-title="description"
                                                 item-value="type"
-                                                v-model="selectedNormalizationType"
                                                 persistent-hint
                                                 hint="Convert raw counts to percentages for more meaningful comparisons between samples of different sizes"
                                             />
@@ -173,6 +173,7 @@
 
                                 <heatmap
                                     v-else
+                                    v-model:selected-cell="selectedCell"
                                     :data="rowData"
                                     :row-names="rowNames"
                                     :col-names="colNames"
@@ -180,7 +181,6 @@
                                     :show-cell-labels="showCellLabels"
                                     :show-tooltips="showTooltips"
                                     @deselect-row="removeRow"
-                                    v-model:selected-cell="selectedCell"
                                 >
                                     <template #tooltip-content="{ selectedRow, selectedCol }">
                                         <template v-if="selectedCol !== -1 && selectedRow !== -1 && rows[selectedRow]">
@@ -192,7 +192,7 @@
                                             </div>
                                             <div>
                                                 Corresponds to
-                                                <span class="font-weight-bold">{{(rows[selectedRow].columnWiseAbundances[selectedCol] * 100).toFixed(2) }}%</span>
+                                                <span class="font-weight-bold">{{ (rows[selectedRow].columnWiseAbundances[selectedCol] * 100).toFixed(2) }}%</span>
                                                 of all species for this sample.
                                             </div>
                                         </template>
@@ -209,7 +209,7 @@
                                 </heatmap>
                             </div>
                         </div>
-                        <v-divider vertical class="mb-2"/>
+                        <v-divider vertical class="mb-2" />
                         <div class="flex-grow-1 mr-8">
                             <v-empty-state
                                 v-if="selectedCell.rowIdx === -1"

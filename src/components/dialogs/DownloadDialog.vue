@@ -33,12 +33,12 @@
                 <div v-else class="d-flex justify-center flex-column">
                     We finished preparing your export. Click the button below to save the file to your computer.
                     <v-btn
-                        @click="download"
                         color="primary"
                         variant="tonal"
                         text="Download"
                         prepend-icon="mdi-download"
                         class="mt-2"
+                        @click="download"
                     />
                 </div>
             </v-card-text>

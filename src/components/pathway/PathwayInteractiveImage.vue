@@ -1,14 +1,15 @@
 <template>
-    <div ref="container"
-         @mousedown="onMouseDown"
-         @mousemove="onMouseMove"
-         @mouseup="onMouseUp"
-         @mouseleave="onMouseUp"
-         @wheel.prevent="onZoom"
-         class="interactive-image-container"
+    <div
+        ref="container"
+        class="interactive-image-container"
+        @mousedown="onMouseDown"
+        @mousemove="onMouseMove"
+        @mouseup="onMouseUp"
+        @mouseleave="onMouseUp"
+        @wheel.prevent="onZoom"
     >
         <div :style="style">
-            <slot></slot>
+            <slot />
         </div>
     </div>
 </template>

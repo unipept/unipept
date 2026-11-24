@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <!-- ── Search hint ────────────────────────────────────────────────────── -->
         <p class="text-caption text-medium-emphasis mb-1">
             Type freely or use <code>field:value</code>. Each term gets auto-classified — dashed chips show inferred fields you can confirm or reassign.
@@ -17,7 +16,7 @@
                     clearable
                     prepend-inner-icon="mdi-magnify"
                     autocomplete="off"
-                    placeholder='Try “sus scrofa”, “rank:species”, or just “has:GO”…'
+                    placeholder="Try “sus scrofa”, “rank:species”, or just “has:GO”…"
                     @focus="onSearchFocus"
                     @blur="onSearchBlur"
                     @update:model-value="handleSearchInput"
@@ -155,8 +154,8 @@
                         <a
                             v-bind="props"
                             class="cursor-pointer"
-                            @click="openPeptideAnalysis(item.peptide)"
                             :style="$vuetify.display.mobile ? 'display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' : ''"
+                            @click="openPeptideAnalysis(item.peptide)"
                         >
                             {{ item.peptide }}
                         </a>

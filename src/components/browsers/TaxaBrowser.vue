@@ -1,18 +1,18 @@
 <template>
     <div>
         <database-summary
+            v-model:selected-items="selectedItems"
+            v-model:invalid-items="invalidItems"
             title="Selected taxa"
             description="This is a summary of all taxa that have been selected for inclusion in your database. Proteins from UniProtKB that are associated to any of these taxa, or their descendants will be included in the final database. If no taxa are selected here, the final database will contain all UniProtKB proteins (TrEMBL + SwissProt)."
             empty-placeholder="No taxa selected yet. No filtering will be applied. Select taxa from the table below."
-            v-model:selected-items="selectedItems"
-            v-model:invalid-items="invalidItems"
             :compute-protein-count="computeProteinCount"
             :compute-taxon-count="computeTaxonCount"
             :chip-background-color="getRankColor"
             :chip-variant="getRankState"
             :item-display-name="(taxon: NcbiTaxon) => taxon.name"
-            @upload-file="processUploadedTaxa"
             class="mb-2"
+            @upload-file="processUploadedTaxa"
         />
 
         <v-unipept-card style="width: 100%;">
@@ -103,7 +103,6 @@
                 </div>
             </v-card-text>
         </v-unipept-card>
-
     </div>
 </template>
 

@@ -1,7 +1,6 @@
 <template>
     <div class="d-flex">
-        <div ref="heatmapContainer">
-        </div>
+        <div ref="heatmapContainer" />
 
         <v-tooltip
             :model-value="tooltipActive"
@@ -18,11 +17,11 @@
 
         <!-- Controls to the right of the visualization -->
         <div>
-            <div :style="`height: ${colLabelHeight}px;`"></div>
+            <div :style="`height: ${colLabelHeight}px;`" />
             <v-hover v-for="(rowName, i) in rowNames" :key="rowName">
-                <template v-slot:default="{ isHovering, props: hooveringProps }">
+                <template #default="{ isHovering, props: hooveringProps }">
                     <v-tooltip text="Remove row from heatmap" location="right" open-delay="0">
-                        <template v-slot:activator="{ props: tooltipProps }">
+                        <template #activator="{ props: tooltipProps }">
                             <div
                                 v-bind="hooveringProps"
                                 :style="`height: ${cellSize}px; margin-bottom: ${cellSpacing}px; cursor: pointer;`"
@@ -47,23 +46,21 @@
     </div>
 
     <div :style="`width: ${containerWidth}px;`" class="d-flex">
-        <div :style="`width: ${rowLabelWidth}px;`">
-        </div>
+        <div :style="`width: ${rowLabelWidth}px;`" />
         <v-menu location="right top" :close-on-content-click="false" :offset="12">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
                 <v-btn
                     color="primary"
                     v-bind="props"
                     :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
                     size="small"
                     variant="elevated"
-                    @click="addRows()"
                     prepend-icon="mdi-plus"
                     :text="addRowButtonLabel"
-                >
-                </v-btn>
+                    @click="addRows()"
+                />
             </template>
-            <slot name="row-selector"></slot>
+            <slot name="row-selector" />
         </v-menu>
     </div>
 </template>

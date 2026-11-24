@@ -7,8 +7,8 @@
         color="primary"
         size="small"
         class="mobile-drawer-toggle"
-        @click="drawerOpen = !drawerOpen"
         style="position: fixed; bottom: 16px; right: 16px; z-index: 100;"
+        @click="drawerOpen = !drawerOpen"
     >
         <v-icon>mdi-chevron-up</v-icon>
     </v-btn>
@@ -100,7 +100,7 @@
         />
 
         <!-- Content that should be shown for this project (information about a single sample, or multiple samples?) -->
-        <slot></slot>
+        <slot />
         
         <manage-sample-group-dialog
             v-if="manageSamples[1]"

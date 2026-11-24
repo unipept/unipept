@@ -28,7 +28,7 @@
             <v-unipept-card class="bg-mainBody" style="background: rgb(var(--v-theme-mainBody));">
                 <v-card-title class="d-flex align-center">
                     <h2>Select a demo project</h2>
-                    <v-spacer/>
+                    <v-spacer />
                     <v-btn
                         color="transparent"
                         icon

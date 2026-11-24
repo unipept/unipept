@@ -99,7 +99,7 @@
                     />
                 </div>
 
-                <v-divider class="my-2" thickness="2" width="50"></v-divider>
+                <v-divider class="my-2" thickness="2" width="50" />
 
                 <div
                     v-if="$route.meta && $route.meta.publication && $route.meta.publicationLink"

@@ -2,7 +2,7 @@
     <div>
         <v-unipept-card class="mb-6">
             <v-card-title class="text-headline-medium font-weight-bold mb-2">
-                <v-icon icon="mdi-file-download-outline" size="30" class="me-2" color="primary"/>
+                <v-icon icon="mdi-file-download-outline" size="30" class="me-2" color="primary" />
                 Export Project
             </v-card-title>
             <v-card-text>
@@ -28,14 +28,13 @@
                     Unfinished analyses will be analysed upon importing the project. The latest version of UniProtKB will be used for
                     the analysis, rather than the version used in this project.
                 </span>
-
             </div>
         </v-alert>
 
         <v-row class="mb-6" density="compact">
             <v-col cols="12" sm="3">
                 <v-unipept-card class="d-flex align-center" style="flex-direction: row; padding: 8px 16px;">
-                    <v-icon icon="mdi-account-group-outline" size="36" class="me-4" color="primary"/>
+                    <v-icon icon="mdi-account-group-outline" size="36" class="me-4" color="primary" />
                     <div>
                         <div class="text-body-large font-weight-medium">Groups</div>
                         <div class="text-headline-medium font-weight-bold">{{ amountOfGroups }}</div>
@@ -45,7 +44,7 @@
 
             <v-col cols="12" sm="3">
                 <v-unipept-card class="d-flex align-center" style="flex-direction: row; padding: 8px 16px;">
-                    <v-icon icon="mdi-flask-outline" size="36" class="me-4" color="primary"/>
+                    <v-icon icon="mdi-flask-outline" size="36" class="me-4" color="primary" />
                     <div>
                         <div class="text-body-large font-weight-medium">Samples</div>
                         <div class="text-headline-medium font-weight-bold">{{ amountOfSamples }}</div>
@@ -55,7 +54,7 @@
 
             <v-col cols="12" sm="3">
                 <v-unipept-card class="d-flex align-center" style="flex-direction: row; padding: 8px 16px;">
-                    <v-icon icon="mdi-dna" size="36" class="me-4" color="primary"/>
+                    <v-icon icon="mdi-dna" size="36" class="me-4" color="primary" />
                     <div>
                         <div class="text-body-large font-weight-medium">Total Peptides</div>
                         <div class="text-headline-medium font-weight-bold">{{ formatNumber(amountOfPeptides) }}</div>
@@ -65,7 +64,7 @@
 
             <v-col cols="12" sm="3">
                 <v-unipept-card class="d-flex align-center" style="flex-direction: row; padding: 8px 16px;">
-                    <v-icon icon="mdi-dna" size="36" class="me-4" color="primary"/>
+                    <v-icon icon="mdi-dna" size="36" class="me-4" color="primary" />
                     <div>
                         <div class="text-body-large font-weight-medium">Unique Peptides</div>
                         <div class="text-headline-medium font-weight-bold">{{ formatNumber(amountOfUniquePeptides) }}</div>
@@ -96,10 +95,10 @@
                     <v-btn
                         color="primary"
                         variant="tonal"
-                        @click="startPreparing(exportProject())"
                         prepend-icon="mdi-download"
                         text="Export Project"
                         :loading="preparingExport"
+                        @click="startPreparing(exportProject())"
                     />
                 </template>
             </download-dialog>

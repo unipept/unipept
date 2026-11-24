@@ -22,8 +22,8 @@
                         bg-color="primary"
                         slider-color="secondary"
                     >
-                        <v-tab text="Barplot"></v-tab>
-                        <v-tab text="Heatmap"></v-tab>
+                        <v-tab text="Barplot" />
+                        <v-tab text="Heatmap" />
                     </v-tabs>
                     <v-card-text class="pa-0">
                         <v-tabs-window v-model="selectedComparativeTab">

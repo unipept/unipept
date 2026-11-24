@@ -20,7 +20,7 @@
         />
     </v-container>
     <v-container v-else class="d-flex justify-center align-center">
-        <v-progress-circular color="primary" indeterminate size="50"/>
+        <v-progress-circular color="primary" indeterminate size="50" />
     </v-container>
 </template>
 

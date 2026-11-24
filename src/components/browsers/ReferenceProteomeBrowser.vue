@@ -1,18 +1,18 @@
 <template>
     <div>
         <database-summary
+            v-model:selected-items="selectedItems"
+            v-model:invalid-items="invalidItems"
             title="Selected reference proteomes"
             description="This is a summary of all reference proteomes that have been selected for inclusion in your database. Proteins from UniProtKB that are associated to any of these reference proteomes will be included in the final database."
             empty-placeholder="No proteomes selected yet. Please select reference proteomes from the table below."
-            v-model:selected-items="selectedItems"
-            v-model:invalid-items="invalidItems"
             :compute-protein-count="computeProteinCount"
             :compute-taxon-count="computeTaxaCount"
             :chip-background-color="(_item: ReferenceProteome) => 'primary'"
             :chip-variant="() => 'flat'"
             :item-display-name="(item: ReferenceProteome) => item.id"
-            @upload-file="processUploadedProteomes"
             class="mb-2"
+            @upload-file="processUploadedProteomes"
         />
 
         <v-unipept-card style="width: 100%;">
@@ -26,9 +26,9 @@
                     :items-per-page="5"
                     :loading="proteomesLoading"
                     :search="debouncedFilterValue"
-                    @update:options="loadProteomes"
                     density="comfortable"
                     color="primary"
+                    @update:options="loadProteomes"
                 >
                     <template #footer.prepend>
                         <v-text-field

@@ -19,8 +19,8 @@
                             <v-col :cols="4">
                                 <v-unipept-card
                                     class="d-flex flex-row align-center"
-                                    @click="navigateToPaste"
                                     style="min-height: 100%;"
+                                    @click="navigateToPaste"
                                 >
                                     <v-icon class="ml-4" color="primary">
                                         mdi-content-paste
@@ -39,8 +39,8 @@
                             <v-col :cols="4">
                                 <v-unipept-card
                                     class="d-flex flex-row align-center"
-                                    @click="navigateToImportWizard"
                                     style="min-height: 100%;"
+                                    @click="navigateToImportWizard"
                                 >
                                     <v-icon class="ml-4" color="primary">
                                         mdi-file
@@ -59,8 +59,8 @@
                             <v-col :cols="4">
                                 <v-unipept-card
                                     class="d-flex flex-row align-center"
-                                    @click="navigateToBulkUpload"
                                     style="min-height: 100%;"
+                                    @click="navigateToBulkUpload"
                                 >
                                     <v-icon class="ml-4" color="primary">
                                         mdi-file-multiple
@@ -95,8 +95,8 @@
                     <!-- Step 2a: Create new sample by pasting list of peptides -->
                     <div v-if="sampleCreationType === 1">
                         <add-sample-card
-                            :is-unique="isUnique"
                             v-model:sample="sample"
+                            :is-unique="isUnique"
                             class="mb-4"
                         />
 

@@ -10,11 +10,11 @@
         item-value="code"
         :show-expand="data.ncbiTree !== undefined"
         density="compact"
-        @update:expanded="singleExpand"
         mobile-breakpoint="md"
+        @update:expanded="singleExpand"
     >
         <template #header.action>
-            <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV" >
+            <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV">
                 <template #activator="{ props }">
                     <v-btn
                         v-bind="props"
@@ -38,8 +38,8 @@
                 :loading="scoresLoading"
                 :error="scoresError"
                 :outdated="scoresOutdated"
-                @rerun="emits('rerunScores')"
                 annotation="GO term"
+                @rerun="emits('rerunScores')"
             />
         </template>
 

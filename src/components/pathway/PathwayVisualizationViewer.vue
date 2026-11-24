@@ -13,7 +13,7 @@
                 >
                     <!-- Settings expansion panel -->
                     <div v-show="!viz.loading.value" class="mx-4 mt-3 mb-3">
-                        <v-expansion-panels color="grey-lighten-4" v-model="settingsPanelOpen">
+                        <v-expansion-panels v-model="settingsPanelOpen" color="grey-lighten-4">
                             <v-expansion-panel value="settings">
                                 <v-expansion-panel-title>
                                     <v-icon class="mr-2">mdi-cog</v-icon>
@@ -73,7 +73,7 @@
                                     alt="Pathway visualization"
                                     style="display: block; max-width: none;"
                                     @load="viz.onImageLoad()"
-                                />
+                                >
                                 <pathway-image-overlay
                                     v-if="viz.imageLoaded.value"
                                     :ref="(el) => { viz.overlayRef.value = el as any }"

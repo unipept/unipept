@@ -31,7 +31,7 @@
                 </template>
                 <template #header.action>
                     <v-tooltip v-if="allInPageSelected">
-                        <template v-slot:activator="{ props: activatorProps }">
+                        <template #activator="{ props: activatorProps }">
                             <v-btn
                                 style="width: 120px;"
                                 color="error"
@@ -46,7 +46,7 @@
                         <span>Drop all items from the heatmap</span>
                     </v-tooltip>
                     <v-tooltip v-else>
-                        <template v-slot:activator="{ props: activatorProps }">
+                        <template #activator="{ props: activatorProps }">
                             <v-btn
                                 style="width: 120px;"
                                 color="primary"
@@ -63,7 +63,7 @@
                 </template>
                 <template #item.action="{ item }">
                     <v-tooltip v-if="rowNames.includes(item.name)">
-                        <template v-slot:activator="{ props: activatorProps }">
+                        <template #activator="{ props: activatorProps }">
                             <v-btn
                                 style="width: 120px;"
                                 color="error"
@@ -71,14 +71,14 @@
                                 variant="tonal"
                                 prepend-icon="mdi-minus"
                                 text="Drop"
-                                @click="removeRow(item)"
                                 v-bind="activatorProps"
+                                @click="removeRow(item)"
                             />
                         </template>
                         <span>Remove item from the heatmap</span>
                     </v-tooltip>
                     <v-tooltip v-else>
-                        <template v-slot:activator="{ props: activatorProps }">
+                        <template #activator="{ props: activatorProps }">
                             <v-btn
                                 style="width: 120px;"
                                 color="primary"
@@ -86,14 +86,13 @@
                                 variant="tonal"
                                 prepend-icon="mdi-plus"
                                 text="Add"
-                                @click="addRow(item)"
                                 v-bind="activatorProps"
+                                @click="addRow(item)"
                             />
                         </template>
                         <span>Add item to the heatmap</span>
                     </v-tooltip>
                 </template>
-
             </v-data-table>
         </v-card-text>
     </v-unipept-card>

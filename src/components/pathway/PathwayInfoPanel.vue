@@ -54,13 +54,12 @@
                                     :key="stat.name"
                                     class="d-flex align-center ga-2 mb-1 text-caption"
                                 >
-                                    <span class="stat-circle" :style="{ background: stat.color }"></span>
+                                    <span class="stat-circle" :style="{ background: stat.color }" />
                                     <span class="flex-grow-1">{{ stat.name }}</span>
                                     <span class="font-weight-medium">{{ stat.count }}/{{ stat.total }}</span>
                                     <span class="text-medium-emphasis">({{ displayPercentage(stat.count / stat.total) }})</span>
                                 </div>
                             </template>
-
                         </template>
 
                         <!-- EC tab -->
@@ -82,7 +81,7 @@
                                         :key="stat.name"
                                         class="d-flex align-center ga-1 text-caption text-medium-emphasis"
                                     >
-                                        <span class="stat-circle" :style="{ background: stat.color }"></span>
+                                        <span class="stat-circle" :style="{ background: stat.color }" />
                                         {{ stat.name }}: {{ stat.matched }}/{{ stat.total }} ({{ displayPercentage(stat.matched / stat.total) }})
                                     </div>
                                 </template>

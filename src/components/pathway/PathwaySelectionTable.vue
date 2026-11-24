@@ -16,7 +16,7 @@
                     </a>
                 </span>
             </div>
-            <img src="../../assets/logo/pathwaypilot-logo.svg" alt="PathwayPilot logo" style="max-width: 120px; flex-shrink: 0;" />
+            <img src="../../assets/logo/pathwaypilot-logo.svg" alt="PathwayPilot logo" style="max-width: 120px; flex-shrink: 0;">
         </div>
 
         <p v-if="subtitle" class="text-body-1 mb-4">{{ subtitle }}</p>
@@ -59,8 +59,8 @@
                         @click:clear="filters.search.value = ''"
                     />
                     <PathwaySelectionFilter
-                        :categoryOptions="categoryOptions"
-                        :compoundOptions="compoundOptions"
+                        :category-options="categoryOptions"
+                        :compound-options="compoundOptions"
                     />
                 </div>
             </template>

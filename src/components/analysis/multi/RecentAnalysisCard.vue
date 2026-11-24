@@ -10,7 +10,7 @@
                     </v-col>
                     <v-col cols="12" lg="4" class="pt-0">
                         <v-tooltip text="Open an existing project (.unipept)">
-                            <template v-slot:activator="{ props: activatorProps }">
+                            <template #activator="{ props: activatorProps }">
                                 <upload-project-button
                                     class="float-none float-lg-right w-xs-100 w-lg-auto"
                                     v-bind="activatorProps"
@@ -37,9 +37,9 @@
                     <template #default="{ item }">
                         <v-card
                             class="project-card mb-1 ps-2"
-                            @click="openProject(item.name)"
                             variant="flat"
                             density="compact"
+                            @click="openProject(item.name)"
                         >
                             <v-card-text class="d-flex align-center gap-2 py-3">
                                 <v-icon size="20" class="mr-5">mdi-folder-outline</v-icon>
@@ -104,7 +104,7 @@
                         </div>
 
                         <v-tooltip text="Remove all projects">
-                            <template v-slot:activator="{ props: activatorProps }">
+                            <template #activator="{ props: activatorProps }">
                                 <v-btn
                                     v-bind="activatorProps"
                                     class="me-5"
@@ -149,7 +149,7 @@
                 </v-card-text>
 
                 <v-card-actions class="justify-end">
-                    <v-btn variant="text" @click="cancel" color="black">Cancel</v-btn>
+                    <v-btn variant="text" color="black" @click="cancel">Cancel</v-btn>
                     <v-btn
                         color="error"
                         text="Yes, delete project"
@@ -177,7 +177,7 @@
                 </v-card-text>
 
                 <v-card-actions class="justify-end">
-                    <v-btn variant="text" @click="cancel" color="black">Cancel</v-btn>
+                    <v-btn variant="text" color="black" @click="cancel">Cancel</v-btn>
                     <v-btn
                         color="error"
                         text="Yes, delete all"

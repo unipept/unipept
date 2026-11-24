@@ -4,7 +4,7 @@
             <tr>
                 <th class="text-left" style="width: 20px;">
                     <v-tooltip text="Drag-and-drop samples to reorder them">
-                        <template v-slot:activator="{ props }">
+                        <template #activator="{ props }">
                             <v-icon color="grey-darken-3" v-bind="props" style="cursor: pointer;">
                                 mdi-swap-vertical
                             </v-icon>
@@ -12,7 +12,7 @@
                     </v-tooltip>
                 </th>
                 <!-- Column reserved to display the primary sample star -->
-                <th class="text-center" style="width: 20px;"></th>
+                <th class="text-center" style="width: 20px;" />
                 <th class="text-left">
                     Name
                 </th>
@@ -35,7 +35,7 @@
                     </td>
                     <td>
                         <v-tooltip text="This is the reference sample, used as primary indicator against which all other samples are compared.">
-                            <template v-slot:activator="{ props }">
+                            <template #activator="{ props }">
                                 <v-icon v-if="index === 0" color="secondary" v-bind="props" style="cursor: pointer">
                                     mdi-star
                                 </v-icon>
@@ -51,15 +51,14 @@
         </draggable>
         <tfoot>
             <tr class="summary-row font-weight-bold">
-                <td class="text-right"></td>
-                <td></td>
+                <td class="text-right" />
+                <td />
                 <td>{{ selectedAnalyses.length }} samples</td>
                 <td class="text-right">{{ formatNumber(totalMatchedPeptides) }} (Total)</td>
                 <td class="text-right">{{ formatNumber(totalSearchedPeptides) }} (Total)</td>
                 <td class="text-right">{{ averageMatchedPeptides.toFixed(2) }}% (Avg.)</td>
             </tr>
         </tfoot>
-
     </v-table>
 </template>
 

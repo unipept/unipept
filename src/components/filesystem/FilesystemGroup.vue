@@ -1,9 +1,9 @@
 <template>
-    <v-divider v-if="showDivider" class="mx-3"/>
+    <v-divider v-if="showDivider" class="mx-3" />
 
     <div class="d-flex flex-row align-center">
         <v-list-subheader>{{ group.name }}</v-list-subheader>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-icon
             class="pe-5"
             color="grey-darken-2"
@@ -15,8 +15,8 @@
 
     <v-list-item
         v-for="analysis in group.analyses"
-        style="margin: 1px 2px;"
         :key="analysis.id"
+        style="margin: 1px 2px;"
         :value="analysis"
         :title="analysis.name"
         color="primary"
@@ -26,7 +26,8 @@
         <template #prepend="{ isSelected }">
             <v-tooltip
                 v-if="analysis.intensities"
-                text="Custom intensity scores for Peptonizer provided">
+                text="Custom intensity scores for Peptonizer provided"
+            >
                 <template #activator="{ props }">
                     <v-icon
                         v-if="isSelected"
