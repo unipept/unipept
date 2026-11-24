@@ -6,7 +6,7 @@ export interface FunctionalProcessorData {
     countsMapTransferable: TransferableState;
     peptideDataTransferable: TransferableState;
     percentage: number;
-    termPrefix: string;
+    termPrefix: "ec" | "go" | "ipr";
     proteinCountProperty: "all" | "ec" | "go" | "ipr";
 }
 
@@ -45,8 +45,7 @@ export const aggregateFunctions = async ({
         }
 
         const proteinCount: number = peptideData.faCounts[proteinCountProperty];
-        // @ts-expect-error peptide data comes straight from Unipept API
-        const terms: Map<string, number> = peptideData[termPrefix] as Map<string, number>;
+        const terms: Record<string, number> = peptideData[termPrefix];
 
         for (const [term, proteinCountOfTerm] of Object.entries(terms)) {
             if ((proteinCountOfTerm / proteinCount) * 100 > percentage) {
