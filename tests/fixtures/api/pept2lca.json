@@ -1,0 +1,16 @@
+[
+  {
+    "peptide": "AALTER",
+    "cutoff_used": true,
+    "taxon_id": 1,
+    "taxon_name": "root",
+    "taxon_rank": "no rank"
+  },
+  {
+    "peptide": "MDGTEYIIVK",
+    "cutoff_used": false,
+    "taxon_id": 572511,
+    "taxon_name": "Blautia",
+    "taxon_rank": "genus"
+  }
+]

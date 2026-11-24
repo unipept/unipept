@@ -1,0 +1,152 @@
+{
+  "id": 1,
+  "name": "Organism",
+  "rank": "no rank",
+  "data": {
+    "count": 3,
+    "self_count": 0
+  },
+  "children": [
+    {
+      "id": 2,
+      "name": "Bacteria",
+      "rank": "domain",
+      "data": {
+        "count": 3,
+        "self_count": 0
+      },
+      "children": [
+        {
+          "id": 1783272,
+          "name": "Bacillati",
+          "rank": "kingdom",
+          "data": {
+            "count": 2,
+            "self_count": 0
+          },
+          "children": [
+            {
+              "id": 201174,
+              "name": "Actinomycetota",
+              "rank": "phylum",
+              "data": {
+                "count": 2,
+                "self_count": 0
+              },
+              "children": [
+                {
+                  "id": 1760,
+                  "name": "Actinomycetes",
+                  "rank": "class",
+                  "data": {
+                    "count": 2,
+                    "self_count": 0
+                  },
+                  "children": [
+                    {
+                      "id": 85004,
+                      "name": "Bifidobacteriales",
+                      "rank": "order",
+                      "data": {
+                        "count": 2,
+                        "self_count": 0
+                      },
+                      "children": [
+                        {
+                          "id": 31953,
+                          "name": "Bifidobacteriaceae",
+                          "rank": "family",
+                          "data": {
+                            "count": 2,
+                            "self_count": 0
+                          },
+                          "children": [
+                            {
+                              "id": 1678,
+                              "name": "Bifidobacterium",
+                              "rank": "genus",
+                              "data": {
+                                "count": 2,
+                                "self_count": 2
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3379134,
+          "name": "Pseudomonadati",
+          "rank": "kingdom",
+          "data": {
+            "count": 1,
+            "self_count": 0
+          },
+          "children": [
+            {
+              "id": 976,
+              "name": "Bacteroidota",
+              "rank": "phylum",
+              "data": {
+                "count": 1,
+                "self_count": 0
+              },
+              "children": [
+                {
+                  "id": 200643,
+                  "name": "Bacteroidia",
+                  "rank": "class",
+                  "data": {
+                    "count": 1,
+                    "self_count": 0
+                  },
+                  "children": [
+                    {
+                      "id": 171549,
+                      "name": "Bacteroidales",
+                      "rank": "order",
+                      "data": {
+                        "count": 1,
+                        "self_count": 0
+                      },
+                      "children": [
+                        {
+                          "id": 815,
+                          "name": "Bacteroidaceae",
+                          "rank": "family",
+                          "data": {
+                            "count": 1,
+                            "self_count": 0
+                          },
+                          "children": [
+                            {
+                              "id": 816,
+                              "name": "Bacteroides",
+                              "rank": "genus",
+                              "data": {
+                                "count": 1,
+                                "self_count": 1
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

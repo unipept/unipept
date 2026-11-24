@@ -17,6 +17,7 @@
     "test": "vitest run",
     "test:coverage": "vitest --coverage run",
     "test:e2e": "playwright test",
+    "test:record": "node tests/fixtures/api/record.ts",
     "generate-icons": "fantasticon"
   },
   "dependencies": {
