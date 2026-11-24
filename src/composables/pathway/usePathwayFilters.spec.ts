@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
-import { usePathwayFilters, type FilterablePathwayItem } from "./usePathwayFilters";
+import { usePathwayFilters } from "./usePathwayFilters";
+import type { FilterablePathwayItem } from "@/logic/pathway/PathwayFilters";
 
 const pathways: FilterablePathwayItem[] = [
     { id: "map00010", name: "Glycolysis", category: "Metabolism", subCategory: "Carbohydrate metabolism" },
