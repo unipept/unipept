@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TreeviewItem } from "@/logic/utils/TreeviewItem";
+import type { TreeviewItem } from "@/types/TreeviewItem";
 import { computed, ref, watch } from 'vue';
 
 import Treeview from './Treeview.vue';
@@ -179,8 +179,6 @@ watch(selectedItems, (items) => {
 </script>
 
 <script lang="ts">
-export type { TreeviewItem } from "@/logic/utils/TreeviewItem";
-
 export type Size = 'x-small' | 'small' | 'default' | 'large' | 'x-large';
 </script>
 

@@ -43,7 +43,8 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
-import Treeview, { TreeviewItem } from '@/components/visualization/treeview/Treeview.vue';
+import Treeview from '@/components/visualization/treeview/Treeview.vue';
+import type { TreeviewItem } from '@/types/TreeviewItem';
 import useTreeFilter from '@/composables/useTreeFilter';
 import { FilteredTree } from '@/logic/utils/TreeFilter';
 import { compressTree } from '@/logic/utils/TreeCompression';

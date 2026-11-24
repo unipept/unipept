@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildEcTree, ecChipColor, EC_CLASS_CHIP_COLORS, numberEcIds, numericKeySort } from "./EcTree";
-import type { TreeviewItem } from "@/logic/utils/TreeviewItem";
+import type { TreeviewItem } from "@/types/TreeviewItem";
 
 const names = (item: TreeviewItem): unknown => item.children.length > 0 ? [item.name, ...item.children.map(names)] : item.name;
 

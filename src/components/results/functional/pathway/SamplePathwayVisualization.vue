@@ -65,7 +65,7 @@ import type { ColoringItem } from '@/logic/pathway/PathwayColoring';
 import NcbiTreeNode from '@/logic/ontology/taxonomic/NcbiTreeNode';
 import PathwayVisualizationViewer from '@/components/pathway/PathwayVisualizationViewer.vue';
 import TaxonTreeview from '@/components/treeview/TaxonTreeview.vue';
-import { TreeviewItem } from '@/components/visualization/treeview/Treeview.vue';
+import type { TreeviewItem } from '@/types/TreeviewItem';
 
 const MAX_TAXA = 6;
 const HIGHLIGHT_COLOR = '#4c8cbf';

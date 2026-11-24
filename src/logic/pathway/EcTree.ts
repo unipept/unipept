@@ -1,4 +1,4 @@
-import type { TreeviewItem } from '@/logic/utils/TreeviewItem';
+import type { TreeviewItem } from '@/types/TreeviewItem';
 import {EcNamespace} from "@/logic/communicators/unipept/functional/EcResponse";
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
