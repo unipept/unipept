@@ -17,7 +17,8 @@ export default class ProteomeCommunicator {
         ids: string[]
     ): Promise<ProteomeResponse[]> {
         while (ProteomeCommunicator.inProgress) {
-            await ProteomeCommunicator.inProgress;
+            // An error of the previous request is reported to its own caller, not to the requests that wait for it
+            await ProteomeCommunicator.inProgress.catch(() => undefined);
         }
 
         ProteomeCommunicator.inProgress = this.doProcess(ids);

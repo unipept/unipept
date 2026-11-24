@@ -127,8 +127,7 @@ describe("NcbiResponseCommunicator", () => {
         ]);
     });
 
-    // A call that waits for the lock fails with the error of the running call and never sends its own request.
-    it.fails("getResponses: a call that waits for a failed call still sends its own request", async () => {
+    it("getResponses: a call that waits for a failed call still sends its own request", async () => {
         const communicator = new NcbiResponseCommunicator(API, 100);
         const { requests } = mockFetch([metadataRoute, { ...taxaRoute({ error: "Internal Server Error" }), status: 500 }]);
 

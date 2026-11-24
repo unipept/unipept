@@ -21,7 +21,8 @@ export default class NcbiResponseCommunicator {
         codes: NcbiId[]
     ): Promise<NcbiResponse[]> {
         while (NcbiResponseCommunicator.inProgress) {
-            await NcbiResponseCommunicator.inProgress;
+            // An error of the previous request is reported to its own caller, not to the requests that wait for it
+            await NcbiResponseCommunicator.inProgress.catch(() => undefined);
         }
 
         NcbiResponseCommunicator.inProgress = this.doProcess(codes);

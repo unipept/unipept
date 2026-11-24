@@ -123,8 +123,7 @@ describe("FunctionalResponseCommunicator", () => {
         await expect(communicator.getResponses(["EC:1.1.1.1"])).resolves.toHaveLength(1);
     });
 
-    // A call that waits for the lock fails with the error of the running call and never sends its own request.
-    it.fails("a call that waits for a failed call still sends its own request", async () => {
+    it("a call that waits for a failed call still sends its own request", async () => {
         const communicator = new EcResponseCommunicator(API, 100);
         const { requests } = mockFetch([metadataRoute, { ...ecRoute({ error: "Internal Server Error" }), status: 500 }]);
 

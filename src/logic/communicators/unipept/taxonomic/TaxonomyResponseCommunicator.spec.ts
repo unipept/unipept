@@ -31,8 +31,7 @@ describe("TaxonomyResponseCommunicator", () => {
         await expect(communicator.getResponses([1680])).resolves.toEqual(taxonomy);
     });
 
-    // A call that waits for the lock fails with the error of the running call and never sends its own request.
-    it.fails("a call that waits for a failed call still sends its own request", async () => {
+    it("a call that waits for a failed call still sends its own request", async () => {
         const communicator = new TaxonomyResponseCommunicator(API, 100);
         const { requests } = mockFetch([{ ...taxonomyRoute({ error: "Internal Server Error" }), status: 500 }]);
 

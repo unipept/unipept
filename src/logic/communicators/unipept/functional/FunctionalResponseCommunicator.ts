@@ -14,9 +14,9 @@ export default abstract class FunctionalResponseCommunicator<T extends Functiona
     ) {}
 
     public async getResponses(codes: string[]): Promise<FunctionalDefinition<T>[]> {
-        // Block until any previously ongoing request is finished
         while (FunctionalResponseCommunicator.inProgress) {
-            await FunctionalResponseCommunicator.inProgress;
+            // An error of the previous request is reported to its own caller, not to the requests that wait for it
+            await FunctionalResponseCommunicator.inProgress.catch(() => undefined);
         }
 
         FunctionalResponseCommunicator.inProgress = this.doProcess(codes);
