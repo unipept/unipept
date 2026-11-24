@@ -2,17 +2,8 @@ import CountTable from "@/logic/processors/CountTable";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import {markRaw, shallowRef} from "vue";
 import PeptideProcessorWebWorker from "../workers/peptideProcessor.worker.ts?worker&inline";
-import {ShareableMap, TransferableState} from "shared-memory-datastructures";
-
-export interface PeptideProcessorData {
-    peptides: string[];
-    filter: boolean;
-}
-
-export interface PeptideProcessorWorkerOutput {
-    peptideCountsTransferable: TransferableState;
-    totalPeptideCount: number;
-}
+import {ShareableMap} from "shared-memory-datastructures";
+import type { PeptideProcessorData, PeptideProcessorWorkerOutput } from "@/logic/processors/peptide/PeptideCounts";
 
 export default function usePeptideProcessor() {
     const countTable = shallowRef<CountTable<string>>();

@@ -1,4 +1,4 @@
-import { highlightTree } from "./highlightedTreeProcessor";
+import { highlightTree } from "@/logic/processors/taxonomic/HighlightedTree";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler

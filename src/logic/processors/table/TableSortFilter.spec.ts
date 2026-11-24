@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseQuery, sortFilterTable } from "./tableSortFilter";
-import type { QuickFilters, TableSortFilterWorkerInput } from "../../useTableSortFilter";
+import { parseQuery, sortFilterTable, type QuickFilters, type TableSortFilterWorkerInput } from "./TableSortFilter";
 import { countsTransferable, peptideDataTransferable } from "../../../../tests/unit/peptideData";
 
 // AAAK: genus, EC only. CCCK: species, GO and InterPro. DDDK: superkingdom, no annotations, cRAP. EEEK: not found.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { countPeptides } from "./peptideProcessor";
+import { countPeptides } from "./PeptideCounts";
 import { fromTransferable } from "../../../../tests/unit/peptideData";
 
 describe("countPeptides", () => {

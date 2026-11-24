@@ -1,4 +1,4 @@
-import { aggregatePathways } from "./pathwayProcessor";
+import { aggregatePathways } from "@/logic/processors/pathway/PathwayAggregation";
 
 self.onunhandledrejection = (event) => {
     throw event.reason;

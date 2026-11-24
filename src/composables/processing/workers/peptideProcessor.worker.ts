@@ -1,4 +1,4 @@
-import { countPeptides } from "./peptideProcessor";
+import { countPeptides } from "@/logic/processors/peptide/PeptideCounts";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler

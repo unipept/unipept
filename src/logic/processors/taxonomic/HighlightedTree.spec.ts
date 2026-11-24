@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { highlightTree } from "./highlightedTreeProcessor";
+import { highlightTree } from "./HighlightedTree";
 
 interface TestNode { id: number, extra: { included?: boolean }, children?: TestNode[] }
 

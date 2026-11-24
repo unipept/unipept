@@ -1,60 +1,11 @@
 import { computed, ref, toRaw, watch } from "vue";
 import { markRaw } from "vue";
 import { useDebounceFn } from "@vueuse/core";
-import { ShareableMap, TransferableState } from "shared-memory-datastructures";
+import { ShareableMap } from "shared-memory-datastructures";
 import type { SingleAnalysisStore } from "@/store/SingleAnalysisStore";
 import TableSortFilterWebWorker from "@/composables/processing/workers/tableSortFilter.worker.ts?worker&inline";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-
-// ─── Shared types (also imported by the worker) ───────────────────────────────
-
-export interface AnalysisSummaryTableItem {
-    peptide:      string;
-    occurrence:   number;
-    lca:          string;
-    rank:         string;
-    found:        boolean;
-    faCounts:     { all: number; ec: number; go: number; ipr: number } | undefined;
-    cutoffUsed:   boolean;
-    crapFiltered: boolean;
-}
-
-export interface NcbiSubsetEntry {
-    name: string;
-    rank: string;
-}
-
-export interface QuickFilters {
-    speciesLevel: boolean;  // exact rank match — distinct from the rank: substring search
-    hasGo:        boolean;
-    hasEc:        boolean;
-    hasIpr:       boolean;
-    notFound:     boolean;  // peptide not matched by Unipept
-}
-
-export interface TableSortFilterWorkerInput {
-    /** TransferableState of peptidesTable.counts — zero-copy via SharedArrayBuffer */
-    peptideCountsTransferable:  TransferableState;
-    /** TransferableState of peptideToData — zero-copy via SharedArrayBuffer */
-    peptideToDataTransferable:  TransferableState;
-    /** TransferableState of a ShareableMap built once from the plain peptideToLca Map */
-    peptideToLcaTransferable:   TransferableState;
-    /** Tiny NCBI name/rank subset for unique LCA ids — structured-cloned (small) */
-    ncbiSubset:                 Record<number, NcbiSubsetEntry>;
-    /** Peptides excluded by the cRAP filter (only populated when useCrap is true) */
-    crapFilteredPeptides:       string[];
-    search:       string;
-    quickFilters: QuickFilters;
-    sortKey:      string;
-    sortOrder:    "asc" | "desc" | "";
-    page:         number;
-    itemsPerPage: number;
-}
-
-export interface TableSortFilterWorkerOutput {
-    rows:       AnalysisSummaryTableItem[];
-    totalCount: number;
-}
+import type { AnalysisSummaryTableItem, NcbiSubsetEntry, QuickFilters, TableSortFilterWorkerInput, TableSortFilterWorkerOutput } from "@/logic/processors/table/TableSortFilter";
 
 // Chip → query string mapping (chips without an entry are chip-only filters with no search equivalent)
 const CHIP_QUERIES: Partial<Record<keyof QuickFilters, string>> = {

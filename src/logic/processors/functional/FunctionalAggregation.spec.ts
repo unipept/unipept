@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateFunctions } from "./functionalProcessor";
+import { aggregateFunctions } from "./FunctionalAggregation";
 import { countsTransferable, fromTransferable, peptideDataTransferable } from "../../../../tests/unit/peptideData";
 
 // AAAAA: 4 proteins with EC numbers, 3 of them 1.1.1.1 and 1 of them 2.7.11.1. CCCCC: 2 proteins, both 1.1.1.1.

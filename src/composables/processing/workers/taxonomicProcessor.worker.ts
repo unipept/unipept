@@ -1,4 +1,4 @@
-import { aggregateTaxa } from "./taxonomicProcessor";
+import { aggregateTaxa } from "@/logic/processors/taxonomic/TaxonAggregation";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler

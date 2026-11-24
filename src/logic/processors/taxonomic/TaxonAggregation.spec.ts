@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateTaxa } from "./taxonomicProcessor";
+import { aggregateTaxa } from "./TaxonAggregation";
 import { fromTransferable, peptideDataTransferable } from "../../../../tests/unit/peptideData";
 
 describe("aggregateTaxa", () => {

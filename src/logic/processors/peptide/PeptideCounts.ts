@@ -1,5 +1,14 @@
-import {PeptideProcessorData} from "@/composables/processing/peptide/usePeptideProcessor";
-import {ShareableMap} from "shared-memory-datastructures";
+import {ShareableMap, TransferableState} from "shared-memory-datastructures";
+
+export interface PeptideProcessorData {
+    peptides: string[];
+    filter: boolean;
+}
+
+export interface PeptideProcessorWorkerOutput {
+    peptideCountsTransferable: TransferableState;
+    totalPeptideCount: number;
+}
 
 export const countPeptides = async ({
     peptides,

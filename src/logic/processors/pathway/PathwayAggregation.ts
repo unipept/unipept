@@ -1,5 +1,22 @@
-import { ShareableMap } from "shared-memory-datastructures";
-import type { PathwayProcessorData, PathwayProcessorOutput } from "../pathway/usePathwayProcessor";
+import { ShareableMap, TransferableState } from "shared-memory-datastructures";
+import type { EcInfo, PathwayInfo } from "@/logic/communicators/PathwayPilotCommunicator";
+
+export interface PathwayProcessorData {
+    peptideCountsTransferable: TransferableState;
+    ecToPeptides: Map<string, string[]>;
+    ecMapping: Map<string, EcInfo>;
+    pathwayMapping: Map<string, PathwayInfo>;
+}
+
+export interface PathwayProcessorOutput {
+    ecs: Set<string>;
+    compounds: Set<string>;
+    pathways: Set<string>;
+    ecToPeptideCount: Map<string, number>;
+    pathwayToPeptideCounts: Map<string, number>;
+    ecToPathways: Map<string, Set<string>>;
+    compoundToPathways: Map<string, Set<string>>;
+}
 
 export const aggregatePathways = ({
     peptideCountsTransferable,

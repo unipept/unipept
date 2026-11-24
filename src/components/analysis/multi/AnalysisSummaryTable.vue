@@ -440,7 +440,7 @@ const headers: DataTableHeader[] = [
     }
 ];
 
-export type { AnalysisSummaryTableItem } from "@/composables/useTableSortFilter";
+export type { AnalysisSummaryTableItem } from "@/logic/processors/table/TableSortFilter";
 </script>
 
 <style scoped>
