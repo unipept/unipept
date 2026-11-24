@@ -2,15 +2,13 @@ import {Peptonizer, PeptonizerProgressListener, PeptonizerResult} from "peptoniz
 import CountTable from "@/logic/processors/CountTable";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
-import useBrowserCheck from "@/composables/useBrowserCheck";
+import {isChromium, isFirefox, isSafari} from "@/logic/utils/BrowserCheck";
 import ExclusiveProcessorRunner from "@/logic/processors/peptonizer/ExclusiveProcessorRunner";
 import {
     mergePeptideAnnotations,
     mergePeptideCounts,
     mergePeptideIntensities
 } from "@/logic/processors/peptonizer/PeptonizerInput";
-
-const { isSafari, isFirefox, isChromium } = useBrowserCheck();
 
 export const DEFAULT_PEPTONIZER_WORKERS = (() => {
     if (isSafari()) {
