@@ -109,7 +109,7 @@ export function usePathwayVisualization() {
 
 export type PathwayVisualization = ReturnType<typeof usePathwayVisualization>;
 
-/** Provided by the component that creates the visualization state; read by PathwayVisualizationViewer. */
+// Provided by the component that creates the visualization state; read by PathwayVisualizationViewer.
 export const pathwayVisualizationKey: InjectionKey<PathwayVisualization> = Symbol('pathwayVisualization');
 
 export function injectPathwayVisualization(): PathwayVisualization {

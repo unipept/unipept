@@ -130,7 +130,7 @@ export function usePathwayFilters<T extends FilterablePathwayItem>(options: Path
 
 export type PathwayFilters = ReturnType<typeof usePathwayFilters>;
 
-/** Provided by the component that creates the filters; read by PathwaySelectionTable and PathwaySelectionFilter. */
+// Provided by the component that creates the filters; read by PathwaySelectionTable and PathwaySelectionFilter.
 export const pathwayFiltersKey: InjectionKey<PathwayFilters> = Symbol('pathwayFilters');
 
 export function injectPathwayFilters(): PathwayFilters {
