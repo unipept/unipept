@@ -60,8 +60,7 @@
                                         class="float-end"
                                         icon="mdi-restart"
                                         @click="restartAnalysis"
-                                    >
-                                    </v-btn>
+                                    />
                                 </template>
                             </v-tooltip>
                             <div>

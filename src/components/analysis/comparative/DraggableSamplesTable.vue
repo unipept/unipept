@@ -12,7 +12,7 @@
                     </v-tooltip>
                 </th>
                 <!-- Column reserved to display the primary sample star -->
-                <th class="text-center" style="width: 20px;"></th>
+                <th class="text-center" style="width: 20px;" />
                 <th class="text-left">
                     Name
                 </th>
@@ -51,8 +51,8 @@
         </draggable>
         <tfoot>
             <tr class="summary-row font-weight-bold">
-                <td class="text-right"></td>
-                <td></td>
+                <td class="text-right" />
+                <td />
                 <td>{{ selectedAnalyses.length }} samples</td>
                 <td class="text-right">{{ formatNumber(totalMatchedPeptides) }} (Total)</td>
                 <td class="text-right">{{ formatNumber(totalSearchedPeptides) }} (Total)</td>

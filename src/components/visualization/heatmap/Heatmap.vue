@@ -1,7 +1,6 @@
 <template>
     <div class="d-flex">
-        <div ref="heatmapContainer">
-        </div>
+        <div ref="heatmapContainer" />
 
         <v-tooltip
             :model-value="tooltipActive"
@@ -18,7 +17,7 @@
 
         <!-- Controls to the right of the visualization -->
         <div>
-            <div :style="`height: ${colLabelHeight}px;`"></div>
+            <div :style="`height: ${colLabelHeight}px;`" />
             <v-hover v-for="(rowName, i) in rowNames" :key="rowName">
                 <template v-slot:default="{ isHovering, props: hooveringProps }">
                     <v-tooltip text="Remove row from heatmap" location="right" open-delay="0">
@@ -47,8 +46,7 @@
     </div>
 
     <div :style="`width: ${containerWidth}px;`" class="d-flex">
-        <div :style="`width: ${rowLabelWidth}px;`">
-        </div>
+        <div :style="`width: ${rowLabelWidth}px;`" />
         <v-menu location="right top" :close-on-content-click="false" :offset="12">
             <template v-slot:activator="{ props }">
                 <v-btn
@@ -60,10 +58,9 @@
                     prepend-icon="mdi-plus"
                     :text="addRowButtonLabel"
                     @click="addRows()"
-                >
-                </v-btn>
+                />
             </template>
-            <slot name="row-selector"></slot>
+            <slot name="row-selector" />
         </v-menu>
     </div>
 </template>

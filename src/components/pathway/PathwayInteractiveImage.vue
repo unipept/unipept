@@ -9,7 +9,7 @@
         @wheel.prevent="onZoom"
     >
         <div :style="style">
-            <slot></slot>
+            <slot />
         </div>
     </div>
 </template>

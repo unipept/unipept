@@ -3,7 +3,7 @@
 
     <div class="d-flex flex-row align-center">
         <v-list-subheader>{{ group.name }}</v-list-subheader>
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-icon
             class="pe-5"
             color="grey-darken-2"

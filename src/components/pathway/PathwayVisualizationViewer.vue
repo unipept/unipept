@@ -73,7 +73,7 @@
                                     alt="Pathway visualization"
                                     style="display: block; max-width: none;"
                                     @load="viz.onImageLoad()"
-                                />
+                                >
                                 <pathway-image-overlay
                                     v-if="viz.imageLoaded.value"
                                     :ref="(el) => { viz.overlayRef.value = el as any }"

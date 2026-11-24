@@ -35,7 +35,7 @@
             Ensure the scores are correctly derived from your search engine for optimal performance.
         </v-alert>
 
-        <div ref="chartContainer" class="chart-container"></div>
+        <div ref="chartContainer" class="chart-container" />
 
         <div
             v-if="tooltip.visible"

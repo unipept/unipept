@@ -25,9 +25,9 @@
             v-if="props.settings.showBarLabel"
             class="resizer"
             @mousedown="startResizing"
-        ></div>
+        />
 
-        <div ref="barplotContainer" class="flex-grow-1 barplot-container"></div>
+        <div ref="barplotContainer" class="flex-grow-1 barplot-container" />
     </div>
 </template>
 

@@ -100,7 +100,7 @@
         />
 
         <!-- Content that should be shown for this project (information about a single sample, or multiple samples?) -->
-        <slot></slot>
+        <slot />
         
         <manage-sample-group-dialog
             v-if="manageSamples[1]"
