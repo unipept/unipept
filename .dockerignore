@@ -6,6 +6,5 @@ test-results
 .github
 .devcontainer
 tests
-wiki-resources
 *.md
 vite.log
