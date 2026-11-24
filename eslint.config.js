@@ -52,7 +52,6 @@ export default defineConfig([
             'vue/max-attributes-per-line': 'off',
             'vue/multiline-html-element-content-newline': 'off',
             'vue/mustache-interpolation-spacing': 'off',
-            'vue/no-mutating-props': 'off',
             'vue/no-spaces-around-equal-signs-in-attribute': 'off',
             'vue/no-template-shadow': 'off',
             'vue/no-unused-vars': 'off',
@@ -61,6 +60,13 @@ export default defineConfig([
             'vue/singleline-html-element-content-newline': 'off',
             'vue/v-on-event-hyphenation': 'off',
             'vue/v-slot-style': 'off',
+        },
+    },
+    {
+        // Off until these components inject their composable instead of taking it as a prop.
+        files: ['src/components/pathway/**'],
+        rules: {
+            'vue/no-mutating-props': 'off',
         },
     },
 ]);

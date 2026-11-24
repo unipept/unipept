@@ -30,8 +30,9 @@ import {SampleTableItem} from "@/components/sample/SampleTable.vue";
 
 const props = defineProps<{
     isUnique: (item: SampleTableItem) => boolean;
-    sample: SampleTableItem;
 }>();
+
+const sample = defineModel<SampleTableItem>("sample", { required: true });
 </script>
 
 <style scoped>

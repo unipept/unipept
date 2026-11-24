@@ -202,9 +202,10 @@ interface DelimiterType {
 }
 
 const props = defineProps<{
-    sample: SampleTableItem;
     columnFile: File;
 }>();
+
+const sample = defineModel<SampleTableItem>("sample", { required: true });
 
 const {
     disabledInputs,
@@ -306,7 +307,7 @@ const readFile = async function() {
     }
 
     // Remove the file extension from the file name
-    props.sample.name = props.columnFile.name.replace(/\.[^/.]+$/, "");;
+    sample.value.name = props.columnFile.name.replace(/\.[^/.]+$/, "");
 
     await parseContent();
 
@@ -326,8 +327,8 @@ const parseContent = async function() {
         delimiter.value
     );
 
-    props.sample.rawPeptides = rawPeptides;
-    props.sample.intensities = intensities;
+    sample.value.rawPeptides = rawPeptides;
+    sample.value.intensities = intensities;
 }
 
 const initialize = async function() {
