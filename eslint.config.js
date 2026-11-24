@@ -24,6 +24,8 @@ export default defineConfig([
             'vue/multi-word-component-names': 'off',
             'vue/html-indent': ['warn', 4],
             'vue/valid-v-slot': ['error', { allowModifiers: true }],
+            'vue/max-attributes-per-line': 'off',
+            'vue/singleline-html-element-content-newline': 'off',
 
             // TypeScript rules
             '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
@@ -39,13 +41,6 @@ export default defineConfig([
                 destructuredArrayIgnorePattern: '^_',
             }],
             '@typescript-eslint/no-var-requires': 'off',
-        },
-    },
-    {
-        // Off until their findings are fixed, one PR per rule.
-        rules: {
-            'vue/max-attributes-per-line': 'off',
-            'vue/singleline-html-element-content-newline': 'off',
         },
     },
 ]);
