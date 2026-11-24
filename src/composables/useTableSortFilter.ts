@@ -5,7 +5,7 @@ import { ShareableMap } from "shared-memory-datastructures";
 import type { SingleAnalysisStore } from "@/store/SingleAnalysisStore";
 import TableSortFilterWebWorker from "@/composables/workers/tableSortFilter.worker.ts?worker&inline";
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import type { AnalysisSummaryTableItem, NcbiSubsetEntry, QuickFilters, TableSortFilterWorkerInput, TableSortFilterWorkerOutput } from "@/logic/processors/table/TableSortFilter";
+import type { AnalysisSummaryTableItem, NcbiSubsetEntry, QuickFilters, TableSortFilterInput, TableSortFilterOutput } from "@/logic/processors/table/TableSortFilter";
 
 // Chip → query string mapping (chips without an entry are chip-only filters with no search equivalent)
 const CHIP_QUERIES: Partial<Record<keyof QuickFilters, string>> = {
@@ -39,8 +39,8 @@ export function useTableSortFilter(analysis: SingleAnalysisStore) {
     let ncbiSubset: Record<number, NcbiSubsetEntry> | null = null;
 
     const { post } = useAsyncWebWorker<
-        TableSortFilterWorkerInput,
-        TableSortFilterWorkerOutput
+        TableSortFilterInput,
+        TableSortFilterOutput
     >(() => new TableSortFilterWebWorker());
 
     // ── Stale-result guard ────────────────────────────────────────────────

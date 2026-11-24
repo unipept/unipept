@@ -3,12 +3,12 @@ import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import {markRaw, shallowRef} from "vue";
 import PeptideProcessorWebWorker from "@/composables/workers/peptideProcessor.worker.ts?worker&inline";
 import {ShareableMap} from "shared-memory-datastructures";
-import type { PeptideProcessorData, PeptideProcessorWorkerOutput } from "@/logic/processors/peptide/PeptideCounts";
+import type { PeptideCountsInput, PeptideCountsOutput } from "@/logic/processors/peptide/PeptideCounts";
 
 export default function usePeptideProcessor() {
     const countTable = shallowRef<CountTable<string>>();
 
-    const { post } = useAsyncWebWorker<PeptideProcessorData, PeptideProcessorWorkerOutput>(
+    const { post } = useAsyncWebWorker<PeptideCountsInput, PeptideCountsOutput>(
         () => new PeptideProcessorWebWorker()
     );
 

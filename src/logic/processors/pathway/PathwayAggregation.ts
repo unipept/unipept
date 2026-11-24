@@ -1,14 +1,14 @@
 import { ShareableMap, TransferableState } from "shared-memory-datastructures";
 import type { EcInfo, PathwayInfo } from "@/logic/communicators/PathwayPilotCommunicator";
 
-export interface PathwayProcessorData {
+export interface PathwayAggregationInput {
     peptideCountsTransferable: TransferableState;
     ecToPeptides: Map<string, string[]>;
     ecMapping: Map<string, EcInfo>;
     pathwayMapping: Map<string, PathwayInfo>;
 }
 
-export interface PathwayProcessorOutput {
+export interface PathwayAggregationOutput {
     ecs: Set<string>;
     compounds: Set<string>;
     pathways: Set<string>;
@@ -23,7 +23,7 @@ export const aggregatePathways = ({
     ecToPeptides,
     ecMapping,
     pathwayMapping
-}: PathwayProcessorData): PathwayProcessorOutput => {
+}: PathwayAggregationInput): PathwayAggregationOutput => {
     const peptideCounts = ShareableMap.fromTransferableState<string, number>(peptideCountsTransferable);
 
     // Step 1: build EC set and per-EC spectral counts (strip "EC:" prefix)

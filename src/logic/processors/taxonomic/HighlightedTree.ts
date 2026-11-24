@@ -1,4 +1,4 @@
-export interface HighlightedTreeProcessorData {
+export interface HighlightedTreeInput {
     tree: any;
     peptides: string[];
     taxaToPeptides: Map<number, string[]>;
@@ -8,7 +8,7 @@ export const highlightTree = async ({
     tree,
     peptides,
     taxaToPeptides
-}: HighlightedTreeProcessorData): Promise<any> => {
+}: HighlightedTreeInput): Promise<any> => {
     return processRecursively(tree, (node: any, children: any) => {
         node.extra.included = children.some((x: any) => x.extra.included) ||
             (

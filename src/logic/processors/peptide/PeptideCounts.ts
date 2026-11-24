@@ -1,11 +1,11 @@
 import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 
-export interface PeptideProcessorData {
+export interface PeptideCountsInput {
     peptides: string[];
     filter: boolean;
 }
 
-export interface PeptideProcessorWorkerOutput {
+export interface PeptideCountsOutput {
     peptideCountsTransferable: TransferableState;
     totalPeptideCount: number;
 }
@@ -13,7 +13,7 @@ export interface PeptideProcessorWorkerOutput {
 export const countPeptides = async ({
     peptides,
     filter
-}: PeptideProcessorData) => {
+}: PeptideCountsInput) => {
     peptides = preprocess(peptides);
 
     const peptideCounts = new ShareableMap<string, number>();

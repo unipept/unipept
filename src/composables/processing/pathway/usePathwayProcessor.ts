@@ -3,7 +3,7 @@ import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
 import PathwayProcessorWebWorker from "@/composables/workers/pathwayProcessor.worker.ts?worker";
 import CountTable from "@/logic/processors/CountTable";
 import type { EcInfo, PathwayInfo } from "@/logic/communicators/PathwayPilotCommunicator";
-import type { PathwayProcessorData, PathwayProcessorOutput } from "@/logic/processors/pathway/PathwayAggregation";
+import type { PathwayAggregationInput, PathwayAggregationOutput } from "@/logic/processors/pathway/PathwayAggregation";
 
 export default function usePathwayProcessor() {
     const ecs = shallowRef<Set<string>>(new Set());
@@ -14,7 +14,7 @@ export default function usePathwayProcessor() {
     const ecToPathways = shallowRef<Map<string, Set<string>>>(new Map());
     const compoundToPathways = shallowRef<Map<string, Set<string>>>(new Map());
 
-    const { post } = useAsyncWebWorker<PathwayProcessorData, PathwayProcessorOutput>(
+    const { post } = useAsyncWebWorker<PathwayAggregationInput, PathwayAggregationOutput>(
         () => new PathwayProcessorWebWorker()
     );
 

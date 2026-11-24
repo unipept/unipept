@@ -2,7 +2,7 @@ import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 
-export interface FunctionalProcessorData {
+export interface FunctionalAggregationInput {
     countsMapTransferable: TransferableState;
     peptideDataTransferable: TransferableState;
     percentage: number;
@@ -10,7 +10,7 @@ export interface FunctionalProcessorData {
     proteinCountProperty: "all" | "ec" | "go" | "ipr";
 }
 
-export interface FunctionalProcessorOutput {
+export interface FunctionalAggregationOutput {
     sortedCountsTransferable: TransferableState;
     itemToPeptides: Map<string, string[]>;
     annotatedCount: number;
@@ -23,7 +23,7 @@ export const aggregateFunctions = async ({
     percentage,
     termPrefix,
     proteinCountProperty
-}: FunctionalProcessorData ) => {
+}: FunctionalAggregationInput ) => {
     const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
     const peptideCounts = ShareableMap.fromTransferableState<string, number>(countsMapTransferable);
 

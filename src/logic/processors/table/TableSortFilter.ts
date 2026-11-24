@@ -26,7 +26,7 @@ export interface QuickFilters {
     notFound:     boolean;  // peptide not matched by Unipept
 }
 
-export interface TableSortFilterWorkerInput {
+export interface TableSortFilterInput {
     /** TransferableState of peptidesTable.counts — zero-copy via SharedArrayBuffer */
     peptideCountsTransferable:  TransferableState;
     /** TransferableState of peptideToData — zero-copy via SharedArrayBuffer */
@@ -45,7 +45,7 @@ export interface TableSortFilterWorkerInput {
     itemsPerPage: number;
 }
 
-export interface TableSortFilterWorkerOutput {
+export interface TableSortFilterOutput {
     rows:       AnalysisSummaryTableItem[];
     totalCount: number;
 }
@@ -133,7 +133,7 @@ export const sortFilterTable = ({
     sortOrder,
     page,
     itemsPerPage
-}: TableSortFilterWorkerInput): TableSortFilterWorkerOutput => {
+}: TableSortFilterInput): TableSortFilterOutput => {
     const peptideCounts = ShareableMap.fromTransferableState<string, number>(
         peptideCountsTransferable
     );
@@ -153,7 +153,7 @@ export const sortFilterTable = ({
     const needsLcaName = Boolean(query.freeText || query.lcaFilter);
     const needsRank    = Boolean(query.freeText || query.rankFilter);
 
-    const rows: TableSortFilterWorkerOutput["rows"] = [];
+    const rows: TableSortFilterOutput["rows"] = [];
 
     for (const [peptide, count] of peptideCounts.entries()) {
         const lcaId     = peptideToLca.get(peptide);
