@@ -21,9 +21,7 @@ describe("highlightTree", () => {
         expect(find(root, 2157)?.extra.included).toBe(false);
     });
 
-    // Two causes: the children are processed asynchronously, so the parent gets promises instead of nodes, and the parent
-    // reads child.included while the flag is written to child.extra.included
-    it.fails("marks the ancestors of an included node as included", async () => {
+    it("marks the ancestors of an included node as included", async () => {
         const root = tree();
 
         await highlightTree({ tree: root, peptides: ["AAAAA"], taxaToPeptides });
