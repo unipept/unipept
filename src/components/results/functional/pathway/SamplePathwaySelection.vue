@@ -1,6 +1,5 @@
 <template>
     <pathway-selection-table
-        :filters="filters"
         :headers="headers"
         sort-key="count"
         :loading="loading"
@@ -14,10 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, provide } from 'vue';
 import { PathwayPilotStore, PathwayItem } from '@/store/PathwayPilotStore';
 import { categoryColor } from '@/composables/pathway/usePathwayColors';
-import { usePathwayFilters } from '@/composables/pathway/usePathwayFilters';
+import { usePathwayFilters, pathwayFiltersKey } from '@/composables/pathway/usePathwayFilters';
 import { pathwayGroups } from '@/logic/PathwayGroups';
 import usePathwayPilotMappingStore from '@/store/PathwayPilotMappingStore';
 import PathwaySelectionTable from '@/components/pathway/PathwaySelectionTable.vue';
@@ -35,6 +34,7 @@ const filters = usePathwayFilters({
     pathwaysForCompound: (c) => props.store.pathwaysForCompound(c),
     allEcs: () => props.store.ecs,
 });
+provide(pathwayFiltersKey, filters);
 
 const headers = [
     { title: 'ID', key: 'id', sortable: true, width: '110px' },

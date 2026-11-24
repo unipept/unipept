@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref, computed, inject, type InjectionKey } from 'vue';
 import { refDebounced } from '@vueuse/core';
 
 export interface FilterablePathwayItem {
@@ -126,4 +126,16 @@ export function usePathwayFilters<T extends FilterablePathwayItem>(options: Path
         applyFilters,
         clearFilters,
     };
+}
+
+export type PathwayFilters = ReturnType<typeof usePathwayFilters>;
+
+export const pathwayFiltersKey: InjectionKey<PathwayFilters> = Symbol('pathwayFilters');
+
+export function injectPathwayFilters(): PathwayFilters {
+    const filters = inject(pathwayFiltersKey);
+    if (!filters) {
+        throw new Error('injectPathwayFilters() requires a parent component that provides pathwayFiltersKey');
+    }
+    return filters;
 }
