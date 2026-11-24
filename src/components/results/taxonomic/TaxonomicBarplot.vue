@@ -4,7 +4,6 @@
             caption="Hover over the bars to see more details"
             :download="() => downloadImageModalOpen = true"
         >
-
             <template #visualization>
                 <div style="padding-top: 50px;">
                     <div class="mx-4">

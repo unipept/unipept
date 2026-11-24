@@ -59,7 +59,6 @@
                 <td class="text-right">{{ averageMatchedPeptides.toFixed(2) }}% (Avg.)</td>
             </tr>
         </tfoot>
-
     </v-table>
 </template>
 

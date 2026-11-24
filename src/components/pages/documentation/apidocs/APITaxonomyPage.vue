@@ -334,7 +334,9 @@
                                 Value: Must be a valid list of NCBI ranks, see <r-link
                                     to="#request"
                                     router
-                                >request</r-link>
+                                >
+                                    request
+                                </r-link>
                             </div>
                         </td>
                     </tr>

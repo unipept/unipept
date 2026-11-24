@@ -60,7 +60,6 @@
                                     <span class="text-medium-emphasis">({{ displayPercentage(stat.count / stat.total) }})</span>
                                 </div>
                             </template>
-
                         </template>
 
                         <!-- EC tab -->

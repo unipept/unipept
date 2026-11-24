@@ -93,7 +93,6 @@
                         <span>Add item to the heatmap</span>
                     </v-tooltip>
                 </template>
-
             </v-data-table>
         </v-card-text>
     </v-unipept-card>

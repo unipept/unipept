@@ -45,7 +45,6 @@ export default defineConfig([
         // Off until their findings are fixed, one PR per rule.
         rules: {
             'vue/max-attributes-per-line': 'off',
-            'vue/multiline-html-element-content-newline': 'off',
             'vue/mustache-interpolation-spacing': 'off',
             'vue/no-spaces-around-equal-signs-in-attribute': 'off',
             'vue/singleline-html-element-content-newline': 'off',

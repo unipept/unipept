@@ -28,7 +28,6 @@
                     Unfinished analyses will be analysed upon importing the project. The latest version of UniProtKB will be used for
                     the analysis, rather than the version used in this project.
                 </span>
-
             </div>
         </v-alert>
 

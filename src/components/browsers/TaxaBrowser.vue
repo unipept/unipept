@@ -103,7 +103,6 @@
                 </div>
             </v-card-text>
         </v-unipept-card>
-
     </div>
 </template>
 
