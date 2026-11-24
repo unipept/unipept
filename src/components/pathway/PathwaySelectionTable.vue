@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { categoryColor } from '@/composables/pathway/usePathwayColors';
+import { categoryColor } from '@/logic/pathway/PathwayColors';
 import { injectPathwayFilters } from '@/composables/pathway/usePathwayFilters';
 import PathwaySelectionFilter from './PathwaySelectionFilter.vue';
 

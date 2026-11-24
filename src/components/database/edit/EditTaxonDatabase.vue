@@ -81,11 +81,10 @@ import {NcbiTaxon} from "@/logic/ontology/taxonomic/Ncbi";
 import TaxaBrowser from "@/components/browsers/TaxaBrowser.vue";
 import useNcbiOntology from "@/composables/ontology/useNcbiOntology";
 import EditDatabaseDialog from "@/components/database/edit/EditDatabaseDialog.vue";
-import useArrayCompare from "@/composables/useArrayCompare";
+import {compareNumberOrStringArrays} from "@/logic/utils/ArrayUtils";
 
 const { ontology: ncbiOntology, update: updateNcbiOntology } = useNcbiOntology();
 const customFilterStore = useCustomFilterStore();
-const { compareNumberOrStringArrays } = useArrayCompare();
 
 const dialogOpen = defineModel<boolean>();
 

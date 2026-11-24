@@ -181,7 +181,7 @@ import FunctionalEcResults from "@/components/results/functional/ec/FunctionalEc
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import FunctionalIprResults from "@/components/results/functional/ipr/FunctionalIprResults.vue";
 import FilterFunctionalResults from "@/components/results/functional/FilterFunctionalResults.vue";
-import usePercentage from "@/composables/usePercentage";
+import {displayPercentage} from "@/logic/utils/Formatting";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {GoResultsTableItem} from "@/components/results/functional/go/GoResultsTable.vue";
 import useCsvDownload from "@/composables/useCsvDownload";
@@ -194,7 +194,6 @@ const { analysis } = defineProps<{
     analysis: SingleAnalysisStore
 }>();
 
-const { displayPercentage } = usePercentage();
 const { download } = useCsvDownload();
 const { getNcbiDefinition } = useOntologyStore();
 

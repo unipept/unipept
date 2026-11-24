@@ -109,7 +109,7 @@
 <script setup lang="ts">
 import {ProjectAnalysisStore} from "@/store/ProjectAnalysisStore";
 import {computed, ref} from "vue";
-import {useNumberFormatter} from "@/composables/useNumberFormatter";
+import {formatNumber} from "@/logic/utils/Formatting";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {PeptonizerStatus} from "@/store/PeptonizerAnalysisStore";
 import useProjectExport from "@/composables/useProjectExport";
@@ -117,8 +117,6 @@ import useAppStateStore from "@/store/AppStateStore";
 import AnalyticsCommunicator from "@/logic/communicators/analytics/AnalyticsCommunicator";
 import DownloadDialog from "@/components/dialogs/DownloadDialog.vue";
 import type { DataTableHeader } from "vuetify";
-
-const { formatNumber } = useNumberFormatter();
 
 const { project } = defineProps<{
     project: ProjectAnalysisStore

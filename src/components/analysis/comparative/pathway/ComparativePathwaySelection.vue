@@ -16,9 +16,9 @@
 import { computed, provide } from 'vue';
 import { SingleAnalysisStore } from '@/store/SingleAnalysisStore';
 import { PathwayPilotStatus, PathwayItem } from '@/store/PathwayPilotStore';
-import { categoryColor } from '@/composables/pathway/usePathwayColors';
+import { categoryColor } from '@/logic/pathway/PathwayColors';
 import { usePathwayFilters, pathwayFiltersKey } from '@/composables/pathway/usePathwayFilters';
-import { pathwayGroups } from '@/logic/PathwayGroups';
+import { pathwayGroups } from '@/logic/pathway/PathwayGroups';
 import usePathwayPilotMappingStore from '@/store/PathwayPilotMappingStore';
 import PathwaySelectionTable from '@/components/pathway/PathwaySelectionTable.vue';
 

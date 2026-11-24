@@ -58,7 +58,7 @@ import { usePathwayLegend } from '@/composables/pathway/usePathwayLegend';
 import { usePathwayVisualization, pathwayVisualizationKey } from '@/composables/pathway/usePathwayVisualization';
 import { usePathwayCsvExport } from '@/composables/pathway/usePathwayCsvExport';
 import { usePathwayColoring } from '@/composables/pathway/usePathwayColoring';
-import type { ColoringItem } from '@/composables/pathway/usePathwayColoring';
+import type { ColoringItem } from '@/logic/pathway/PathwayColoring';
 import PathwayVisualizationViewer from '@/components/pathway/PathwayVisualizationViewer.vue';
 
 const props = defineProps<{

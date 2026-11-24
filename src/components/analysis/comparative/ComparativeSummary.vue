@@ -86,7 +86,7 @@ import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {computed, ComputedRef} from "vue";
 import TopSharedSpeciesTable from "@/components/analysis/comparative/TopSharedSpeciesTable.vue";
 import ConsistentSettingCheck from "@/components/analysis/comparative/ConsistentSettingCheck.vue";
-import {useNumberFormatter} from "@/composables/useNumberFormatter";
+import {formatNumber} from "@/logic/utils/Formatting";
 import {GroupAnalysisStore} from "@/store/GroupAnalysisStore";
 import DraggableSamplesTable from "@/components/analysis/comparative/DraggableSamplesTable.vue";
 
@@ -95,8 +95,6 @@ const { groups } = defineProps<{
 }>();
 
 const selectedAnalyses = defineModel<SingleAnalysisStore[]>("selected-analyses", { required: true });
-
-const { formatNumber } = useNumberFormatter();
 
 const totalSearchedPeptides: ComputedRef<number> = computed(() => {
     if (!selectedAnalyses.value || selectedAnalyses.value.length === 0) {

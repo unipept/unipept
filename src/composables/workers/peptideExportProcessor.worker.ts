@@ -1,7 +1,7 @@
 import type {PeptideExportData} from "@/composables/usePeptideExport";
 import {ShareableMap} from "shared-memory-datastructures";
 import {NcbiRank} from "@/logic/ontology/taxonomic/Ncbi";
-import usePercentage from "@/composables/usePercentage";
+import {displayPercentage} from "@/logic/utils/Formatting";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
@@ -52,8 +52,6 @@ const process = async({
             })
             .slice(0, 3);
     }
-
-    const { displayPercentage } = usePercentage();
 
     const peptideToData = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, {serializer: new PeptideDataSerializer()});
 

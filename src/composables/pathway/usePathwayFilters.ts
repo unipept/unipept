@@ -1,18 +1,9 @@
 import { ref, computed, inject, type InjectionKey } from 'vue';
 import { refDebounced } from '@vueuse/core';
+import { filterPathways, searchPathways, type FilterablePathwayItem, type PathwayLookups } from '@/logic/pathway/PathwayFilters';
 
-export interface FilterablePathwayItem {
-    id: string;
-    category: string;
-    subCategory: string;
-    name: string;
-}
-
-export interface PathwayFiltersOptions<T extends FilterablePathwayItem> {
+export interface PathwayFiltersOptions<T extends FilterablePathwayItem> extends PathwayLookups {
     items: () => T[];
-    pathwaysForEc: (ec: string) => Set<string>;
-    pathwaysForCompound: (c: string) => Set<string>;
-    allEcs: () => Iterable<string>;
 }
 
 export function usePathwayFilters<T extends FilterablePathwayItem>(options: PathwayFiltersOptions<T>) {
@@ -35,57 +26,13 @@ export function usePathwayFilters<T extends FilterablePathwayItem>(options: Path
         appliedEcs.value.length + appliedCompounds.value.length + appliedCategories.value.length
     );
 
-    const filterItems = (items: T[], ecs: string[], compounds: string[], categories: string[]): T[] => {
-        if (ecs.length > 0) {
-            const allowed = new Set<string>();
-            for (const ec of ecs) {
-                if (ec.endsWith('.-')) {
-                    const prefix = ec.replace(/(\.-)+$/, '');
-                    for (const storeEc of options.allEcs()) {
-                        const storeEcStr = storeEc as string;
-                        if (storeEcStr.startsWith(prefix + '.') || storeEcStr === prefix) {
-                            for (const p of options.pathwaysForEc(storeEcStr)) allowed.add(p);
-                        }
-                    }
-                } else {
-                    for (const p of options.pathwaysForEc(ec)) allowed.add(p);
-                }
-            }
-            items = items.filter(item => allowed.has(item.id));
-        }
-
-        if (compounds.length > 0) {
-            const allowed = new Set<string>();
-            for (const c of compounds) {
-                for (const p of options.pathwaysForCompound(c)) allowed.add(p);
-            }
-            items = items.filter(item => allowed.has(item.id));
-        }
-
-        if (categories.length > 0) {
-            const catSet = new Set(categories);
-            items = items.filter(item => catSet.has(item.subCategory || item.category));
-        }
-
-        return items;
-    };
-
     const previewFilteredCount = computed(() =>
-        filterItems(options.items(), draftEcs.value, draftCompounds.value, draftCategories.value).length
+        filterPathways(options.items(), draftEcs.value, draftCompounds.value, draftCategories.value, options).length
     );
 
     const filteredItems = computed(() => {
-        let items = filterItems(options.items(), appliedEcs.value, appliedCompounds.value, appliedCategories.value);
-        if (debouncedSearch.value) {
-            const q = debouncedSearch.value.toLowerCase();
-            items = items.filter(item =>
-                item.id.toLowerCase().includes(q) ||
-                item.name.toLowerCase().includes(q) ||
-                (item.category || '').toLowerCase().includes(q) ||
-                (item.subCategory || '').toLowerCase().includes(q)
-            );
-        }
-        return items;
+        const items = filterPathways(options.items(), appliedEcs.value, appliedCompounds.value, appliedCategories.value, options);
+        return searchPathways(items, debouncedSearch.value);
     });
 
     const openFilterDialog = () => {

@@ -43,9 +43,11 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
-import Treeview, { TreeviewItem } from '@/components/visualization/treeview/Treeview.vue';
-import useTreeFilter, { FilteredTree } from '@/composables/useTreeFilter';
-import useTreeCompression from '@/composables/useTreeCompression';
+import Treeview from '@/components/visualization/treeview/Treeview.vue';
+import type { TreeviewItem } from '@/types/TreeviewItem';
+import useTreeFilter from '@/composables/useTreeFilter';
+import { FilteredTree } from '@/logic/utils/TreeFilter';
+import { compressTree } from '@/logic/utils/TreeCompression';
 import UnipeptCommunicator from '@/logic/communicators/unipept/UnipeptCommunicator';
 
 const props = withDefaults(defineProps<{
@@ -71,7 +73,6 @@ const localSelected = ref<TreeviewItem[]>(props.modelValue);
 
 const placeholder: FilteredTree = { id: 0, name: '', nameExtra: '', children: [], extra: null };
 const { filteredTree, filter, update } = useTreeFilter(placeholder);
-const { compress: compressRankTree } = useTreeCompression();
 
 const communicator = new UnipeptCommunicator();
 
@@ -99,7 +100,7 @@ const loadTree = async () => {
     treeError.value = false;
     try {
         const tree = await communicator.taxa2tree(props.taxonIds.map(String));
-        const compressed = compressRankTree(tree, props.taxonIds);
+        const compressed = compressTree(tree, props.taxonIds);
         update(compressed);
         treeLoaded.value = true;
     } catch {

@@ -112,7 +112,7 @@ import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import LineageTable from "@/components/tables/LineageTable.vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import FunctionalGoResults from "@/components/results/functional/go/FunctionalGoResults.vue";
-import usePercentage from "@/composables/usePercentage";
+import {displayPercentage} from "@/logic/utils/Formatting";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import FunctionalEcResults from "@/components/results/functional/ec/FunctionalEcResults.vue";
 import FunctionalIprResults from "@/components/results/functional/ipr/FunctionalIprResults.vue";
@@ -124,7 +124,6 @@ import GoTableData from "@/components/results/functional/go/GoTableData";
 import EcTableData from "@/components/results/functional/ec/EcTableData";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
 
-const { displayPercentage } = usePercentage();
 const { download } = useCsvDownload();
 
 export interface Props {

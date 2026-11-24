@@ -175,7 +175,7 @@
 import AnalysisSummaryTable from "@/components/analysis/multi/AnalysisSummaryTable.vue";
 import {SingleAnalysisStore} from "@/store/SingleAnalysisStore";
 import {computed, onMounted, ref} from "vue";
-import usePercentage from "@/composables/usePercentage";
+import {displayPercentage} from "@/logic/utils/Formatting";
 import AnalysisSummaryExport from "@/components/analysis/multi/AnalysisSummaryExport.vue";
 import useCsvDownload from "@/composables/useCsvDownload";
 import usePeptideExport from "@/composables/usePeptideExport";
@@ -187,7 +187,6 @@ import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicat
 import useCustomFilterStore from "@/store/CustomFilterStore";
 
 const customFilterStore = useCustomFilterStore();
-const { displayPercentage } = usePercentage();
 const { generateExport } = usePeptideExport();
 const { download: downloadCsv } = useCsvDownload();
 const { databaseVersion: latest, process } = useMetaData();

@@ -144,7 +144,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { EcInfo, CompoundInfo } from '@/logic/communicators/PathwayPilotCommunicator';
-import usePercentage from '@/composables/usePercentage';
+import { displayPercentage } from '@/logic/utils/Formatting';
 
 type InfoPanelData = { type: 'area'; area: any } | { type: 'compound'; compound: any };
 
@@ -156,8 +156,6 @@ const props = defineProps<{
     getEcStats?: (ecId: string) => { name: string; color: string; matched: number; total: number }[];
     getAreaStats?: (area: any) => { name: string; color: string; count: number; total: number }[];
 }>();
-
-const { displayPercentage } = usePercentage();
 
 const activeTab = ref<string>('overview');
 

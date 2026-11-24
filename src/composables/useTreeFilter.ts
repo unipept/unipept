@@ -1,13 +1,5 @@
 import {ref} from "vue";
-
-export interface FilteredTree {
-    id: number;
-    name: string;
-    nameExtra: string;
-    children: FilteredTree[]
-    match?: { start: number, end: number }
-    extra: any
-}
+import {filterTree, type FilteredTree} from "@/logic/utils/TreeFilter";
 
 export default function useTreeFilter(tree: FilteredTree) {
     const originalTree = ref<FilteredTree>(tree);
@@ -19,42 +11,7 @@ export default function useTreeFilter(tree: FilteredTree) {
     }
 
     const filter = (search: string) => {
-        if (!search) {
-            filteredTree.value = originalTree.value;
-            return;
-        }
-
-        filteredTree.value = filterRecursive(JSON.parse(JSON.stringify(originalTree.value)), search)[1];
-    }
-
-    const matchItem = (item: FilteredTree, search: string) => {
-        return item.name.toLowerCase().indexOf(search.toLowerCase());
-    }
-
-    const filterRecursive = (node: FilteredTree, search: string): [ boolean, FilteredTree ] => {
-        if (!search) {
-            return [ true, node ];
-        }
-
-        const updatedChildren: FilteredTree[] = [];
-        for (const child of node.children) {
-            const [ keep, updatedChild ] = filterRecursive(child, search);
-
-            if (keep) {
-                node.match = { start: 0, end: 0 };
-                updatedChildren.push(updatedChild);
-            }
-        }
-
-        node.children = updatedChildren;
-
-        const match = matchItem(node, search);
-
-        if (match !== -1) {
-            node.match = { start: match, end: match + search.length };
-        }
-
-        return [ updatedChildren.length > 0 || match !== -1, node ];
+        filteredTree.value = filterTree(originalTree.value, search);
     }
 
     return {

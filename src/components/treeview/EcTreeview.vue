@@ -61,8 +61,10 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import Treeview, { TreeviewItem } from '@/components/visualization/treeview/Treeview.vue';
-import { ecChipColor, useEcNumbers } from '@/composables/treeview/useEcNumbers';
+import Treeview from '@/components/visualization/treeview/Treeview.vue';
+import type { TreeviewItem } from '@/types/TreeviewItem';
+import { useEcNumbers } from '@/composables/treeview/useEcNumbers';
+import { ecChipColor } from '@/logic/pathway/EcTree';
 
 const props = defineProps<{
     ecIds: string[];

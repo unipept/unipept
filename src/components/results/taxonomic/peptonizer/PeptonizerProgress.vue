@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import useTimeFormatter from "@/composables/useTimeFormatter";
+import { convertDurationToString } from "@/logic/utils/Formatting";
 
 defineProps<{
     progress: number,
@@ -50,10 +50,6 @@ defineProps<{
     peptonizerInitializationFinished: boolean,
     peptonizerFinished: boolean
 }>();
-
-const {
-    convertDurationToString
-} = useTimeFormatter();
 </script>
 
 <style scoped>

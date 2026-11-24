@@ -1,6 +1,6 @@
 import { ref, computed, watch, toValue } from 'vue';
 import type { MaybeRefOrGetter } from 'vue';
-import { PATHWAY_COLORS } from '@/composables/pathway/usePathwayColors';
+import { PATHWAY_COLORS } from '@/logic/pathway/PathwayColors';
 
 export function usePathwayLegend(options: {
     items: MaybeRefOrGetter<{ label: string }[]>;

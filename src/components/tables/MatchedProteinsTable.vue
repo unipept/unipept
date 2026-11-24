@@ -207,7 +207,7 @@ import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import {PeptideAnalysisStore} from "@/store/PeptideAnalysisStore";
 import useOntologyStore from "@/store/OntologyStore";
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
-import useStringUtils from "@/composables/useStringUtils";
+import {displayPercentage} from "@/logic/utils/Formatting";
 import {AnalysisStatus} from "@/store/AnalysisStatus";
 import {FunctionalDefinition} from "@/logic/communicators/unipept/functional/FunctionalDefinition";
 import {GoNamespace} from "@/logic/communicators/unipept/functional/GoResponse";
@@ -333,8 +333,7 @@ const openInUniProt = (accessionId: string): void => {
  * @param annotationType The type of annotation that was given. Must be one of GO, EC, IPR.
  */
 const percentageForAnnotation = (annotationCode: string, annotationType: ("go" | "ec" | "ipr")) => {
-    const { numberToPercent } = useStringUtils();
-    return numberToPercent(peptideData.value![annotationType][annotationCode] / peptideData.value!.faCounts[annotationType]);
+    return displayPercentage(peptideData.value![annotationType][annotationCode] / peptideData.value!.faCounts[annotationType], 0);
 }
 
 onMounted(() => {

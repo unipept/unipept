@@ -111,7 +111,7 @@
 <script setup lang="ts" generic="T extends { id: number | string }">
 import {onMounted, ref, watch} from "vue";
 import FileUploadButton from "@/components/filesystem/FileUploadButton.vue";
-import {useNumberFormatter} from "@/composables/useNumberFormatter";
+import {formatNumber} from "@/logic/utils/Formatting";
 import useAsync from "@/composables/useAsync";
 
 const props = defineProps<{
@@ -131,9 +131,6 @@ const invalidItems = defineModel<string[]>("invalidItems", {default: () => []});
 const emit = defineEmits<{
     (e: 'uploadFile', file: File, callback: () => void): void,
 }>();
-
-// Start of logic for UI and presentation
-const { formatNumber } = useNumberFormatter();
 
 // Start of logic for processing the uploaded file
 const processingFile = ref(false);
