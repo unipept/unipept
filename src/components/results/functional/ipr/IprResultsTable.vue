@@ -10,8 +10,8 @@
         item-value="code"
         density="compact"
         :show-expand="data.ncbiTree !== undefined"
-        @update:expanded="singleExpand"
         mobile-breakpoint="md"
+        @update:expanded="singleExpand"
     >
         <template #header.action>
             <v-tooltip v-if="!$vuetify.display.mobile" text="Download table as CSV">
@@ -38,8 +38,8 @@
                 :loading="scoresLoading"
                 :error="scoresError"
                 :outdated="scoresOutdated"
-                @rerun="emits('rerunScores')"
                 annotation="InterPro entry"
+                @rerun="emits('rerunScores')"
             />
         </template>
 

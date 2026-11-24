@@ -7,8 +7,8 @@
         color="primary"
         size="small"
         class="mobile-drawer-toggle"
-        @click="drawerOpen = !drawerOpen"
         style="position: fixed; bottom: 16px; right: 16px; z-index: 100;"
+        @click="drawerOpen = !drawerOpen"
     >
         <v-icon>mdi-chevron-up</v-icon>
     </v-btn>

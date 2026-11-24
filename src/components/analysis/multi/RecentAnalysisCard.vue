@@ -37,9 +37,9 @@
                     <template #default="{ item }">
                         <v-card
                             class="project-card mb-1 ps-2"
-                            @click="openProject(item.name)"
                             variant="flat"
                             density="compact"
+                            @click="openProject(item.name)"
                         >
                             <v-card-text class="d-flex align-center gap-2 py-3">
                                 <v-icon size="20" class="mr-5">mdi-folder-outline</v-icon>
@@ -149,7 +149,7 @@
                 </v-card-text>
 
                 <v-card-actions class="justify-end">
-                    <v-btn variant="text" @click="cancel" color="black">Cancel</v-btn>
+                    <v-btn variant="text" color="black" @click="cancel">Cancel</v-btn>
                     <v-btn
                         color="error"
                         text="Yes, delete project"
@@ -177,7 +177,7 @@
                 </v-card-text>
 
                 <v-card-actions class="justify-end">
-                    <v-btn variant="text" @click="cancel" color="black">Cancel</v-btn>
+                    <v-btn variant="text" color="black" @click="cancel">Cancel</v-btn>
                     <v-btn
                         color="error"
                         text="Yes, delete all"

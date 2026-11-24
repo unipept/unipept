@@ -8,7 +8,7 @@
             <template #visualization>
                 <div style="padding-top: 50px;">
                     <div class="mx-4">
-                        <v-expansion-panels color="grey-lighten-4" class="mb-4" v-model="settingsPanelOpen">
+                        <v-expansion-panels v-model="settingsPanelOpen" color="grey-lighten-4" class="mb-4">
                             <v-expansion-panel value="settings">
                                 <v-expansion-panel-title>
                                     <v-icon class="mr-2">
@@ -30,6 +30,7 @@
                                         </v-col>
                                         <v-col :cols="3">
                                             <v-number-input
+                                                v-model="taxonCount"
                                                 :reverse="false"
                                                 label="Taxa"
                                                 :min="1"
@@ -38,7 +39,6 @@
                                                 :inset="false"
                                                 variant="underlined"
                                                 density="comfortable"
-                                                v-model="taxonCount"
                                             />
                                         </v-col>
                                         <v-col :cols="3">

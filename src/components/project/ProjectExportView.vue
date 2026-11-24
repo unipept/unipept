@@ -96,10 +96,10 @@
                     <v-btn
                         color="primary"
                         variant="tonal"
-                        @click="startPreparing(exportProject())"
                         prepend-icon="mdi-download"
                         text="Export Project"
                         :loading="preparingExport"
+                        @click="startPreparing(exportProject())"
                     />
                 </template>
             </download-dialog>

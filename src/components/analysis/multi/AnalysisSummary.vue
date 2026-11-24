@@ -57,9 +57,9 @@
                                         v-bind="tooltip"
                                         variant="outlined"
                                         size="small"
-                                        @click="restartAnalysis"
                                         class="float-end"
                                         icon="mdi-restart"
+                                        @click="restartAnalysis"
                                     >
                                     </v-btn>
                                 </template>

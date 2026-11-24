@@ -57,9 +57,9 @@
                     :style="`width: ${containerWidth - rowLabelWidth - labelSpacing}px;`"
                     size="small"
                     variant="elevated"
-                    @click="addRows()"
                     prepend-icon="mdi-plus"
                     :text="addRowButtonLabel"
+                    @click="addRows()"
                 >
                 </v-btn>
             </template>

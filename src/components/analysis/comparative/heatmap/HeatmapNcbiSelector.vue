@@ -71,8 +71,8 @@
                                 variant="tonal"
                                 prepend-icon="mdi-minus"
                                 text="Drop"
-                                @click="removeRow(item)"
                                 v-bind="activatorProps"
+                                @click="removeRow(item)"
                             />
                         </template>
                         <span>Remove item from the heatmap</span>
@@ -86,8 +86,8 @@
                                 variant="tonal"
                                 prepend-icon="mdi-plus"
                                 text="Add"
-                                @click="addRow(item)"
                                 v-bind="activatorProps"
+                                @click="addRow(item)"
                             />
                         </template>
                         <span>Add item to the heatmap</span>

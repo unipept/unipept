@@ -1,13 +1,13 @@
 <template>
     <v-list
         v-model:opened="expanded"
+        v-model:selected="selected"
         class="py-0"
         color="primary"
         selectable
         :select-strategy="multiSelect ? 'classic' : 'single-leaf'"
         open-strategy="multiple"
         :mandatory="!multiSelect"
-        v-model:selected="selected"
         @update:selected="selectItem"
     >
         <v-list-item
@@ -20,8 +20,8 @@
         </v-list-item>
 
         <filesystem-group
-            v-else
             v-for="(group, i) in project.groups"
+            v-else
             :key="group.id"
             :group="group"
             :show-divider="i > 0"

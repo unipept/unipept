@@ -15,8 +15,8 @@
 
     <v-list-item
         v-for="analysis in group.analyses"
-        style="margin: 1px 2px;"
         :key="analysis.id"
+        style="margin: 1px 2px;"
         :value="analysis"
         :title="analysis.name"
         color="primary"

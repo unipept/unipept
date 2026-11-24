@@ -58,8 +58,8 @@
                                     style="align-self: start;"
                                     color="primary"
                                     :loading="processingFile"
-                                    @upload="onUploadFile"
                                     prepend-icon="mdi-file-upload"
+                                    @upload="onUploadFile"
                                 >
                                     Upload from file
                                 </file-upload-button>
@@ -76,8 +76,8 @@
                                     variant="outlined"
                                     style="align-self: start;"
                                     color="error"
-                                    @click="onClearSelection"
                                     :disabled="selectedItems.length === 0"
+                                    @click="onClearSelection"
                                 >
                                     Clear all
                                 </v-btn>

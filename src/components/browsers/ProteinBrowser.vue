@@ -1,18 +1,18 @@
 <template>
     <div>
         <database-summary
+            v-model:selected-items="selectedItems"
+            v-model:invalid-items="invalidItems"
             title="Selected proteins"
             description="This is a summary of all proteins that have been selected for inclusion in your database."
             empty-placeholder="No proteins selected yet. Select at least one protein from the table below to continue."
-            v-model:selected-items="selectedItems"
-            v-model:invalid-items="invalidItems"
             :chip-background-color="(_item: Protein) => 'primary'"
             :chip-variant="() => 'flat'"
             :item-display-name="(protein: Protein) => protein.id"
             :compute-protein-count="computeProteinCount"
             :compute-taxon-count="computeTaxonCount"
-            @upload-file="processUploadedProteins"
             class="mb-2"
+            @upload-file="processUploadedProteins"
         />
 
         <v-unipept-card style="width: 100%;">
