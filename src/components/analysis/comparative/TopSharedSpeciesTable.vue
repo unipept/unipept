@@ -77,7 +77,7 @@
             </span>
         </template>
 
-        <template #item.averageAbundance = "{ item }">
+        <template #item.averageAbundance="{ item }">
             <div
                 :style="{
                     padding: '6px 12px',
