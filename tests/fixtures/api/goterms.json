@@ -1,0 +1,12 @@
+[
+  {
+    "code": "GO:0005737",
+    "name": "cytoplasm",
+    "namespace": "cellular component"
+  },
+  {
+    "code": "GO:0016301",
+    "name": "kinase activity",
+    "namespace": "molecular function"
+  }
+]
