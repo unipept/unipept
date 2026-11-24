@@ -44,7 +44,6 @@ export default defineConfig([
     {
         // Off until their findings are fixed, one PR per rule.
         rules: {
-            'vue/html-quotes': 'off',
             'vue/html-self-closing': 'off',
             'vue/max-attributes-per-line': 'off',
             'vue/multiline-html-element-content-newline': 'off',

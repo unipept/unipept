@@ -17,7 +17,7 @@
                     clearable
                     prepend-inner-icon="mdi-magnify"
                     autocomplete="off"
-                    placeholder='Try “sus scrofa”, “rank:species”, or just “has:GO”…'
+                    placeholder="Try “sus scrofa”, “rank:species”, or just “has:GO”…"
                     @focus="onSearchFocus"
                     @blur="onSearchBlur"
                     @update:model-value="handleSearchInput"
