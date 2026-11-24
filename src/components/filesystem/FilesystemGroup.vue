@@ -26,7 +26,8 @@
         <template #prepend="{ isSelected }">
             <v-tooltip
                 v-if="analysis.intensities"
-                text="Custom intensity scores for Peptonizer provided">
+                text="Custom intensity scores for Peptonizer provided"
+            >
                 <template #activator="{ props }">
                     <v-icon
                         v-if="isSelected"

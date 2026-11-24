@@ -55,7 +55,8 @@
 
                     <ul
                         class="pa-0 ma-0"
-                        style="list-style-type:none;">
+                        style="list-style-type:none;"
+                    >
                         <li v-for="analysis of selectedAnalyses.slice(4)" :key="analysis.id">
                             <span v-if="analysis.lcaToPeptides!.has(item.id)">
                                 <v-icon color="success" class="mr-1" style="cursor: pointer;">
