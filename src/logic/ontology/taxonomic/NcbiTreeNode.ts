@@ -78,8 +78,7 @@ export default class NcbiTreeNode implements DataNodeLike {
      *
      * @param f The function to call.
      */
-    public callRecursively(f: (x: NcbiTreeNode) => any) {
-        // @ts-ignore: this is a recursive call
+    public callRecursively(f: (this: NcbiTreeNode) => void) {
         f.call(this);
         if (this.children) {
             this.children.forEach(c => {
