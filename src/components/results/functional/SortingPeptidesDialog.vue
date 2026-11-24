@@ -52,5 +52,5 @@
 </template>
 
 <script setup lang="ts">
-const dialogOpen = defineModel({ default: false });
+const dialogOpen = defineModel<boolean>({ default: false });
 </script>

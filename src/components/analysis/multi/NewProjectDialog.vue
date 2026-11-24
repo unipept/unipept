@@ -42,7 +42,7 @@
 import {ref} from "vue";
 import {asyncComputed} from "@vueuse/core";
 
-const dialogOpen = defineModel({ default: false });
+const dialogOpen = defineModel<boolean>({ default: false });
 
 const emits = defineEmits<{
     (e: 'project:new', projectName: string): void
