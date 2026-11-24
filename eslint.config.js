@@ -32,6 +32,12 @@ export default defineConfig([
             '@typescript-eslint/no-empty-function': ['error', { allow: ['arrowFunctions'] }],
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/no-non-null-assertion': 'off',
+            '@typescript-eslint/no-unused-vars': ['error', {
+                argsIgnorePattern: '^_',
+                varsIgnorePattern: '^_',
+                caughtErrorsIgnorePattern: '^_',
+                destructuredArrayIgnorePattern: '^_',
+            }],
             '@typescript-eslint/no-var-requires': 'off',
         },
     },
@@ -39,7 +45,6 @@ export default defineConfig([
         // Off until their findings are fixed, one PR per rule.
         rules: {
             '@typescript-eslint/no-empty-object-type': 'off',
-            '@typescript-eslint/no-unused-vars': 'off',
             '@typescript-eslint/triple-slash-reference': 'off',
             'prefer-const': 'off',
             'vue/attribute-hyphenation': 'off',
@@ -54,7 +59,6 @@ export default defineConfig([
             'vue/mustache-interpolation-spacing': 'off',
             'vue/no-spaces-around-equal-signs-in-attribute': 'off',
             'vue/no-template-shadow': 'off',
-            'vue/no-unused-vars': 'off',
             'vue/no-v-html': 'off',
             'vue/require-prop-types': 'off',
             'vue/singleline-html-element-content-newline': 'off',
