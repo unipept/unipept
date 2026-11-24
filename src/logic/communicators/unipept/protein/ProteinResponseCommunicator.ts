@@ -44,7 +44,8 @@ export default class ProteinResponseCommunicator {
         accessions: string[]
     ): Promise<ProteinResponse[]> {
         while (ProteinResponseCommunicator.responsesInProgress) {
-            await ProteinResponseCommunicator.responsesInProgress;
+            // An error of the previous request is reported to its own caller, not to the requests that wait for it
+            await ProteinResponseCommunicator.responsesInProgress.catch(() => undefined);
         }
 
         ProteinResponseCommunicator.responsesInProgress = this.doProcess(accessions);
