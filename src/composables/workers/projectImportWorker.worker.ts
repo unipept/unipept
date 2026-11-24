@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import {ProjectImportData, SerializedStateData} from "@/composables/useProjectImport";
+import type {ProjectImportData, SerializedStateData} from "@/composables/useProjectImport";
 import {AppStateStoreImport} from "@/store/AppStateStore";
 import {ProjectUpgradeManager} from "@/logic/project/ProjectUpgradeManager";
 import {ProjectAnalysisStoreImport} from "@/store/ProjectAnalysisStore";
