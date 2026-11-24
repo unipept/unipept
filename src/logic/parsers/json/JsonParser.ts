@@ -17,6 +17,9 @@ export default class JsonParser {
     public parseAndHighlight(object: object): string {
         return JSON
             .stringify(object, null, 2)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
             .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g, 
                 match => {
                     if(/^"/.test(match)) {

@@ -58,4 +58,11 @@ describe("JsonParser", () => {
         expect(result.indexOf('active:')).toBeLessThan(result.indexOf('count:'));
         expect(result.indexOf('count:')).toBeLessThan(result.indexOf('description:'));
     });
+
+    it("should escape HTML in string values", () => {
+        const input = {name: "<img src=x onerror=alert(1)> & co"};
+        const result = parser.parseAndHighlight(input);
+        expect(result).not.toContain('<img');
+        expect(result).toContain(`<span style="color: ${STRING_COLOR};">"&lt;img src=x onerror=alert(1)&gt; &amp; co"</span>`);
+    });
 });
