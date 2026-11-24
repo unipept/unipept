@@ -17,7 +17,7 @@ export interface TaxonAggregationOutput {
 export const aggregateTaxa = async ({
    peptideCounts,
    peptideDataTransferable
-}: TaxonAggregationInput ) => {
+}: TaxonAggregationInput): Promise<TaxonAggregationOutput> => {
     const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
 
     const countsPerLca = new Map<number, number>();

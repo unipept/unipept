@@ -13,7 +13,7 @@ export interface PeptideCountsOutput {
 export const countPeptides = async ({
     peptides,
     filter
-}: PeptideCountsInput) => {
+}: PeptideCountsInput): Promise<PeptideCountsOutput> => {
     peptides = preprocess(peptides);
 
     const peptideCounts = new ShareableMap<string, number>();

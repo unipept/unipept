@@ -23,7 +23,7 @@ export const aggregateFunctions = async ({
     percentage,
     termPrefix,
     proteinCountProperty
-}: FunctionalAggregationInput ) => {
+}: FunctionalAggregationInput): Promise<FunctionalAggregationOutput> => {
     const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
     const peptideCounts = ShareableMap.fromTransferableState<string, number>(countsMapTransferable);
 
