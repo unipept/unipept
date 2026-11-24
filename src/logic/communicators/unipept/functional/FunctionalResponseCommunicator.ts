@@ -41,26 +41,26 @@ export default abstract class FunctionalResponseCommunicator<T extends Functiona
         await processMetadata();
         const uniprotVersion = databaseVersion.value;
 
-        const alreadyProcessedCodes = new Set<string>();
-        for (const code of codes) {
-            const response = await FunctionalResponseCommunicator.lruCache.get(`${uniprotVersion}__${this.apiBaseUrl}__${this.endpoint}__${code}`);
+        const cacheKey = (code: string) => `${uniprotVersion}__${this.apiBaseUrl}__${this.endpoint}__${code}`;
+        const cached = await FunctionalResponseCommunicator.lruCache.getAll(codes.map(cacheKey));
 
+        const codesToProcess: string[] = [];
+        for (const code of codes) {
+            const response = cached.get(cacheKey(code));
             if (response) {
                 responses.push(response);
-                alreadyProcessedCodes.add(code);
+            } else {
+                codesToProcess.push(code);
             }
         }
-
-        const codesToProcess = codes.filter(code => !alreadyProcessedCodes.has(code));
 
         for (let i = 0; i < codesToProcess.length; i += this.batchSize) {
             const payload = this.createPayload(codesToProcess.slice(i, i + this.batchSize));
             const res = await NetworkUtils.postJSON(`${this.apiBaseUrl}${this.endpoint}`, payload);
 
-            for (const response of this.transformResponse(res)) {
-                await FunctionalResponseCommunicator.lruCache.set(`${uniprotVersion}__${this.apiBaseUrl}__${this.endpoint}__${response.code}`, response);
-                responses.push(response);
-            }
+            const batchResponses = this.transformResponse(res);
+            await FunctionalResponseCommunicator.lruCache.setAll(new Map(batchResponses.map(r => [cacheKey(r.code), r])));
+            responses.push(...batchResponses);
         }
 
         return responses;
