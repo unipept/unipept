@@ -24,6 +24,7 @@ const usePeptideAnalysisStore = (
     // ===============================================================
 
     const status = ref<AnalysisStatus>(AnalysisStatus.Pending);
+    const analysisError = ref<string>("");
 
     const id = ref<string>(_id);
     const peptide = ref<string>(_peptide);
@@ -47,43 +48,49 @@ const usePeptideAnalysisStore = (
 
     const analyse = async () => {
         status.value = AnalysisStatus.Running;
+        analysisError.value = "";
 
-        await processProteins(peptide.value, config.value.equate);
+        try {
+            await processProteins(peptide.value, config.value.equate);
 
-        const peptideTableMap = new ShareableMap<string, number>();
-        peptideTableMap.set(peptide.value, 1);
+            const peptideTableMap = new ShareableMap<string, number>();
+            peptideTableMap.set(peptide.value, 1);
 
-        const peptideTable: CountTable<string> = new CountTable(peptideTableMap);
+            const peptideTable: CountTable<string> = new CountTable(peptideTableMap);
 
-        await processPept2Filtered([peptide.value], config.value.equate, config.value.useCrap, undefined);
+            await processPept2Filtered([peptide.value], config.value.equate, config.value.useCrap, undefined);
 
-        await processEc(peptideTable, peptideToData.value!);
-        await processGo(peptideTable, peptideToData.value!);
-        await processInterpro(peptideTable, peptideToData.value!);
+            await processEc(peptideTable, peptideToData.value!);
+            await processGo(peptideTable, peptideToData.value!);
+            await processInterpro(peptideTable, peptideToData.value!);
 
-        // Add all organism IDs for which we need detailed information from the NCBI ontology
-        const lcaSet: Set<number> = new Set();
-        const lcaProteinMap = new ShareableMap<number, number>();
-        lcaSet.add(lca.value);
-        for (const protein of proteins.value) {
-            lcaSet.add(protein.taxonId);
-            lcaProteinMap.set(protein.taxonId, (lcaProteinMap.get(protein.taxonId) || 0) + 1);
-        }
-        for (const ncbiId of lineage.value) {
-            if (ncbiId !== null) {
-                lcaSet.add(ncbiId);
+            // Add all organism IDs for which we need detailed information from the NCBI ontology
+            const lcaSet: Set<number> = new Set();
+            const lcaProteinMap = new ShareableMap<number, number>();
+            lcaSet.add(lca.value);
+            for (const protein of proteins.value) {
+                lcaSet.add(protein.taxonId);
+                lcaProteinMap.set(protein.taxonId, (lcaProteinMap.get(protein.taxonId) || 0) + 1);
             }
+            for (const ncbiId of lineage.value) {
+                if (ncbiId !== null) {
+                    lcaSet.add(ncbiId);
+                }
+            }
+            const lcaProteinCountTable = new CountTable(lcaProteinMap);
+
+            await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
+            await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
+            await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
+            await ontologyStore.updateNcbiOntology([...lcaSet]);
+
+            processNcbiTree(lcaProteinCountTable);
+
+            status.value = AnalysisStatus.Finished;
+        } catch (error) {
+            status.value = AnalysisStatus.Failed;
+            analysisError.value = error ? String(error) : "Unknown error";
         }
-        const lcaProteinCountTable = new CountTable(lcaProteinMap);
-
-        await ontologyStore.updateEcOntology(Array.from(ecToPeptides.value!.keys()));
-        await ontologyStore.updateGoOntology(Array.from(goToPeptides.value!.keys()));
-        await ontologyStore.updateIprOntology(Array.from(iprToPeptides.value!.keys()));
-        await ontologyStore.updateNcbiOntology([...lcaSet]);
-
-        processNcbiTree(lcaProteinCountTable);
-
-        status.value = AnalysisStatus.Finished;
     }
 
     return {
@@ -91,6 +98,7 @@ const usePeptideAnalysisStore = (
         peptide,
         config,
         status,
+        analysisError,
 
         peptideToData,
         proteins,
