@@ -10,10 +10,10 @@
                     </v-col>
                     <v-col cols="12" lg="4" class="pt-0">
                         <v-tooltip text="Open an existing project (.unipept)">
-                            <template v-slot:activator="{ props }">
+                            <template v-slot:activator="{ props: activatorProps }">
                                 <upload-project-button
                                     class="float-none float-lg-right w-xs-100 w-lg-auto"
-                                    v-bind="props"
+                                    v-bind="activatorProps"
                                     :projects="projects"
                                     :loading="loading"
                                     @project:upload="uploadProject"
@@ -59,9 +59,9 @@
                                     :text="item.upgradeError"
                                     max-width="320"
                                 >
-                                    <template #activator="{ props }">
+                                    <template #activator="{ props: activatorProps }">
                                         <v-btn
-                                            v-bind="props"
+                                            v-bind="activatorProps"
                                             variant="text"
                                             color="warning"
                                             icon="mdi-alert"
@@ -104,9 +104,9 @@
                         </div>
 
                         <v-tooltip text="Remove all projects">
-                            <template v-slot:activator="{ props }">
+                            <template v-slot:activator="{ props: activatorProps }">
                                 <v-btn
-                                    v-bind="props"
+                                    v-bind="activatorProps"
                                     class="me-5"
                                     variant="text"
                                     color="error"

@@ -41,9 +41,9 @@
                 </template>
                 <template #item.fa="{ item }">
                     <v-tooltip location="top">
-                        <template #activator="{ props }">
+                        <template #activator="{ props: activatorProps }">
                             <v-avatar
-                                v-bind="props"
+                                v-bind="activatorProps"
                                 size="30"
                                 :color="item.functionalAnnotations.go.length > 0 ? 'amber' : 'amber-lighten-4'"
                             >
@@ -76,9 +76,9 @@
                     </v-tooltip>
 
                     <v-tooltip location="top">
-                        <template #activator="{ props }">
+                        <template #activator="{ props: activatorProps }">
                             <v-avatar
-                                v-bind="props"
+                                v-bind="activatorProps"
                                 size="30"
                                 :color="item.functionalAnnotations.ec.length > 0 ? 'indigo' : 'indigo-lighten-4'"
                             >
@@ -111,9 +111,9 @@
                     </v-tooltip>
 
                     <v-tooltip location="top">
-                        <template #activator="{ props }">
+                        <template #activator="{ props: activatorProps }">
                             <v-avatar
-                                v-bind="props"
+                                v-bind="activatorProps"
                                 size="30"
                                 :color="item.functionalAnnotations.interpro.length > 0 ? 'red' : 'red-lighten-4'"
                             >
