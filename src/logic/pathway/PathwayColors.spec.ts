@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { categoryColor, isSelectable } from "./PathwayColors";
-import { groupColors } from "@/logic/PathwayGroups";
+import { groupColors } from "@/logic/pathway/PathwayGroups";
 
 describe("PathwayColors", () => {
     it("categoryColor returns the color of the group, or grey for an unknown group", () => {

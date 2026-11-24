@@ -1,4 +1,4 @@
-import { pathwayGroups, groupColors } from '@/logic/PathwayGroups';
+import { pathwayGroups, groupColors } from '@/logic/pathway/PathwayGroups';
 
 export const PATHWAY_COLORS = [
     '#5878a3', '#e59344', '#d1605e', '#85b6b2',
