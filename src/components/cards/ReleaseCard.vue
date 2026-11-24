@@ -31,6 +31,7 @@
                         v-if="changelog.description"
                         class="px-5 pt-5 mb-n7"
                     >
+                        <!-- eslint-disable-next-line vue/no-v-html -- sanitized with DOMPurify in onMounted -->
                         <div v-html="changelog.description" />
                     </v-card-text>
 
