@@ -58,7 +58,6 @@ export default defineConfig({
         pages && crossOriginIsolation(),
     ],
     define: {
-        "process.env": {},
         APP_VERSION: JSON.stringify(process.env.npm_package_version)
     },
     resolve: {
