@@ -48,8 +48,12 @@ export default defineConfig([
         rules: {
             'no-restricted-imports': ['error', {
                 patterns: [{
-                    group: ['vue', 'pinia', 'vuetify', 'vuetify/*', '@vueuse/*', '@/store/*', '@/composables/*', '@/components/*', '**/store/*', '**/composables/*', '**/components/*'],
-                    message: 'src/logic may not import Vue, Pinia, Vuetify, stores, composables or components.',
+                    group: [
+                        'vue', 'vue-router', 'pinia', 'vuetify', 'vuetify/*', '@vueuse/*', '*.vue',
+                        '@/store/*', '@/composables/*', '@/components/*', '@/router', '@/router/*', '@/plugins/*',
+                        '**/store/*', '**/composables/*', '**/components/*', '**/router', '**/router/*', '**/plugins/*',
+                    ],
+                    message: 'src/logic may not import Vue, Pinia, Vuetify, the router, plugins, stores, composables or components.',
                 }],
             }],
         },
