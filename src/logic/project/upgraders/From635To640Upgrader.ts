@@ -306,7 +306,7 @@ export class PeptideData_v6_3_5 {
     }
 
     public get ec(): any {
-        const output = {};
+        const output: Record<string, number> = {};
 
         let ecStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_EC_INDEX_OFFSET);
         const ecLength = this.dataView.getUint32(ecStart);
@@ -320,7 +320,6 @@ export class PeptideData_v6_3_5 {
             const part3 = this.encodedNullOrNumberToString(this.dataView.getInt32(ecStart + 8));
             const part4 = this.encodedNullOrNumberToString(this.dataView.getInt32(ecStart + 12));
 
-            // @ts-ignore: variable indexing
             output[`EC:${part1}.${part2}.${part3}.${part4}`] = this.dataView.getUint32(ecStart + 16);
 
             ecStart += 20;
@@ -338,7 +337,7 @@ export class PeptideData_v6_3_5 {
     }
 
     public get go(): any {
-        const output = {};
+        const output: Record<string, number> = {};
 
         let goStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_GO_INDEX_OFFSET);
         const goLength = this.dataView.getUint32(goStart);
@@ -349,7 +348,6 @@ export class PeptideData_v6_3_5 {
         for (let i = 0; i < goLength; i++) {
             const term = this.dataView.getUint32(goStart);
 
-            // @ts-ignore: variable indexing
             output[
             "GO:" + leftPad(term.toString(), "0", 7)
                 ] = this.dataView.getUint32(goStart + 4);
@@ -361,7 +359,7 @@ export class PeptideData_v6_3_5 {
     }
 
     public get ipr(): any {
-        const output = {};
+        const output: Record<string, number> = {};
 
         let iprStart = this.dataView.getUint32(PeptideData_v6_3_5.FA_IPR_INDEX_OFFSET);
         const iprLength = this.dataView.getUint32(iprStart);
@@ -372,7 +370,6 @@ export class PeptideData_v6_3_5 {
         for (let i = 0; i < iprLength; i++) {
             const term = this.dataView.getUint32(iprStart);
 
-            // @ts-ignore: variable indexing
             output[
             "IPR:IPR" + leftPad(term.toString(), "0", 6)
                 ] = this.dataView.getUint32(iprStart + 4);
