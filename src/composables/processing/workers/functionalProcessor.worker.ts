@@ -40,7 +40,7 @@ const process = async ({
         }
 
         const proteinCount: number = peptideData.faCounts[proteinCountProperty];
-        // @ts-ignore peptide data comes straight from Unipept API
+        // @ts-expect-error peptide data comes straight from Unipept API
         const terms: Map<string, number> = peptideData[termPrefix] as Map<string, number>;
 
         for (const [term, proteinCountOfTerm] of Object.entries(terms)) {

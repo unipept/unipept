@@ -221,7 +221,7 @@ export default class PeptideData {
     }
 
     public get ec(): any {
-        const output = {};
+        const output: Record<string, number> = {};
 
         let ecStart = this.dataView.getUint32(PeptideData.FA_EC_INDEX_OFFSET);
         const ecLength = this.dataView.getUint32(ecStart);
@@ -235,7 +235,6 @@ export default class PeptideData {
             const part3 = this.encodedNullOrNumberToString(this.dataView.getInt32(ecStart + 8));
             const part4 = this.encodedNullOrNumberToString(this.dataView.getInt32(ecStart + 12));
 
-            // @ts-ignore: variable indexing
             output[`EC:${part1}.${part2}.${part3}.${part4}`] = this.dataView.getUint32(ecStart + 16);
 
             ecStart += 20;
@@ -253,7 +252,7 @@ export default class PeptideData {
     }
 
     public get go(): any {
-        const output = {};
+        const output: Record<string, number> = {};
 
         let goStart = this.dataView.getUint32(PeptideData.FA_GO_INDEX_OFFSET);
         const goLength = this.dataView.getUint32(goStart);
@@ -264,7 +263,6 @@ export default class PeptideData {
         for (let i = 0; i < goLength; i++) {
             const term = this.dataView.getUint32(goStart);
 
-            // @ts-ignore: variable indexing
             output[
             "GO:" + term.toString().padStart(7, "0")
                 ] = this.dataView.getUint32(goStart + 4);
@@ -276,7 +274,7 @@ export default class PeptideData {
     }
 
     public get ipr(): any {
-        const output = {};
+        const output: Record<string, number> = {};
 
         let iprStart = this.dataView.getUint32(PeptideData.FA_IPR_INDEX_OFFSET);
         const iprLength = this.dataView.getUint32(iprStart);
@@ -287,7 +285,6 @@ export default class PeptideData {
         for (let i = 0; i < iprLength; i++) {
             const term = this.dataView.getUint32(iprStart);
 
-            // @ts-ignore: variable indexing
             output[
             "IPR:IPR" + term.toString().padStart(6, "0")
                 ] = this.dataView.getUint32(iprStart + 4);

@@ -75,7 +75,7 @@ export default createVuetify({
         sets: {
             unipept: unipeptIcons
         },
-        // @ts-ignore (custom icons are not in the type provided by Vuetify)
+        // @ts-expect-error (custom icons are not in the type provided by Vuetify)
         unipeptIconsAliases
     },
     components: {
