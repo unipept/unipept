@@ -10,7 +10,7 @@
         </span>
         <span v-else>
             <v-tooltip interactive close-delay="500">
-                <template v-slot:activator="{ props }">
+                <template #activator="{ props }">
                     <span class="font-weight-bold" v-bind="props">&quot;{{ checkName }}&quot;</span> setting is inconsistent over selected samples
                 </template>
                 <div>

@@ -10,7 +10,7 @@
                     </v-col>
                     <v-col cols="12" lg="4" class="pt-0">
                         <v-tooltip text="Open an existing project (.unipept)">
-                            <template v-slot:activator="{ props: activatorProps }">
+                            <template #activator="{ props: activatorProps }">
                                 <upload-project-button
                                     class="float-none float-lg-right w-xs-100 w-lg-auto"
                                     v-bind="activatorProps"
@@ -104,7 +104,7 @@
                         </div>
 
                         <v-tooltip text="Remove all projects">
-                            <template v-slot:activator="{ props: activatorProps }">
+                            <template #activator="{ props: activatorProps }">
                                 <v-btn
                                     v-bind="activatorProps"
                                     class="me-5"

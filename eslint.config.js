@@ -46,7 +46,6 @@ export default defineConfig([
         rules: {
             'vue/max-attributes-per-line': 'off',
             'vue/singleline-html-element-content-newline': 'off',
-            'vue/v-slot-style': 'off',
         },
     },
 ]);

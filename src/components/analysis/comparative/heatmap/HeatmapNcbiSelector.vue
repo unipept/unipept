@@ -31,7 +31,7 @@
                 </template>
                 <template #header.action>
                     <v-tooltip v-if="allInPageSelected">
-                        <template v-slot:activator="{ props: activatorProps }">
+                        <template #activator="{ props: activatorProps }">
                             <v-btn
                                 style="width: 120px;"
                                 color="error"
@@ -46,7 +46,7 @@
                         <span>Drop all items from the heatmap</span>
                     </v-tooltip>
                     <v-tooltip v-else>
-                        <template v-slot:activator="{ props: activatorProps }">
+                        <template #activator="{ props: activatorProps }">
                             <v-btn
                                 style="width: 120px;"
                                 color="primary"
@@ -63,7 +63,7 @@
                 </template>
                 <template #item.action="{ item }">
                     <v-tooltip v-if="rowNames.includes(item.name)">
-                        <template v-slot:activator="{ props: activatorProps }">
+                        <template #activator="{ props: activatorProps }">
                             <v-btn
                                 style="width: 120px;"
                                 color="error"
@@ -78,7 +78,7 @@
                         <span>Remove item from the heatmap</span>
                     </v-tooltip>
                     <v-tooltip v-else>
-                        <template v-slot:activator="{ props: activatorProps }">
+                        <template #activator="{ props: activatorProps }">
                             <v-btn
                                 style="width: 120px;"
                                 color="primary"
