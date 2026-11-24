@@ -1,11 +1,16 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import useMetaData from "./useMetaData";
 import { mockFetch } from "../../../../tests/unit/fetchMock";
 import metadata from "../../../../tests/fixtures/api/metadata.json";
+import { forgetDatabaseVersions } from "@/logic/communicators/unipept/DatabaseVersion";
 
 const API = "https://api.example.org";
 
 describe("useMetaData", () => {
+    beforeEach(() => {
+        forgetDatabaseVersions();
+    });
+
     afterEach(() => {
         vi.unstubAllGlobals();
     });

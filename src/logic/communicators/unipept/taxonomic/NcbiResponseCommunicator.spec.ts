@@ -6,6 +6,7 @@ import taxa from "../../../../../tests/fixtures/api/taxa.json";
 import taxaCount from "../../../../../tests/fixtures/api/taxa-count.json";
 import taxaFilter from "../../../../../tests/fixtures/api/taxa-filter.json";
 import metadata from "../../../../../tests/fixtures/api/metadata.json";
+import { forgetDatabaseVersions } from "../DatabaseVersion";
 
 vi.mock("lru-cache-idb", () => import("../../../../../tests/unit/lruCacheIdbMock"));
 
@@ -16,6 +17,7 @@ const taxaRoute = (response: unknown = taxa): MockRoute =>
 
 describe("NcbiResponseCommunicator", () => {
     beforeEach(() => {
+        forgetDatabaseVersions();
         memoryCache.clear();
     });
 
@@ -57,6 +59,8 @@ describe("NcbiResponseCommunicator", () => {
         mockFetch([metadataRoute, taxaRoute()]);
         await communicator.getResponses([1678, 816]);
 
+        // A new database release; the version is no longer kept
+        forgetDatabaseVersions();
         const { requests } = mockFetch([
             { url: `${API}/private_api/metadata`, response: { ...metadata, db_version: "other" } },
             taxaRoute(),

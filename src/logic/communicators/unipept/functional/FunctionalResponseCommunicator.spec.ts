@@ -8,6 +8,7 @@ import ecnumbers from "../../../../../tests/fixtures/api/ecnumbers.json";
 import goterms from "../../../../../tests/fixtures/api/goterms.json";
 import interpros from "../../../../../tests/fixtures/api/interpros.json";
 import metadata from "../../../../../tests/fixtures/api/metadata.json";
+import { forgetDatabaseVersions } from "../DatabaseVersion";
 
 vi.mock("lru-cache-idb", () => import("../../../../../tests/unit/lruCacheIdbMock"));
 
@@ -18,6 +19,7 @@ const ecRoute = (response: unknown = ecnumbers): MockRoute =>
 
 describe("FunctionalResponseCommunicator", () => {
     beforeEach(() => {
+        forgetDatabaseVersions();
         memoryCache.clear();
     });
 
@@ -91,6 +93,8 @@ describe("FunctionalResponseCommunicator", () => {
         mockFetch([metadataRoute, ecRoute()]);
         await communicator.getResponses(["EC:1.1.1.1", "EC:2.7.11.1"]);
 
+        // A new database release; the version is no longer kept
+        forgetDatabaseVersions();
         const { requests } = mockFetch([
             { url: `${API}/private_api/metadata`, response: { ...metadata, db_version: "other" } },
             ecRoute(),
