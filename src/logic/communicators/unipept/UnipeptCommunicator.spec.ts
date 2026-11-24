@@ -83,4 +83,14 @@ describe("UnipeptCommunicator", () => {
 
         await expect(communicator.uniprotVersion()).resolves.toBe(metadata.db_version);
     });
+
+    it("throws when the API returns an error", async () => {
+        mockFetch([
+            { url: /\/api\/v2\/pept2lca\.json\?/, response: { error: "x" }, status: 500 },
+            { method: "POST", url: `${API}/api/v2/taxa2tree.json`, response: { error: "x" }, status: 500 },
+        ]);
+
+        await expect(communicator.pept2lca(["AALTER"])).rejects.toThrow(/Request failed: 500/);
+        await expect(communicator.taxa2treeCounts({ "1678": 1 })).rejects.toThrow(/Request failed: 500/);
+    });
 });
