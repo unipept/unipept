@@ -1,10 +1,10 @@
 import useAsyncWebWorker from "@/composables/useAsyncWebWorker";
-import FunctionalProcessorWebWorker from "@/composables/workers/functionalProcessor.worker.ts?worker";
-import type { FunctionalProcessorData, FunctionalProcessorOutput } from "@/logic/processors/functional/FunctionalAggregation";
+import FunctionalAggregationWorker from "@/composables/workers/functionalAggregation.worker.ts?worker";
+import type { FunctionalAggregationInput, FunctionalAggregationOutput } from "@/logic/processors/functional/FunctionalAggregation";
 
 export default function useFunctionalProcessor() {
-    const {post} = useAsyncWebWorker<FunctionalProcessorData, FunctionalProcessorOutput>(
-        () => new FunctionalProcessorWebWorker()
+    const {post} = useAsyncWebWorker<FunctionalAggregationInput, FunctionalAggregationOutput>(
+        () => new FunctionalAggregationWorker()
     );
 
     return {

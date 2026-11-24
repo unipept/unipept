@@ -132,7 +132,7 @@
 import {computed, ref, watch, toRaw, Ref} from "vue";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
-import NcbiTreeNode from "@/logic/ontology/taxonomic/NcbiTreeNode";
+import type { HighlightedTreeNode } from "@/logic/processors/taxonomic/HighlightedTree";
 import {displayPercentage} from "@/logic/utils/Formatting";
 import GoTableData from "@/components/results/functional/go/GoTableData";
 import PeptonizerScoreHeader from "@/components/results/functional/PeptonizerScoreHeader.vue";
@@ -159,7 +159,7 @@ const emits = defineEmits<{
 }>();
 
 const expanded = ref<string[]>([]);
-const trees = new Map<string, NcbiTreeNode>();
+const trees = new Map<string, HighlightedTreeNode>();
 
 // Do not hide annotations based on their score while the scores are being computed or could not be computed
 const filteredItems = computed(() => scoresLoading || scoresError ? items : items.filter(item => (item.confidence ?? 0) >= probabilityThreshold));

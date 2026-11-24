@@ -134,7 +134,7 @@ import {displayPercentage} from "@/logic/utils/Formatting";
 import useHighlightedTreeProcessor from "@/composables/processing/taxonomic/useHighlightedTreeProcessor";
 import Treeview from "@/components/results/taxonomic/Treeview.vue";
 import InterproTableData from "@/components/results/functional/ipr/InterproTableData";
-import {DataNodeLike} from "unipept-visualizations";
+import type { HighlightedTreeNode } from "@/logic/processors/taxonomic/HighlightedTree";
 import PeptonizerScoreHeader from "@/components/results/functional/PeptonizerScoreHeader.vue";
 import PeptonizerScoreCell from "@/components/results/functional/PeptonizerScoreCell.vue";
 import type {DataTableSortItem as SortItem, DataTableHeader} from "vuetify";
@@ -159,7 +159,7 @@ const emits = defineEmits<{
 }>();
 
 const expanded = ref<string[]>([]);
-const trees = new Map<string, DataNodeLike>();
+const trees = new Map<string, HighlightedTreeNode>();
 
 // Do not hide annotations based on their score while the scores are being computed or could not be computed
 const filteredItems = computed(() => scoresLoading || scoresError ? items : items.filter(item => (item.confidence ?? 0) >= probabilityThreshold));

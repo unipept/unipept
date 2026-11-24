@@ -2,12 +2,12 @@ import {ShareableMap, TransferableState} from "shared-memory-datastructures";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 
-export interface TaxonomicProcessorData {
+export interface TaxonAggregationInput {
     peptideCounts: Map<string, number>;
     peptideDataTransferable: TransferableState;
 }
 
-export interface TaxonomicProcessorWorkerOutput {
+export interface TaxonAggregationOutput {
     countsPerLcaTransferable: TransferableState;
     lcaToPeptides: Map<number, string[]>;
     peptideToLca: Map<string, number>;
@@ -17,7 +17,7 @@ export interface TaxonomicProcessorWorkerOutput {
 export const aggregateTaxa = async ({
    peptideCounts,
    peptideDataTransferable
-}: TaxonomicProcessorData ) => {
+}: TaxonAggregationInput): Promise<TaxonAggregationOutput> => {
     const peptideToResponseMap = ShareableMap.fromTransferableState<string, PeptideData>(peptideDataTransferable, { serializer: new PeptideDataSerializer()});
 
     const countsPerLca = new Map<number, number>();

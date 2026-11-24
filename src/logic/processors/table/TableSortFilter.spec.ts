@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseQuery, sortFilterTable, type QuickFilters, type TableSortFilterWorkerInput } from "./TableSortFilter";
+import { parseQuery, sortFilterTable, type QuickFilters, type TableSortFilterInput } from "./TableSortFilter";
 import { countsTransferable, peptideDataTransferable } from "../../../../tests/unit/peptideData";
 
 // AAAK: genus, EC only. CCCK: species, GO and InterPro. DDDK: superkingdom, no annotations, cRAP. EEEK: not found.
@@ -18,7 +18,7 @@ const ncbiSubset = {
 
 const noQuickFilters: QuickFilters = { speciesLevel: false, hasGo: false, hasEc: false, hasIpr: false, notFound: false };
 
-const run = (options: Partial<TableSortFilterWorkerInput> = {}) => sortFilterTable({
+const run = (options: Partial<TableSortFilterInput> = {}) => sortFilterTable({
     peptideCountsTransferable: countsTransferable(counts),
     peptideToDataTransferable: peptideDataTransferable(data),
     peptideToLcaTransferable: countsTransferable(lca),
@@ -34,7 +34,7 @@ const run = (options: Partial<TableSortFilterWorkerInput> = {}) => sortFilterTab
 });
 
 // Without a sort key the row order is the internal order of the maps, so those results are compared sorted
-const peptides = (options: Partial<TableSortFilterWorkerInput> = {}) => {
+const peptides = (options: Partial<TableSortFilterInput> = {}) => {
     const result = run(options).rows.map(row => row.peptide);
     return options.sortKey ? result : result.sort();
 };
