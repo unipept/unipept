@@ -6,7 +6,7 @@ export const highlightTree = async ({
     taxaToPeptides
 }: HighlightedTreeProcessorData): Promise<any> => {
     return processRecursively(tree, (node: any, children: any) => {
-        node.extra.included = children.some((x: any) => x.included) ||
+        node.extra.included = children.some((x: any) => x.extra.included) ||
             (
                 taxaToPeptides.has(node.id) &&
                 taxaToPeptides.get(node.id)!.some(pept => peptides.includes(pept))
@@ -16,10 +16,10 @@ export const highlightTree = async ({
     });
 };
 
-const processRecursively = async (
+const processRecursively = (
     node: any,
     f: (node: any, children: any) => any
-): Promise<any> => {
+): any => {
     return f(
         node,
         node.children?.map((child: any) => processRecursively(child, f)) ?? []
