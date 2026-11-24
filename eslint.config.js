@@ -42,4 +42,20 @@ export default defineConfig([
             '@typescript-eslint/no-var-requires': 'off',
         },
     },
+    {
+        // src/logic is plain TypeScript: it may not depend on Vue or on the layers above it
+        files: ['src/logic/**/*.ts'],
+        rules: {
+            'no-restricted-imports': ['error', {
+                patterns: [{
+                    group: [
+                        'vue', 'vue-router', 'pinia', 'vuetify', 'vuetify/*', '@vueuse/*', '*.vue',
+                        '@/store/*', '@/composables/*', '@/components/*', '@/router', '@/router/*', '@/plugins/*',
+                        '**/store/*', '**/composables/*', '**/components/*', '**/router', '**/router/*', '**/plugins/*',
+                    ],
+                    message: 'src/logic may not import Vue, Pinia, Vuetify, the router, plugins, stores, composables or components.',
+                }],
+            }],
+        },
+    },
 ]);
