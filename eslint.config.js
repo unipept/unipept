@@ -62,11 +62,4 @@ export default defineConfig([
             'vue/v-slot-style': 'off',
         },
     },
-    {
-        // Off until these components inject their composable instead of taking it as a prop.
-        files: ['src/components/pathway/**'],
-        rules: {
-            'vue/no-mutating-props': 'off',
-        },
-    },
 ]);
