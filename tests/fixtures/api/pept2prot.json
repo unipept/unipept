@@ -1,0 +1,50 @@
+[
+  {
+    "peptide": "MDGTEYIIVK",
+    "cutoff_used": false,
+    "uniprot_id": "A0ABR7IJG5",
+    "protein_name": "Co-chaperonin GroES",
+    "taxon_id": 2763027,
+    "taxon_name": "Blautia difficilis",
+    "protein": "MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVVVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK",
+    "ec_references": "",
+    "go_references": "GO:0005737 GO:0005524 GO:0046872 GO:0044183 GO:0051087",
+    "interpro_references": "IPR020818 IPR037124 IPR018369 IPR011032"
+  },
+  {
+    "peptide": "MDGTEYIIVK",
+    "cutoff_used": false,
+    "uniprot_id": "A0ABX2GMN3",
+    "protein_name": "Co-chaperonin GroES",
+    "taxon_id": 418240,
+    "taxon_name": "Blautia wexlerae",
+    "protein": "MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK",
+    "ec_references": "",
+    "go_references": "GO:0005737 GO:0005524 GO:0046872 GO:0044183 GO:0051087",
+    "interpro_references": "IPR020818 IPR037124 IPR018369 IPR011032"
+  },
+  {
+    "peptide": "MDGTEYIIVK",
+    "cutoff_used": false,
+    "uniprot_id": "A0A174AIW3",
+    "protein_name": "Co-chaperonin GroES",
+    "taxon_id": 418240,
+    "taxon_name": "Blautia wexlerae",
+    "protein": "MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK",
+    "ec_references": "",
+    "go_references": "GO:0005737 GO:0005524 GO:0046872 GO:0044183 GO:0051087",
+    "interpro_references": "IPR020818 IPR037124 IPR018369 IPR011032"
+  },
+  {
+    "peptide": "MDGTEYIIVK",
+    "cutoff_used": false,
+    "uniprot_id": "A0ACT0YYS3",
+    "protein_name": "Co-chaperone GroES",
+    "taxon_id": 649762,
+    "taxon_name": "Blautia luti DSM 14534 = JCM 17040",
+    "protein": "MTLVPLGDRVVLKQVEAEETTKSGIVLPGQAQEKPQQAEVVAVGPGGVVDGKEVKMEVAVGDKVIYSKYSGTEVKMDGTEYIIVKQNDILAIVK",
+    "ec_references": "",
+    "go_references": "",
+    "interpro_references": ""
+  }
+]

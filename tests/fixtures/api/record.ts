@@ -60,6 +60,46 @@ const recordings: Recording[] = [
         url: `${API}/api/v2/taxonomy`,
         body: { input: [1680], descendants: true },
     },
+    {
+        file: "pept2prot.json",
+        url: `${API}/api/v2/pept2prot`,
+        body: { input: ["MDGTEYIIVK"], equate_il: true, extra: true },
+    },
+    {
+        file: "proteins.json",
+        url: `${API}/private_api/proteins`,
+        body: { accessions: ["P12345", "P00330"] },
+    },
+    {
+        file: "proteins-count.json",
+        url: `${API}/private_api/proteins/count`,
+        body: { filter: "kinase" },
+    },
+    {
+        file: "proteins-filter.json",
+        url: `${API}/private_api/proteins/filter`,
+        body: { filter: "kinase", start: 0, end: 3, sort_by: "uniprot_accession_number", sort_descending: false },
+    },
+    {
+        file: "proteomes.json",
+        url: `${API}/private_api/proteomes`,
+        body: { proteomes: ["UP000005640", "UP000000625"] },
+    },
+    {
+        file: "proteomes-count.json",
+        url: `${API}/private_api/proteomes/count`,
+        body: { filter: "UP0000056" },
+    },
+    {
+        file: "proteomes-filter.json",
+        url: `${API}/private_api/proteomes/filter`,
+        body: { start: 0, end: 3, filter: "UP0000056", sort_by: "id", sort_descending: false },
+    },
+    {
+        file: "protinfo.json",
+        url: `${API}/api/v2/protinfo`,
+        body: { input: ["P12345", "P00330"] },
+    },
 ];
 
 for (const { file, url, body } of recordings) {
