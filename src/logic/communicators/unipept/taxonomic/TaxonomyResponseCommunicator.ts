@@ -16,7 +16,8 @@ export default class TaxonomyResponseCommunicator {
         codes: NcbiId[]
     ): Promise<TaxonomyResponse[]> {
         while (TaxonomyResponseCommunicator.inProgress) {
-            await TaxonomyResponseCommunicator.inProgress;
+            // An error of the previous request is reported to its own caller, not to the requests that wait for it
+            await TaxonomyResponseCommunicator.inProgress.catch(() => undefined);
         }
 
         TaxonomyResponseCommunicator.inProgress = this.doProcess(codes);

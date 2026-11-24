@@ -3,6 +3,7 @@ import {Pept2filteredData} from "@/composables/communication/unipept/usePept2fil
 import PeptideData from "@/logic/ontology/peptides/PeptideData";
 import PeptideDataSerializer from "@/logic/ontology/peptides/PeptideDataSerializer";
 import {Filter, FilterType} from "@/store/CustomFilterStore";
+import NetworkUtils from "@/logic/communicators/NetworkUtils";
 
 self.onunhandledrejection = (event) => {
     // This will propagate to the main thread's `onerror` handler
@@ -29,16 +30,12 @@ const process = async ({
     const requests: (() => Promise<void>)[] = [];
     for (let i = 0; i < peptides.length; i += batchSize) {
         requests.push(async () => {
-            const response = await fetch(`${baseUrl}/mpa/pept2data`, {
-                method: "POST",
-                body: JSON.stringify({
-                    peptides: peptides.slice(i, i + batchSize),
-                    equate_il: equate,
-                    report_taxa: true,
-                    ...constructFilterJson(filter)
-                }),
-                headers: { "Content-Type": "application/json" }
-            }).then(r => r.json());
+            const response = await NetworkUtils.postJSON(`${baseUrl}/mpa/pept2data`, JSON.stringify({
+                peptides: peptides.slice(i, i + batchSize),
+                equate_il: equate,
+                report_taxa: true,
+                ...constructFilterJson(filter)
+            }));
 
             for (const peptide of response.peptides) {
                 if (useCrap && peptide.crap_filtered) {

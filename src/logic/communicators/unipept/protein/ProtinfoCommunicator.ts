@@ -20,7 +20,8 @@ export default class ProtinfoCommunicator {
         ...proteins: string[]
     ): Promise<Map<string, ProtinfoResponse>> {
         while (ProtinfoCommunicator.inProgress) {
-            await ProtinfoCommunicator.inProgress;
+            // An error of the previous request is reported to its own caller, not to the requests that wait for it
+            await ProtinfoCommunicator.inProgress.catch(() => undefined);
         }
 
         ProtinfoCommunicator.inProgress = this.doProcess(proteins);

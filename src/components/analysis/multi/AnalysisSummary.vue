@@ -45,7 +45,7 @@
                         </v-alert>
 
                         <v-alert
-                            v-else
+                            v-else-if="latest"
                             color="warning"
                             variant="tonal"
                             class="mt-3"
@@ -234,7 +234,7 @@ const editAnalysis = () => {
     emits('edit');
 }
 
-onMounted(process);
+onMounted(() => process().catch(() => undefined));
 </script>
 
 <style scoped>

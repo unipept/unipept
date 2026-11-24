@@ -1,5 +1,5 @@
 // Fetches the API responses that the unit tests use and saves them in this folder.
-// Run with `yarn test:record`. The requests must match the ones that UnipeptCommunicator.spec.ts checks.
+// Run with `yarn test:record`. The requests must match the ones that the communicator specs check.
 import { writeFile } from "node:fs/promises";
 
 const API = "https://api.unipept.ugent.be";
@@ -24,6 +24,41 @@ const recordings: Recording[] = [
     {
         file: "metadata.json",
         url: `${API}/private_api/metadata?`,
+    },
+    {
+        file: "ecnumbers.json",
+        url: `${API}/private_api/ecnumbers`,
+        body: { ecnumbers: ["1.1.1.1", "2.7.11.1"] },
+    },
+    {
+        file: "goterms.json",
+        url: `${API}/private_api/goterms`,
+        body: { goterms: ["GO:0005737", "GO:0016301"] },
+    },
+    {
+        file: "interpros.json",
+        url: `${API}/private_api/interpros`,
+        body: { interpros: ["IPR000719", "IPR011009"] },
+    },
+    {
+        file: "taxa.json",
+        url: `${API}/private_api/taxa`,
+        body: { taxids: [1678, 816] },
+    },
+    {
+        file: "taxa-count.json",
+        url: `${API}/private_api/taxa/count`,
+        body: { filter: "bacteroides" },
+    },
+    {
+        file: "taxa-filter.json",
+        url: `${API}/private_api/taxa/filter`,
+        body: { filter: "bacteroides", start: 0, end: 3, sort_by: "id", sort_descending: false },
+    },
+    {
+        file: "taxonomy.json",
+        url: `${API}/api/v2/taxonomy`,
+        body: { input: [1680], descendants: true },
     },
 ];
 

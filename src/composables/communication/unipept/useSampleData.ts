@@ -1,5 +1,6 @@
 import {ref} from "vue";
 import {DEFAULT_API_BASE_URL} from "@/logic/Constants";
+import NetworkUtils from "@/logic/communicators/NetworkUtils";
 
 export interface SampleData {
     id: number
@@ -21,10 +22,7 @@ export default function useSampleData(
     const samples = ref<SampleData[]>([]);
 
     const process = async () => {
-        const response = await fetch(`${baseUrl}/datasets/sampledata`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        }).then(r => r.json());
+        const response = await NetworkUtils.postJSON(`${baseUrl}/datasets/sampledata`);
 
         samples.value = response.sample_data;
     }

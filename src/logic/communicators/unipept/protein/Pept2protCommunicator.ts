@@ -14,8 +14,9 @@ export default class Pept2protCommunicator {
         peptide: string,
         equateIl: boolean
     ): Promise<Pept2protResponse[]> {
-        if (Pept2protCommunicator.inProgress) {
-            await Pept2protCommunicator.inProgress;
+        while (Pept2protCommunicator.inProgress) {
+            // An error of the previous request is reported to its own caller, not to the requests that wait for it
+            await Pept2protCommunicator.inProgress.catch(() => undefined);
         }
 
         Pept2protCommunicator.inProgress = this.doProcess(peptide, equateIl);

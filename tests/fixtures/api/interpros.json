@@ -1,0 +1,12 @@
+[
+  {
+    "code": "IPR000719",
+    "name": "Protein kinase domain",
+    "category": "Domain"
+  },
+  {
+    "code": "IPR011009",
+    "name": "Protein kinase-like domain superfamily",
+    "category": "Homologous_superfamily"
+  }
+]
