@@ -157,7 +157,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useFullscreen } from '@vueuse/core';
-import type { usePathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
+import { injectPathwayVisualization } from '@/composables/pathway/usePathwayVisualization';
 import type { PathwayItem } from '@/store/PathwayPilotStore';
 import PathwayInteractiveImage from '@/components/pathway/PathwayInteractiveImage.vue';
 import PathwayImageOverlay from '@/components/pathway/PathwayImageOverlay.vue';
@@ -167,7 +167,6 @@ import VisualizationControls from '@/components/results/taxonomic/VisualizationC
 import PathwayLegend from "@/components/pathway/PathwayLegend.vue";
 
 defineProps<{
-    viz: ReturnType<typeof usePathwayVisualization>;
     coloredAreas: any[];
     selectedPathway: PathwayItem | undefined;
     legendItems: { label: string; color: string }[];
@@ -185,6 +184,8 @@ const emit = defineEmits<{
     'export-csv': [delimiter: string];
     retry: [];
 }>();
+
+const viz = injectPathwayVisualization();
 
 const settingsPanelOpen = ref<string[]>([]);
 const fullscreenRoot = ref<HTMLElement | null>(null);
