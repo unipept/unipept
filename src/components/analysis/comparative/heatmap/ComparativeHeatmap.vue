@@ -192,7 +192,7 @@
                                             </div>
                                             <div>
                                                 Corresponds to
-                                                <span class="font-weight-bold">{{(rows[selectedRow].columnWiseAbundances[selectedCol] * 100).toFixed(2) }}%</span>
+                                                <span class="font-weight-bold">{{ (rows[selectedRow].columnWiseAbundances[selectedCol] * 100).toFixed(2) }}%</span>
                                                 of all species for this sample.
                                             </div>
                                         </template>
