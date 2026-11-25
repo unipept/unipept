@@ -17,7 +17,7 @@ const router = createRouter({
             return savedPosition;
         } else {
             // Go to the top of the page
-            return { x: 0, y: 0 }
+            return { top: 0 }
         }
     }
 });
