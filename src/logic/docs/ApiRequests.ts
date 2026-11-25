@@ -1,15 +1,6 @@
 import NetworkUtils from "@/logic/communicators/NetworkUtils";
 import { DEFAULT_API_BASE_URL } from "@/logic/Constants";
-
-/** The endpoints of the public Unipept API, under `/api/v2/`. */
-export const apiEndpoints = [
-    "pept2prot", "pept2taxa", "pept2lca", "pept2ec", "pept2go", "pept2interpro", "pept2funct", "peptinfo",
-    "protinfo", "taxa2lca", "taxa2tree", "taxonomy"
-] as const;
-
-export type ApiEndpoint = typeof apiEndpoints[number];
-
-export type ApiParamValue = string | number | boolean | (string | number)[];
+import type { ApiParamValue } from "./ApiReference";
 
 /** The parameters as form fields. An array becomes one `name[]` field per value. */
 export function apiFormFields(params: Record<string, ApiParamValue>): [string, string][] {

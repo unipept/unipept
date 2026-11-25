@@ -9,7 +9,7 @@
   "scripts": {
     "predev": "fantasticon",
     "dev": "vite --host",
-    "typecheck": "vue-tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
+    "typecheck": "tsc -b tsconfig.node.json && vue-tsc --noEmit",
     "prebuild": "fantasticon",
     "build": "vite build",
     "preview": "vite preview",

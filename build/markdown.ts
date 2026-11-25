@@ -10,6 +10,7 @@ import { frontmatterPlugin } from "@mdit-vue/plugin-frontmatter";
 import { resolveHeadersFromTokens, slugify } from "@mdit-vue/shared";
 import { fromHighlighter } from "@shikijs/markdown-it/core";
 import { createHighlighter } from "shiki";
+import { apiReference } from "./apiReference.ts";
 
 export interface MarkdownRendererOptions {
     /** Base URL of the app, added in front of absolute links and image paths. */
@@ -28,6 +29,11 @@ export interface MarkdownPagesOptions extends MarkdownRendererOptions {
      * tag in PascalCase or kebab-case.
      */
     components?: Record<string, string>;
+    /**
+     * Module path of the component that shows a page with `layout: api` in its front matter. It gets the checked
+     * front matter as its `api` prop and the rendered Markdown in its default slot.
+     */
+    apiComponent?: string;
 }
 
 /** Languages that code blocks are highlighted in. Code in other languages is shown as plain text. */
@@ -70,7 +76,8 @@ export async function createMarkdownRenderer(options: MarkdownRendererOptions = 
         .use(componentPlugin)
         .use(attrs, { allowedAttributes: ["id"] })
         .use(anchor, { slugify, permalink: anchor.permalink.linkInsideHeader({ symbol: "&#8203;", ariaHidden: true }) })
-        .use(frontmatterPlugin)
+        // gray-matter caches a file without options, also after a YAML error, which then reads as empty.
+        .use(frontmatterPlugin, { grayMatterOptions: {} })
         .use(fromHighlighter(highlighter, {
             themes: { light: "github-light", dark: "github-dark" },
             defaultColor: false
@@ -94,12 +101,13 @@ export async function createMarkdownRenderer(options: MarkdownRendererOptions = 
     }
 
     md.use(container, "code-group", {
-        render(tokens: Token[], idx: number) {
+        render(tokens: Token[], idx: number, _options: unknown, env: { codeGroups?: number } = {}) {
             if (tokens[idx].nesting === -1) {
                 return "</div></div>\n";
             }
 
-            const group = `group-${idx}`;
+            env.codeGroups = (env.codeGroups ?? 0) + 1;
+            const group = `group-${env.codeGroups}`;
             let tabs = "";
             for (let i = idx + 1; tokens[i].type !== "container_code-group_close"; i++) {
                 const token = tokens[i];
@@ -244,7 +252,7 @@ export function markdownToVue(
     md: MarkdownIt,
     src: string,
     file: string,
-    options: Partial<Pick<MarkdownPagesOptions, "components" | "srcDir">> = {}
+    options: Partial<Pick<MarkdownPagesOptions, "components" | "srcDir" | "apiComponent">> = {}
 ): string {
     const relativePath = options.srcDir ? path.relative(options.srcDir, file).split(path.sep).join("/") : undefined;
     const env: Record<string, any> = {
@@ -256,9 +264,19 @@ export function markdownToVue(
         .filter(([tag]) => new RegExp(`<(${tag}|${kebabCase(tag)})[\\s/>]`).test(html))
         .map(([tag, module]) => `import ${tag} from ${JSON.stringify(module)};`);
 
+    let template = `<div class="vp-doc">${html}</div>`;
+    if (env.frontmatter?.layout === "api") {
+        if (!options.apiComponent) {
+            throw new Error(`${file}: layout: api needs the apiComponent option.`);
+        }
+        const api = apiReference(env.frontmatter, md, file, env);
+        imports.push(`import ApiReference from ${JSON.stringify(options.apiComponent)};`, `const api = ${JSON.stringify(api)};`);
+        template = `<ApiReference :api="api">${template}</ApiReference>`;
+    }
+
     return [
         ...(imports.length > 0 ? [`<script setup>\n${imports.join("\n")}\n</script>`] : []),
-        `<template><div class="vp-doc">${html}</div></template>`
+        `<template>${template}</template>`
     ].join("\n");
 }
 
