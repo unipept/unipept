@@ -26,13 +26,6 @@ declare module "virtual:docs-pages" {
 
 declare module "*.md" {
     import type { DefineComponent } from "vue";
-    import type { MarkdownHeader } from "virtual:docs-pages";
-
-    export type { MarkdownHeader };
-
-    export const frontmatter: Record<string, unknown>;
-    export const headers: MarkdownHeader[];
-    export const title: string;
 
     const component: DefineComponent;
     export default component;

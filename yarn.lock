@@ -275,33 +275,7 @@
     gray-matter "^4.0.3"
     markdown-it "^15.0.3"
 
-"@mdit-vue/plugin-headers@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@mdit-vue/plugin-headers/-/plugin-headers-4.0.0.tgz#7ebdaf0fb5ad3f5d3b41efb279da4a2083b1fa35"
-  integrity sha512-bfLq7kwdVeMggYA1czOEUoGLaQJDRAiOwJ/XDbNNkLDdJvHx/cXkPu9il+vAQEarMz/QrOBlI2Ygbv32Bws5Iw==
-  dependencies:
-    "@mdit-vue/shared" "4.0.0"
-    "@mdit-vue/types" "4.0.0"
-    markdown-it "^15.0.3"
-
-"@mdit-vue/plugin-sfc@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@mdit-vue/plugin-sfc/-/plugin-sfc-4.0.0.tgz#204624f0c86b366980facbf1dc03b77776907808"
-  integrity sha512-PolNeZ3zJLcVahGN3j/97kVv6I1M2yKx1HU6O31hPuBAKCEXJTXvE4UDkomv6jPVuOkvAemIDqNIscbN4Gn55Q==
-  dependencies:
-    "@mdit-vue/types" "4.0.0"
-    markdown-it "^15.0.3"
-
-"@mdit-vue/plugin-title@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@mdit-vue/plugin-title/-/plugin-title-4.0.0.tgz#b44001cf6c146d3d01af5c53f54a538af70a73f1"
-  integrity sha512-aru6OX8RbeCPYxeOYy0/egUtojOVDmOZWSTGyRUxWrJdThCm9p9ORRBwwEYqtRa3BajG8yH95iixyYXA9vkTXQ==
-  dependencies:
-    "@mdit-vue/shared" "4.0.0"
-    "@mdit-vue/types" "4.0.0"
-    markdown-it "^15.0.3"
-
-"@mdit-vue/shared@4.0.0", "@mdit-vue/shared@^4.0.0":
+"@mdit-vue/shared@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@mdit-vue/shared/-/shared-4.0.0.tgz#b3e0a82018d1a12df6b321bd72dd51e22fbc61ed"
   integrity sha512-aYqXHD8UCbGewcpn2Q0zhDRLx/8tj6pW3dDGDlJifytD7UqyorQvJ1Vc8xIY93fcXXedRcLH8OfguPgj9uDsqg==

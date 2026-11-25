@@ -7,9 +7,6 @@ import attrs from "markdown-it-attrs";
 import container from "markdown-it-container";
 import { componentPlugin } from "@mdit-vue/plugin-component";
 import { frontmatterPlugin } from "@mdit-vue/plugin-frontmatter";
-import { headersPlugin } from "@mdit-vue/plugin-headers";
-import { sfcPlugin } from "@mdit-vue/plugin-sfc";
-import { titlePlugin } from "@mdit-vue/plugin-title";
 import { resolveHeadersFromTokens, slugify } from "@mdit-vue/shared";
 import { fromHighlighter } from "@shikijs/markdown-it/core";
 import { createHighlighter } from "shiki";
@@ -17,8 +14,6 @@ import { createHighlighter } from "shiki";
 export interface MarkdownRendererOptions {
     /** Base URL of the app, added in front of absolute links and image paths. */
     base?: string;
-    /** Languages that code blocks can be highlighted in. Other languages are shown as plain text. */
-    languages?: string[];
 }
 
 export interface MarkdownPagesOptions extends MarkdownRendererOptions {
@@ -35,10 +30,11 @@ export interface MarkdownPagesOptions extends MarkdownRendererOptions {
     components?: Record<string, string>;
 }
 
-export const defaultLanguages = ["shellsession", "bash", "json"];
+/** Languages that code blocks are highlighted in. Code in other languages is shown as plain text. */
+const languages = ["shellsession", "bash", "json"];
 
 /** Module that lists all docs pages, see {@link readDocsPages}. */
-export const docsPagesId = "virtual:docs-pages";
+const docsPagesId = "virtual:docs-pages";
 const resolvedDocsPagesId = "\0" + docsPagesId;
 
 export interface DocsPageData {
@@ -57,19 +53,17 @@ const callouts = ["tip", "info", "warning", "danger", "details"];
 
 const kebabCase = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
-const scriptSetupRE = /^<script\b[^>]*\bsetup\b[^>]*>/;
-const scriptLangTsRE = /^<script\b[^>]*\blang=["']ts["']/;
 
 /**
  * Creates the Markdown renderer for the docs. Besides standard Markdown it supports front matter, `{#id}` after a
  * heading, `::: tip`, `::: info`, `::: warning`, `::: danger`, `::: details` and `::: code-group` blocks,
- * highlighted code blocks with a header that shows the language and a copy button, and Vue components and
- * `<script setup>` in the page.
+ * highlighted code blocks with a header that shows the language and a copy button, and Vue components in the
+ * page.
  */
 export async function createMarkdownRenderer(options: MarkdownRendererOptions = {}): Promise<MarkdownIt> {
     const highlighter = await createHighlighter({
         themes: ["github-light", "github-dark"],
-        langs: options.languages ?? defaultLanguages
+        langs: languages
     });
 
     const md = markdownIt({ html: true })
@@ -77,9 +71,6 @@ export async function createMarkdownRenderer(options: MarkdownRendererOptions = 
         .use(attrs, { allowedAttributes: ["id"] })
         .use(anchor, { slugify, permalink: anchor.permalink.linkInsideHeader({ symbol: "&#8203;", ariaHidden: true }) })
         .use(frontmatterPlugin)
-        .use(headersPlugin, { level: [2, 3] })
-        .use(sfcPlugin)
-        .use(titlePlugin)
         .use(fromHighlighter(highlighter, {
             themes: { light: "github-light", dark: "github-dark" },
             defaultColor: false
@@ -93,10 +84,8 @@ export async function createMarkdownRenderer(options: MarkdownRendererOptions = 
                     return name === "details" ? "</details>\n" : "</div>\n";
                 }
 
-                // A separate env, so rendering the title does not reset the page's headers and title.
-                const titleEnv = { relativePath: env?.relativePath };
                 const title = md.renderInline(token.info.trim().slice(name.length).trim()
-                    || (name === "details" ? "Details" : name.toUpperCase()), titleEnv);
+                    || (name === "details" ? "Details" : name.toUpperCase()), env);
                 return name === "details"
                     ? `<details class="details custom-block"><summary>${title}</summary>\n`
                     : `<div class="${name} custom-block"><p class="custom-block-title">${title}</p>\n`;
@@ -248,9 +237,8 @@ export function readDocsPages(md: MarkdownIt, srcDir: string): DocsPageData[] {
 }
 
 /**
- * Turns one Markdown page into the source of a Vue single-file component. The component renders the page and
- * exports its `frontmatter`, `headers` and `title`. The title is `title` in the front matter, else the first `#`
- * heading.
+ * Turns one Markdown page into the source of a Vue single-file component that renders the page. The page's title,
+ * front matter and headings come from {@link readDocsPages} instead.
  */
 export function markdownToVue(
     md: MarkdownIt,
@@ -264,36 +252,13 @@ export function markdownToVue(
     };
     const html = md.render(src, env);
 
-    const scripts: string[] = env.sfcBlocks?.scripts.map((s: { content: string }) => s.content) ?? [];
-    const setupIndex = scripts.findIndex(s => scriptSetupRE.test(s));
-    if (scripts.some(s => !scriptSetupRE.test(s))) {
-        throw new Error(`${file}: use <script setup> in Markdown pages, not <script>.`);
-    }
-    const lang = scripts.some(s => scriptLangTsRE.test(s)) ? ` lang="ts"` : "";
-
     const imports = Object.entries(options.components ?? {})
         .filter(([tag]) => new RegExp(`<(${tag}|${kebabCase(tag)})[\\s/>]`).test(html))
         .map(([tag, module]) => `import ${tag} from ${JSON.stringify(module)};`);
-    if (imports.length > 0) {
-        if (setupIndex >= 0) {
-            scripts[setupIndex] = scripts[setupIndex].replace(scriptSetupRE, open => `${open}\n${imports.join("\n")}`);
-        } else {
-            scripts.push(`<script setup${lang}>\n${imports.join("\n")}\n</script>`);
-        }
-    }
-
-    const pageData = [
-        `export const frontmatter = ${JSON.stringify(env.frontmatter ?? {})};`,
-        `export const headers = ${JSON.stringify(env.headers ?? [])};`,
-        `export const title = ${JSON.stringify(typeof env.frontmatter?.title === "string" ? env.frontmatter.title : env.title ?? "")};`
-    ];
 
     return [
-        `<script${lang}>\n${pageData.join("\n")}\n</script>`,
-        ...scripts,
-        `<template><div class="vp-doc">${html}</div></template>`,
-        ...(env.sfcBlocks?.styles.map((s: { content: string }) => s.content) ?? []),
-        ...(env.sfcBlocks?.customBlocks.map((s: { content: string }) => s.content) ?? [])
+        ...(imports.length > 0 ? [`<script setup>\n${imports.join("\n")}\n</script>`] : []),
+        `<template><div class="vp-doc">${html}</div></template>`
     ].join("\n");
 }
 
