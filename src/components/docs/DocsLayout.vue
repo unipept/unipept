@@ -22,6 +22,31 @@
                 </v-expansion-panel>
             </v-expansion-panels>
 
+            <nav
+                aria-label="Breadcrumb"
+                class="docs-layout__breadcrumb"
+            >
+                <template
+                    v-for="(crumb, index) in breadcrumb"
+                    :key="index"
+                >
+                    <span
+                        v-if="index > 0"
+                        aria-hidden="true"
+                    > / </span>
+                    <router-link
+                        v-if="crumb.path"
+                        :to="crumb.path"
+                    >
+                        {{ crumb.label }}
+                    </router-link>
+                    <span
+                        v-else
+                        :aria-current="index === breadcrumb.length - 1 ? 'page' : undefined"
+                    >{{ crumb.label }}</span>
+                </template>
+            </nav>
+
             <h1 class="docs-layout__title">
                 {{ docs.page.title }}
             </h1>
@@ -51,6 +76,21 @@
 
         <aside class="docs-layout__toc">
             <docs-toc :headers="docs.page.headers" />
+            <div
+                v-if="docs.section.publication"
+                class="docs-layout__cite"
+            >
+                Cite:
+                <a
+                    v-if="docs.section.publicationLink"
+                    :href="publicationUrl(docs.section.publicationLink)"
+                    target="_blank"
+                    rel="noreferrer"
+                >{{ docs.section.publication }}</a>
+                <template v-else>
+                    {{ docs.section.publication }}
+                </template>
+            </div>
         </aside>
     </div>
 </template>
@@ -63,6 +103,7 @@ import DocsSideMenu from "./DocsSideMenu.vue";
 import DocsToc from "./DocsToc.vue";
 import DocsPager from "./DocsPager.vue";
 import useDocsContent from "@/composables/docs/useDocsContent";
+import { docsBreadcrumb, publicationUrl } from "@/logic/docs/DocsSections";
 import "@/styles/docs.css";
 
 const editBase = "https://github.com/unipept/unipept/edit/main/src/content/docs/";
@@ -75,6 +116,7 @@ useDocsContent(content);
 
 const docs = computed(() => route.meta.docs);
 const editLink = computed(() => editBase + docs.value?.page.file);
+const breadcrumb = computed(() => docs.value ? docsBreadcrumb(docs.value.section, docs.value.page) : []);
 </script>
 
 <style scoped>
@@ -100,6 +142,33 @@ const editLink = computed(() => editBase + docs.value?.page.file);
 .docs-layout__main {
     min-width: 0;
     max-width: 820px;
+}
+
+.docs-layout__breadcrumb {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--docs-text-muted);
+}
+
+.docs-layout__breadcrumb a {
+    color: var(--docs-link);
+    text-decoration: none;
+}
+
+.docs-layout__breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.docs-layout__cite {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--docs-border);
+    font-size: 13px;
+    color: var(--docs-text-muted);
+}
+
+.docs-layout__cite a {
+    color: var(--docs-link);
 }
 
 .docs-layout__title {

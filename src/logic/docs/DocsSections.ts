@@ -145,3 +145,28 @@ export function adjacentDocsPages(section: DocsSection, page: DocsPage): { previ
     const index = section.pages.findIndex(p => p.path === page.path);
     return index < 0 ? {} : { previous: section.pages[index - 1], next: section.pages[index + 1] };
 }
+
+export interface DocsBreadcrumb {
+    label: string;
+    /** Page to link to; none for the current page and for menu groups. */
+    path?: string;
+}
+
+/** The section, the titled menu group of the page and the page itself. The section links to its first page. */
+export function docsBreadcrumb(section: DocsSection, page: DocsPage): DocsBreadcrumb[] {
+    const first = section.pages[0];
+    if (page.path === first?.path) {
+        return [{ label: section.title }];
+    }
+    const group = section.menu.find(g => g.pages.some(p => p.path === page.path));
+    return [
+        { label: section.title, path: first?.path },
+        ...(group?.title ? [{ label: group.title }] : []),
+        { label: page.menuLabel }
+    ];
+}
+
+/** URL of a publication link as the sections write it, such as `doi:10.1093/…` or `doi.org/10.1093/…`. */
+export function publicationUrl(link: string): string {
+    return /^https?:\/\//.test(link) ? link : "https://" + link.replace(/^doi:/, "doi.org/");
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { DocsPageData } from "virtual:docs-pages";
-import { adjacentDocsPages, buildDocsSections, docsPagePath, docsSectionConfigs, type DocsSectionConfig } from "./DocsSections";
+import { adjacentDocsPages, buildDocsSections, docsBreadcrumb, docsPagePath, docsSectionConfigs, publicationUrl, type DocsSectionConfig } from "./DocsSections";
 
 const load = async () => ({ default: {} as never });
 
@@ -119,5 +119,32 @@ describe("adjacentDocsPages", () => {
     it("gives no previous page for the first page and no next page for the last", () => {
         expect(adjacentDocsPages(section, overview).previous).toBeUndefined();
         expect(adjacentDocsPages(section, pept2lca).next).toBeUndefined();
+    });
+});
+
+describe("docsBreadcrumb", () => {
+    const [section] = buildDocsSections({ cli: { ...config, menu: ["", "pept2lca", { title: "Case studies", pages: ["casestudies", "casestudies/tpa"] }] } }, pages);
+    const [overview, pept2lca, , tpa] = section.pages;
+
+    it("gives the section, the menu group and the page", () => {
+        expect(docsBreadcrumb(section, tpa)).toEqual([
+            { label: "CLI", path: "/cli" }, { label: "Case studies" }, { label: "Tryptic peptide" }
+        ]);
+    });
+
+    it("leaves out a menu group without a title", () => {
+        expect(docsBreadcrumb(section, pept2lca)).toEqual([{ label: "CLI", path: "/cli" }, { label: "unipept pept2lca" }]);
+    });
+
+    it("gives only the section on its first page", () => {
+        expect(docsBreadcrumb(section, overview)).toEqual([{ label: "CLI" }]);
+    });
+});
+
+describe("publicationUrl", () => {
+    it("turns the publication links of the sections into URLs", () => {
+        expect(publicationUrl("doi:10.1093/bioinformatics/btw039")).toBe("https://doi.org/10.1093/bioinformatics/btw039");
+        expect(publicationUrl("doi.org/10.1093/bioinformatics/btaa553")).toBe("https://doi.org/10.1093/bioinformatics/btaa553");
+        expect(publicationUrl("https://example.org/paper")).toBe("https://example.org/paper");
     });
 });

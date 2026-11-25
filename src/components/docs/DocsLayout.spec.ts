@@ -24,6 +24,8 @@ const sections = buildDocsSections(
     {
         cli: {
             title: "CLI",
+            publication: "Verschaffelt et al. (2020) Bioinformatics",
+            publicationLink: "doi.org/10.1093/bioinformatics/btaa553",
             menu: ["", { title: "Commands", pages: ["pept2lca", "pept2prot"] }]
         }
     },
@@ -90,6 +92,15 @@ describe("DocsLayout", () => {
         expect(html).toMatch(/Previous<\/span> Unipept CLI/);
         expect(links(html, "/cli/pept2prot").find(link => link.includes(`rel="next"`))).toBeDefined();
         expect(html).toMatch(/Next<\/span> unipept pept2prot/);
+    });
+
+    it("shows the breadcrumb and the publication to cite", async () => {
+        const html = await render("/cli/pept2lca", 1440);
+
+        expect(html).toMatch(/<nav aria-label="Breadcrumb"[^>]*>.*CLI.*Commands.*pept2lca/s);
+        expect(links(html, "/cli").length).toBeGreaterThan(0);
+        expect(html).toContain(`href="https://doi.org/10.1093/bioinformatics/btaa553"`);
+        expect(html).toContain("Verschaffelt et al. (2020) Bioinformatics");
     });
 
     it("leaves out On this page for a page without headings", async () => {
