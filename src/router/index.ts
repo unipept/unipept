@@ -1,5 +1,13 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
+import docsPages from "virtual:docs-pages";
+import { buildDocsSections, docsSectionConfigs, type DocsSectionConfig } from "@/logic/docs/DocsSections";
+import { docsRoutes } from "./DocsRoutes";
+
+const docsSections = buildDocsSections(
+    docsSectionConfigs(import.meta.glob<DocsSectionConfig>("/src/content/docs/*/_section.ts", { eager: true, import: "default" })),
+    docsPages
+);
 
 const spaMeta = {
     publication: "Vande Moortele et al. (2025) Journal of Proteome Research",
@@ -199,7 +207,8 @@ const routes = [
             publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
             publicationLink: "doi:10.1021/acs.jproteome.8b00716"
         }
-    }
+    },
+    ...docsRoutes(docsSections, () => import("@/components/docs/DocsLayout.vue"))
 ]
 
 const router = createRouter({

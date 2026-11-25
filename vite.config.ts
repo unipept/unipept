@@ -127,6 +127,8 @@ export default defineConfig({
     },
     test: {
         exclude: [...configDefaults.exclude, 'tests/e2e/**'],
+        // Vuetify components import their CSS, which only Vite can load.
+        server: { deps: { inline: ['vuetify'] } },
         coverage: {
             provider: 'v8',
             include: ['src/**/*.{ts,vue}'],

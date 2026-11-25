@@ -134,3 +134,14 @@ export function buildDocsSections(configs: Record<string, DocsSectionConfig>, pa
         return { ...config, name, path: sectionPath, menu: groups, pages: groups.flatMap(group => group.pages) };
     });
 }
+
+/** The section configs from `import.meta.glob` of `src/content/docs/*\/_section.ts`, by folder name. */
+export function docsSectionConfigs(modules: Record<string, DocsSectionConfig>): Record<string, DocsSectionConfig> {
+    return Object.fromEntries(Object.entries(modules).map(([file, config]) => [file.split("/").at(-2)!, config]));
+}
+
+/** The pages before and after `page` in the menu of its section. */
+export function adjacentDocsPages(section: DocsSection, page: DocsPage): { previous?: DocsPage; next?: DocsPage } {
+    const index = section.pages.findIndex(p => p.path === page.path);
+    return index < 0 ? {} : { previous: section.pages[index - 1], next: section.pages[index + 1] };
+}

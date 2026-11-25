@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { DocsPageData } from "virtual:docs-pages";
-import { buildDocsSections, docsPagePath, type DocsSectionConfig } from "./DocsSections";
+import { adjacentDocsPages, buildDocsSections, docsPagePath, docsSectionConfigs, type DocsSectionConfig } from "./DocsSections";
 
 const load = async () => ({ default: {} as never });
 
@@ -99,5 +99,25 @@ describe("buildDocsSections", () => {
             .toThrow("Docs page umgap/index.md is not in a section folder with a _section.ts file.");
         expect(() => buildDocsSections({}, [page("index.md", "Docs")]))
             .toThrow("Docs page index.md is not in a section folder with a _section.ts file.");
+    });
+});
+
+describe("docsSectionConfigs", () => {
+    it("keys the configs by section folder", () => {
+        expect(docsSectionConfigs({ "/src/content/docs/cli/_section.ts": config })).toEqual({ cli: config });
+    });
+});
+
+describe("adjacentDocsPages", () => {
+    const [section] = buildDocsSections({ cli: config }, pages);
+    const [overview, casestudies, , pept2lca] = section.pages;
+
+    it("gives the pages before and after a page, across groups", () => {
+        expect(adjacentDocsPages(section, casestudies)).toEqual({ previous: overview, next: section.pages[2] });
+    });
+
+    it("gives no previous page for the first page and no next page for the last", () => {
+        expect(adjacentDocsPages(section, overview).previous).toBeUndefined();
+        expect(adjacentDocsPages(section, pept2lca).next).toBeUndefined();
     });
 });

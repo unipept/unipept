@@ -1,0 +1,13 @@
+/* Colours of the docs pages. The accent is the Unipept amber. */
+.docs-layout {
+    --docs-text: #1f2937;
+    --docs-text-strong: #111827;
+    --docs-text-muted: #4b5563;
+    --docs-border: #e3e8ef;
+    --docs-surface: #ffffff;
+    --docs-surface-hover: #f3f6fa;
+    --docs-accent: #ffc107;
+    --docs-accent-soft: #fff4d6;
+    --docs-accent-text: #5c3b00;
+    --docs-link: #8f5b00;
+}
