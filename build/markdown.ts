@@ -53,7 +53,7 @@ export interface DocsPageData {
 }
 
 /** The front matter fields that the app reads from `virtual:docs-pages`. The other fields stay out of the bundle. */
-const appFrontmatter = ["subtitle", "menuLabel"];
+const appFrontmatter = ["subtitle", "menuLabel", "layout"];
 
 const callouts = ["tip", "info", "warning", "danger", "details"];
 

@@ -41,6 +41,18 @@
     --docs-danger-bg: #ffebee;
     --docs-danger-text: #b71c1c;
 
+    /* API pages: the request form, the POST label, the response status and the JSON of a response. */
+    --docs-input-border: #d5dce5;
+    --docs-on-accent: #1f1300;
+    --docs-post: #2e7d32;
+    --docs-status-idle: #9ca3af;
+    --docs-status-done: #4ade80;
+    --docs-status-failed: #f87171;
+    --docs-json-key: #7dd3fc;
+    --docs-json-string: #bef264;
+    --docs-json-number: #fdba74;
+    --docs-json-literal: #f9a8d4;
+
     --docs-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 }
 
@@ -187,6 +199,7 @@
 /* Code: inline code is light; code blocks are dark, with a header that shows the language and a copy button. */
 
 .vp-doc :not(pre) > code {
+    overflow-wrap: anywhere;
     padding: 2px 6px;
     border-radius: 4px;
     background: var(--docs-inline-code-bg);

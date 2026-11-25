@@ -27,9 +27,11 @@ const sections = buildDocsSections(
             publication: "Verschaffelt et al. (2020) Bioinformatics",
             publicationLink: "doi.org/10.1093/bioinformatics/btaa553",
             menu: ["", { title: "Commands", pages: ["pept2lca", "pept2prot"] }]
-        }
+        },
+        apidocs: { title: "API", menu: ["pept2lca"] }
     },
     [
+        page("apidocs/pept2lca.md", "pept2lca", { layout: "api" }),
         page("cli/index.md", "Unipept CLI"),
         page(
             "cli/pept2lca.md",
@@ -58,7 +60,7 @@ describe("DocsLayout", () => {
         const html = await render("/cli/pept2lca");
 
         expect(html).not.toContain("<main");
-        expect(html).toMatch(/<h1 class="docs-layout__title"[^>]*>unipept pept2lca<\/h1>/);
+        expect(html).toMatch(/<h1 class="docs-page-header__title"[^>]*>unipept pept2lca<\/h1>/);
         expect(html).toContain("Returns the lowest common ancestor.");
         expect(html).toContain("Content of cli/pept2lca.md");
         expect(html).toContain(`href="https://github.com/unipept/unipept/edit/main/src/content/docs/cli/pept2lca.md"`);
@@ -114,6 +116,14 @@ describe("DocsLayout", () => {
 
         expect(html).toMatch(/<button type="button" class="docs-layout__bar-button docs-layout__bar-menu"[^>]*aria-controls="docs-menu" aria-expanded="false"/);
         expect(html).toMatch(/<aside id="docs-menu"/);
-        expect(html).toMatch(/class="docs-layout__bar-button docs-layout__bar-toc"[^>]*>\s*On this page/);
+        expect(html).toMatch(/class="[^"]*docs-layout__bar-toc"[^>]*>\s*On this page/);
+    });
+
+    it("has a Request button instead of On this page on an API page", async () => {
+        const html = await render("/apidocs/pept2lca");
+
+        expect(html).toMatch(/<div class="docs-layout docs-layout--api"/);
+        expect(html).toMatch(/aria-controls="api-panel" aria-expanded="false"[^>]*>\s*Request/);
+        expect(html).not.toContain("docs-layout__toc");
     });
 });
