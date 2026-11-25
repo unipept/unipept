@@ -461,3 +461,8 @@
         transition: none;
     }
 }
+
+/* Long lists of short items, such as rank names, in a <div class="columns">. */
+.vp-doc .columns ul {
+    columns: 3 10em;
+}
