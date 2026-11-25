@@ -102,14 +102,22 @@
     opacity: 1;
 }
 
-.vp-doc a {
+/* Links: the colour, and a light dotted line that turns solid on hover. */
+.vp-doc a,
+.docs-layout__footer a,
+.docs-layout__cite a {
     color: var(--docs-link);
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    text-decoration: underline dotted rgb(143 91 0 / 45%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
 }
 
-.vp-doc a:hover {
+.vp-doc a:hover,
+.docs-layout__footer a:hover,
+.docs-layout__cite a:hover {
     color: var(--docs-accent-text);
+    text-decoration-style: solid;
+    text-decoration-color: currentColor;
 }
 
 .vp-doc img {

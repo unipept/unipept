@@ -167,9 +167,6 @@ const breadcrumb = computed(() => docs.value ? docsBreadcrumb(docs.value.section
     color: var(--docs-text-muted);
 }
 
-.docs-layout__cite a {
-    color: var(--docs-link);
-}
 
 .docs-layout__title {
     margin: 0;
@@ -192,9 +189,6 @@ const breadcrumb = computed(() => docs.value ? docsBreadcrumb(docs.value.section
     font-size: 14px;
 }
 
-.docs-layout__footer a {
-    color: var(--docs-link);
-}
 
 @media (max-width: 1279.98px) {
     .docs-layout {

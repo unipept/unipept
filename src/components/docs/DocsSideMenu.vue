@@ -17,7 +17,7 @@
                 v-for="page in group.pages"
                 :key="page.path"
                 :to="page.path"
-                class="docs-side-menu__link"
+                :class="['docs-side-menu__link', { 'docs-side-menu__link--top': !group.title }]"
                 exact-active-class="docs-side-menu__link--active"
             >
                 {{ page.menuLabel }}
@@ -58,6 +58,20 @@ defineProps<{
     border-radius: 6px;
     color: var(--docs-text);
     text-decoration: none;
+}
+
+/* A page outside a group, such as the overview, looks like a group title. */
+.docs-side-menu__link--top {
+    margin: 0 0 8px -12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--docs-text-muted);
+}
+
+.docs-side-menu__link--top + .docs-side-menu__group {
+    margin-top: 12px;
 }
 
 .docs-side-menu__link:hover {
