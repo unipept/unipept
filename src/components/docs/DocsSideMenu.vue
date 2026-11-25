@@ -36,6 +36,8 @@ defineProps<{
 
 <style scoped>
 .docs-side-menu {
+    /* Room for the highlight of a page outside a group, which reaches left of the text. */
+    padding-left: 12px;
     font-size: 14px;
 }
 

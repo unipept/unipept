@@ -102,10 +102,9 @@
     opacity: 1;
 }
 
-/* Links: the colour, and a light dotted line that turns solid on hover. */
+/* Links: the colour, and a light dotted line that darkens on hover. */
 .vp-doc a,
-.docs-layout__footer a,
-.docs-layout__cite a {
+.docs-layout__footer a {
     color: var(--docs-link);
     text-decoration: underline dotted rgb(143 91 0 / 45%);
     text-decoration-thickness: 1px;
@@ -113,10 +112,8 @@
 }
 
 .vp-doc a:hover,
-.docs-layout__footer a:hover,
-.docs-layout__cite a:hover {
+.docs-layout__footer a:hover {
     color: var(--docs-accent-text);
-    text-decoration-style: solid;
     text-decoration-color: currentColor;
 }
 

@@ -76,21 +76,6 @@
 
         <aside class="docs-layout__toc">
             <docs-toc :headers="docs.page.headers" />
-            <div
-                v-if="docs.section.publication"
-                class="docs-layout__cite"
-            >
-                Cite:
-                <a
-                    v-if="docs.section.publicationLink"
-                    :href="publicationUrl(docs.section.publicationLink)"
-                    target="_blank"
-                    rel="noreferrer"
-                >{{ docs.section.publication }}</a>
-                <template v-else>
-                    {{ docs.section.publication }}
-                </template>
-            </div>
         </aside>
     </div>
 </template>
@@ -103,7 +88,7 @@ import DocsSideMenu from "./DocsSideMenu.vue";
 import DocsToc from "./DocsToc.vue";
 import DocsPager from "./DocsPager.vue";
 import useDocsContent from "@/composables/docs/useDocsContent";
-import { docsBreadcrumb, publicationUrl } from "@/logic/docs/DocsSections";
+import { docsBreadcrumb } from "@/logic/docs/DocsSections";
 import "@/styles/docs.css";
 
 const editBase = "https://github.com/unipept/unipept/edit/main/src/content/docs/";
@@ -157,14 +142,6 @@ const breadcrumb = computed(() => docs.value ? docsBreadcrumb(docs.value.section
 
 .docs-layout__breadcrumb a:hover {
     text-decoration: underline;
-}
-
-.docs-layout__cite {
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid var(--docs-border);
-    font-size: 13px;
-    color: var(--docs-text-muted);
 }
 
 
