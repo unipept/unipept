@@ -45,6 +45,24 @@ export default class NetworkUtils {
     }
 
     /**
+     * Posts form fields to a URL and returns a promise containing the parsed (JSON) response. Throws if the response
+     * is not OK.
+     *
+     * @param url The url to which we want to send the request.
+     * @param data The form fields to post.
+     * @return A promise containing the parsed response data.
+     */
+    public static async postForm(url: string, data: URLSearchParams): Promise<any> {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Accept": "application/json" },
+            body: data
+        });
+        NetworkUtils.checkResponse(response, url);
+        return response.json();
+    }
+
+    /**
      * This method should be used when a specific URL should be opened in a new browser window or tab.
      *
      * @param url The full url to which navigation should take place.
