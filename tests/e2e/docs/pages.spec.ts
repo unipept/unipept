@@ -1,5 +1,5 @@
-import {test, expect} from './fixtures';
-import {docsPages} from './docs-pages';
+import {test, expect} from '../fixtures';
+import {docsPages} from './pages';
 
 for (const {url, title, anchors} of docsPages) {
     test(`Documentation page ${url} has its title and anchors`, async ({page}) => {
