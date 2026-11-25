@@ -1,10 +1,10 @@
 <template>
     <v-container>
         <h1 class="font-weight-light">
-            Case study: Taxonomic analysis of a tryptic peptide
+            Case study: Taxonomic analysis of a metaproteomics dataset
         </h1>
         <h3 class="font-weight-light">
-            This case study describes how the Unipept command line tools can be used for the taxonomic analysis of a single tryptic peptide.
+            This case study describes how the Unipept command line tools can be used for the taxonomic analysis of a metaproteomics dataset.
         </h3>
 
         <header-body-card
