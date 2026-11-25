@@ -63,7 +63,8 @@ const scriptLangTsRE = /^<script\b[^>]*\blang=["']ts["']/;
 /**
  * Creates the Markdown renderer for the docs. Besides standard Markdown it supports front matter, `{#id}` after a
  * heading, `::: tip`, `::: info`, `::: warning`, `::: danger`, `::: details` and `::: code-group` blocks,
- * highlighted code blocks with a copy button, and Vue components and `<script setup>` in the page.
+ * highlighted code blocks with a header that shows the language and a copy button, and Vue components and
+ * `<script setup>` in the page.
  */
 export async function createMarkdownRenderer(options: MarkdownRendererOptions = {}): Promise<MarkdownIt> {
     const highlighter = await createHighlighter({
@@ -130,6 +131,7 @@ export async function createMarkdownRenderer(options: MarkdownRendererOptions = 
     });
 
     const loadedLanguages = highlighter.getLoadedLanguages();
+    const languageLabels: Record<string, string> = { console: "Terminal", shellsession: "Terminal", bash: "Shell", sh: "Shell", json: "JSON" };
     const fence = md.renderer.rules.fence!;
     md.renderer.rules.fence = (tokens, idx, renderOptions, env, self) => {
         const token = tokens[idx];
@@ -139,8 +141,9 @@ export async function createMarkdownRenderer(options: MarkdownRendererOptions = 
         token.info = [loadedLanguages.includes(name) ? name : "text", ...rest].join(" ");
         const active = token.meta?.active ? " active" : "";
         const code = fence(tokens, idx, renderOptions, env, self).replace(/^<pre\b/, "<pre v-pre");
-        return `<div class="language-${lang}${active}"><button title="Copy code" class="copy"></button>`
-            + `<span class="lang">${lang}</span>${code}</div>\n`;
+        const label = languageLabels[name] ?? (name === "text" ? "" : lang);
+        return `<div class="language-${lang}${active}"><div class="code-header"><span class="lang">${label}</span>`
+            + `<button type="button" class="copy">Copy</button></div>${code}</div>\n`;
     };
 
     const codeInline = md.renderer.rules.code_inline!;

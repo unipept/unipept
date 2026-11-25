@@ -164,7 +164,8 @@ describe("a Markdown page imported through Vite", () => {
         expect(html).toContain(`<div class="tip custom-block"><p class="custom-block-title">Input size</p>`);
         expect(html).toContain(`<div class="vp-code-group">`);
         expect(html).toContain("{{ not interpolated }}");
-        expect(html).toContain(`<div class="language-console active">`);
+        expect(html).toContain(`<div class="language-console active"><div class="code-header"><span class="lang">Terminal</span>`
+            + `<button type="button" class="copy">Copy</button></div>`);
         expect(html).toMatch(/<span style="--shiki-light:#[0-9A-F]{6}/i);
         expect(html).toMatch(/<img src="[^"]*pixel\.png" alt="A pixel"/);
     });

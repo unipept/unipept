@@ -14,17 +14,21 @@ export default function useDocsContent(root: Ref<HTMLElement | undefined>) {
     const router = useRouter();
 
     const copy = (button: HTMLElement) => {
-        const block = button.parentElement;
+        const block = button.closest<HTMLElement>("div[class*=\"language-\"]");
         const code = block?.querySelector("pre")?.textContent;
         if (!block || code == null) {
             return;
         }
-        const feedback = (state: "copied" | "failed") => {
+        const feedback = (state: "copied" | "failed", text: string) => {
             button.classList.add(state);
-            setTimeout(() => button.classList.remove(state), feedbackDuration);
+            button.textContent = text;
+            setTimeout(() => {
+                button.classList.remove(state);
+                button.textContent = "Copy";
+            }, feedbackDuration);
         };
         navigator.clipboard.writeText(copyableText(block.className, code))
-            .then(() => feedback("copied"), () => feedback("failed"));
+            .then(() => feedback("copied", "Copied"), () => feedback("failed", "Copy failed"));
     };
 
     const follow = (event: MouseEvent, link: HTMLAnchorElement) => {
