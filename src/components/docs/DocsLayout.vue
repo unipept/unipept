@@ -32,7 +32,9 @@
                 {{ docs.page.subtitle }}
             </p>
 
-            <router-view />
+            <div ref="content">
+                <router-view />
+            </div>
 
             <footer class="docs-layout__footer">
                 <a
@@ -54,18 +56,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useDisplay } from "vuetify";
 import DocsSideMenu from "./DocsSideMenu.vue";
 import DocsToc from "./DocsToc.vue";
 import DocsPager from "./DocsPager.vue";
+import useDocsContent from "@/composables/docs/useDocsContent";
 import "@/styles/docs.css";
 
 const editBase = "https://github.com/unipept/unipept/edit/main/src/content/docs/";
 
 const route = useRoute();
 const display = useDisplay();
+const content = ref<HTMLElement>();
+
+useDocsContent(content);
 
 const docs = computed(() => route.meta.docs);
 const editLink = computed(() => editBase + docs.value?.page.file);
@@ -105,9 +111,9 @@ const editLink = computed(() => editBase + docs.value?.page.file);
 }
 
 .docs-layout__subtitle {
-    margin: 8px 0 0;
+    margin: 8px 0 0 !important;
     font-size: 18px;
-    color: var(--docs-text-muted);
+    color: var(--docs-text-muted) !important;
 }
 
 .docs-layout__footer {
