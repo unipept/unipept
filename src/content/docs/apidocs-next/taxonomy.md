@@ -11,11 +11,7 @@ parameters:
       Unipept will return the taxonomic information for the given taxa.
       To pass multiple taxon identifiers, simply add multiple `input[]` parameters (see the *Multiple taxa* example).
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of taxon identifiers passed to the `input[]` parameter.
-      Keep in mind that searching for lots of taxon identifiers at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 taxon identifiers each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
   - name: extra
     type: boolean
     default: false
@@ -28,7 +24,7 @@ parameters:
     default: false
     summary: Return names of ranks in the lineage if `true`.
     details: |
-      When both `names` and `extra` are set to `true`, Unipept will return the names of all ranks in the lineage of each organism.
+      When both `names` and `extra` are set to `true`, Unipept will return the names of all ranks in the lineage of each taxon.
       Setting only `names` to `true` will not result in additional information fields being returned.
       See the [response](#response) section for an overview of the information fields returned.
 
@@ -43,8 +39,9 @@ parameters:
     details: |
       When the parameter is set to `true`, Unipept will also return all the descendants for each taxon.
   - name: descendants_ranks
-    type: "a valid list of NCBI ranks, see [request](#request)"
-    summary: "Return only descendants of the given ranks for each input taxon. `[ \"species\" ]` (default)."
+    type: list of NCBI ranks
+    values: ranks
+    summary: Return only the descendants at the given ranks.
     details: |
       `descendants_ranks` is an optional parameter and should be a list of NCBI ranks. Possible values are listed below.
       When not set explicitly, the parameter defaults to `[ "species" ]`. When the parameter is set to a non-empty list
@@ -84,25 +81,25 @@ parameters:
       </div>
 response:
   summary: |
-    The organisms associated with the given taxon identifiers are returned as a list of JSON objects.
-    By default, each object contains the following information fields extracted from the UniProt entry and NCBI taxonomy:
+    The given taxa are returned as a list of JSON objects, one per taxon.
+    By default, each object contains the following information fields from the NCBI taxonomy:
   fields:
     - name: taxon_id
       type: integer
-      summary: The NCBI taxon id of the taxonomic lowest common ancestor.
+      summary: The NCBI taxon id of the taxon.
     - name: taxon_name
       type: string
-      summary: The name of the taxonomic lowest common ancestor.
+      summary: The name of the taxon.
     - name: taxon_rank
       type: string
-      summary: The taxonomic rank of the taxonomic lowest common ancestor.
+      summary: The taxonomic rank of the taxon.
     - name: <rank>_id
       type: integer or null
       when: extra
       ranks: id
       summary: The taxon id of each rank in the lineage.
       details: |
-        When the `extra` parameter is set to `true`, the object contains additional information about the lineage of the organisms
+        When the `extra` parameter is set to `true`, the object contains additional information about the lineage of each taxon
         extracted from the NCBI taxonomy.
     - name: <rank>_name
       type: string
@@ -134,5 +131,4 @@ examples:
 
 This method returns the taxonomic information from the Unipept Taxonomy, for a given NCBI taxon identifier.
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.

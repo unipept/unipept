@@ -4,18 +4,16 @@ subtitle: Returns the taxonomic tree for a given list of taxon identifiers.
 layout: api
 parameters:
   - name: "input[]"
-    type: integer, GET only
-    required: true
-    summary: List of taxon identifiers to calculate the taxonomic tree for. Add multiple parameters to specify multiple taxon id's.
+    type: integer
+    summary: Taxon identifier to calculate the taxonomic tree for. Required in a GET request. Add multiple parameters to specify multiple taxon id's.
     details: |
       `input[]` is the required parameter of a GET-request and takes at least one taxon identifier.
       Unipept will compute and return the taxonomic tree for the given taxa.
       To pass multiple taxon identifiers, simply add multiple `input[]` parameters (see the *Multiple taxa* example).
       Each identifier counts once towards the tree; pass `counts` instead if you need to weigh them.
   - name: counts
-    type: object, POST only
-    required: true
-    summary: Taxon identifiers and associated counts to calculate the taxonomic tree for. Should be a JSON-object with taxon id's as keys and counts as values.
+    type: object
+    summary: Taxon identifiers with their counts, as an object with taxon ids as keys and counts as values. Required in a POST request.
     details: |
       `counts` is the required parameter of a POST-request and takes an object with taxon identifiers
       as keys and the number of occurrences of each taxon as values. The counts end up in the `count` and
@@ -24,11 +22,7 @@ parameters:
       It can be sent either as JSON (with a `Content-Type: application/json` header) or as
       form-encoded `counts[taxon_id]` parameters.
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of taxon identifiers passed to the `input[]` parameter.
-      Keep in mind that searching for lots of taxon identifiers at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 taxon identifiers each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
 response:
   summary: |
     The taxonomic tree for the given list of taxon identifiers is returned as a JSON object.
@@ -50,13 +44,13 @@ response:
       fields:
         - name: count
           type: integer
-          summary: How many of the given taxa are directly or indirectly associated with this node? (e.g. correspond to the node itself or one of it's children).
+          summary: Number of the given taxa at this node or below it.
         - name: self_count
           type: integer
-          summary: How many of the given taxa are directly associated with this node?
+          summary: Number of the given taxa at this node itself.
     - name: children
       type: list of objects
-      summary: A list of nodes that are the children of this node in the NCBI-taxonomy. These have the same structure as the root JSON-object.
+      summary: The child nodes of this node in the NCBI taxonomy, with the same fields as this node.
 examples:
   - title: Multiple taxa
     description: |
@@ -70,8 +64,7 @@ examples:
 
 This method constructs and returns the taxonomic tree for a given list of NCBI taxon identifiers.
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.
 
 ::: tip GET and POST take different parameters
 Unlike the other methods, taxa2tree does not accept the same parameters for both request types.

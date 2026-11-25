@@ -11,11 +11,7 @@ parameters:
       Unipept will return the functional InterPro entries associated with each of the `input[]` peptides based on their occurrence in UniProt entries.
       To pass multiple peptides at once, simply add multiple `input[]` parameters (see the *Multiple peptides* example).
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of peptides passed to the `input[]` parameter.
-      Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
   - name: equate_il
     type: boolean
     default: true
@@ -33,9 +29,9 @@ parameters:
   - name: domains
     type: boolean
     default: false
-    summary: Separates InterPro entries in groups according to their type `true`.
+    summary: Group the InterPro entries by type.
     details: |
-      `domains` is an optional parameter that can be used to separate the InterPro entries in groups according to their type (domain, family, homologous superfamily, repeat, conserved site, active site, binding site, PTM).
+      When `true`, the InterPro entries are grouped by type (domain, family, homologous superfamily, repeat, conserved site, active site, binding site, PTM).
 
       ::: tip Performance penalty
       Setting `extra` to `true` has a performance penalty inferred from additional database queries.
@@ -54,7 +50,7 @@ response:
       summary: "`true` if the number of matched proteins exceeded the cutoff (default: 10,000 proteins) and the response was truncated; `false` otherwise."
     - name: total_protein_count
       type: integer
-      summary: Total amount of proteins matched with the given peptide.
+      summary: Total number of proteins that match the peptide.
     - name: ipr
       type: list of objects
       summary: A list of JSON objects that each represent an InterPro entry associated with the current peptide.
@@ -64,7 +60,7 @@ response:
           summary: InterPro entry code associated with the current peptide.
         - name: protein_count
           type: integer
-          summary: Amount of proteins matched with the given peptide that are labeled with the current InterPro code.
+          summary: Number of proteins that match the peptide and are labeled with this InterPro code.
         - name: name
           type: string
           when: extra
@@ -84,8 +80,8 @@ examples:
     params: { input: [AIPQLEVARPADAYETAEAYR, APVLSDSSCK] }
   - title: Equating I and L
     description: |
-      This example retrieves the functional InterPro entries associated with the peptide *APVLSDSSCK*.
-      In searching, isoleucine (I) and leucinge (L) are considered equal.
+      This example retrieves the functional InterPro entries associated with the peptide *APVISDSSCK*.
+      In searching, isoleucine (I) and leucine (L) are considered equal.
     params: { input: [APVISDSSCK], equate_il: true }
   - title: With extra information
     description: |
@@ -100,5 +96,4 @@ examples:
 This method returns the functional InterPro entries associated with a given peptide.
 This is the same information as provided when performing a search with the [Single Peptide Analysis](/tpa) in the web interface.
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.

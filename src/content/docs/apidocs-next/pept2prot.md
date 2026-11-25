@@ -11,11 +11,7 @@ parameters:
       Unipept will return the list of UniProt entries that contain any of the `input[]` peptides in their protein sequence.
       To pass multiple peptides at once, simply add multiple `input[]` parameters (see the *Multiple peptides* example).
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of peptides passed to the `input[]` parameter.
-      Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
   - name: equate_il
     type: boolean
     default: true
@@ -92,7 +88,7 @@ examples:
     params: { input: [AIPQLEVARPADAYETAEAYR, APVLSDSSCK] }
   - title: Equating I and L
     description: |
-      This example retrieves all UniProt entries containing the peptide *APVLSDSSCK*.
+      This example retrieves all UniProt entries containing the peptide *APVISDSSCK*.
       In searching, isoleucine (I) and leucine (L) are considered equal.
     params: { input: [APVISDSSCK], equate_il: true }
   - title: With extra information
@@ -104,5 +100,4 @@ examples:
 This method returns the list of UniProt entries containing a given peptide. This is the same information as provided on the Protein matches
 tab when performing a search with the [Single Peptide Analysis](/tpa) in the web interface.
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.

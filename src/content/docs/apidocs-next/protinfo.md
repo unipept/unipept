@@ -11,11 +11,7 @@ parameters:
       Unipept will return the functional EC-numbers, GO-terms and InterPro entries associated with each of the `input[]` proteins.
       To pass multiple proteins at once, simply add multiple `input[]` parameters (see the *Multiple proteins* example).
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of proteins passed to the `input[]` parameter.
-      Keep in mind that searching for lots of proteins at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 proteins each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
   - name: extra
     type: boolean
     default: false
@@ -26,28 +22,28 @@ parameters:
   - name: domains
     type: boolean
     default: false
-    summary: Separates GO-namespaces and InterPro types and places objects in group associated with current namespace or type when `true`.
+    summary: Group the GO-terms by namespace and the InterPro entries by type.
     details: |
-      `domains` is an optional parameter that can be used to order the GO-terms in groups according to their namespace (cellular component, molecular function, biological process).
+      When `true`, the GO-terms are grouped by namespace (cellular component, molecular function, biological process) and the InterPro entries by type.
   - name: names
     type: boolean
     default: false
     summary: Return names of ranks in the lineage if `true`.
     details: |
-      When both `names` and `extra` are set to `true`, Unipept will return the names of all ranks in the lineage of each organism.
+      When both `names` and `extra` are set to `true`, Unipept will return the names of all ranks in the lineage of the lowest common ancestor.
       Setting only `names` to `true` will not result in additional information fields being returned.
       See the [response](#response) section for an overview of the information fields returned.
 
       ::: tip Performance penalty
       Setting `extra`, `domains` or `names` to `true` has a performance penalty inferred from additional database queries.
-      Do not use this parameter unless the extra information fields are needed.
+      Do not use these parameters unless the extra information fields are needed.
       :::
 response:
   summary: |
     A list of JSON objects is returned. By default, each object contains the following information fields:
 
     When the `domains` parameter is set to `true`, objects are placed in a group corresponding to their namespace and the objects
-    are nested in an additional object. See the examples for more information on how to use this.
+    are nested in an additional object. The *With domains* example shows the grouped objects.
   fields:
     - name: protein
       type: string
@@ -124,7 +120,7 @@ examples:
     params: { input: [A0JP26, A0PK11] }
   - title: With extra information
     description: |
-      This example retrieves all functional EC-numbers, GO-terms, InterPro entries and the lowest common ancestor associated with the protein *A0JP26* including the name of each EC-number, GO-term, the name and type of each InterPro entry, and its complete lineage.
+      This example retrieves all functional EC-numbers, GO-terms, InterPro entries and the lowest common ancestor associated with the protein *A0JP26* including the name of each EC-number and GO-term, the name and type of each InterPro entry, and the complete lineage.
     params: { input: [A0JP26], extra: true }
   - title: With domains
     description: |
@@ -136,5 +132,4 @@ examples:
     params: { input: [A0JP26], extra: true, names: true }
 ---
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.

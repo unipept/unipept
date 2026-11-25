@@ -11,11 +11,7 @@ parameters:
       Unipept will return the set of organisms associated with the UniProt entries that contain any of the `input[]` peptides in their protein sequence.
       To pass multiple peptides at once, simply add multiple `input[]` parameters (see the *Multiple peptides* example).
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of peptides passed to the `input[]` parameter.
-      Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
   - name: equate_il
     type: boolean
     default: true
@@ -59,7 +55,7 @@ parameters:
       When the parameter is set to `true`, Unipept will only return tryptic matches.
 response:
   summary: |
-    The organisms associated with matching UniProt entries are returned as a list of json objects. By default, each object
+    The organisms associated with matching UniProt entries are returned as a list of JSON objects. By default, each object
     contains the following information fields extracted from the UniProt entry and NCBI taxonomy.
     If a peptide matches more than 10,000 proteins, the response is truncated and `cutoff_used` is set to `true`.
 
@@ -106,7 +102,7 @@ examples:
     params: { input: [AIPQLEVARPADAYETAEAYR, APVLSDSSCK] }
   - title: Equating I and L
     description: |
-      This example retrieves all organisms associated with the UniProt entries containing the peptide *APVLSDSSCK*.
+      This example retrieves all organisms associated with the UniProt entries containing the peptide *APVISDSSCK*.
       In searching, isoleucine (I) and leucine (L) are considered equal.
     params: { input: [APVISDSSCK], equate_il: true }
   - title: With the lineage
@@ -122,5 +118,4 @@ examples:
 This method returns the set of organisms associated with the UniProt entries containing a given peptide.
 This is the same information as provided on the *Lineage table* tab when performing a search with the [Single Peptide Analysis](/tpa) in the web interface.
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.

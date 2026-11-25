@@ -12,11 +12,7 @@ parameters:
       Unipept will calculate and return the taxonomic lowest common ancestor of the given taxa.
       To pass multiple taxon identifiers, simply add multiple `input[]` parameters (see the *Multiple taxa* example).
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of taxon identifiers passed to the `input[]` parameter.
-      Keep in mind that searching for lots of taxon identifiers at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 taxon identifiers each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
   - name: extra
     type: boolean
     default: false
@@ -89,5 +85,4 @@ examples:
 
 This method calculates and returns the taxonomic lowest common ancestor for a given list of NCBI taxon identifiers.
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.

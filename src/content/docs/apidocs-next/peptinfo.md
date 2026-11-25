@@ -11,11 +11,7 @@ parameters:
       Unipept will return the functional EC-numbers, GO-terms and InterPro entries associated with each of the `input[]` peptides based on their occurrence in UniProt entries.
       To pass multiple peptides at once, simply add multiple `input[]` parameters (see the *Multiple peptides* example).
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of peptides passed to the `input[]` parameter.
-      Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
   - name: equate_il
     type: boolean
     default: true
@@ -33,21 +29,21 @@ parameters:
   - name: domains
     type: boolean
     default: false
-    summary: Separates GO-namespaces and InterPro types and places objects in group associated with current namespace or type when `true`.
+    summary: Group the GO-terms by namespace and the InterPro entries by type.
     details: |
-      `domains` is an optional parameter that can be used to order the GO-terms in groups according to their namespace (cellular component, molecular function, biological process).
+      When `true`, the GO-terms are grouped by namespace (cellular component, molecular function, biological process) and the InterPro entries by type.
   - name: names
     type: boolean
     default: false
     summary: Return names of ranks in the lineage if `true`.
     details: |
-      When both `names` and `extra` are set to `true`, Unipept will return the names of all ranks in the lineage of each organism.
+      When both `names` and `extra` are set to `true`, Unipept will return the names of all ranks in the lineage of the lowest common ancestor.
       Setting only `names` to `true` will not result in additional information fields being returned.
       See the [response](#response) section for an overview of the information fields returned.
 
       ::: tip Performance penalty
       Setting `extra`, `domains` or `names` to `true` has a performance penalty inferred from additional database queries.
-      Do not use this parameter unless the extra information fields are needed.
+      Do not use these parameters unless the extra information fields are needed.
       :::
   - name: validate_taxa
     type: boolean
@@ -64,7 +60,7 @@ response:
     If a peptide matches more than 10,000 proteins, the response is truncated and `cutoff_used` is set to `true`.
 
     When the `domains` parameter is set to `true`, objects are placed in a group corresponding to their namespace and the objects
-    are nested in an additional object. See the examples for more information on how to use this.
+    are nested in an additional object. The *With domains* example shows the grouped objects.
   fields:
     - name: peptide
       type: string
@@ -74,7 +70,7 @@ response:
       summary: "`true` if the number of matched proteins exceeded the cutoff (default: 10,000 proteins) and the response was truncated; `false` otherwise."
     - name: total_protein_count
       type: integer
-      summary: Total amount of proteins matched with the given peptide.
+      summary: Total number of proteins that match the peptide.
     - name: ec
       type: list of objects
       summary: A list of JSON objects that each represent an EC-number associated with the current peptide.
@@ -84,7 +80,7 @@ response:
           summary: EC-number associated with the current peptide.
         - name: protein_count
           type: integer
-          summary: Amount of proteins matched with the given peptide that are labeled with the current EC-number.
+          summary: Number of proteins that match the peptide and are labeled with this EC-number.
         - name: name
           type: string
           when: extra
@@ -98,7 +94,7 @@ response:
           summary: GO-term associated with the current peptide.
         - name: protein_count
           type: integer
-          summary: Amount of proteins matched with the given peptide that are labeled with the current GO-term.
+          summary: Number of proteins that match the peptide and are labeled with this GO-term.
         - name: name
           type: string
           when: extra
@@ -112,7 +108,7 @@ response:
           summary: InterPro entry code associated with the current peptide.
         - name: protein_count
           type: integer
-          summary: Amount of proteins matched with the given peptide that are labeled with the current InterPro code.
+          summary: Number of proteins that match the peptide and are labeled with this InterPro code.
         - name: name
           type: string
           when: extra
@@ -153,25 +149,24 @@ examples:
     params: { input: [AIPQLEVARPADAYETAEAYR, APVLSDSSCK] }
   - title: Equating I and L
     description: |
-      This example retrieves all functional EC-numbers, GO-terms, InterPro entries and the lowest common ancestor associated with the peptide *APVLSDSSCK*.
-      In searching, isoleucine (I) and leucinge (L) are considered equal.
+      This example retrieves all functional EC-numbers, GO-terms, InterPro entries and the lowest common ancestor associated with the peptide *APVISDSSCK*.
+      In searching, isoleucine (I) and leucine (L) are considered equal.
     params: { input: [APVISDSSCK], equate_il: true }
   - title: With extra information
     description: |
-      This example retrieves all functional EC-numbers, GO-terms, InterPro entries and the lowest common ancestor associated with the peptide *AIPQLEVARPADAYETAEAYR* including the name of each EC-number, GO-term, the name and type of each InterPro entry, and its complete lineage.
+      This example retrieves all functional EC-numbers, GO-terms, InterPro entries and the lowest common ancestor associated with the peptide *AIPQLEVARPADAYETAEAYR* including the name of each EC-number and GO-term, the name and type of each InterPro entry, and the complete lineage.
     params: { input: [AIPQLEVARPADAYETAEAYR], extra: true }
   - title: With domains
     description: |
       This example retrieves all functional EC-numbers, GO-terms, InterPro entries and the lowest common ancestor associated with the peptide *APVLSDSSCK* distributed over the distinct GO-domains and InterPro types.
     params: { input: [APVLSDSSCK], domains: true }
-  - title: With domains
+  - title: With lineage names
     description: |
       This example retrieves all functional EC-numbers, GO-terms, InterPro entries and the lowest common ancestor associated with the peptide *APVLSDSSCK* including the names of all ranks in the lineage.
-    params: { input: [APVLSDSSCK], domains: true, names: true }
+    params: { input: [APVLSDSSCK], extra: true, names: true }
 ---
 
-This method returns functional information and the lowest common ancestor a given peptide.
+This method returns functional information and the lowest common ancestor for a given peptide.
 This is the same information as provided when performing a search with the [Single Peptide Analysis](/tpa) in the web interface.
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.

@@ -11,11 +11,7 @@ parameters:
       Unipept will return the functional EC-numbers associated with each of the `input[]` peptides based on their occurrence in UniProt entries.
       To pass multiple peptides at once, simply add multiple `input[]` parameters (see the *Multiple peptides* example).
 
-      ::: tip Input size
-      Unipept puts no restrictions on the number of peptides passed to the `input[]` parameter.
-      Keep in mind that searching for lots of peptides at once may cause the request to timeout or, in the case of a GET-request, exceed the maximum URL length.
-      When performing bulk searches, we suggest splitting the input set over requests of 100 peptides each.
-      :::
+      For large inputs, see [Large requests](./index.md#large-requests).
   - name: equate_il
     type: boolean
     default: true
@@ -28,7 +24,7 @@ parameters:
     default: false
     summary: Return additional information fields if `true`.
     details: |
-      When the parameter is set to `true`, Unipept will also return the name associated with anEC-number.
+      When the parameter is set to `true`, Unipept will also return the name associated with an EC-number.
       See the [response](#response) section for an overview of the information fields returned.
 
       ::: tip Performance penalty
@@ -50,7 +46,7 @@ response:
       summary: "`true` if the number of matched proteins exceeded the cutoff (default: 10,000 proteins) and the response was truncated; `false` otherwise."
     - name: total_protein_count
       type: integer
-      summary: Total amount of proteins matched with the given peptide.
+      summary: Total number of proteins that match the peptide.
     - name: ec
       type: list of objects
       summary: A list of JSON objects that each represent an EC-number associated with the current peptide.
@@ -60,7 +56,7 @@ response:
           summary: EC-number associated with the current peptide.
         - name: protein_count
           type: integer
-          summary: Amount of proteins matched with the given peptide that are labeled with the currentEC-number.
+          summary: Number of proteins that match the peptide and are labeled with this EC-number.
         - name: name
           type: string
           when: extra
@@ -76,8 +72,8 @@ examples:
     params: { input: [AIPQLEVARPADAYETAEAYR, APVLSDSSCK] }
   - title: Equating I and L
     description: |
-      This example retrieves the functional EC-numbers associated with the peptide *APVLSDSSCK*.
-      In searching, isoleucine (I) and leucinge (L) are considered equal.
+      This example retrieves the functional EC-numbers associated with the peptide *APVISDSSCK*.
+      In searching, isoleucine (I) and leucine (L) are considered equal.
     params: { input: [APVISDSSCK], equate_il: true }
   - title: With extra information
     description: |
@@ -88,5 +84,4 @@ examples:
 This method returns the functional EC-numbers associated with a given peptide.
 This is the same information as provided when performing a search with the [Single Peptide Analysis](/tpa) in the web interface.
 
-Send a POST request (preferred) or a GET request to the URL above.
-[Parameters](#parameters) can be included in the request body (POST) or in the query string (GET).
+[Making requests](./index.md#requests) explains how to send a request to this endpoint.
