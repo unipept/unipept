@@ -5,7 +5,10 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./node_modules/.tmp/node"
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "build/**/*.ts"]
 }
