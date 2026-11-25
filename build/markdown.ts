@@ -1,5 +1,6 @@
+import fs from "node:fs";
 import path from "node:path";
-import type { Plugin } from "vite";
+import { normalizePath, type Plugin } from "vite";
 import markdownIt, { type MarkdownIt, type Token } from "markdown-it";
 import anchor from "markdown-it-anchor";
 import attrs from "markdown-it-attrs";
@@ -9,7 +10,7 @@ import { frontmatterPlugin } from "@mdit-vue/plugin-frontmatter";
 import { headersPlugin } from "@mdit-vue/plugin-headers";
 import { sfcPlugin } from "@mdit-vue/plugin-sfc";
 import { titlePlugin } from "@mdit-vue/plugin-title";
-import { slugify } from "@mdit-vue/shared";
+import { resolveHeadersFromTokens, slugify } from "@mdit-vue/shared";
 import { fromHighlighter } from "@shikijs/markdown-it/core";
 import { createHighlighter } from "shiki";
 
@@ -35,6 +36,22 @@ export interface MarkdownPagesOptions extends MarkdownRendererOptions {
 }
 
 export const defaultLanguages = ["shellsession", "bash", "json"];
+
+/** Module that lists all docs pages, see {@link readDocsPages}. */
+export const docsPagesId = "virtual:docs-pages";
+const resolvedDocsPagesId = "\0" + docsPagesId;
+
+export interface DocsPageData {
+    /** Path of the page in the docs folder, with `/` as separator. */
+    file: string;
+    title: string;
+    frontmatter: Record<string, unknown>;
+    /** The `##` and `###` headings. */
+    headers: ReturnType<typeof resolveHeadersFromTokens>;
+}
+
+/** The front matter fields that the app reads from `virtual:docs-pages`. The other fields stay out of the bundle. */
+const appFrontmatter = ["subtitle", "menuLabel"];
 
 const callouts = ["tip", "info", "warning", "danger", "details"];
 
@@ -186,6 +203,47 @@ function resolveLink(href: string, relativePath?: string): string {
     return url + hash;
 }
 
+const headerOptions = {
+    level: [2, 3],
+    shouldAllowHtml: false,
+    shouldAllowNested: false,
+    shouldEscapeText: false,
+    slugify
+};
+
+/**
+ * Reads the title, front matter and headings of every `.md` file in `srcDir`, sorted by path. Only parses the pages,
+ * so code is not highlighted. A docs page must have `title` in its front matter and no `#` heading, because the
+ * docs layout shows the title.
+ */
+export function readDocsPages(md: MarkdownIt, srcDir: string): DocsPageData[] {
+    if (!fs.existsSync(srcDir)) {
+        return [];
+    }
+
+    return fs.readdirSync(srcDir, { recursive: true, encoding: "utf8" })
+        .map(file => file.split(path.sep).join("/"))
+        .filter(file => file.endsWith(".md"))
+        .sort()
+        .map(file => {
+            const env: Record<string, any> = { relativePath: file };
+            const tokens = md.parse(fs.readFileSync(path.join(srcDir, file), "utf8"), env);
+            const frontmatter = env.frontmatter ?? {};
+            if (typeof frontmatter.title !== "string") {
+                throw new Error(`${file}: a docs page needs a title in its front matter.`);
+            }
+            if (tokens.some(token => token.tag === "h1")) {
+                throw new Error(`${file}: a docs page has no # heading, because the layout shows the title.`);
+            }
+            return {
+                file,
+                title: frontmatter.title,
+                frontmatter,
+                headers: resolveHeadersFromTokens(tokens, headerOptions)
+            };
+        });
+}
+
 /**
  * Turns one Markdown page into the source of a Vue single-file component. The component renders the page and
  * exports its `frontmatter`, `headers` and `title`. The title is `title` in the front matter, else the first `#`
@@ -221,11 +279,10 @@ export function markdownToVue(
         }
     }
 
-    const pageTitle = typeof env.frontmatter?.title === "string" ? env.frontmatter.title : env.title ?? "";
     const pageData = [
         `export const frontmatter = ${JSON.stringify(env.frontmatter ?? {})};`,
         `export const headers = ${JSON.stringify(env.headers ?? [])};`,
-        `export const title = ${JSON.stringify(pageTitle)};`
+        `export const title = ${JSON.stringify(typeof env.frontmatter?.title === "string" ? env.frontmatter.title : env.title ?? "")};`
     ];
 
     return [
@@ -240,13 +297,47 @@ export function markdownToVue(
 /**
  * Compiles imported `.md` files to Vue components. `@vitejs/plugin-vue` must include `.md` files to compile
  * the result.
+ *
+ * Also provides `virtual:docs-pages`, whose default export lists the pages in `srcDir` as {@link DocsPageData}
+ * with a `load` function that imports the page.
  */
 export default function markdownPages(options: MarkdownPagesOptions): Plugin {
     let renderer: Promise<MarkdownIt> | undefined;
+    let root = process.cwd();
+    let docsPagesCode: string | undefined;
+
+    const docsPagesModule = async () => {
+        renderer ??= createMarkdownRenderer(options);
+        const md = await renderer;
+        const pages = readDocsPages(md, options.srcDir).map(page => {
+            const url = "/" + normalizePath(path.relative(root, path.join(options.srcDir, page.file)));
+            const frontmatter = Object.fromEntries(
+                Object.entries(page.frontmatter).filter(([key]) => appFrontmatter.includes(key))
+            );
+            return `{ ...${JSON.stringify({ ...page, frontmatter })}, load: () => import(${JSON.stringify(url)}) }`;
+        });
+        return `export default [\n${pages.join(",\n")}\n];\n`;
+    };
+
+    const isDocsPage = (file: string) =>
+        file.endsWith(".md") && !path.relative(options.srcDir, file).startsWith("..");
 
     return {
         name: "unipept:markdown-pages",
         enforce: "pre",
+        configResolved(config) {
+            root = config.root;
+        },
+        resolveId(id) {
+            return id === docsPagesId ? resolvedDocsPagesId : undefined;
+        },
+        async load(id) {
+            if (id !== resolvedDocsPagesId) {
+                return;
+            }
+            docsPagesCode = await docsPagesModule();
+            return docsPagesCode;
+        },
         async transform(src, id) {
             if (!id.endsWith(".md")) {
                 return;
@@ -254,6 +345,15 @@ export default function markdownPages(options: MarkdownPagesOptions): Plugin {
 
             renderer ??= createMarkdownRenderer(options);
             return { code: markdownToVue(await renderer, src, id, options), map: null };
+        },
+        async hotUpdate({ file, modules }) {
+            const index = this.environment.moduleGraph.getModuleById(resolvedDocsPagesId);
+            if (!index || !isDocsPage(file) || await docsPagesModule() === docsPagesCode) {
+                return;
+            }
+            // A title, heading or page changed, so the menus need the new list.
+            this.environment.moduleGraph.invalidateModule(index);
+            return [...modules, index];
         }
     };
 }

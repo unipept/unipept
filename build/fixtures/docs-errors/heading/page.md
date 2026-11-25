@@ -1,0 +1,7 @@
+---
+title: Page
+---
+
+# Page
+
+Text.

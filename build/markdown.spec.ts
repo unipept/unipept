@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
 import { parse } from "vue/compiler-sfc";
-import { createMarkdownRenderer, markdownToVue } from "./markdown";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import type { ResolvedConfig } from "vite";
+import markdownPages, { createMarkdownRenderer, markdownToVue, readDocsPages } from "./markdown";
 import Sample, { frontmatter, headers, title } from "./fixtures/sample.md";
 
 const md = await createMarkdownRenderer({ base: "/unipept/" });
@@ -164,5 +167,58 @@ describe("a Markdown page imported through Vite", () => {
         expect(html).toContain(`<div class="language-console active">`);
         expect(html).toMatch(/<span style="--shiki-light:#[0-9A-F]{6}/i);
         expect(html).toMatch(/<img src="[^"]*pixel\.png" alt="A pixel"/);
+    });
+});
+
+describe("readDocsPages", () => {
+    const srcDir = fileURLToPath(new URL("./fixtures/docs", import.meta.url));
+
+    it("lists the title, front matter and headings of every page", () => {
+        expect(readDocsPages(md, srcDir)).toEqual([
+            { file: "guide/advanced/options.md", title: "Options", frontmatter: { title: "Options" }, headers: [] },
+            {
+                file: "guide/index.md",
+                title: "Guide",
+                frontmatter: { title: "Guide", subtitle: "Start here." },
+                headers: [
+                    {
+                        level: 2, title: "Install", slug: "install", link: "#install",
+                        children: [{ level: 3, title: "macOS", slug: "macos_installation", link: "#macos_installation", children: [] }]
+                    },
+                    { level: 2, title: "Use it", slug: "use-it", link: "#use-it", children: [] }
+                ]
+            }
+        ]);
+    });
+
+    it("gives the same headings as the compiled page", () => {
+        const [, page] = readDocsPages(md, srcDir);
+        const vue = markdownToVue(md, readFileSync(`${srcDir}/guide/index.md`, "utf8"), `${srcDir}/guide/index.md`, { srcDir });
+
+        expect(vue).toContain(`export const headers = ${JSON.stringify(page.headers)};`);
+    });
+
+    it("provides the pages as virtual:docs-pages, with a function that imports each page", async () => {
+        const plugin = markdownPages({ srcDir });
+        (plugin.configResolved as (config: Partial<ResolvedConfig>) => void)({ root: fileURLToPath(new URL("..", import.meta.url)) });
+        const id = (plugin.resolveId as (id: string) => string)("virtual:docs-pages");
+        const code = await (plugin.load as (id: string) => Promise<string>)(id);
+
+        expect(code).toContain(`load: () => import("/build/fixtures/docs/guide/advanced/options.md")`);
+        expect(code).toContain(`"file":"guide/index.md","title":"Guide","frontmatter":{"subtitle":"Start here."}`);
+    });
+
+    it("rejects a page without a title in its front matter", () => {
+        expect(() => readDocsPages(md, fileURLToPath(new URL("./fixtures/docs-errors/no-title", import.meta.url))))
+            .toThrow("page.md: a docs page needs a title in its front matter.");
+    });
+
+    it("rejects a page with a # heading", () => {
+        expect(() => readDocsPages(md, fileURLToPath(new URL("./fixtures/docs-errors/heading", import.meta.url))))
+            .toThrow("page.md: a docs page has no # heading, because the layout shows the title.");
+    });
+
+    it("returns no pages if the folder does not exist", () => {
+        expect(readDocsPages(md, `${srcDir}/missing`)).toEqual([]);
     });
 });
