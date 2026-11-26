@@ -67,8 +67,8 @@
 
         <v-main class="d-flex flex-column bg-mainBody">
             <v-container
-                class="main-container flex-grow-1 px-0 px-lg-2"
-                style="max-width: 1400px;"
+                :class="['main-container', 'flex-grow-1', 'px-0', { 'px-lg-2': !$route.meta.docs }]"
+                :style="{ maxWidth: $route.meta.docs ? 'none' : '1400px' }"
                 fluid
             >
                 <router-view :key="navigationKey" />

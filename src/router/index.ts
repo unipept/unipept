@@ -7,9 +7,11 @@ const router = createRouter({
     routes,
     scrollBehavior(to, from, savedPosition) {
         if (to.hash) {
-            // Go to appended anchor in the url
+            // Go to the anchor, with its scroll-margin-top as offset, so that it stays below the fixed header.
+            const target = document.getElementById(decodeURIComponent(to.hash.slice(1)));
             return {
                 el: to.hash,
+                top: target ? parseFloat(getComputedStyle(target).scrollMarginTop) || 0 : 0,
                 behavior: "smooth"
             }
         } else if (savedPosition) {

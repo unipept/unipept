@@ -20,7 +20,7 @@
 
 .vp-doc {
     font-size: 16px;
-    line-height: 1.7;
+    line-height: 1.75;
 }
 
 .vp-doc > :first-child {
@@ -56,9 +56,9 @@
 .vp-doc :is(h2, h3, h4) {
     position: relative;
     color: var(--docs-text-strong);
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.3;
-    scroll-margin-top: calc(var(--v-layout-top, 0px) + 24px);
+    scroll-margin-top: calc(var(--v-layout-top, 0px) + var(--docs-bar-height, 0px) + 24px);
 }
 
 .vp-doc h2 {
@@ -399,4 +399,24 @@
 
 .vp-doc .custom-block.details:not([open]) > summary {
     margin-bottom: 0;
+}
+
+/* Fade of the scrim behind a drawer and of the "On this page" menu. The menu's outer element comes from Vuetify,
+   so this is not scoped. */
+
+.docs-fade-enter-active,
+.docs-fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.docs-fade-enter-from,
+.docs-fade-leave-to {
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .docs-fade-enter-active,
+    .docs-fade-leave-active {
+        transition: none;
+    }
 }

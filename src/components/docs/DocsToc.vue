@@ -1,11 +1,13 @@
 <template>
     <nav
         v-if="headings.length > 0"
-        aria-labelledby="docs-toc-title"
+        :aria-labelledby="title ? titleId : undefined"
+        :aria-label="title ? undefined : 'On this page'"
         class="docs-toc"
     >
         <div
-            id="docs-toc-title"
+            v-if="title"
+            :id="titleId"
             class="docs-toc__title"
         >
             On this page
@@ -23,13 +25,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, useId } from "vue";
 import type { MarkdownHeader } from "virtual:docs-pages";
 import useActiveHeading from "@/composables/docs/useActiveHeading";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     headers: MarkdownHeader[];
-}>();
+    /** Whether to show the "On this page" title, which the bar's menu leaves out. */
+    title?: boolean;
+}>(), {
+    title: true
+});
+
+const titleId = useId();
 
 const headings = computed(() => props.headers.flatMap(header => [header, ...header.children]));
 const active = useActiveHeading(computed(() => headings.value.map(heading => heading.slug)));
@@ -37,7 +45,7 @@ const active = useActiveHeading(computed(() => headings.value.map(heading => hea
 
 <style scoped>
 .docs-toc {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .docs-toc__title {
@@ -50,6 +58,7 @@ const active = useActiveHeading(computed(() => headings.value.map(heading => hea
     display: block;
     padding: 4px 0 4px 12px;
     border-left: 2px solid var(--docs-border);
+    line-height: 24px;
     color: var(--docs-text-muted);
     text-decoration: none;
 }

@@ -41,10 +41,10 @@ const sections = buildDocsSections(
     ]
 );
 
-async function render(path: string, clientWidth: number): Promise<string> {
+async function render(path: string): Promise<string> {
     const router = createRouter({ history: createMemoryHistory(), routes: docsRoutes(sections, DocsLayout) });
     const app = createSSRApp({ render: () => h(components.VApp, () => h(RouterView)) });
-    app.use(router).use(createVuetify({ components, ssr: { clientWidth } }));
+    app.use(router).use(createVuetify({ components, ssr: true }));
     await router.push(path);
     await router.isReady();
     return renderToString(app);
@@ -55,7 +55,7 @@ const links = (html: string, href: string) => html.match(new RegExp(`<a [^>]*hre
 
 describe("DocsLayout", () => {
     it("shows the title, subtitle and content of the page", async () => {
-        const html = await render("/cli/pept2lca", 1440);
+        const html = await render("/cli/pept2lca");
 
         expect(html).not.toContain("<main");
         expect(html).toMatch(/<h1 class="docs-layout__title"[^>]*>unipept pept2lca<\/h1>/);
@@ -65,7 +65,7 @@ describe("DocsLayout", () => {
     });
 
     it("shows the section menu with the current page marked", async () => {
-        const html = await render("/cli/pept2lca", 1440);
+        const html = await render("/cli/pept2lca");
 
         expect(html).toMatch(/<nav aria-label="CLI" class="docs-side-menu"/);
         expect(html).toMatch(/<div class="docs-side-menu__group"[^>]*>Commands<\/div>/);
@@ -73,11 +73,10 @@ describe("DocsLayout", () => {
         expect(current).toContain("docs-side-menu__link--active");
         expect(current).toContain(`aria-current="page"`);
         expect(links(html, "/cli/pept2prot")[0]).not.toContain("docs-side-menu__link--active");
-        expect(html).not.toContain("v-expansion-panel");
     });
 
     it("lists the headings under On this page", async () => {
-        const html = await render("/cli/pept2lca", 1440);
+        const html = await render("/cli/pept2lca");
 
         expect(html).toContain("On this page");
         expect(links(html, "/cli/pept2lca#input")[0]).toContain("docs-toc__link--level-2");
@@ -86,7 +85,7 @@ describe("DocsLayout", () => {
     });
 
     it("links to the previous and next page in the menu", async () => {
-        const html = await render("/cli/pept2lca", 1440);
+        const html = await render("/cli/pept2lca");
 
         expect(links(html, "/cli").find(link => link.includes(`rel="prev"`))).toBeDefined();
         expect(html).toMatch(/Previous<\/span> Unipept CLI/);
@@ -95,7 +94,7 @@ describe("DocsLayout", () => {
     });
 
     it("shows the breadcrumb, and no publication next to On this page", async () => {
-        const html = await render("/cli/pept2lca", 1440);
+        const html = await render("/cli/pept2lca");
 
         expect(html).toMatch(/<nav aria-label="Breadcrumb"[^>]*>.*CLI.*Commands.*pept2lca/s);
         expect(links(html, "/cli").length).toBeGreaterThan(0);
@@ -103,16 +102,18 @@ describe("DocsLayout", () => {
     });
 
     it("leaves out On this page for a page without headings", async () => {
-        const html = await render("/cli", 1440);
+        const html = await render("/cli");
 
         expect(html).not.toContain("On this page");
+        expect(html).not.toContain("docs-layout__bar-toc");
         expect(html).not.toContain(`rel="prev"`);
     });
 
-    it("folds the menu into a panel on a narrow screen", async () => {
-        const html = await render("/cli/pept2lca", 600);
+    it("has a bar with buttons for the menu and On this page, which CSS shows on a narrow screen", async () => {
+        const html = await render("/cli/pept2lca");
 
-        expect(html).toContain("v-expansion-panel");
-        expect(html).toContain("CLI menu");
+        expect(html).toMatch(/<button type="button" class="docs-layout__bar-button docs-layout__bar-menu"[^>]*aria-controls="docs-menu" aria-expanded="false"/);
+        expect(html).toMatch(/<aside id="docs-menu"/);
+        expect(html).toMatch(/class="docs-layout__bar-button docs-layout__bar-toc"[^>]*>\s*On this page/);
     });
 });
