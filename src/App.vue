@@ -108,7 +108,7 @@
                     {{ $route.meta.publication }}
                     <a
                         class="link"
-                        :href="'https://' + $route.meta.publicationLink"
+                        :href="publicationUrl($route.meta.publicationLink)"
                         target="_blank"
                     >
                         &nbsp;{{ $route.meta.publicationLink }}
@@ -156,6 +156,7 @@
 import { onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router'
 import UnipeptCommunicator from "@/logic/communicators/unipept/UnipeptCommunicator";
+import { publicationUrl } from "@/logic/docs/DocsSections";
 
 const router = useRouter();
 
