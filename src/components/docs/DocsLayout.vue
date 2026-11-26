@@ -1,7 +1,11 @@
 <template>
     <div
         v-if="docs"
-        :class="['docs-layout', { 'docs-layout--menu-open': menuOpen, 'docs-layout--no-toc': !hasToc }]"
+        :class="['docs-layout', {
+            'docs-layout--api': isApi,
+            'docs-layout--no-toc': !isApi && !hasToc,
+            'docs-layout--menu-open': menuOpen
+        }]"
     >
         <aside
             id="docs-menu"
@@ -14,9 +18,9 @@
         </aside>
         <transition name="docs-fade">
             <div
-                v-if="menuOpen"
-                class="docs-layout__scrim"
-                @click="closeMenu(true)"
+                v-if="menuOpen || requestOpen"
+                :class="['docs-layout__scrim', `docs-layout__scrim--${scrimFor}`]"
+                @click="closeDrawers"
             />
         </transition>
 
@@ -36,8 +40,23 @@
                     />
                     Menu
                 </button>
+                <button
+                    v-if="isApi"
+                    ref="requestButton"
+                    type="button"
+                    class="docs-layout__bar-button docs-layout__bar-end"
+                    aria-controls="api-panel"
+                    :aria-expanded="requestOpen"
+                    @click="requestOpen = !requestOpen"
+                >
+                    Request
+                    <v-icon
+                        icon="mdi-chevron-right"
+                        size="16"
+                    />
+                </button>
                 <v-menu
-                    v-if="hasToc"
+                    v-else-if="hasToc"
                     location="bottom end"
                     :attach="true"
                     transition="docs-fade"
@@ -45,7 +64,7 @@
                     <template #activator="{ props: activator, isActive }">
                         <button
                             type="button"
-                            class="docs-layout__bar-button docs-layout__bar-toc"
+                            class="docs-layout__bar-button docs-layout__bar-end docs-layout__bar-toc"
                             v-bind="activator"
                         >
                             On this page
@@ -71,40 +90,11 @@
                 </v-menu>
             </div>
 
-            <nav
-                aria-label="Breadcrumb"
-                class="docs-layout__breadcrumb"
-            >
-                <template
-                    v-for="(crumb, index) in breadcrumb"
-                    :key="index"
-                >
-                    <span
-                        v-if="index > 0"
-                        aria-hidden="true"
-                    > / </span>
-                    <router-link
-                        v-if="crumb.path"
-                        :to="crumb.path"
-                    >
-                        {{ crumb.label }}
-                    </router-link>
-                    <span
-                        v-else
-                        :aria-current="index === breadcrumb.length - 1 ? 'page' : undefined"
-                    >{{ crumb.label }}</span>
-                </template>
-            </nav>
-
-            <h1 class="docs-layout__title">
-                {{ docs.page.title }}
-            </h1>
-            <p
-                v-if="docs.page.subtitle"
-                class="docs-layout__subtitle"
-            >
-                {{ docs.page.subtitle }}
-            </p>
+            <docs-page-header
+                v-if="!isApi"
+                :section="docs.section"
+                :page="docs.page"
+            />
 
             <div ref="content">
                 <router-view />
@@ -116,6 +106,21 @@
                     target="_blank"
                     rel="noreferrer"
                 >Edit this page on GitHub</a>
+                <div
+                    v-if="isApi && docs.section.publication"
+                    class="docs-layout__cite"
+                >
+                    Cite:
+                    <a
+                        v-if="docs.section.publicationLink"
+                        :href="publicationUrl(docs.section.publicationLink)"
+                        target="_blank"
+                        rel="noreferrer"
+                    >{{ docs.section.publication }}</a>
+                    <template v-else>
+                        {{ docs.section.publication }}
+                    </template>
+                </div>
             </footer>
             <docs-pager
                 :section="docs.section"
@@ -124,7 +129,7 @@
         </article>
 
         <aside
-            v-if="hasToc"
+            v-if="!isApi && hasToc"
             class="docs-layout__toc"
         >
             <docs-toc :headers="docs.page.headers" />
@@ -139,8 +144,10 @@ import { useEventListener, useScrollLock } from "@vueuse/core";
 import DocsSideMenu from "./DocsSideMenu.vue";
 import DocsToc from "./DocsToc.vue";
 import DocsPager from "./DocsPager.vue";
+import DocsPageHeader from "./DocsPageHeader.vue";
 import useDocsContent from "@/composables/docs/useDocsContent";
-import { docsBreadcrumb } from "@/logic/docs/DocsSections";
+import { provideRequestPanel } from "@/composables/docs/useRequestPanel";
+import { publicationUrl } from "@/logic/docs/DocsSections";
 import "@/styles/docs.css";
 
 const editBase = "https://github.com/unipept/unipept/edit/main/src/content/docs/";
@@ -149,16 +156,29 @@ const route = useRoute();
 const content = ref<HTMLElement>();
 const menu = ref<HTMLElement>();
 const menuButton = ref<HTMLButtonElement>();
+const requestButton = ref<HTMLButtonElement>();
 
 useDocsContent(content);
 
 const docs = computed(() => route.meta.docs);
 const editLink = computed(() => editBase + docs.value?.page.file);
-const breadcrumb = computed(() => docs.value ? docsBreadcrumb(docs.value.section, docs.value.page) : []);
 const hasToc = computed(() => (docs.value?.page.headers.length ?? 0) > 0);
+// API endpoint pages have their request panel on the right instead of "On this page". Their ApiReference shows
+// the page header, so that the panel starts at the top.
+const isApi = computed(() => docs.value?.page.layout === "api");
 
-// Below 960 px the menu is a drawer, which the Menu button in the bar opens.
+// Below 960 px the menu is a drawer, which the Menu button in the bar opens; below 1488 px the request panel of
+// an API page is one too.
 const menuOpen = ref(false);
+const { open: requestOpen, element: requestPanel } = provideRequestPanel(closeRequest);
+
+// The drawer that the scrim belongs to. It keeps its value after the drawer closes, so the scrim can fade out.
+const scrimFor = ref<"menu" | "request">("menu");
+watch([menuOpen, requestOpen], ([menu, request]) => {
+    if (menu || request) {
+        scrimFor.value = menu ? "menu" : "request";
+    }
+});
 
 async function toggleMenu() {
     menuOpen.value = !menuOpen.value;
@@ -176,6 +196,19 @@ function closeMenu(restoreFocus = false) {
     menuOpen.value = false;
 }
 
+/** Closes the request drawer; the focus goes back to the Request button if it was in the drawer. */
+function closeRequest() {
+    if (requestOpen.value && requestPanel.value?.contains(document.activeElement)) {
+        requestButton.value?.focus();
+    }
+    requestOpen.value = false;
+}
+
+function closeDrawers() {
+    closeMenu(true);
+    closeRequest();
+}
+
 // A link closes the drawer, also one to the current page, which does not change the route.
 function closeMenuOnLink(event: MouseEvent) {
     if ((event.target as Element | null)?.closest("a")) {
@@ -183,18 +216,21 @@ function closeMenuOnLink(event: MouseEvent) {
     }
 }
 
-watch(() => route.path, () => closeMenu());
+watch(() => route.path, () => {
+    closeMenu();
+    requestOpen.value = false;
+});
 
 // The page behind an open drawer does not scroll. The space of the scroll bar stays, so the page does not shift.
 const pageLock = useScrollLock(typeof document === "undefined" ? null : document.documentElement);
-watch(menuOpen, open => {
-    pageLock.value = open;
-    document.documentElement.style.scrollbarGutter = open ? "stable" : "";
+watch([menuOpen, requestOpen], ([menu, request]) => {
+    pageLock.value = menu || request;
+    document.documentElement.style.scrollbarGutter = menu || request ? "stable" : "";
 });
 
 useEventListener("keydown", (event: KeyboardEvent) => {
     if (event.key === "Escape") {
-        closeMenu(true);
+        closeDrawers();
     }
 });
 
@@ -207,7 +243,9 @@ function scrollToTop() {
 /*
  * The breakpoints and sizes are those of the Dolos docs (VitePress). Below 1280 px "On this page" is a menu in the
  * bar, and below 960 px the menu is a drawer, so the page has one column. The layout is at most 1440 px wide and
- * centred; the text stays at most 688 px wide, centred between the menu and "On this page".
+ * centred; the text stays at most 688 px wide, centred between the menu and "On this page". An API page is at most
+ * 1680 px wide, so that its request panel fits next to the fields from 1488 px; below that the panel is a drawer.
+ * ApiReference.vue uses the same 1488 px breakpoint.
  */
 .docs-layout {
     --docs-menu-width: 272px;
@@ -289,7 +327,7 @@ function scrollToTop() {
     display: none;
 }
 
-.docs-layout__bar-toc {
+.docs-layout__bar-end {
     margin-left: auto;
 }
 
@@ -321,42 +359,57 @@ function scrollToTop() {
 
 .docs-layout__scrim {
     display: none;
-}
-
-.docs-layout__breadcrumb {
-    margin-bottom: 12px;
-    font-size: 13px;
-    color: var(--docs-text-muted);
-}
-
-.docs-layout__breadcrumb a {
-    color: var(--docs-link);
-    text-decoration: none;
-}
-
-.docs-layout__breadcrumb a:hover {
-    text-decoration: underline;
-}
-
-.docs-layout__title {
-    margin: 0;
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 1.25;
-    color: var(--docs-text-strong);
-}
-
-.docs-layout__subtitle {
-    margin: 8px 0 0 !important;
-    font-size: 18px;
-    color: var(--docs-text-muted) !important;
+    position: fixed;
+    inset: var(--v-layout-top, 0px) 0 0;
+    z-index: 1000;
+    background: rgb(var(--docs-shadow) / 40%);
 }
 
 .docs-layout__footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
     margin-top: 48px;
     padding-top: 20px;
     border-top: 1px solid var(--docs-border);
     font-size: 14px;
+}
+
+.docs-layout__cite {
+    font-size: 13px;
+    color: var(--docs-text-muted);
+}
+
+/* API pages: the main column holds the reference, with its own columns. */
+.docs-layout--api {
+    grid-template-columns: var(--docs-menu-width) minmax(0, 1fr);
+    max-width: 1680px;
+}
+
+.docs-layout--api .docs-layout__main > * {
+    max-width: none;
+}
+
+@media (max-width: 1487.98px) {
+    .docs-layout--api {
+        --docs-bar-height: 44px;
+    }
+
+    .docs-layout--api .docs-layout__bar {
+        display: flex;
+        margin-right: calc(-1 * var(--docs-gutter));
+        padding-right: var(--docs-gutter);
+    }
+
+    .docs-layout--api .docs-layout__scrim--request {
+        display: block;
+    }
+
+    /* With the request panel as a drawer, the page has the width of a normal page. */
+    .docs-layout--api .docs-layout__main > :not(.docs-layout__bar) {
+        max-width: var(--docs-text-width);
+    }
 }
 
 @media (max-width: 1279.98px) {
@@ -427,12 +480,8 @@ function scrollToTop() {
         transition: transform 0.2s ease;
     }
 
-    .docs-layout__scrim {
+    .docs-layout__scrim--menu {
         display: block;
-        position: fixed;
-        inset: var(--v-layout-top, 0px) 0 0;
-        z-index: 1000;
-        background: rgb(var(--docs-shadow) / 40%);
     }
 }
 

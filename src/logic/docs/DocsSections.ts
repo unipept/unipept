@@ -30,6 +30,8 @@ export interface DocsPage {
     /** Name in the menu and the pager: `menuLabel` in the front matter, else the title. */
     menuLabel: string;
     subtitle?: string;
+    /** `api` for an API endpoint page, which has no "On this page". */
+    layout: "doc" | "api";
     headers: MarkdownHeader[];
     load: DocsPageData["load"];
 }
@@ -107,6 +109,7 @@ export function buildDocsSections(configs: Record<string, DocsSectionConfig>, pa
                 title: data.title,
                 menuLabel: typeof menuLabel === "string" ? menuLabel : data.title,
                 subtitle: typeof subtitle === "string" ? subtitle : undefined,
+                layout: data.frontmatter.layout === "api" ? "api" : "doc",
                 headers: data.headers,
                 load: data.load
             };

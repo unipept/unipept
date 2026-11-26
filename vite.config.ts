@@ -41,7 +41,8 @@ export default defineConfig({
     plugins: [
         markdownPages({
             srcDir: fileURLToPath(new URL("./src/content/docs", import.meta.url)),
-            base: baseURL
+            base: baseURL,
+            apiComponent: "@/components/docs/ApiReference.vue"
         }),
         vue({
             include: [/\.vue$/, /\.md$/],

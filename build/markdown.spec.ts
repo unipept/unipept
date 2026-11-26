@@ -47,6 +47,39 @@ describe("markdownToVue", () => {
 
         expect(compileTemplate({ source: template, filename: "a.md", id: "a" }).errors).not.toEqual([]);
     });
+
+    it("wraps a page with layout: api in the API component, with its checked front matter", () => {
+        const src = "---\nlayout: api\nresponse:\n  fields: []\n---\n\nIntro.\n";
+        const vue = markdownToVue(md, src, "/docs/pept2lca.md", { apiComponent: "@/components/docs/ApiReference.vue" });
+        const { descriptor, errors } = parse(vue);
+
+        expect(errors).toEqual([]);
+        expect(descriptor.scriptSetup?.content).toContain(`import ApiReference from "@/components/docs/ApiReference.vue";`);
+        expect(descriptor.scriptSetup?.content).toContain(`const api = {"endpoint":"pept2lca","parameters":[]`);
+        expect(descriptor.template?.content).toBe(`<ApiReference :api="api"><div class="vp-doc"><p>Intro.</p>\n</div></ApiReference>`);
+    });
+
+    it("gives the code groups of the page and of the API texts different names", () => {
+        const group = "::: code-group\n```console [A]\n$ a\n```\n```console [B]\n$ b\n```\n:::\n";
+        const details = group.split("\n").map(line => `      ${line}`).join("\n");
+        const src = `---\nlayout: api\nparameters:\n  - name: a\n    type: string\n    summary: A.\n    details: |\n${details}\nresponse:\n  fields: []\n---\n\n${group}`;
+        const vue = markdownToVue(md, src, "/docs/pept2lca.md", { apiComponent: "x" });
+
+        expect(vue).toContain(`name="group-1"`);
+        expect(vue).toContain(`name=\\"group-2\\"`);
+    });
+
+    it("rejects a page with layout: api and a mistake in its front matter", () => {
+        expect(() => markdownToVue(md, "---\nlayout: api\nresponse: []\n---\n", "/docs/a.md", { apiComponent: "x" }))
+            .toThrow(`/docs/a.md: response: must be an object.`);
+    });
+
+    it("reports a YAML error in the front matter every time", () => {
+        const src = "---\nlist: { name: input[], type: string }\n---\n";
+
+        expect(() => markdownToVue(md, src, "/docs/a.md")).toThrow("missed comma between flow collection entries");
+        expect(() => markdownToVue(md, src, "/docs/a.md")).toThrow("missed comma between flow collection entries");
+    });
 });
 
 describe("createMarkdownRenderer", () => {
