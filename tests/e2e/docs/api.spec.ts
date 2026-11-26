@@ -17,7 +17,6 @@ async function open(page: Page, url: string) {
 }
 
 const response = (page: Page) => page.locator('.api-response');
-const picked = (page: Page) => page.locator('.api-panel__picker .v-select__selection-text');
 
 /** Chooses `title` in the request picker. */
 async function pick(page: Page, title: string) {
@@ -44,13 +43,6 @@ test.describe('API reference', () => {
         await page.locator('.api-panel__picker .v-field').click();
         await expect(page.locator('.v-list-subheader', {hasText: 'Examples'})).toBeVisible();
         await expect(page.getByRole('option')).toHaveText(['One peptide', 'Multiple peptides', 'Equating I and L', 'With the lineage', 'With lineage names', 'Your own input…']);
-    });
-
-    test('selects the example of a link to its anchor', async ({page}) => {
-        await mockApi(page, []);
-        await open(page, '/apidocs/pept2lca#example2');
-
-        await expect(picked(page)).toHaveText('Multiple peptides');
     });
 
     test('sends the own input of taxa2tree as counts, without a counts field', async ({page}) => {

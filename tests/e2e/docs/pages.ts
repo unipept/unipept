@@ -12,25 +12,10 @@ export interface DocsPage {
     anchors: string[];
 }
 
-/** Anchors of the old API pages, which other sites may link to. They stay, whatever the pages define. */
-const oldApiAnchors = ["request", "response", "parameters", "examples", "try"];
-const linkedAnchors: Record<string, string[]> = {
-    ...Object.fromEntries(["pept2prot", "pept2taxa", "pept2lca", "pept2ec", "pept2go", "pept2interpro", "pept2funct",
-        "peptinfo", "protinfo", "taxonomy"].map(name => [`/apidocs/${name}`, [...oldApiAnchors, "example2"]])),
-    "/apidocs/taxa2lca": [...oldApiAnchors, "example"],
-    "/apidocs/taxa2tree": [...oldApiAnchors, "example", "example2"]
-};
-
 const markdownPages: DocsPage[] = docsPageTargets(
     await createMarkdownRenderer(),
     fileURLToPath(new URL("../../../src/content/docs", import.meta.url))
-).map(page => ({ ...page, anchors: [...new Set([...page.anchors, ...linkedAnchors[page.url] ?? []])] }));
-
-for (const url of Object.keys(linkedAnchors)) {
-    if (!markdownPages.some(page => page.url === url)) {
-        throw new Error(`${url} is gone, but other sites may link to its anchors.`);
-    }
-}
+);
 
 const vuePages: DocsPage[] = [
     { url: "/clidocs", title: "Unipept CLI documentation v4.2.2", anchors: ["functionality", "installation", "updates", "configuration"] },

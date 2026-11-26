@@ -38,10 +38,7 @@ const headerSlugs = (headers: DocsPageData["headers"]): string[] =>
  */
 export function docsPageTargets(md: MarkdownIt, srcDir: string): { url: string; title: string; anchors: string[] }[] {
     return readDocsPages(md, srcDir).map(page => {
-        const examples = Array.isArray(page.frontmatter.examples) ? page.frontmatter.examples as { id?: unknown }[] : [];
-        const api = page.frontmatter.layout === "api"
-            ? [...apiAnchors, ...examples.flatMap(e => typeof e.id === "string" ? [e.id] : [])]
-            : [];
+        const api = page.frontmatter.layout === "api" ? apiAnchors : [];
         return { url: pageUrl(page.file), title: page.title, anchors: [...headerSlugs(page.headers), ...api] };
     });
 }

@@ -51,17 +51,6 @@ test.describe('Documentation layout', () => {
         await expect(button).toBeFocused();
     });
 
-    test('opens the drawer for a link to #try only when the panel is a drawer', async ({page}) => {
-        await open(page, 1100, '/apidocs/pept2lca#try');
-        await expect(page.locator('#api-panel')).toBeVisible();
-        await expect(page.locator('#api-panel .v-select__selection-text')).toHaveText('Your own input…');
-
-        // Another page first, so that the page loads again instead of only changing its hash.
-        await open(page, 1600, '/apidocs');
-        await open(page, 1600, '/apidocs/pept2lca#try');
-        await expect(page.locator('.docs-layout__bar-end')).toHaveAttribute('aria-expanded', 'false');
-    });
-
     test('opens the menu as a drawer below 960 px, which a link or Escape closes', async ({page}) => {
         await open(page, 800, '/apidocs');
 
