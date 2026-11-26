@@ -1,5 +1,10 @@
+import { fileURLToPath } from "node:url";
+import { docsPageTargets } from "../../../build/content";
+import { createMarkdownRenderer } from "../../../build/markdown";
+
 /**
- * Every documentation page, with its title and the anchors that links and menus point to.
+ * Every documentation page, with its title and the anchors that links and menus point to. The Markdown pages in
+ * src/content/docs are read from their files; the .vue pages are listed here.
  */
 export interface DocsPage {
     url: string;
@@ -7,20 +12,12 @@ export interface DocsPage {
     anchors: string[];
 }
 
-export const docsPages: DocsPage[] = [
-    { url: "/apidocs", title: "Unipept API documentation v2.0", anchors: ["functionality"] },
-    { url: "/apidocs/pept2prot", title: "POST /api/v2/pept2prot", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/pept2taxa", title: "POST /api/v2/pept2taxa", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/pept2lca", title: "POST /api/v2/pept2lca", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/pept2ec", title: "POST /api/v2/pept2ec", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/pept2go", title: "POST /api/v2/pept2go", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/pept2interpro", title: "POST /api/v2/pept2interpro", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/pept2funct", title: "POST /api/v2/pept2funct", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/peptinfo", title: "POST /api/v2/peptinfo", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/protinfo", title: "POST /api/v2/protinfo", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
-    { url: "/apidocs/taxa2lca", title: "POST /api/v2/taxa2lca", anchors: ["request", "response", "parameters", "examples", "example", "try"] },
-    { url: "/apidocs/taxa2tree", title: "POST /api/v2/taxa2tree", anchors: ["request", "response", "parameters", "examples", "example", "example2", "try"] },
-    { url: "/apidocs/taxonomy", title: "POST /api/v2/taxonomy", anchors: ["request", "response", "parameters", "examples", "example2", "try"] },
+const markdownPages: DocsPage[] = docsPageTargets(
+    await createMarkdownRenderer(),
+    fileURLToPath(new URL("../../../src/content/docs", import.meta.url))
+);
+
+const vuePages: DocsPage[] = [
     { url: "/clidocs", title: "Unipept CLI documentation v4.2.2", anchors: ["functionality", "installation", "updates", "configuration"] },
     { url: "/clidocs/casestudies", title: "Unipept CLI Case Studies", anchors: [] },
     { url: "/clidocs/casestudies/tpa", title: "Case study: Taxonomic analysis of a tryptic peptide", anchors: ["fig1", "fig2", "fig3", "fig4"] },
@@ -72,3 +69,5 @@ export const docsPages: DocsPage[] = [
     { url: "/desktop/configuration", title: "Configuration options", anchors: ["concurrency", "storage", "docker"] },
     { url: "/desktop/faq", title: "Frequently Asked Questions (FAQ)", anchors: ["faq"] }
 ];
+
+export const docsPages: DocsPage[] = [...markdownPages, ...vuePages];

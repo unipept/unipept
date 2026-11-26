@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { MarkdownIt } from "markdown-it";
 import { apiReference } from "./apiReference.ts";
-import { markdownToVue, readDocsPages } from "./markdown.ts";
+import { markdownToVue, readDocsPages, type DocsPageData } from "./markdown.ts";
 
 export interface DocsContentOptions {
     /** Whether the app has a route for a path that is not a docs page. */
@@ -28,6 +28,20 @@ function apiHtml(api: ReturnType<typeof apiReference>): string[] {
 }
 
 const pageUrl = (file: string) => "/" + file.replace(/(^|\/)index\.md$/, "").replace(/\.md$/, "");
+
+const headerSlugs = (headers: DocsPageData["headers"]): string[] =>
+    headers.flatMap(h => [h.slug, ...headerSlugs(h.children)]);
+
+/**
+ * The URL, title and anchors of every docs page in `srcDir`. The anchors are the `##` and `###` headings, and on a
+ * page with `layout: api` also the anchors of the API reference.
+ */
+export function docsPageTargets(md: MarkdownIt, srcDir: string): { url: string; title: string; anchors: string[] }[] {
+    return readDocsPages(md, srcDir).map(page => {
+        const api = page.frontmatter.layout === "api" ? apiAnchors : [];
+        return { url: pageUrl(page.file), title: page.title, anchors: [...headerSlugs(page.headers), ...api] };
+    });
+}
 
 /**
  * Checks the docs pages in `srcDir` for mistakes that the build does not catch: unknown front matter fields, links

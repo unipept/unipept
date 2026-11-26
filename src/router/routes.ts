@@ -18,11 +18,6 @@ const mpaMeta = {
     publicationLink: "doi.org/10.1021/acs.jproteome.4c00848",
 };
 
-const apidocsMeta = {
-    publication: "Mesuere et al. (2016) Bioinformatics",
-    publicationLink: "doi:10.1093/bioinformatics/btw039"
-};
-
 const clidocsMeta = {
     publication: "Verschaffelt et al. (2020) Bioinformatics",
     publicationLink: "doi.org/10.1093/bioinformatics/btaa553"
@@ -87,26 +82,6 @@ export const routes: RouteRecordRaw[] = [
             { path: "database", name: "mpaDatabase", component: () => import("@/components/pages/features/analysis/MetaproteomeDatabasePage.vue"), meta: mpaMeta },
         ],
         meta: mpaMeta
-    },
-    {
-        path: "/apidocs",
-        component: () => import("@/components/pages/features/APIPage.vue"),
-        children: [
-            { path: "", component: () => import("@/components/pages/documentation/apidocs/APIDocsOverviewPage.vue"), meta: apidocsMeta },
-            { path: "pept2prot", component: () => import("@/components/pages/documentation/apidocs/APIPept2ProtPage.vue"), meta: apidocsMeta },
-            { path: "pept2taxa", component: () => import("@/components/pages/documentation/apidocs/APIPept2TaxaPage.vue"), meta: apidocsMeta },
-            { path: "pept2lca", component: () => import("@/components/pages/documentation/apidocs/APIPept2LcaPage.vue"), meta: apidocsMeta },
-            { path: "pept2ec", component: () => import("@/components/pages/documentation/apidocs/APIPept2EcPage.vue"), meta: apidocsMeta },
-            { path: "pept2go", component: () => import("@/components/pages/documentation/apidocs/APIPept2GoPage.vue"), meta: apidocsMeta },
-            { path: "pept2interpro", component: () => import("@/components/pages/documentation/apidocs/APIPept2InterproPage.vue"), meta: apidocsMeta },
-            { path: "pept2funct", component: () => import("@/components/pages/documentation/apidocs/APIPept2FunctPage.vue"), meta: apidocsMeta },
-            { path: "peptinfo", component: () => import("@/components/pages/documentation/apidocs/APIPeptInfoPage.vue"), meta: apidocsMeta },
-            { path: "protinfo", component: () => import("@/components/pages/documentation/apidocs/APIProtInfoPage.vue"), meta: apidocsMeta },
-            { path: "taxa2lca", component: () => import("@/components/pages/documentation/apidocs/APITaxa2LcaPage.vue"), meta: apidocsMeta },
-            { path: "taxa2tree", component: () => import("@/components/pages/documentation/apidocs/APITaxa2TreePage.vue"), meta: apidocsMeta },
-            { path: "taxonomy", component: () => import("@/components/pages/documentation/apidocs/APITaxonomyPage.vue"), meta: apidocsMeta },
-        ],
-        meta: apidocsMeta
     },
     {
         path: "/clidocs",
