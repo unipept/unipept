@@ -301,7 +301,7 @@ function scrollToTop() {
     border: 1px solid var(--docs-border);
     border-radius: 8px;
     background: var(--docs-surface);
-    box-shadow: 0 8px 24px rgb(15 23 42 / 12%);
+    box-shadow: 0 8px 24px rgb(var(--docs-shadow) / 12%);
 }
 
 .docs-layout__back-to-top {
@@ -415,7 +415,7 @@ function scrollToTop() {
         overscroll-behavior: contain;
         padding: 24px 16px;
         background: rgb(var(--v-theme-mainBody));
-        box-shadow: 0 0 24px rgb(15 23 42 / 16%);
+        box-shadow: 0 0 24px rgb(var(--docs-shadow) / 16%);
         transform: translateX(-100%);
         visibility: hidden;
         transition: transform 0.2s ease, visibility 0s 0.2s;
@@ -432,7 +432,7 @@ function scrollToTop() {
         position: fixed;
         inset: var(--v-layout-top, 0px) 0 0;
         z-index: 1000;
-        background: rgb(15 23 42 / 40%);
+        background: rgb(var(--docs-shadow) / 40%);
     }
 }
 
