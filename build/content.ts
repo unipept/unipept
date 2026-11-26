@@ -12,8 +12,8 @@ export interface DocsContentOptions {
 const frontmatterFields = ["title", "subtitle", "menuLabel", "layout"];
 /** Front matter of a page with `layout: api`, which the build checks itself. */
 const apiFields = ["parameters", "response", "examples"];
-/** Anchors that the API reference adds to a page with `layout: api`, besides the ids of the examples. */
-const apiAnchors = ["request", "parameters", "response", "examples", "try"];
+/** Anchors that the API reference adds to a page with `layout: api`. */
+const apiAnchors = ["parameters", "response"];
 
 /** The HTML texts of an API reference, so their links are checked as well. */
 function apiHtml(api: ReturnType<typeof apiReference>): string[] {
@@ -44,7 +44,7 @@ export function checkDocsContent(md: MarkdownIt, srcDir: string, options: DocsCo
         if (page.frontmatter.layout === "api") {
             const api = apiReference(page.frontmatter, md, file, { relativePath: page.file });
             html += apiHtml(api).join("\n");
-            idList.push(...apiAnchors, ...api.examples.flatMap(e => e.id ? [e.id] : []));
+            idList.push(...apiAnchors);
         }
         const duplicateIds = [...new Set(idList.filter((id, i) => idList.indexOf(id) !== i))];
         return { ...page, url: pageUrl(page.file), html, ids: new Set(idList), duplicateIds };

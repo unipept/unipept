@@ -110,10 +110,9 @@ export function apiReference(
     const responseSummary = optionalText(response.summary, "response.summary");
 
     const parameterNames = parameters.map(p => p.name.replace(/\[\]$/, ""));
-    const ids = new Set<string>();
     const examples = list(frontmatter.examples ?? [], "examples").map((value, i): ApiExample => {
         const where = `examples[${i}]`;
-        const e = record(value, where, ["title"], ["id", "description", "params", "json"]);
+        const e = record(value, where, ["title"], ["description", "params", "json"]);
         if ((e.params === undefined) === (e.json === undefined)) {
             fail(where, `needs either "params" or "json".`);
         }
@@ -127,16 +126,8 @@ export function apiReference(
                 }
             }
         }
-        const id = optionalText(e.id, `${where}.id`);
-        if (id && ids.has(id)) {
-            fail(`${where}.id`, `"${id}" is used twice.`);
-        }
-        if (id) {
-            ids.add(id);
-        }
         const description = optionalText(e.description, `${where}.description`);
         return {
-            ...(id ? { id } : {}),
             title: text(e.title, `${where}.title`),
             ...(description ? { description: block(description) } : {}),
             ...(e.params !== undefined ? { params: e.params as ApiExample["params"] } : {}),

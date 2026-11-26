@@ -20,7 +20,7 @@ const page = {
     },
     examples: [
         { title: "One peptide", description: "The LCA of *AALTER*.\n", params: { input: ["AALTER"] } },
-        { id: "example2", title: "Counts", json: { counts: { 817: 3 } } }
+        { title: "Counts", json: { counts: { 817: 3 } } }
     ]
 };
 
@@ -43,7 +43,7 @@ describe("apiReference", () => {
         expect(api.response.fields[1].fields).toEqual([{ name: "ec_number", type: "string", summary: "The EC number." }]);
         expect(api.examples).toEqual([
             { title: "One peptide", description: "<p>The LCA of <em>AALTER</em>.</p>\n", params: { input: ["AALTER"] } },
-            { id: "example2", title: "Counts", json: { counts: { 817: 3 } } }
+            { title: "Counts", json: { counts: { 817: 3 } } }
         ]);
     });
 
@@ -92,8 +92,8 @@ describe("apiReference", () => {
             .toThrow(`examples[0]: needs either "params" or "json".`);
     });
 
-    it("rejects an example id that is used twice", () => {
-        const examples = [{ id: "a", title: "x", params: {} }, { id: "a", title: "y", params: {} }];
-        expect(() => read({ ...page, examples })).toThrow(`examples[1].id: "a" is used twice.`);
+    it("rejects an example with an id", () => {
+        expect(() => read({ ...page, examples: [{ id: "a", title: "x", params: {} }] }))
+            .toThrow(`examples[0]: unknown key "id".`);
     });
 });

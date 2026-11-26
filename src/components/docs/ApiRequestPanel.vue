@@ -1,19 +1,5 @@
 <template>
-    <div
-        id="examples"
-        class="api-panel"
-    >
-        <span
-            v-for="example in api.examples.filter(e => e.id)"
-            :id="example.id"
-            :key="example.id"
-            class="api-panel__anchor"
-        />
-        <span
-            id="try"
-            class="api-panel__anchor"
-        />
-
+    <div class="api-panel">
         <div class="api-panel__picker">
             <div
                 class="api-panel__label"
@@ -122,9 +108,6 @@
 
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { useRoute } from "vue-router";
-import { useEventListener } from "@vueuse/core";
-import { useRequestPanel } from "@/composables/docs/useRequestPanel";
 import ApiRequestBlock from "./ApiRequestBlock.vue";
 import ApiResponseBlock from "./ApiResponseBlock.vue";
 import { DEFAULT_API_BASE_URL } from "@/logic/Constants";
@@ -140,9 +123,6 @@ interface Result {
 const props = defineProps<{
     api: ApiReferenceData;
 }>();
-
-const route = useRoute();
-const { open, isDrawer } = useRequestPanel();
 
 const selection = ref<number | "own">(0);
 const results = reactive(new Map<number | "own", Result>());
@@ -250,36 +230,8 @@ watch(selection, (next, previous) => {
     }
 });
 
-/** A link to an example's anchor chooses that example; a link to #try chooses the own input. */
-function followHash(hash: string) {
-    const index = props.api.examples.findIndex(e => e.id && `#${e.id}` === hash);
-    if (index >= 0) {
-        selection.value = index;
-    } else if (hash === "#try") {
-        selection.value = "own";
-    } else {
-        return;
-    }
-    // A drawer opens; on a wider screen the panel is in view already.
-    if (isDrawer.value) {
-        open.value = true;
-    }
-}
-
-watch(() => route.hash, followHash);
-
-// A link to the hash that the URL already has does not change the route, so it is followed here.
-useEventListener("click", (event: MouseEvent) => {
-    const hash = (event.target as Element | null)?.closest("a")?.getAttribute("href");
-    if (hash && hash === route.hash) {
-        followHash(hash);
-        document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
-    }
-});
-
 onMounted(() => {
-    followHash(route.hash);
-    if (selection.value !== "own" && props.api.examples.length > 0 && !results.has(selection.value)) {
+    if (props.api.examples.length > 0) {
         send();
     }
 });
@@ -287,7 +239,6 @@ onMounted(() => {
 
 <style scoped>
 .api-panel {
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -297,12 +248,6 @@ onMounted(() => {
 /* Only the response gives up space when the panel is full; the rest keeps its height. */
 .api-panel > :not(.api-response) {
     flex-shrink: 0;
-}
-
-.api-panel__anchor {
-    position: absolute;
-    top: 0;
-    scroll-margin-top: calc(var(--v-layout-top, 0px) + var(--docs-bar-height, 0px) + 24px);
 }
 
 .api-panel__label {

@@ -6,10 +6,7 @@
                 :section="docs.section"
                 :page="docs.page"
             />
-            <div
-                id="request"
-                class="api-reference__endpoint"
-            >
+            <div class="api-reference__endpoint">
                 <span class="api-reference__method api-reference__method--post">POST</span>
                 <span class="api-reference__method api-reference__method--get">GET</span>
                 <code>{{ DEFAULT_API_BASE_URL }}/api/v2/{{ api.endpoint }}</code>
@@ -168,7 +165,6 @@ watch(open, async isOpen => {
     border: 1px solid var(--docs-border);
     border-radius: 8px;
     background: var(--docs-surface);
-    scroll-margin-top: calc(var(--v-layout-top, 0px) + var(--docs-bar-height, 0px) + 24px);
 }
 
 .api-reference__endpoint code {

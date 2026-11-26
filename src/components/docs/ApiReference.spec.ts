@@ -27,7 +27,7 @@ const api: ApiReferenceData = {
     },
     examples: [
         { title: "One peptide", description: "<p>The LCA of AALTER.</p>", params: { input: ["AALTER"] } },
-        { id: "example2", title: "Counts", json: { counts: { 817: 3 } } }
+        { title: "Counts", json: { counts: { 817: 3 } } }
     ]
 };
 
@@ -39,7 +39,8 @@ async function render(component: object, props: Record<string, unknown>, slot?: 
     return renderToString(app);
 }
 
-const ids = (html: string) => [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]);
+/** The ids in the HTML, without the ids that Vuetify generates for its form fields. */
+const ids = (html: string) => [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]).filter(id => !/^input-v-/.test(id));
 
 describe("ApiReference", () => {
     it("shows the endpoint, the page text and the parameters with their tags", async () => {
@@ -62,10 +63,8 @@ describe("ApiReference", () => {
         expect(html).toMatch(/2 fields<\/summary>.*domain_name.*realm_name/s);
     });
 
-    it("keeps the anchors of the old pages", async () => {
-        expect(ids(await render(ApiReference, { api }))).toEqual(
-            expect.arrayContaining(["request", "parameters", "response", "examples", "example2", "try"])
-        );
+    it("has ids only on the parameters, the panel and the response", async () => {
+        expect(ids(await render(ApiReference, { api }))).toEqual(["parameters", "api-panel", "response"]);
     });
 
     it("chooses the first example and shows its request", async () => {

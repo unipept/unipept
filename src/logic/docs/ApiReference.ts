@@ -38,8 +38,6 @@ export interface ApiField {
 }
 
 export interface ApiExample {
-    /** Anchor of the example, such as `example2`. */
-    id?: string;
     title: string;
     description?: string;
     /** Parameters, sent as form fields or in the query string. */

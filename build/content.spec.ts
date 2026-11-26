@@ -11,6 +11,7 @@ describe("checkDocsContent", () => {
         const problems = checkDocsContent(md, srcDir, { isRoute: path => path === "/apidocs" });
 
         expect(problems).toEqual([
+            "guide/api.md: the link #try points to an anchor that is not on the page.",
             "guide/api.md: the link /missing has no page.",
             "guide/api.md: the link #nowhere points to an anchor that is not on the page.",
             `guide/api.md: the id "parameters" is used twice.`,
