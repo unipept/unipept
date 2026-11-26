@@ -3,11 +3,7 @@ title: unipept pept2lca
 subtitle: Returns the taxonomic lowest common ancestor for a given tryptic peptide.
 ---
 
-<script setup lang="ts">
-const peptide: string = "AALTER";
-</script>
-
-The command reads {{ peptide }} and links to [pept2prot](./pept2prot.md).
+The command reads peptides and links to [pept2prot](./pept2prot.md).
 
 ## Input {#input}
 

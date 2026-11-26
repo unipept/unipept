@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";
-import { parse } from "vue/compiler-sfc";
-import { createMarkdownRenderer, markdownToVue } from "./markdown";
-import Sample, { frontmatter, headers, title } from "./fixtures/sample.md";
+import { compileTemplate, parse } from "vue/compiler-sfc";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import type { ResolvedConfig } from "vite";
+import markdownPages, { createMarkdownRenderer, markdownToVue, readDocsPages } from "./markdown";
+import Sample from "./fixtures/sample.md";
 
 const md = await createMarkdownRenderer({ base: "/unipept/" });
 const components = { ApiExample: "@/components/ApiExample.vue", ApiTry: "@/components/ApiTry.vue" };
@@ -16,7 +19,8 @@ describe("markdownToVue", () => {
 
         expect(errors).toEqual([]);
         expect(descriptor.template?.content).toContain(`<h2 id="section"`);
-        expect(descriptor.script?.content).toContain(`export const title = "Title";`);
+        expect(descriptor.script).toBeNull();
+        expect(descriptor.scriptSetup).toBeNull();
     });
 
     it("imports only the components a page uses", () => {
@@ -38,19 +42,10 @@ describe("markdownToVue", () => {
         expect(vue).not.toContain("import ApiExample");
     });
 
-    it("adds the imports to the page's own script setup", () => {
-        const src = `<script setup lang="ts">\nconst a = 1;\n</script>\n\n<ApiExample />\n`;
-        const { descriptor, errors } = parse(markdownToVue(md, src, "/docs/a.md", { components }));
+    it("does not compile a page with a script block", () => {
+        const template = render("<script>\nconst a = 1;\n</script>\n");
 
-        expect(errors).toEqual([]);
-        expect(descriptor.scriptSetup?.content).toContain("import ApiExample");
-        expect(descriptor.scriptSetup?.content).toContain("const a = 1;");
-        expect(descriptor.script?.lang).toBe("ts");
-    });
-
-    it("rejects a plain script block", () => {
-        expect(() => markdownToVue(md, `<script>\nexport default {};\n</script>\n`, "/docs/a.md"))
-            .toThrow("use <script setup>");
+        expect(compileTemplate({ source: template, filename: "a.md", id: "a" }).errors).not.toEqual([]);
     });
 });
 
@@ -141,28 +136,72 @@ describe("createMarkdownRenderer", () => {
 });
 
 describe("a Markdown page imported through Vite", () => {
-    it("exports its front matter, title and headers", () => {
-        expect(frontmatter).toEqual({
-            title: "unipept pept2lca",
-            subtitle: "Returns the taxonomic lowest common ancestor for a given tryptic peptide."
-        });
-        expect(title).toBe("unipept pept2lca");
-        expect(headers).toEqual([{
-            level: 2, title: "Input", slug: "input", link: "#input",
-            children: [{ level: 3, title: "Fasta", slug: "fasta", link: "#fasta", children: [] }]
-        }]);
-    });
-
     it("renders the blocks", async () => {
         const html = await renderToString(createSSRApp(Sample));
 
-        expect(html).toContain("The command reads AALTER");
+        expect(html).toContain("The command reads peptides");
         expect(html).toContain(`<a href="./pept2prot">pept2prot</a>`);
         expect(html).toContain(`<div class="tip custom-block"><p class="custom-block-title">Input size</p>`);
         expect(html).toContain(`<div class="vp-code-group">`);
         expect(html).toContain("{{ not interpolated }}");
-        expect(html).toContain(`<div class="language-console active">`);
+        expect(html).toContain(`<div class="language-console active"><div class="code-header"><span class="lang">Terminal</span>`
+            + `<button type="button" class="copy">Copy</button></div>`);
         expect(html).toMatch(/<span style="--shiki-light:#[0-9A-F]{6}/i);
         expect(html).toMatch(/<img src="[^"]*pixel\.png" alt="A pixel"/);
+    });
+});
+
+describe("readDocsPages", () => {
+    const srcDir = fileURLToPath(new URL("./fixtures/docs", import.meta.url));
+
+    it("lists the title, front matter and headings of every page", () => {
+        expect(readDocsPages(md, srcDir)).toEqual([
+            { file: "guide/advanced/options.md", title: "Options", frontmatter: { title: "Options" }, headers: [] },
+            {
+                file: "guide/index.md",
+                title: "Guide",
+                frontmatter: { title: "Guide", subtitle: "Start here." },
+                headers: [
+                    {
+                        level: 2, title: "Install", slug: "install", link: "#install",
+                        children: [{ level: 3, title: "macOS", slug: "macos_installation", link: "#macos_installation", children: [] }]
+                    },
+                    { level: 2, title: "Use it", slug: "use-it", link: "#use-it", children: [] }
+                ]
+            }
+        ]);
+    });
+
+    it("lists headings whose anchors are on the compiled page", () => {
+        const [, page] = readDocsPages(md, srcDir);
+        const vue = markdownToVue(md, readFileSync(`${srcDir}/guide/index.md`, "utf8"), `${srcDir}/guide/index.md`, { srcDir });
+        const slugs = page.headers.flatMap(h => [h.slug, ...h.children.map(c => c.slug)]);
+
+        expect(slugs).toEqual(["install", "macos_installation", "use-it"]);
+        slugs.forEach(slug => expect(vue).toContain(`id="${slug}"`));
+    });
+
+    it("provides the pages as virtual:docs-pages, with a function that imports each page", async () => {
+        const plugin = markdownPages({ srcDir });
+        (plugin.configResolved as (config: Partial<ResolvedConfig>) => void)({ root: fileURLToPath(new URL("..", import.meta.url)) });
+        const id = (plugin.resolveId as (id: string) => string)("virtual:docs-pages");
+        const code = await (plugin.load as (id: string) => Promise<string>)(id);
+
+        expect(code).toContain(`load: () => import("/build/fixtures/docs/guide/advanced/options.md")`);
+        expect(code).toContain(`"file":"guide/index.md","title":"Guide","frontmatter":{"subtitle":"Start here."}`);
+    });
+
+    it("rejects a page without a title in its front matter", () => {
+        expect(() => readDocsPages(md, fileURLToPath(new URL("./fixtures/docs-errors/no-title", import.meta.url))))
+            .toThrow("page.md: a docs page needs a title in its front matter.");
+    });
+
+    it("rejects a page with a # heading", () => {
+        expect(() => readDocsPages(md, fileURLToPath(new URL("./fixtures/docs-errors/heading", import.meta.url))))
+            .toThrow("page.md: a docs page has no # heading, because the layout shows the title.");
+    });
+
+    it("returns no pages if the folder does not exist", () => {
+        expect(readDocsPages(md, `${srcDir}/missing`)).toEqual([]);
     });
 });
