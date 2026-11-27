@@ -1,5 +1,8 @@
-/* Colours of the docs pages. The accent is the Unipept amber of the Vuetify theme. */
-.docs-layout {
+/*
+ * Colours of the docs pages, also of the search dialog, which is outside the layout. The accent is the Unipept
+ * amber of the Vuetify theme.
+ */
+:root {
     --docs-text: #1f2937;
     --docs-text-strong: #111827;
     --docs-text-muted: #4b5563;

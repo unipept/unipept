@@ -14,6 +14,7 @@
             class="docs-layout__menu"
             @click="closeMenuOnLink"
         >
+            <docs-search class="docs-layout__search" />
             <docs-side-menu :section="docs.section" />
         </aside>
         <transition name="docs-fade">
@@ -141,6 +142,7 @@
 import { computed, nextTick, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useEventListener, useScrollLock } from "@vueuse/core";
+import DocsSearch from "./DocsSearch.vue";
 import DocsSideMenu from "./DocsSideMenu.vue";
 import DocsToc from "./DocsToc.vue";
 import DocsPager from "./DocsPager.vue";
@@ -279,6 +281,10 @@ function scrollToTop() {
 
 .docs-layout__menu:focus {
     outline: none;
+}
+
+.docs-layout__search {
+    margin-bottom: 16px;
 }
 
 .docs-layout__main {
