@@ -62,7 +62,7 @@ const kebabCase = (name: string) => name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").
 
 /**
  * Creates the Markdown renderer for the docs. Besides standard Markdown it supports front matter, `{#id}` after a
- * heading, `::: tip`, `::: info`, `::: warning`, `::: danger`, `::: details` and `::: code-group` blocks,
+ * heading, `{width=50}` after an image, `::: tip`, `::: info`, `::: warning`, `::: danger`, `::: details` and `::: code-group` blocks,
  * highlighted code blocks with a header that shows the language and a copy button, and Vue components in the
  * page.
  */
@@ -74,7 +74,7 @@ export async function createMarkdownRenderer(options: MarkdownRendererOptions = 
 
     const md = markdownIt({ html: true })
         .use(componentPlugin)
-        .use(attrs, { allowedAttributes: ["id"] })
+        .use(attrs, { allowedAttributes: ["id", "width"] })
         .use(anchor, { slugify, permalink: anchor.permalink.linkInsideHeader({ symbol: "&#8203;", ariaHidden: true }) })
         // gray-matter caches a file without options, also after a YAML error, which then reads as empty.
         .use(frontmatterPlugin, { grayMatterOptions: {} })

@@ -33,11 +33,6 @@ const newsMeta = {
     publicationLink: "doi:10.1021/acs.jproteome.8b00716"
 };
 
-const desktopMeta = {
-    publication: "Verschaffelt et al. (2023) Journal of Proteome Research",
-    publicationLink: "doi.org/10.1021/acs.jproteome.3c00091"
-}
-
 export const routes: RouteRecordRaw[] = [
     {
         path: "/",
@@ -139,20 +134,6 @@ export const routes: RouteRecordRaw[] = [
             { path: "printindex", component: () => import("@/components/pages/documentation/metagenomics/MetagenomicsPrintIndexPage.vue"), meta: metagenomicsMeta }
         ],
         meta: metagenomicsMeta
-    },
-    {
-        path: "/desktop",
-        component: () => import("@/components/pages/features/DesktopPage.vue"),
-        children: [
-            { path: "", component: () => import("@/components/pages/documentation/desktopdocs/DesktopGettingStartedPage.vue"), meta: desktopMeta },
-            { path: "application-overview", component: () => import("@/components/pages/documentation/desktopdocs/DesktopApplicationOverviewPage.vue"), meta: desktopMeta },
-            { path: "project-management", component: () => import("@/components/pages/documentation/desktopdocs/DesktopProjectManagementPage.vue"), meta: desktopMeta },
-            { path: "single-assay-analysis", component: () => import("@/components/pages/documentation/desktopdocs/DesktopSingleAssayAnalysisPage.vue"), meta: desktopMeta },
-            { path: "comparative-analysis", component: () => import("@/components/pages/documentation/desktopdocs/DesktopComparativeAnalysisPage.vue"), meta: desktopMeta },
-            { path: "configuration", component: () => import("@/components/pages/documentation/desktopdocs/DesktopConfigurationOptionsPage.vue"), meta: desktopMeta },
-            { path: "faq", component: () => import("@/components/pages/documentation/desktopdocs/DesktopFAQPage.vue"), meta: desktopMeta }
-        ],
-        meta: desktopMeta
     },
     {
         path: "/about",
