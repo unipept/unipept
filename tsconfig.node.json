@@ -10,5 +10,5 @@
     "emitDeclarationOnly": true,
     "outDir": "./node_modules/.tmp/node"
   },
-  "include": ["vite.config.ts", "build/**/*.ts", "src/types/markdown.d.ts", "src/logic/docs/ApiReference.ts"]
+  "include": ["vite.config.ts", "build/**/*.ts", "src/types/markdown.d.ts", "src/logic/docs/ApiReference.ts", "src/logic/docs/DocsSearchIndex.ts"]
 }

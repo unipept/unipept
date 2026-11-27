@@ -2,6 +2,7 @@
 import vue from "@vitejs/plugin-vue"
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
 import markdownPages from "./build/markdown.ts"
+import { docsSearch } from "./build/search.ts"
 
 // Utilities
 import { defineConfig, configDefaults } from "vitest/config"
@@ -35,15 +36,18 @@ function crossOriginIsolation(): Plugin {
 }
 
 // https://vitejs.dev/config/
+const docsDir = fileURLToPath(new URL("./src/content/docs", import.meta.url))
+
 export default defineConfig({
     envPrefix: ['VITE_', 'MAX_PEPTONIZER_'],
     base: baseURL,
     plugins: [
         markdownPages({
-            srcDir: fileURLToPath(new URL("./src/content/docs", import.meta.url)),
+            srcDir: docsDir,
             base: baseURL,
             apiComponent: "@/components/docs/ApiReference.vue"
         }),
+        docsSearch({ srcDir: docsDir, base: baseURL }),
         vue({
             include: [/\.vue$/, /\.md$/],
             template: { transformAssetUrls }
