@@ -18,22 +18,6 @@ $ umgap translate -f1 < input.fa
 DYK
 ```
 
-The `-f` flag allows you to add reading frames to the translation. If you want to translate multiple frames and care to
-keep them apart, the `-n` flag adds the name of the frame to the end of the FASTA header.
-
-```console
-$ umgap translate -n -f1 -f1R < input.fa
->header1|1
-DYK
->header1|1R
-FVI
-```
-
-The `-a` flag can be used as a shortcut to translate all 6 reading frames.
-
-With the `-t` flag, you can select a specific translation table, for instance `-t11` for the bacterial, archaeal and
-plant plastid code.
-
 ## Command-line options {#options}
 
 ### --all-frames / -a
@@ -43,10 +27,10 @@ plant plastid code.
 #### Example
 
 ```console
-$ cat gattaca.fa
+$ cat input.fa
 >header1
 GATTACAAA
-$ umgap translate -a < gattaca.fa
+$ umgap translate -a < input.fa
 >header1
 DYK
 >header1
@@ -68,10 +52,10 @@ CN
 #### Example
 
 ```console
-$ cat gattaca.fa
+$ cat input.fa
 >header1
 GATTACAAA
-$ umgap translate -a -n < gattaca.fa
+$ umgap translate -a -n < input.fa
 >header1|1
 DYK
 >header1|2
@@ -126,13 +110,30 @@ Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
 
 Takes one or more values: `--frame <f>...`.
 
+Pass `-f` once for each frame to translate. To keep the frames apart, add `-n`, which adds the name of the frame
+to the FASTA header.
+
+#### Example
+
+```console
+$ cat input.fa
+>header1
+GATTACAAA
+$ umgap translate -n -f1 -f1R < input.fa
+>header1|1
+DYK
+>header1|1R
+FVI
+```
+
 ### --table / -t
 
 *Translation table to use*
 
 Takes a value: `--table <t>`. The default is `1`.
 
-Translation table 4 translates `TGA` to tryptophan (`W`) instead of a stop codon.
+For instance, `-t11` selects the bacterial, archaeal and plant plastid code. Translation table 4 translates `TGA` to
+tryptophan (`W`) instead of a stop codon.
 
 #### Example
 

@@ -33,8 +33,6 @@ $ umgap uniq -d / < input.fa
 1883
 ```
 
-Taxon IDs are separated by newlines in the actual output, but are separated by spaces in this example.
-
 ## Command-line options {#options}
 
 ### --wrap / -w
@@ -59,7 +57,7 @@ Takes a value: `--separator <s>`. The default is `newline`.
 #### Example
 
 ```console
-$ cat uniq.fa
+$ cat input.fa
 >header1/1
 147206
 240495
@@ -68,7 +66,7 @@ $ cat uniq.fa
 1
 1883
 1883
-$ umgap uniq -d / -s , < uniq.fa
+$ umgap uniq -d / -s , < input.fa
 >header1
 147206,240495,1883,1,1883,1883
 ```
@@ -78,3 +76,25 @@ $ umgap uniq -d / -s , < uniq.fa
 *Strip FASTA headers after this string*
 
 Takes a value: `--delimiter <d>`.
+
+#### Example
+
+```console
+$ cat input.fa
+>header1/1
+147206
+240495
+>header1/2
+1883
+1
+1883
+1883
+$ umgap uniq -d / < input.fa
+>header1
+147206
+240495
+1883
+1
+1883
+1883
+```

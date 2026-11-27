@@ -37,14 +37,6 @@ taxon id,taxon name,input.txt,input.txt
 1,root,2,2
 ```
 
-With the `-r` option, the default species rank can be set to any named rank.
-
-```console
-$ umgap taxa2freq -r phylum taxons.tsv < input.txt
-taxon id,taxon name,stdin
-7711,Chordata,10
-```
-
 ## Command-line options {#options}
 
 ### --frequency / -f
@@ -78,3 +70,23 @@ taxon id,taxon name,stdin
 *The rank to show*
 
 Takes a value: `--rank <r>`. The default is `species`.
+
+#### Example
+
+```console
+$ cat input.txt
+9606
+9606
+2759
+9606
+9606
+9606
+9606
+9606
+9606
+9606
+8287
+$ umgap taxa2freq -r phylum taxons.tsv < input.txt
+taxon id,taxon name,stdin
+7711,Chordata,10
+```

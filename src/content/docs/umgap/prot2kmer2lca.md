@@ -28,21 +28,6 @@ $ umgap prot2kmer2lca -k9 uniprot-2020-04-9mer.index < input.fa
 6920
 ```
 
-Add the `-o` option to print out 0 for k-mers not found in the index.
-
-```console
-$ umgap prot2kmer2lca -o uniprot-2020-04-9mer.index < input.fa
->header1
-571525
-571525
-6920
-6920
-1
-6920
-0
-0
-```
-
 This command also allows an alternative mode of operation. When memory mapped, it can take some time for the index to be
 searched. With the `-m` flag, the complete index will be loaded in memory before operation. This, too, takes some time,
 but for a single large analysis, this impact is irrelevant compared to the time of analysis. When processing many short
@@ -63,6 +48,26 @@ This makes querying significantly faster, but requires some initialization time.
 ### --one-on-one / -o
 
 *Map unknown sequences to 0 instead of ignoring them*
+
+By default, k-mers not found in the index are ignored.
+
+#### Example
+
+```console
+$ cat input.fa
+>header1
+DAIGDVAKAYKKAG*S
+$ umgap prot2kmer2lca -o uniprot-2020-04-9mer.index < input.fa
+>header1
+571525
+571525
+6920
+6920
+1
+6920
+0
+0
+```
 
 ### --chunksize / -c
 

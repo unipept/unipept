@@ -45,10 +45,10 @@ Takes a value: `--length <k>`. The default is `9`.
 #### Example
 
 ```console
-$ cat input.tsv
+$ cat short.tsv
 654924	MNAKYDTDQGVGR
 176652	MIKLFCVLAA
-$ umgap splitkmers -k 6 < input.tsv
+$ umgap splitkmers -k 6 < short.tsv
 MNAKYD	654924
 NAKYDT	654924
 AKYDTD	654924
@@ -73,10 +73,10 @@ Takes a value: `--prefix <p>`.
 #### Example
 
 ```console
-$ cat input.tsv
+$ cat short.tsv
 654924	MNAKYDTDQGVGR
 176652	MIKLFCVLAA
-$ umgap splitkmers -k 6 -p M < input.tsv
+$ umgap splitkmers -k 6 -p M < short.tsv
 NAKYD	654924
 IKLFC	176652
 ```

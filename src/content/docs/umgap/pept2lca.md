@@ -22,20 +22,6 @@ $ umgap pept2lca tryptic-peptides.index < input.fa
 3398
 ```
 
-By default, sequences not found in the index are ignored. Using the `-o (--on-on-one)` flag, they are mapped to 0,
-instead.
-
-```console
-$ cat input.fa
->header1
-NOTATRYPTICPEPTIDE
-ENFVYLAK
-$ umgap pept2lca -o tryptic-peptides.index < input.fa
->header1
-0
-3398
-```
-
 ## Command-line options {#options}
 
 ### --in-memory / -m
@@ -47,6 +33,21 @@ This makes querying significantly faster, but requires some initialization time.
 ### --one-on-one / -o
 
 *Map unknown sequences to 0 instead of ignoring them*
+
+By default, sequences not found in the index are ignored.
+
+#### Example
+
+```console
+$ cat input.fa
+>header1
+NOTATRYPTICPEPTIDE
+ENFVYLAK
+$ umgap pept2lca -o tryptic-peptides.index < input.fa
+>header1
+0
+3398
+```
 
 ### --chunksize / -c
 

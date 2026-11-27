@@ -39,10 +39,10 @@ Takes a value: `--length <k>`. The default is `9`.
 #### Example
 
 ```console
-$ cat kmer.fa
+$ cat input.fa
 >header1
 DAIGDVAKAYKKAG*S
-$ umgap prot2kmer -k 12 < kmer.fa
+$ umgap prot2kmer -k 12 < input.fa
 >header1
 DAIGDVAKAYKK
 AIGDVAKAYKKA

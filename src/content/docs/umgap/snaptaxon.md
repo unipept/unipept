@@ -21,18 +21,12 @@ $ cat input.fa
 186802
 1598
 1883
-$ umgap snaptaxon 2020-04-taxons.tsv -r order < ~/input.fa
+$ umgap snaptaxon taxons.tsv -r order < input.fa
 >header1
 38820
 186802
 186826
 85011
-$ umgap snaptaxon 2020-04-taxons.tsv -t 1239 2 < ~/input.fa
->header1
-1
-1239
-1239
-2
 ```
 
 ## Command-line options {#options}
@@ -65,8 +59,42 @@ subfamily, tribe, subtribe, genus, subgenus, species group, species subgroup, sp
 
 Takes a value: `--rank <r>`.
 
+#### Example
+
+```console
+$ cat input.fa
+>header1
+888268
+186802
+1598
+1883
+$ umgap snaptaxon taxons.tsv -r order < input.fa
+>header1
+38820
+186802
+186826
+85011
+```
+
 ### --taxons / -t
 
 *A taxon to snap towards (allow multiple times)*
 
 Takes one or more values: `--taxons <t>...`.
+
+#### Example
+
+```console
+$ cat input.fa
+>header1
+888268
+186802
+1598
+1883
+$ umgap snaptaxon taxons.tsv -t 1239 2 < input.fa
+>header1
+1
+1239
+1239
+2
+```
