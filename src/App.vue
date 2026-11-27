@@ -172,10 +172,7 @@ type NavItem = {
 const navItems: NavItem[] = [
     { name: "Single Peptide Analysis", path: "/spa", forceReload: false },
     { name: "Metaproteomics Analysis", path: "/mpa", forceReload: false },
-    { name: "API", path: "/apidocs", forceReload: false },
-    { name: "CLI", path: "/clidocs", forceReload: false },
-    { name: "Metagenomics", path: "/umgap", forceReload: false },
-    { name: "Unipept Desktop", path: "/desktop", forceReload: false },
+    { name: "Documentation", path: "/docs", forceReload: false },
 ];
 
 const unipeptCommunicator = new UnipeptCommunicator();

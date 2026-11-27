@@ -2,7 +2,9 @@ import {test, expect} from '../fixtures';
 
 test.describe('Documentation hub', () => {
     test('links every section and its main pages, and searches all docs', async ({page}) => {
-        await page.goto('/docs');
+        await page.goto('/');
+        await page.getByRole('tab', {name: 'Documentation'}).click();
+        await expect(page).toHaveURL(/\/docs$/);
         await expect(page.getByRole('heading', {level: 1, name: 'Unipept documentation'})).toBeVisible();
 
         for (const name of ['API', 'CLI', 'UMGAP', 'Desktop Deprecated']) {

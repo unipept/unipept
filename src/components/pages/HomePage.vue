@@ -22,6 +22,8 @@
                 API and a set of command line tools. Next to these core functions, Unipept also has a tool for selecting
                 unique peptides for <span class="font-weight-bold">targeted proteomics</span> and for
                 <span class="font-weight-bold">comparing genomes</span> based on peptide similarity.
+                The <router-link to="/docs">documentation</router-link> explains the API, the command line tools,
+                the metagenomics pipeline and Unipept Desktop.
             </v-col>
 
             <v-col
