@@ -51,6 +51,27 @@ describe("buildDocsSections", () => {
             .toEqual(["/cli", "/cli/casestudies", "/cli/casestudies/tpa", "/cli/pept2lca"]);
     });
 
+    it("links the first page and the case studies of the config", () => {
+        const caseStudies = [{ page: "casestudies/tpa", label: "Case study" }, "casestudies"];
+        const [section] = buildDocsSections({ cli: { ...config, startLabel: "Overview and installation", caseStudies } }, pages);
+
+        expect([section.start!.page.path, section.start!.label]).toEqual(["/cli", "Overview and installation"]);
+        expect(section.caseStudies.map(({ page, label }) => [page.path, label]))
+            .toEqual([["/cli/casestudies/tpa", "Case study"], ["/cli/casestudies", "Case studies"]]);
+    });
+
+    it("labels the start link with the menu label, and has no case studies without config", () => {
+        const [section] = buildDocsSections({ cli: config }, pages);
+
+        expect(section.start!.label).toBe("Unipept CLI");
+        expect(section.caseStudies).toEqual([]);
+    });
+
+    it("rejects a case study that is not in the menu", () => {
+        expect(() => buildDocsSections({ cli: { ...config, caseStudies: ["pept2prot"] } }, pages))
+            .toThrow(`cli/_section.ts: the case study "pept2prot" is not in the menu.`);
+    });
+
     it("takes the menu label and subtitle from the front matter", () => {
         const [section] = buildDocsSections({ cli: config }, pages);
         const [overview, , tpa, pept2lca] = section.pages;

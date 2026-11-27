@@ -4,6 +4,7 @@ export default defineDocsSection({
     title: "API",
     publication: "Mesuere et al. (2016) Bioinformatics",
     publicationLink: "doi:10.1093/bioinformatics/btw039",
+    description: "Query peptides, proteins and taxa over HTTP and get JSON back.",
     menu: [
         "",
         {

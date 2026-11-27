@@ -19,6 +19,17 @@ export interface DocsSectionConfig {
      * Pages that are not in a group are shown above the next group, without a title.
      */
     menu: (string | DocsMenuGroupConfig)[];
+    /** Whether the product of the section is deprecated, which the docs hub shows. */
+    deprecated?: boolean;
+    /** One sentence on the section, for its card on the docs hub. */
+    description?: string;
+    /** Text of the link to the first page of the menu on the docs hub. The default is the menu label of that page. */
+    startLabel?: string;
+    /**
+     * Case studies that the card on the docs hub links to, written as in {@link DocsSectionConfig.menu}. A link shows
+     * the menu label of its page, or `label`.
+     */
+    caseStudies?: (string | { page: string; label: string })[];
 }
 
 export interface DocsPage {
@@ -41,7 +52,7 @@ export interface DocsMenuGroup {
     pages: DocsPage[];
 }
 
-export interface DocsSection extends Omit<DocsSectionConfig, "menu"> {
+export interface DocsSection extends Omit<DocsSectionConfig, "menu" | "startLabel" | "caseStudies"> {
     /** Name of the section folder, such as "clidocs". */
     name: string;
     /** URL of the section, such as "/clidocs". */
@@ -49,6 +60,14 @@ export interface DocsSection extends Omit<DocsSectionConfig, "menu"> {
     menu: DocsMenuGroup[];
     /** All pages, in menu order. */
     pages: DocsPage[];
+    /** Link to the first page of the menu on the docs hub. */
+    start?: DocsLink;
+    caseStudies: DocsLink[];
+}
+
+export interface DocsLink {
+    page: DocsPage;
+    label: string;
 }
 
 /** Types the default export of a `_section.ts` file. */
@@ -66,8 +85,8 @@ export function docsPagePath(file: string): string {
 
 /**
  * Combines the section configs, by folder name, with the pages from `virtual:docs-pages`. Throws if a page is not
- * in its section's menu, if a menu entry has no page, if a page is not in a section folder with a config, or if two
- * pages have the same URL.
+ * in its section's menu, if a menu entry has no page, if a case study is not in the menu, if a page is not in a
+ * section folder with a config, or if two pages have the same URL.
  */
 export function buildDocsSections(configs: Record<string, DocsSectionConfig>, pages: DocsPageData[]): DocsSection[] {
     const pagesByPath = new Map<string, DocsPageData>();
@@ -87,7 +106,7 @@ export function buildDocsSections(configs: Record<string, DocsSectionConfig>, pa
         }
     }
 
-    return Object.entries(configs).map(([name, { menu, ...config }]) => {
+    return Object.entries(configs).map(([name, { menu, startLabel, caseStudies = [], ...config }]) => {
         const sectionPath = `/${name}`;
         const listed = new Set<string>();
 
@@ -134,7 +153,20 @@ export function buildDocsSections(configs: Record<string, DocsSectionConfig>, pa
             throw new Error(`Docs page ${missing.file} is not in the menu of ${name}/_section.ts.`);
         }
 
-        return { ...config, name, path: sectionPath, menu: groups, pages: groups.flatMap(group => group.pages) };
+        const sectionPages = groups.flatMap(group => group.pages);
+        const first = sectionPages[0];
+        const start = first && { page: first, label: startLabel ?? first.menuLabel };
+        const caseStudyLinks = caseStudies.map(entry => {
+            const { page: file, label } = typeof entry === "string" ? { page: entry, label: undefined } : entry;
+            const path = file === "" ? sectionPath : `${sectionPath}/${file}`;
+            const page = sectionPages.find(p => p.path === path);
+            if (!page) {
+                throw new Error(`${name}/_section.ts: the case study "${file}" is not in the menu.`);
+            }
+            return { page, label: label ?? page.menuLabel };
+        });
+
+        return { ...config, name, path: sectionPath, menu: groups, pages: sectionPages, start, caseStudies: caseStudyLinks };
     });
 }
 

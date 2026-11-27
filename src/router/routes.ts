@@ -96,5 +96,11 @@ export const routes: RouteRecordRaw[] = [
             publicationLink: "doi:10.1021/acs.jproteome.8b00716"
         }
     },
+    {
+        path: "/docs",
+        component: () => import("@/components/docs/DocsHub.vue"),
+        props: { sections: docsSections },
+        meta: {}
+    },
     ...docsRoutes(docsSections, () => import("@/components/docs/DocsLayout.vue"))
 ]
