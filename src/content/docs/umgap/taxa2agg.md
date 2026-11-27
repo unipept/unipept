@@ -142,13 +142,13 @@ $ umgap taxa2agg -l 2 taxons.tsv < lower.fa
 
 *The method to use for aggregation*
 
-Takes a value: `--method <m>`. The default is `tree] [possible values: tree, rmq`.
+Takes a value: `--method <m>`, one of `tree` and `rmq`. The default is `tree`.
 
 ### --aggregate / -a
 
 *The strategy to use for aggregation*
 
-Takes a value: `--aggregate <a>`. The default is `hybrid] [possible values: lca*, hybrid, mrtl`.
+Takes a value: `--aggregate <a>`, one of `lca*`, `hybrid` and `mrtl`. The default is `hybrid`.
 
 With `-a 'lca*'`, the result for the input of the `--factor` example is 1783272 (Bacillati).
 

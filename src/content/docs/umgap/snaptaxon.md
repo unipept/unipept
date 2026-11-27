@@ -53,9 +53,10 @@ $ umgap snaptaxon -i -r species taxons.tsv < invalid.fa
 
 ### --rank / -r
 
-*The rank to snap towards [possible values: superkingdom, kingdom, subkingdom, superphylum, phylum, subphylum,
-superclass, class, subclass, infraclass, superorder, order, suborder, infraorder, parvorder, superfamily, family,
-subfamily, tribe, subtribe, genus, subgenus, species group, species subgroup, species, subspecies, varietas, forma]*
+*The rank to snap towards [possible values: superkingdom, domain, realm, kingdom, subkingdom, superphylum, phylum,
+subphylum, superclass, class, subclass, infraclass, superorder, order, suborder, infraorder, parvorder, superfamily,
+family, subfamily, tribe, subtribe, genus, subgenus, species group, species subgroup, species, subspecies, varietas,
+forma, strain]*
 
 Takes a value: `--rank <r>`.
 
