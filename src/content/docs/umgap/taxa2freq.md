@@ -53,6 +53,26 @@ taxon id,taxon name,stdin
 
 Takes a value: `--frequency <f>`. The default is `1`.
 
+#### Example
+
+```console
+$ cat input.txt
+9606
+9606
+2759
+9606
+9606
+9606
+9606
+9606
+9606
+9606
+8287
+$ umgap taxa2freq -f 3 taxons.tsv < input.txt
+taxon id,taxon name,stdin
+9606,Homo sapiens,9
+```
+
 ### --rank / -r
 
 *The rank to show*

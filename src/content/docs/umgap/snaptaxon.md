@@ -41,6 +41,22 @@ $ umgap snaptaxon 2020-04-taxons.tsv -t 1239 2 < ~/input.fa
 
 *Include the invalidated taxa from the taxonomy*
 
+In the example, 60 (Vitreoscilla sp.) is an invalid taxon. Without `-i`, it snaps to the root (1).
+
+#### Example
+
+```console
+$ cat invalid.fa
+>header1
+60
+$ umgap snaptaxon -r species taxons.tsv < invalid.fa
+>header1
+1
+$ umgap snaptaxon -i -r species taxons.tsv < invalid.fa
+>header1
+60
+```
+
 ### --rank / -r
 
 *The rank to snap towards [possible values: superkingdom, kingdom, subkingdom, superphylum, phylum, subphylum,

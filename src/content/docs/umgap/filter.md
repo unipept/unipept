@@ -59,6 +59,23 @@ Takes a value: `--lacks <l>`. There is no default.
 
 Takes a value: `--maxlen <M>`. The default is `50`.
 
+#### Example
+
+```console
+$ cat peps.fa
+>header1
+AYK
+K
+AGVSGHVWQSDGITNCLLR
+GLTR
+VK
+EAVANR
+DSGNGYINK
+$ umgap filter -M 8 < peps.fa
+>header1
+EAVANR
+```
+
 ### --minlen / -m
 
 *Minimum length required*

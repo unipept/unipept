@@ -57,11 +57,69 @@ penalty of 5, which can be made more or less severe (higher or lower) with the `
 
 Takes a value: `--max-gap-size <g>`. The default is `0`.
 
+#### Example
+
+```console
+$ cat seeds.fa
+>header1
+1883
+1883
+0
+1598
+1598
+0
+0
+2
+2
+2
+$ umgap seedextend < seeds.fa
+>header1
+1883
+1883
+1598
+1598
+2
+2
+2
+$ umgap seedextend -g 1 < seeds.fa
+>header1
+1883
+1883
+0
+1598
+1598
+2
+2
+2
+```
+
 ### --min-seed-size / -s
 
 *The minimum length of equal taxa to count as seed*
 
 Takes a value: `--min-seed-size <s>`. The default is `2`.
+
+#### Example
+
+```console
+$ cat seeds.fa
+>header1
+1883
+1883
+0
+1598
+1598
+0
+0
+2
+2
+2
+$ umgap seedextend -s 3 < seeds.fa
+>header1
+2
+2
+2
+```
 
 ### --penalty / -p
 
@@ -69,8 +127,62 @@ Takes a value: `--min-seed-size <s>`. The default is `2`.
 
 Takes a value: `--penalty <p>`. The default is `5`.
 
+In scored mode, each gap in an extended seed adds the penalty to the score of that seed. With `-p 0`, the
+extended seed with a gap scores lower than the seed of 3 times Bacteria (2).
+
+#### Example
+
+```console
+$ cat seeds.fa
+>header1
+1883
+1883
+0
+1598
+1598
+0
+0
+2
+2
+2
+$ umgap seedextend -r taxons.tsv -g 1 < seeds.fa
+>header1
+1883
+1883
+0
+1598
+1598
+$ umgap seedextend -r taxons.tsv -g 1 -p 0 < seeds.fa
+>header1
+2
+2
+2
+```
+
 ### --ranked / -r
 
 *Use taxon ranks in given NCBI taxonomy tsv-file to pick extended seed with highest score*
 
 Takes a value: `--ranked <r>`.
+
+#### Example
+
+```console
+$ cat seeds.fa
+>header1
+1883
+1883
+0
+1598
+1598
+0
+0
+2
+2
+2
+$ umgap seedextend -r taxons.tsv < seeds.fa
+>header1
+2
+2
+2
+```

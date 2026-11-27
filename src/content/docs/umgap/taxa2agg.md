@@ -48,21 +48,95 @@ aggregation is also available via the `-a` and `-m` options, as is a hybrid appr
 
 *Let all taxa snap to taxa with a named rank (such as species) during calculations*
 
+In the example, 2593676 (unclassified Streptomyces) has no named rank. With `-r`, it counts as its genus
+Streptomyces (1883).
+
+#### Example
+
+```console
+$ cat ranked.fa
+>header1
+2593676
+2593676
+1883
+$ umgap taxa2agg taxons.tsv < ranked.fa
+>header1
+2593676
+$ umgap taxa2agg -r taxons.tsv < ranked.fa
+>header1
+1883
+```
+
 ### --scored / -s
 
 *Each taxon is followed by a score between 0 and 1*
 
+#### Example
+
+```console
+$ cat scored.fa
+>header1
+1883=0.9
+1883=0.8
+1598=0.2
+1239=0.3
+1239=0.1
+$ umgap taxa2agg -s taxons.tsv < scored.fa
+>header1
+1883
+```
+
 ### --factor / -f
 
-*The factor for the hybrid aggregation, from 0.0 (MRTL) to 1.0 (LCA*)*
+*The factor for the hybrid aggregation, from 0.0 (MRTL) to 1.0 (LCA\*)*
 
 Takes a value: `--factor <f>`. The default is `0.25`.
+
+In the example, 1883 is Streptomyces, 1598 is *Limosilactobacillus reuteri* and 1239 is Bacillota. With `-f 1`, the
+result is 1783272 (Bacillati), the lowest taxon that contradicts none of them.
+
+#### Example
+
+```console
+$ cat mix.fa
+>header1
+1883
+1883
+1598
+1239
+1239
+$ umgap taxa2agg taxons.tsv < mix.fa
+>header1
+1598
+$ umgap taxa2agg -f 1 taxons.tsv < mix.fa
+>header1
+1783272
+```
 
 ### --lower-bound / -l
 
 *The smallest input frequency for a taxon to be included in the aggregation*
 
 Takes a value: `--lower-bound <l>`. The default is `0`.
+
+In the example, 1239 is Bacillota and 1598 is *Limosilactobacillus reuteri*, a species in Bacillota. With `-l 2`, the
+taxa that occur only once (1598) are left out.
+
+#### Example
+
+```console
+$ cat lower.fa
+>header1
+1239
+1239
+1598
+$ umgap taxa2agg taxons.tsv < lower.fa
+>header1
+1598
+$ umgap taxa2agg -l 2 taxons.tsv < lower.fa
+>header1
+1239
+```
 
 ### --method / -m
 
@@ -75,3 +149,20 @@ Takes a value: `--method <m>`. The default is `tree] [possible values: tree, rmq
 *The strategy to use for aggregation*
 
 Takes a value: `--aggregate <a>`. The default is `hybrid] [possible values: lca*, hybrid, mrtl`.
+
+With `-a 'lca*'`, the result for the input of the `--factor` example is 1783272 (Bacillati).
+
+#### Example
+
+```console
+$ cat mix.fa
+>header1
+1883
+1883
+1598
+1239
+1239
+$ umgap taxa2agg -a 'lca*' taxons.tsv < mix.fa
+>header1
+1783272
+```

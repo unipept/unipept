@@ -40,3 +40,21 @@ Using the `-p` flag, you can change the splitting pattern. The default pattern (
 *The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides*
 
 Takes a value: `--pattern <p>`. The default is `([KR])([^P])`.
+
+#### Example
+
+```console
+$ cat kp.fa
+>header1
+MSKPLAKGRPEK
+$ umgap prot2tryp < kp.fa
+>header1
+MSKPLAK
+GRPEK
+$ umgap prot2tryp -p '([KR])()' < kp.fa
+>header1
+MSK
+PLAK
+GR
+PEK
+```

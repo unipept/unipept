@@ -43,3 +43,59 @@ Taxon IDs are separated by newlines in the actual output, but are separated by s
 *The number of frames of which to pick the best*
 
 Takes a value: `--frames <f>`. The default is `6`.
+
+#### Example
+
+```console
+$ cat input.fa
+>header1|1
+9606
+9606
+2759
+9606
+9606
+9606
+9606
+9606
+9606
+9606
+8287
+>header1|2
+2026807
+888268
+186802
+1598
+1883
+>header1|3
+1883
+>header1|1R
+27342
+2759
+155619
+1133106
+38033
+2
+>header1|2R
+>header1|3R
+2951
+$ umgap bestof -f 3 < input.fa
+>header1|1
+9606
+9606
+2759
+9606
+9606
+9606
+9606
+9606
+9606
+9606
+8287
+>header1|1R
+27342
+2759
+155619
+1133106
+38033
+2
+```

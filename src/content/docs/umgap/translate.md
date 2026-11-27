@@ -40,17 +40,85 @@ plant plastid code.
 
 *Read and output all six frames*
 
+#### Example
+
+```console
+$ cat gattaca.fa
+>header1
+GATTACAAA
+$ umgap translate -a < gattaca.fa
+>header1
+DYK
+>header1
+IT
+>header1
+LQ
+>header1
+FVI
+>header1
+L*
+>header1
+CN
+```
+
 ### --append-name / -n
 
 *Append a bar (\|) and the name of the frame to the fasta header*
+
+#### Example
+
+```console
+$ cat gattaca.fa
+>header1
+GATTACAAA
+$ umgap translate -a -n < gattaca.fa
+>header1|1
+DYK
+>header1|2
+IT
+>header1|3
+LQ
+>header1|1R
+FVI
+>header1|2R
+L*
+>header1|3R
+CN
+```
 
 ### --methionine / -m
 
 *Replace each start-codon with methionine*
 
+#### Example
+
+```console
+$ cat start.fa
+>header1
+TTGGATTACAAA
+$ umgap translate -f1 < start.fa
+>header1
+LDYK
+$ umgap translate -f1 -m < start.fa
+>header1
+MDYK
+```
+
 ### --show-table / -s
 
 *Instead of normal use, print the selected table and exit*
+
+#### Example
+
+```console
+$ umgap translate -s
+universal=1
+AAs    = FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+Starts = ---M---------------M---------------M----------------------------
+Base1  = TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG
+Base2  = TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG
+Base3  = TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG
+```
 
 ### --frame / -f
 
@@ -63,3 +131,19 @@ Takes one or more values: `--frame <f>...`.
 *Translation table to use*
 
 Takes a value: `--table <t>`. The default is `1`.
+
+Translation table 4 translates `TGA` to tryptophan (`W`) instead of a stop codon.
+
+#### Example
+
+```console
+$ cat stop.fa
+>header1
+TGAGATTAC
+$ umgap translate -f1 < stop.fa
+>header1
+*DY
+$ umgap translate -f1 -t 4 < stop.fa
+>header1
+WDY
+```

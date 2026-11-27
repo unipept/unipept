@@ -41,11 +41,37 @@ Taxon IDs are separated by newlines in the actual output, but are separated by s
 
 *Wrap the output sequences*
 
+#### Example
+
+```console
+$ { echo '>header1'; seq 30; } | umgap uniq -s , -w
+>header1
+1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,2
+7,28,29,30
+```
+
 ### --separator / -s
 
 *Separator between output items*
 
 Takes a value: `--separator <s>`. The default is `newline`.
+
+#### Example
+
+```console
+$ cat uniq.fa
+>header1/1
+147206
+240495
+>header1/2
+1883
+1
+1883
+1883
+$ umgap uniq -d / -s , < uniq.fa
+>header1
+147206,240495,1883,1,1883,1883
+```
 
 ### --delimiter / -d
 

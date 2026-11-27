@@ -35,3 +35,18 @@ KAYKKAG*S
 *The k-mer length*
 
 Takes a value: `--length <k>`. The default is `9`.
+
+#### Example
+
+```console
+$ cat kmer.fa
+>header1
+DAIGDVAKAYKKAG*S
+$ umgap prot2kmer -k 12 < kmer.fa
+>header1
+DAIGDVAKAYKK
+AIGDVAKAYKKA
+IGDVAKAYKKAG
+GDVAKAYKKAG*
+DVAKAYKKAG*S
+```

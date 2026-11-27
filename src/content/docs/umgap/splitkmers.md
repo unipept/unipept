@@ -42,8 +42,41 @@ KLFCVLAAF	176652
 
 Takes a value: `--length <k>`. The default is `9`.
 
+#### Example
+
+```console
+$ cat input.tsv
+654924	MNAKYDTDQGVGR
+176652	MIKLFCVLAA
+$ umgap splitkmers -k 6 < input.tsv
+MNAKYD	654924
+NAKYDT	654924
+AKYDTD	654924
+KYDTDQ	654924
+YDTDQG	654924
+DTDQGV	654924
+TDQGVG	654924
+DQGVGR	654924
+MIKLFC	176652
+IKLFCV	176652
+KLFCVL	176652
+LFCVLA	176652
+FCVLAA	176652
+```
+
 ### --prefix / -p
 
 *Print only the (k-1)-mer suffixes of the k-mers starting with this character*
 
 Takes a value: `--prefix <p>`.
+
+#### Example
+
+```console
+$ cat input.tsv
+654924	MNAKYDTDQGVGR
+176652	MIKLFCVLAA
+$ umgap splitkmers -k 6 -p M < input.tsv
+NAKYD	654924
+IKLFC	176652
+```
