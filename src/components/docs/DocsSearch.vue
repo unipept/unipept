@@ -67,7 +67,7 @@
                         :title="result.title"
                         :subtitle="where(result)"
                         rounded="lg"
-                        @click="closeForResult"
+                        @click="closeForResult(result)"
                         @mousemove="active = i"
                     />
                 </v-list>
@@ -96,6 +96,11 @@ defineProps<{
     large?: boolean;
 }>();
 
+const emit = defineEmits<{
+    /** A result was chosen. */
+    result: [];
+}>();
+
 const router = useRouter();
 
 const open = ref(false);
@@ -109,6 +114,8 @@ const button = ref<ComponentPublicInstance>();
 const input = ref<{ focus: () => void }>();
 /** Whether the dialog closed to open a result, which moves the focus to the new page. */
 let navigated = false;
+/** A result on the current page, which the router does not scroll to. */
+let samePage: string | undefined;
 
 const shortcut = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform) ? "⌘ K" : "Ctrl K";
 
@@ -163,9 +170,11 @@ async function move(step: number) {
 }
 
 /** Closes the dialog for a result that the router opens. */
-function closeForResult() {
+function closeForResult(result: DocsSearchResult) {
     navigated = true;
+    samePage = router.resolve(result.url).fullPath === router.currentRoute.value.fullPath ? result.url : undefined;
     open.value = false;
+    emit("result");
 }
 
 function afterLeave() {
@@ -173,12 +182,27 @@ function afterLeave() {
     if (!navigated) {
         (button.value?.$el as HTMLElement | undefined)?.focus();
     }
+    if (samePage) {
+        scrollTo(samePage);
+    }
     navigated = false;
+    samePage = undefined;
+}
+
+/** Scrolls to the heading of a URL, or to the top if it has no hash. */
+function scrollTo(url: string) {
+    const hash = router.resolve(url).hash;
+    const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
+    if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+    } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 }
 
 function go(result: DocsSearchResult | undefined) {
     if (result) {
-        closeForResult();
+        closeForResult(result);
         router.push(result.url);
     }
 }

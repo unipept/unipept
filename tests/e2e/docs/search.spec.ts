@@ -48,4 +48,28 @@ test.describe('Documentation search', () => {
         await expect(menu).toBeVisible();
         await expect(button).toBeFocused();
     });
+
+    test('closes the menu drawer and scrolls for a result on the current page', async ({page}) => {
+        await page.setViewportSize({width: 800, height: 900});
+        await page.goto('/clidocs/pept2lca');
+        await expect(page.getByRole('main').locator('h1').first()).toBeVisible();
+        await page.getByRole('button', {name: 'Menu'}).click();
+        const menu = page.locator('.docs-layout__menu');
+        await menu.getByRole('button', {name: /Search/}).click();
+
+        const input = page.getByRole('combobox', {name: 'Search the documentation'});
+        await input.fill('pept2lca');
+        await page.getByRole('option', {name: '--equate / -e CLI › unipept pept2lca'}).click();
+
+        await expect(input).toBeHidden();
+        await expect(menu).toBeHidden();
+        await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+
+        await page.getByRole('button', {name: 'Menu'}).click();
+        await menu.getByRole('button', {name: /Search/}).click();
+        await input.fill('pept2lca');
+        await page.getByRole('option', {name: 'unipept pept2lca CLI › unipept pept2lca'}).click();
+        await expect(input).toBeHidden();
+        await expect(menu).toBeHidden();
+    });
 });

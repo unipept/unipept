@@ -14,7 +14,10 @@
             :class="['docs-layout__menu', menuFade]"
             @click="closeMenuOnLink"
         >
-            <docs-search class="docs-layout__search" />
+            <docs-search
+                class="docs-layout__search"
+                @result="closeMenu()"
+            />
             <docs-side-menu :section="docs.section" />
         </aside>
         <transition name="docs-fade">
