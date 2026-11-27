@@ -5,7 +5,7 @@ import { apiReference } from "./apiReference.ts";
 import { markdownToVue, readDocsPages, type DocsPageData } from "./markdown.ts";
 
 export interface DocsContentOptions {
-    /** Whether the app has a route for a path that is not a docs page. */
+    /** Whether the app has a route or a public file for a path that is not a docs page. */
     isRoute: (path: string) => boolean;
 }
 
