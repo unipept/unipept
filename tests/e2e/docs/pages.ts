@@ -60,14 +60,7 @@ const vuePages: DocsPage[] = [
     { url: "/umgap/splitkmers", title: "umgap splitkmers", anchors: ["usage"] },
     { url: "/umgap/joinkmers", title: "umgap joinkmers", anchors: ["usage"] },
     { url: "/umgap/buildindex", title: "umgap buildindex", anchors: ["usage"] },
-    { url: "/umgap/printindex", title: "umgap printindex", anchors: ["usage"] },
-    { url: "/desktop", title: "Unipept Desktop documentation v2.0.0", anchors: ["overview", "download", "windows_installation", "macos_installation", "linux_installation", "first_time_use", "update"] },
-    { url: "/desktop/application-overview", title: "Application overview", anchors: ["application_window", "sidebar"] },
-    { url: "/desktop/project-management", title: "Project Management", anchors: ["overview", "managing_projects"] },
-    { url: "/desktop/single-assay-analysis", title: "Unipept Desktop - Single Assay Analysis", anchors: ["overview", "analysing_assay", "taxonomic_analysis_results"] },
-    { url: "/desktop/comparative-analysis", title: "Comparative Analysis", anchors: ["overview", "intra_assay_comparison", "inter_assay_comparison"] },
-    { url: "/desktop/configuration", title: "Configuration options", anchors: ["concurrency", "storage", "docker"] },
-    { url: "/desktop/faq", title: "Frequently Asked Questions (FAQ)", anchors: ["faq"] }
+    { url: "/umgap/printindex", title: "umgap printindex", anchors: ["usage"] }
 ];
 
 export const docsPages: DocsPage[] = [...markdownPages, ...vuePages];
