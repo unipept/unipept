@@ -15,7 +15,7 @@ multiple peptides per FASTA header, separated by newlines.
 $ cat input.fa
 >header1
 AYKKAGVSGHVWQSDGITNCLLRGLTRVKEAVANRDSGNGYINKVYYWTVDKRATTRDALDAGVDGIMTNYPDVITDVLN
-$ umgap prot2tryp tryptic-lca.index < input.fa
+$ umgap prot2tryp < input.fa
 >header1
 AYK
 K

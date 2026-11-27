@@ -73,11 +73,11 @@ the input order, having a chunk size which is a multiple of 12 (all 6 translatio
 reads) will keep FASTA records that originate from the same reads together. Takes a value: `--chunksize <c>`. The
 default is `240`.
 
-### --length / -l
+### --length / -k
 
 *The length of the k-mers in the index*
 
-Takes a value: `--length <l>`. The default is `9`.
+Takes a value: `--length <k>`. The default is `9`.
 
 ### --socket / -s
 

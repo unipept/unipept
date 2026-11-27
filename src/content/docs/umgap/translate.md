@@ -22,7 +22,7 @@ The `-f` flag allows you to add reading frames to the translation. If you want t
 keep them apart, the `-n` flag adds the name of the frame to the end of the FASTA header.
 
 ```console
-$ umgap translate -f1 -f1R < input.fa
+$ umgap translate -n -f1 -f1R < input.fa
 >header1|1
 DYK
 >header1|1R

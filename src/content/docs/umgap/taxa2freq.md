@@ -29,12 +29,12 @@ $ cat input.txt
 8287
 $ umgap taxa2freq taxons.tsv < input.txt
 taxon id,taxon name,stdin
-1,root,2
 9606,Homo sapiens,9
+1,root,2
 $ umgap taxa2freq taxons.tsv input.txt input.txt
 taxon id,taxon name,input.txt,input.txt
-1,root,2,2
 9606,Homo sapiens,9,9
+1,root,2,2
 ```
 
 With the `-r` option, the default species rank can be set to any named rank.

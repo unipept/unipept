@@ -46,8 +46,9 @@ The number of consecutive equal IDs to start a seed is 2 by default, and can be 
 maximum length of gaps between seeds to join in an extension can be set with `-g`, no gaps are allowed by default.
 
 The command can be altered to print only the extended seed with the highest score among all extended seeds. Pass a
-taxonomy using the `-r taxon.tsv` option to activate this. In this scored mode, extended seeds with gaps are given a
-penalty of 5, which can be made more or less severe (higher or lower) with the `-p` option.
+taxonomy using the `-r taxon.tsv` option to activate this. In this scored mode, each gap adds a penalty of 5 to the
+score of its extended seed, instead of the score of a taxon. The `-p` option changes this value: a lower value makes
+gaps more severe.
 
 ## Command-line options {#options}
 
