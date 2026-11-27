@@ -6,7 +6,7 @@ subtitle: Splits a TSV stream of peptides and taxon IDs into k-mers and taxon ID
 The `umgap splitkmers` command takes tab-separated taxon IDs and protein sequences and outputs the k-mers mapped to the
 taxon IDs.
 
-## usage {#usage}
+## Usage {#usage}
 
 The input is given on *standard input* and should be a TSV formatted stream of taxon IDs and a protein sequence from
 this taxon. The output will be written to *standard output* and consists of a TSV formatted stream of k-mers mapped to
@@ -34,10 +34,16 @@ KLFCVLAAF	176652
 ...
 ```
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-k / --length k** | The k-mer length [default: 9] |
-| **-p / --prefix p** | Print only the (k-1)-mer suffixes of the k-mers starting with this character |
+## Command-line options {#options}
 
+### --length / -k
+
+*The k-mer length*
+
+Takes a value: `--length <k>`. The default is `9`.
+
+### --prefix / -p
+
+*Print only the (k-1)-mer suffixes of the k-mers starting with this character*
+
+Takes a value: `--prefix <p>`.

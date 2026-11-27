@@ -52,13 +52,37 @@ umgap prot2kmer2lca index | ...`, it can run in a separate (and persistent) proc
 pipeline(s) to communicate with the socket using [OpenBSD's netcat](http://man.openbsd.org/nc): `... | nc -NU
 /path/to/umgap-socket | ...`.
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-m / --in-memory** | Load index in memory instead of memory mapping the file contents. This makes querying significantly faster, but requires some initialization time. |
-| **-o / --one-on-one** | Map unknown sequences to 0 instead of ignoring them |
-| **-c / --chunksize c** | Number of reads grouped into one chunk. Bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end reads) will keep FASTA records that originate from the same reads together [default: 240] |
-| **-l / --length l** | The length of the k-mers in the index [default: 9] |
-| **-s / --socket s** | Instead of reading from stdin and writing to stdout, create a Unix socket to communicate with using OpenBSD's netcat (nc -NU socket). This is especially useful in combination with the --in-memory flag: you only have to load the index in memory once, after which you can query it without having the loading time overhead each time |
+## Command-line options {#options}
 
+### --in-memory / -m
+
+*Load index in memory instead of memory mapping the file contents*
+
+This makes querying significantly faster, but requires some initialization time.
+
+### --one-on-one / -o
+
+*Map unknown sequences to 0 instead of ignoring them*
+
+### --chunksize / -c
+
+*Number of reads grouped into one chunk*
+
+Bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as
+the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end
+reads) will keep FASTA records that originate from the same reads together. Takes a value: `--chunksize <c>`. The
+default is `240`.
+
+### --length / -l
+
+*The length of the k-mers in the index*
+
+Takes a value: `--length <l>`. The default is `9`.
+
+### --socket / -s
+
+*Instead of reading from stdin and writing to stdout, create a Unix socket to communicate with using OpenBSD's netcat
+(nc -NU socket)*
+
+This is especially useful in combination with the `--in-memory` flag: you only have to load the index in memory once,
+after which you can query it without having the loading time overhead each time. Takes a value: `--socket <s>`.

@@ -6,7 +6,7 @@ subtitle: Counts ranked taxon occurrences in a stream of taxon IDs or arguments
 The `umgap taxa2freq` command creates a frequency table of a list of taxa on a given target rank (species by default).
 When invoked with file arguments, it adds a column for each file.
 
-## usage {#usage}
+## Usage {#usage}
 
 The input is given on *standard input*, or in multiple file arguments, a single taxon ID on each line. Each taxon that
 is more specific than the target rank is counted towards its ancestor on the target rank. Each taxon less specific than
@@ -45,10 +45,16 @@ taxon id,taxon name,stdin
 7711,Chordata,10
 ```
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-f / --frequency f** | The minimum frequency to be reported [default: 1] |
-| **-r / --rank r** | The rank to show [default: species] |
+## Command-line options {#options}
 
+### --frequency / -f
+
+*The minimum frequency to be reported*
+
+Takes a value: `--frequency <f>`. The default is `1`.
+
+### --rank / -r
+
+*The rank to show*
+
+Takes a value: `--rank <r>`. The default is `species`.

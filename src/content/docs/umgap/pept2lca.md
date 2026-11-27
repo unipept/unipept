@@ -36,11 +36,23 @@ $ umgap pept2lca -o tryptic-peptides.index < input.fa
 3398
 ```
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-m / --in-memory** | Load index in memory instead of memory mapping the file contents. This makes querying significantly faster, but requires some initialization time. |
-| **-o / --one-on-one** | Map unknown sequences to 0 instead of ignoring them |
-| **-c / --chunksize c** | Number of reads grouped into one chunk. Bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end reads) will keep FASTA records that originate from the same reads together [default: 240] |
+## Command-line options {#options}
 
+### --in-memory / -m
+
+*Load index in memory instead of memory mapping the file contents*
+
+This makes querying significantly faster, but requires some initialization time.
+
+### --one-on-one / -o
+
+*Map unknown sequences to 0 instead of ignoring them*
+
+### --chunksize / -c
+
+*Number of reads grouped into one chunk*
+
+Bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as
+the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end
+reads) will keep FASTA records that originate from the same reads together. Takes a value: `--chunksize <c>`. The
+default is `240`.

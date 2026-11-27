@@ -30,8 +30,3 @@ AAAAA	2759	superkingdom
 BBBBBB	9153	family
 ```
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-

@@ -33,9 +33,10 @@ DALDAGVDGIMTNYPDVITDVLN
 Using the `-p` flag, you can change the splitting pattern. The default pattern (`[KR])([^P]`) splits between any Lysine
 (K) or Arginine (R), followed by any amino acid that is not Proline (P).
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-p / --pattern p** | The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides) [default: ([KR])([^P])] |
+## Command-line options {#options}
 
+### --pattern / -p
+
+*The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides*
+
+Takes a value: `--pattern <p>`. The default is `([KR])([^P])`.

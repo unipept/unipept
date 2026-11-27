@@ -28,9 +28,10 @@ AKAYKKAG*
 KAYKKAG*S
 ```
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-k / --length k** | The k-mer length [default: 9] |
+## Command-line options {#options}
 
+### --length / -k
+
+*The k-mer length*
+
+Takes a value: `--length <k>`. The default is `9`.

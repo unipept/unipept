@@ -6,7 +6,7 @@ subtitle: Aggregates taxon IDs in a FASTA stream
 The `umgap taxa2agg` command takes one or more lists of taxon IDs as input and aggregates them into a single consensus
 taxon.
 
-## usage {#usage}
+## Usage {#usage}
 
 The input is given in a FASTA format on *standard input*. Each FASTA record contains a list of taxon IDs, separated by
 newlines. The output is written to *standard output*, also in a FASTA format, each record containing a single taxon ID,
@@ -42,14 +42,36 @@ aggregation is also available via the `-a` and `-m` options, as is a hybrid appr
   frequency of ancestors in the list, but would have less contradicting taxa. Use the `-f` option to select a hybrid
   close to the `MRTL(-f 0.0)` or to the `LCA (-f 1.0)`.
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-r / --ranked** | Let all taxa snap to taxa with a named rank (such as species) during calculations |
-| **-s / --scored** | Each taxon is followed by a score between 0 and 1 |
-| **-f / --factor f** | The factor for the hybrid aggregation, from 0.0 (MRTL) to 1.0 (LCA*) [default: 0.25] |
-| **-l / --lower-bound l** | The smallest input frequency for a taxon to be included in the aggregation [default: 0] |
-| **-m / --method m** | The method to use for aggregation [default: tree] [possible values: tree, rmq] |
-| **-a / --aggregate a** | The strategy to use for aggregation [default: hybrid] [possible values: lca*, hybrid, mrtl] |
+## Command-line options {#options}
 
+### --ranked / -r
+
+*Let all taxa snap to taxa with a named rank (such as species) during calculations*
+
+### --scored / -s
+
+*Each taxon is followed by a score between 0 and 1*
+
+### --factor / -f
+
+*The factor for the hybrid aggregation, from 0.0 (MRTL) to 1.0 (LCA*)*
+
+Takes a value: `--factor <f>`. The default is `0.25`.
+
+### --lower-bound / -l
+
+*The smallest input frequency for a taxon to be included in the aggregation*
+
+Takes a value: `--lower-bound <l>`. The default is `0`.
+
+### --method / -m
+
+*The method to use for aggregation*
+
+Takes a value: `--method <m>`. The default is `tree] [possible values: tree, rmq`.
+
+### --aggregate / -a
+
+*The strategy to use for aggregation*
+
+Takes a value: `--aggregate <a>`. The default is `hybrid] [possible values: lca*, hybrid, mrtl`.

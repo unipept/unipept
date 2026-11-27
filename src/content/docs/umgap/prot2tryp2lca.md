@@ -25,16 +25,53 @@ $ umgap prot2tryp2lca tryptic-lca.index < input.fa
 6920
 ```
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-m / --in-memory** | Load index in memory instead of memory mapping the file contents. This makes querying significantly faster, but requires some initialization time. |
-| **-o / --one-on-one** | Map unknown sequences to 0 instead of ignoring them |
-| **-c / --chunksize c** | Number of reads grouped into one chunk. Bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end reads) will keep FASTA records that originate from the same reads together [default: 240] |
-| **-k / --keep k** | Amino acid symbols that a sequence must contain [none by default] |
-| **-d / --drop d** | Amino acid symbols that a sequence may not contain [none by default] |
-| **-L / --maxlen L** | Maximum length allowed [default: 50] |
-| **-l / --minlen l** | Minimum length required [default: 5] |
-| **-p / --pattern p** | The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides) [default: ([KR])([^P])] |
+## Command-line options {#options}
 
+### --in-memory / -m
+
+*Load index in memory instead of memory mapping the file contents*
+
+This makes querying significantly faster, but requires some initialization time.
+
+### --one-on-one / -o
+
+*Map unknown sequences to 0 instead of ignoring them*
+
+### --chunksize / -c
+
+*Number of reads grouped into one chunk*
+
+Bigger chunks decrease the overhead caused by multithreading. Because the output order is not necessarily the same as
+the input order, having a chunk size which is a multiple of 12 (all 6 translations multiplied by the two paired-end
+reads) will keep FASTA records that originate from the same reads together. Takes a value: `--chunksize <c>`. The
+default is `240`.
+
+### --keep / -k
+
+*Amino acid symbols that a sequence must contain*
+
+Takes a value: `--keep <k>`. There is no default.
+
+### --drop / -d
+
+*Amino acid symbols that a sequence may not contain*
+
+Takes a value: `--drop <d>`. There is no default.
+
+### --maxlen / -L
+
+*Maximum length allowed*
+
+Takes a value: `--maxlen <L>`. The default is `50`.
+
+### --minlen / -l
+
+*Minimum length required*
+
+Takes a value: `--minlen <l>`. The default is `5`.
+
+### --pattern / -p
+
+*The cleavage-pattern (regex), i.e. the pattern after which the next peptide will be cleaved for tryptic peptides*
+
+Takes a value: `--pattern <p>`. The default is `([KR])([^P])`.

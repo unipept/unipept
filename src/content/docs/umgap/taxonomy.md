@@ -6,7 +6,7 @@ subtitle: Includes the taxonomic information in a stream of NCBI taxon IDs
 The umgap taxonomy command takes one or more NCBI taxon IDs as input, searches for them in the taxonomy and outputs more
 information about them in a TSV format.
 
-## usage {#usage}
+## Usage {#usage}
 
 The input is given on *standard input* and may be any sequence of FASTA headers and/or lines containing a single NCBI
 taxon ID. A TSV header is printed to *standard output*. The FASTA headers (any line starting with a `>`) are just copied
@@ -60,10 +60,12 @@ taxon_id	taxon_name	taxon_rank	domain_id	domain_name	realm_id	realm_name    king
 888268	Dichanthelium oligosanthes	species	2759	Eukaryota	33090	Viridiplantae					35493	Streptophyta	131221	Streptophytina			3398	Magnoliopsida	1437197	Petrosaviidae					38820	Poales									4479	Poaceae	147369	Panicoideae	147428	Paniceae	1648011	Dichantheliinae	161620	Dichanthelium							888268	Dichanthelium oligosanthes
 ```
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-a / --all** | Show the full lineage of a taxon |
-| **-H / --no-header** | Do not output the TSV header |
+## Command-line options {#options}
 
+### --all / -a
+
+*Show the full lineage of a taxon*
+
+### --no-header / -H
+
+*Do not output the TSV header*

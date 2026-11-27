@@ -39,12 +39,28 @@ GLTR
 EAVANR
 ```
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-c / --contains c** | Amino acid symbols that a sequence must contain [none by default] |
-| **-l / --lacks l** | Amino acid symbols that a sequence may not contain [none by default] |
-| **-M / --maxlen M** | Maximum length allowed [default: 50] |
-| **-m / --minlen m** | Minimum length required [default: 5] |
+## Command-line options {#options}
 
+### --contains / -c
+
+*Amino acid symbols that a sequence must contain*
+
+Takes a value: `--contains <c>`. There is no default.
+
+### --lacks / -l
+
+*Amino acid symbols that a sequence may not contain*
+
+Takes a value: `--lacks <l>`. There is no default.
+
+### --maxlen / -M
+
+*Maximum length allowed*
+
+Takes a value: `--maxlen <M>`. The default is `50`.
+
+### --minlen / -m
+
+*Minimum length required*
+
+Takes a value: `--minlen <m>`. The default is `5`.

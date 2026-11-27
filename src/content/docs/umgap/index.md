@@ -64,6 +64,9 @@ requests or found a bug, don't hesitate to contact us by email ([unipept@ugent.b
 | [**buildindex**](./buildindex.md) | Write an FST index of stdin on stdout |
 | [**printindex**](./printindex.md) | Print the values in an FST index to stdout |
 
+Every command also accepts `-h` / `--help`, which prints its help information, and `-V` / `--version`, which prints
+its version.
+
 ## Installation {#installation}
 
 To use UMGAP, Rust needs to be installed on your system. We recommend the lastest version, but all versions since Rust

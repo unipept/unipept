@@ -49,12 +49,28 @@ The command can be altered to print only the extended seed with the highest scor
 taxonomy using the `-r taxon.tsv` option to activate this. In this scored mode, extended seeds with gaps are given a
 penalty of 5, which can be made more or less severe (higher or lower) with the `-p` option.
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-g / --max-gap-size g** | The maximum length of a gap between seeds in an extension [default: 0] |
-| **-s / --min-seed-size s** | The minimum length of equal taxa to count as seed [default: 2] |
-| **-p / --penalty p** | The score penalty for gaps in extended seeds [default: 5] |
-| **-r / --ranked r** | Use taxon ranks in given NCBI taxonomy tsv-file to pick extended seed with highest score |
+## Command-line options {#options}
 
+### --max-gap-size / -g
+
+*The maximum length of a gap between seeds in an extension*
+
+Takes a value: `--max-gap-size <g>`. The default is `0`.
+
+### --min-seed-size / -s
+
+*The minimum length of equal taxa to count as seed*
+
+Takes a value: `--min-seed-size <s>`. The default is `2`.
+
+### --penalty / -p
+
+*The score penalty for gaps in extended seeds*
+
+Takes a value: `--penalty <p>`. The default is `5`.
+
+### --ranked / -r
+
+*Use taxon ranks in given NCBI taxonomy tsv-file to pick extended seed with highest score*
+
+Takes a value: `--ranked <r>`.

@@ -36,9 +36,10 @@ $ umgap bestof < input.fa
 
 Taxon IDs are separated by newlines in the actual output, but are separated by spaces in this example.
 
-| Option | Description |
-| ------ | ----------- |
-| **-h / --help** | Prints help information |
-| **-V / --version** | Prints version information |
-| **-f / --frames f** | The number of frames of which to pick the best [default: 6] |
+## Command-line options {#options}
 
+### --frames / -f
+
+*The number of frames of which to pick the best*
+
+Takes a value: `--frames <f>`. The default is `6`.
