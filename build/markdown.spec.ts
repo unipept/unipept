@@ -135,6 +135,11 @@ describe("createMarkdownRenderer", () => {
         expect(html).toContain(`<img src="https://example.org/c.png" alt="c">`);
     });
 
+    it("sets the width of an image, also in a table", () => {
+        expect(render("![a](./a.png){width=50}\n")).toContain(`<img src="./a.png" alt="a" width="50">`);
+        expect(render("| a |\n| - |\n| ![b](./b.png){width=50} |\n")).toContain(`<img src="./b.png" alt="b" width="50">`);
+    });
+
     it("opens external links in a new tab", () => {
         expect(render("[Unipept](https://unipept.ugent.be)\n"))
             .toContain(`<a href="https://unipept.ugent.be" target="_blank" rel="noreferrer">`);
