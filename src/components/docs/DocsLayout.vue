@@ -11,9 +11,13 @@
             id="docs-menu"
             ref="menu"
             tabindex="-1"
-            class="docs-layout__menu"
+            :class="['docs-layout__menu', menuFade]"
             @click="closeMenuOnLink"
         >
+            <docs-search
+                class="docs-layout__search"
+                @result="closeMenu()"
+            />
             <docs-side-menu :section="docs.section" />
         </aside>
         <transition name="docs-fade">
@@ -130,7 +134,8 @@
 
         <aside
             v-if="!isApi && hasToc"
-            class="docs-layout__toc"
+            ref="toc"
+            :class="['docs-layout__toc', tocFade]"
         >
             <docs-toc :headers="docs.page.headers" />
         </aside>
@@ -141,11 +146,13 @@
 import { computed, nextTick, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useEventListener, useScrollLock } from "@vueuse/core";
+import DocsSearch from "./DocsSearch.vue";
 import DocsSideMenu from "./DocsSideMenu.vue";
 import DocsToc from "./DocsToc.vue";
 import DocsPager from "./DocsPager.vue";
 import DocsPageHeader from "./DocsPageHeader.vue";
 import useDocsContent from "@/composables/docs/useDocsContent";
+import useScrollFade from "@/composables/docs/useScrollFade";
 import { provideRequestPanel } from "@/composables/docs/useRequestPanel";
 import { publicationUrl } from "@/logic/docs/DocsSections";
 import "@/styles/docs.css";
@@ -155,6 +162,9 @@ const editBase = "https://github.com/unipept/unipept/edit/main/src/content/docs/
 const route = useRoute();
 const content = ref<HTMLElement>();
 const menu = ref<HTMLElement>();
+const toc = ref<HTMLElement>();
+const { classes: menuFade, update: updateMenuFade } = useScrollFade(menu);
+const { classes: tocFade, update: updateTocFade } = useScrollFade(toc);
 const menuButton = ref<HTMLButtonElement>();
 const requestButton = ref<HTMLButtonElement>();
 
@@ -216,9 +226,13 @@ function closeMenuOnLink(event: MouseEvent) {
     }
 }
 
-watch(() => route.path, () => {
+watch(() => route.path, async () => {
     closeMenu();
     requestOpen.value = false;
+    // Another page can have another menu or other headings.
+    await nextTick();
+    updateMenuFade();
+    updateTocFade();
 });
 
 // The page behind an open drawer does not scroll. The space of the scroll bar stays, so the page does not shift.
@@ -228,8 +242,9 @@ watch([menuOpen, requestOpen], ([menu, request]) => {
     document.documentElement.style.scrollbarGutter = menu || request ? "stable" : "";
 });
 
+// Escape in a dialog or menu closes only that overlay.
 useEventListener("keydown", (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
+    if (event.key === "Escape" && !(event.target as Element | null)?.closest?.(".v-overlay")) {
         closeDrawers();
     }
 });
@@ -279,6 +294,10 @@ function scrollToTop() {
 
 .docs-layout__menu:focus {
     outline: none;
+}
+
+.docs-layout__search {
+    margin-bottom: 16px;
 }
 
 .docs-layout__main {

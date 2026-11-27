@@ -10,10 +10,7 @@ test('Homepage loads correctly', async ({page}) => {
     const navItems = [
         'Single Peptide Analysis',
         'Metaproteomics Analysis',
-        'API',
-        'CLI',
-        'Metagenomics',
-        'Unipept Desktop'
+        'Documentation'
     ];
 
     for (const item of navItems) {

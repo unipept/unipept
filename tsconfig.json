@@ -20,5 +20,5 @@
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "tests/unit/**/*.ts", "tests/fixtures/**/*.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],
-  "exclude": ["node_modules", "src/logic/docs/ApiReference.ts"]
+  "exclude": ["node_modules", "src/logic/docs/ApiReference.ts", "src/logic/docs/DocsSearchIndex.ts"]
 }

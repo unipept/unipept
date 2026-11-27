@@ -27,7 +27,8 @@ function apiHtml(api: ReturnType<typeof apiReference>): string[] {
     ];
 }
 
-const pageUrl = (file: string) => "/" + file.replace(/(^|\/)index\.md$/, "").replace(/\.md$/, "");
+/** URL of a docs page from its path in the docs folder. */
+export const docsPageUrl = (file: string) => "/" + file.replace(/(^|\/)index\.md$/, "").replace(/\.md$/, "");
 
 const headerSlugs = (headers: DocsPageData["headers"]): string[] =>
     headers.flatMap(h => [h.slug, ...headerSlugs(h.children)]);
@@ -39,7 +40,7 @@ const headerSlugs = (headers: DocsPageData["headers"]): string[] =>
 export function docsPageTargets(md: MarkdownIt, srcDir: string): { url: string; title: string; anchors: string[] }[] {
     return readDocsPages(md, srcDir).map(page => {
         const api = page.frontmatter.layout === "api" ? apiAnchors : [];
-        return { url: pageUrl(page.file), title: page.title, anchors: [...headerSlugs(page.headers), ...api] };
+        return { url: docsPageUrl(page.file), title: page.title, anchors: [...headerSlugs(page.headers), ...api] };
     });
 }
 
@@ -61,7 +62,7 @@ export function checkDocsContent(md: MarkdownIt, srcDir: string, options: DocsCo
             idList.push(...apiAnchors);
         }
         const duplicateIds = [...new Set(idList.filter((id, i) => idList.indexOf(id) !== i))];
-        return { ...page, url: pageUrl(page.file), html, ids: new Set(idList), duplicateIds };
+        return { ...page, url: docsPageUrl(page.file), html, ids: new Set(idList), duplicateIds };
     });
     const byUrl = new Map(pages.map(page => [page.url, page]));
     const problems: string[] = [];

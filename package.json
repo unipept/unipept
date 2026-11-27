@@ -30,6 +30,7 @@
     "localforage": "^1.10.0",
     "lru-cache-idb": "^0.5.2",
     "marked": "^18.1.2",
+    "minisearch": "^7.2.0",
     "peptonizer": "^0.1.28",
     "pinia": "^3.0.4",
     "shared-memory-datastructures": "1.0.0-alpha.9",
@@ -40,7 +41,6 @@
     "vuetify": "^4.3.1"
   },
   "devDependencies": {
-    "fantasticon": "^4.1.0",
     "@mdit-vue/plugin-component": "^4.0.0",
     "@mdit-vue/plugin-frontmatter": "^4.0.0",
     "@mdit-vue/shared": "^4.0.0",
@@ -54,6 +54,7 @@
     "coi-serviceworker": "^0.1.7",
     "eslint": "^10.13.0",
     "eslint-plugin-vue": "^10.12.0",
+    "fantasticon": "^4.1.0",
     "markdown-it": "^15.0.3",
     "markdown-it-anchor": "^10.1.0",
     "markdown-it-attrs": "^5.0.1",

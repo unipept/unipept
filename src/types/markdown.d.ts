@@ -24,6 +24,12 @@ declare module "virtual:docs-pages" {
     export default pages;
 }
 
+declare module "virtual:docs-search" {
+    /** The search index of the docs pages, as JSON for `MiniSearch.loadJSON`. */
+    const index: string;
+    export default index;
+}
+
 declare module "*.md" {
     import type { DefineComponent } from "vue";
 
