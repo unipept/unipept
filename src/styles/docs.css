@@ -469,3 +469,29 @@
 .vp-doc .columns ul {
     columns: 3 10em;
 }
+
+/* An element that scrolls without a scrollbar; useScrollFade sets the edges that fade out. */
+.docs-scroll-fade {
+    --docs-fade-top: 0px;
+    --docs-fade-bottom: 0px;
+    scrollbar-width: none;
+    mask-image: linear-gradient(
+        to bottom,
+        transparent,
+        #000 var(--docs-fade-top),
+        #000 calc(100% - var(--docs-fade-bottom)),
+        transparent
+    );
+}
+
+.docs-scroll-fade::-webkit-scrollbar {
+    display: none;
+}
+
+.docs-scroll-fade--top {
+    --docs-fade-top: 40px;
+}
+
+.docs-scroll-fade--bottom {
+    --docs-fade-bottom: 40px;
+}

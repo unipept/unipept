@@ -74,4 +74,17 @@ test.describe('Documentation layout', () => {
         await expect(page).toHaveURL(/\/apidocs\/pept2lca$/);
         await expect(menu).toBeHidden();
     });
+
+    test('scrolls a long menu without a scrollbar and fades the edges with more items', async ({page}) => {
+        await open(page, 1600, '/umgap/filter');
+        const menu = page.locator('.docs-layout__menu');
+
+        expect(await menu.evaluate(element => getComputedStyle(element).scrollbarWidth)).toBe('none');
+        await expect(menu).toHaveClass(/docs-scroll-fade--bottom/);
+        await expect(menu).not.toHaveClass(/docs-scroll-fade--top/);
+
+        await menu.evaluate(element => element.scrollTop = element.scrollHeight);
+        await expect(menu).toHaveClass(/docs-scroll-fade--top/);
+        await expect(menu).not.toHaveClass(/docs-scroll-fade--bottom/);
+    });
 });
