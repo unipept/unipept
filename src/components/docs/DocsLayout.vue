@@ -239,8 +239,9 @@ watch([menuOpen, requestOpen], ([menu, request]) => {
     document.documentElement.style.scrollbarGutter = menu || request ? "stable" : "";
 });
 
+// Escape in a dialog or menu closes only that overlay.
 useEventListener("keydown", (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
+    if (event.key === "Escape" && !(event.target as Element | null)?.closest?.(".v-overlay")) {
         closeDrawers();
     }
 });

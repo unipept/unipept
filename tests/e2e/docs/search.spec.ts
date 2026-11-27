@@ -32,4 +32,20 @@ test.describe('Documentation search', () => {
         await expect(input).toBeHidden();
         await expect(button).toBeFocused();
     });
+
+    test('closes only the dialog on Escape when the menu drawer is open', async ({page}) => {
+        await page.setViewportSize({width: 800, height: 900});
+        await page.goto('/desktop');
+        await page.getByRole('button', {name: 'Menu'}).click();
+        const menu = page.locator('.docs-layout__menu');
+        const button = menu.getByRole('button', {name: /Search/});
+        await button.click();
+
+        const input = page.getByRole('combobox', {name: 'Search the documentation'});
+        await expect(input).toBeFocused();
+        await input.press('Escape');
+        await expect(input).toBeHidden();
+        await expect(menu).toBeVisible();
+        await expect(button).toBeFocused();
+    });
 });
