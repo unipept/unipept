@@ -22,4 +22,10 @@ test.describe('Documentation hub', () => {
         await page.getByRole('combobox', {name: 'Search the documentation'}).fill('fastq2fasta');
         await expect(page.getByRole('option').first()).toContainText('UMGAP › umgap fastq2fasta');
     });
+
+    test('is the first link of the breadcrumb on a docs page', async ({page}) => {
+        await page.goto('/umgap/casestudies/basic');
+        await page.getByRole('navigation', {name: 'Breadcrumb'}).getByRole('link', {name: 'Documentation'}).click();
+        await expect(page).toHaveURL(/\/docs$/);
+    });
 });

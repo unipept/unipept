@@ -187,14 +187,21 @@ export interface DocsBreadcrumb {
     path?: string;
 }
 
-/** The section, the titled menu group of the page and the page itself. The section links to its first page. */
+/** Label and URL of the docs hub, the first item of every breadcrumb. */
+export const docsHubBreadcrumb: DocsBreadcrumb = { label: "Documentation", path: "/docs" };
+
+/**
+ * The docs hub, the section, the titled menu group of the page and the page itself. The section links to its first
+ * page.
+ */
 export function docsBreadcrumb(section: DocsSection, page: DocsPage): DocsBreadcrumb[] {
     const first = section.pages[0];
     if (page.path === first?.path) {
-        return [{ label: section.title }];
+        return [docsHubBreadcrumb, { label: section.title }];
     }
     const group = section.menu.find(g => g.pages.some(p => p.path === page.path));
     return [
+        docsHubBreadcrumb,
         { label: section.title, path: first?.path },
         ...(group?.title ? [{ label: group.title }] : []),
         { label: page.menuLabel }

@@ -147,18 +147,20 @@ describe("docsBreadcrumb", () => {
     const [section] = buildDocsSections({ cli: { ...config, menu: ["", "pept2lca", { title: "Case studies", pages: ["casestudies", "casestudies/tpa"] }] } }, pages);
     const [overview, pept2lca, , tpa] = section.pages;
 
-    it("gives the section, the menu group and the page", () => {
+    const hub = { label: "Documentation", path: "/docs" };
+
+    it("gives the docs hub, the section, the menu group and the page", () => {
         expect(docsBreadcrumb(section, tpa)).toEqual([
-            { label: "CLI", path: "/cli" }, { label: "Case studies" }, { label: "Tryptic peptide" }
+            hub, { label: "CLI", path: "/cli" }, { label: "Case studies" }, { label: "Tryptic peptide" }
         ]);
     });
 
     it("leaves out a menu group without a title", () => {
-        expect(docsBreadcrumb(section, pept2lca)).toEqual([{ label: "CLI", path: "/cli" }, { label: "unipept pept2lca" }]);
+        expect(docsBreadcrumb(section, pept2lca)).toEqual([hub, { label: "CLI", path: "/cli" }, { label: "unipept pept2lca" }]);
     });
 
-    it("gives only the section on its first page", () => {
-        expect(docsBreadcrumb(section, overview)).toEqual([{ label: "CLI" }]);
+    it("gives only the docs hub and the section on its first page", () => {
+        expect(docsBreadcrumb(section, overview)).toEqual([hub, { label: "CLI" }]);
     });
 });
 
