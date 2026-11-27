@@ -18,11 +18,6 @@ const mpaMeta = {
     publicationLink: "doi.org/10.1021/acs.jproteome.4c00848",
 };
 
-const clidocsMeta = {
-    publication: "Verschaffelt et al. (2020) Bioinformatics",
-    publicationLink: "doi.org/10.1093/bioinformatics/btaa553"
-};
-
 const metagenomicsMeta = {
     publication: "Gurdeep Singh et al. (2019) Journal of Proteome Research",
     publicationLink: "doi:10.1021/acs.jproteome.8b00716"
@@ -77,31 +72,6 @@ export const routes: RouteRecordRaw[] = [
             { path: "database", name: "mpaDatabase", component: () => import("@/components/pages/features/analysis/MetaproteomeDatabasePage.vue"), meta: mpaMeta },
         ],
         meta: mpaMeta
-    },
-    {
-        path: "/clidocs",
-        component: () => import("@/components/pages/features/CLIPage.vue"),
-        children: [
-            { path: "", component: () => import("@/components/pages/documentation/clidocs/CLIDocsOverviewPage.vue"), meta: clidocsMeta },
-            { path: "casestudies", component: () => import("@/components/pages/documentation/clidocs/CLICaseStudiesPage.vue"), meta: clidocsMeta },
-            { path: "casestudies/tpa", component: () => import("@/components/pages/documentation/clidocs/casestudies/CLITrypticCaseStudy.vue"), meta: clidocsMeta },
-            { path: "casestudies/mpa", component: () => import("@/components/pages/documentation/clidocs/casestudies/CLIMetaproteomicsCaseStudy.vue"), meta: clidocsMeta },
-            { path: "uniprot", component: () => import("@/components/pages/documentation/clidocs/CLIUniprotPage.vue"), meta: clidocsMeta },
-            { path: "prot2pept", component: () => import("@/components/pages/documentation/clidocs/CLIProt2PeptPage.vue"), meta: clidocsMeta },
-            { path: "peptfilter", component: () => import("@/components/pages/documentation/clidocs/CLIPeptfilterPage.vue"), meta: clidocsMeta },
-            { path: "pept2lca", component: () => import("@/components/pages/documentation/clidocs/CLIPept2LcaPage.vue"), meta: clidocsMeta },
-            { path: "pept2prot", component: () => import("@/components/pages/documentation/clidocs/CLIPept2ProtPage.vue"), meta: clidocsMeta },
-            { path: "pept2taxa", component: () => import("@/components/pages/documentation/clidocs/CLIPept2TaxaPage.vue"), meta: clidocsMeta },
-            { path: "pept2ec", component: () => import("@/components/pages/documentation/clidocs/CLIPept2EcPage.vue"), meta: clidocsMeta },
-            { path: "pept2go", component: () => import("@/components/pages/documentation/clidocs/CLIPept2GoPage.vue"), meta: clidocsMeta },
-            { path: "pept2interpro", component: () => import("@/components/pages/documentation/clidocs/CLIPept2InterproPage.vue"), meta: clidocsMeta },
-            { path: "pept2funct", component: () => import("@/components/pages/documentation/clidocs/CLIPept2FunctPage.vue"), meta: clidocsMeta },
-            { path: "peptinfo", component: () => import("@/components/pages/documentation/clidocs/CLIPeptInfoPage.vue"), meta: clidocsMeta },
-            { path: "protinfo", component: () => import("@/components/pages/documentation/clidocs/CLIProtinfoPage.vue"), meta: clidocsMeta },
-            { path: "taxa2lca", component: () => import("@/components/pages/documentation/clidocs/CLITaxa2LcaPage.vue"), meta: clidocsMeta },
-            { path: "taxonomy", component: () => import("@/components/pages/documentation/clidocs/CLITaxonomyPage.vue"), meta: clidocsMeta }
-        ],
-        meta: clidocsMeta
     },
     {
         path: "/umgap",
